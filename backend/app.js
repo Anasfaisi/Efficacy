@@ -1,1 +1,1 @@
-console.log("hai")
+const server = "anas"
