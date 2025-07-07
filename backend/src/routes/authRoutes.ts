@@ -9,5 +9,4 @@ router.post('/refresh',refresh);
 router.post('/logout' , logout);
 
 
-export default routerPS D:\Brototype\week 23\Efficacy> git add .
-warning: in the working copy of 'backend/.env', CRLF will be replaced by LF the next time Git touches it
+export default router
