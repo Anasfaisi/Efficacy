@@ -1,9 +1,16 @@
 import express from "express"
 import dotenv from "dotenv"
+import connectDB from "./config/db"
+import authRoutes from "./routes/authRoutes"
+import cookieParser from "cookie-parser"
+
 dotenv.config()
-const port = process.env.PORT
 const app = express()
 app.use(express.json())
+app.use(cookieParser())
 
-app.get("/",(req,res)=>{res.send("Efficacy backend")});
+connectDB()
+const port = process.env.PORT
+
+app.use("/api/auth",authRoutes)
 app.listen(port,()=>console.log("http://localhost:5000"))
