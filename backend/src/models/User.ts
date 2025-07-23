@@ -6,6 +6,7 @@ interface IUser{
     email:string,
     password: string,
     refreshToken : string,
+    role:string
 }
 
 const userSchema = new Schema<IUser>({

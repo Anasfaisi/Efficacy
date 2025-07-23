@@ -11,7 +11,7 @@ class UserRepository{
 
     async updateRefreshToken(userId:string,refreshToken:string|null):Promise<void> {
         await User.updateOne({_id :userId},{refreshToken})
-    }
+}
 
     async findByRefreshToken(refreshToken:string):Promise<IUser |null>{
        return await User.findOne({refreshToken})

@@ -1,0 +1,60 @@
+import bcrypt from "bcrypt";
+import UserRepository from "../repositories/UserRepository";
+import jwt from "jsonwebtoken";
+class AuthService {
+    constructor() {
+        this.userRepository = new UserRepository();
+    }
+    async register(email, password, name) {
+        const existingUser = await this.userRepository.findByEmail(email);
+        if (existingUser) {
+            throw new Error("User already exist");
+        }
+        const hashPassword = await bcrypt.hash(password, 10);
+        const user = await this.userRepository.create({ name, email, password: hashPassword });
+        const token = await this.generateAccessToken(user);
+        const refreshToken = this.generateRefreshToken(user);
+        await this.userRepository.updateRefreshToken(user._id.toString(), refreshToken);
+        return { token, refreshToken, user: { email: user.email, name: user.name } };
+    }
+    async login(email, password) {
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            throw new Error('Invalid credentials');
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            throw new Error('Invalid credentials');
+        }
+        const token = this.generateAccessToken(user);
+        const refreshToken = this.generateRefreshToken(user);
+        await this.userRepository.updateRefreshToken(user._id.toString(), refreshToken);
+        return { token, refreshToken, user: { email: user.email, name: user.name } };
+    }
+    async refreshToken(refreshToken) {
+        try {
+            const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'refreshSecret');
+            const user = await this.userRepository.findByRefreshToken(refreshToken);
+            if (!user || user._id.toString() !== decoded.id) {
+                throw new Error("Invalid refresh token");
+            }
+            const newAccessToken = this.generateAccessToken(user);
+            return { token: newAccessToken, user: { email: user.email, name: user.name } };
+        }
+        catch (error) {
+            throw new Error("Invalid refresh Token");
+        }
+    }
+    generateAccessToken(user) {
+        return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+    }
+    generateRefreshToken(user) {
+        return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_REFRESH_SECRET || "refreshSecret", {
+            expiresIn: "7d"
+        });
+    }
+    async logout(userId) {
+        await this.userRepository.updateRefreshToken(userId, null);
+    }
+}
+export default AuthService;

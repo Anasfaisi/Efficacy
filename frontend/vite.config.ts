@@ -6,6 +6,9 @@ import path from "path"
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(),],
+   css: {
+    postcss: './postcss.config.js', // Ensure PostCSS is configured
+  },
   resolve:{
     alias:{
       "@":path.resolve(__dirname,"./src")

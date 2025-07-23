@@ -1,11 +1,24 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from "./slices/authSlice";
+import authReducer from './slices/authSlice';
+import adminAuthReducer from './slices/adminAuthSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    adminAuth: adminAuthReducer,
   },
-  devTools: process.env.NODE_ENV !== 'production',
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          'auth/login',
+          'auth/checkSession',
+          'adminAuth/adminLogin',
+          'adminAuth/checkAdminSession',
+        ],
+        ignoredPaths: ['auth.error', 'adminAuth.error'],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

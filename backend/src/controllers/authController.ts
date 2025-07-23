@@ -5,6 +5,7 @@ const authservice = new AuthService()
 
 export const register = async (req: Request, res: Response):Promise<any> => {
   try {
+    console.log(req.body)
     const { email, password, name } = req.body;
     const result = await authservice.register(email, password, name);
     const isProduction = process.env.NODE_ENV === 'production';
@@ -18,7 +19,9 @@ export const register = async (req: Request, res: Response):Promise<any> => {
       console.log('Refresh token set in development:', result.refreshToken);
     }
     res.json({ token: result.token, user: result.user });
+    
   } catch (error: any) {
+    console.log(error)
     res.status(400).json({ message: error.message });
   }
 };
@@ -27,6 +30,7 @@ export const register = async (req: Request, res: Response):Promise<any> => {
 
 export const login  = async (req:Request,res:Response):Promise<any>=>{
   try {
+    console.log(req.body)
     const {email,password }= req.body
     const result = await authservice.login(email,password)
     const isProduction = process.env.NODE_ENV === "production";
@@ -38,7 +42,7 @@ export const login  = async (req:Request,res:Response):Promise<any>=>{
     })
       res.json({ token: result.token, user: result.user });
   } catch (error:any) {
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ message: error.message});
   }  
 }
 
