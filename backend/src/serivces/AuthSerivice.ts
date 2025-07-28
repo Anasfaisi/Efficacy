@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
-import UserRepository from "../repositories/UserRepository"
+import UserRepository from "../repositories/UserRepository.ts"
 import jwt from "jsonwebtoken"
-import { IUser } from "../models/User"
+import { IUser } from "../models/User.ts"
 
 class AuthService {
     private userRepository: UserRepository

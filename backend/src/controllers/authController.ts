@@ -1,4 +1,4 @@
-import AuthService from "../serivces/AuthSerivice";
+import AuthService from "../serivces/AuthSerivice.ts";
 import { Request,Response } from "express";
 import jwt from "jsonwebtoken"
 const authservice = new AuthService()

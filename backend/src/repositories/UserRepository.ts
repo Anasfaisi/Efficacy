@@ -1,4 +1,4 @@
-import User,{IUser} from "../models/User" // Adjust the path if your IUser type/interface is elsewhere
+import User,{IUser} from "../models/User.ts" // Adjust the path if your IUser type/interface is elsewhere
 
 class UserRepository{
     async findByEmail(email:string):Promise<IUser|null>{

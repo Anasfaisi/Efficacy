@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import adminRepository from '../repositories/adminRepository';
+import adminRepository from '../repositories/adminRepository.ts';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { AdminAuthRequest } from '../middleware/adminAuthMiddleware';
+import { AdminAuthRequest } from '../middleware/adminAuthMiddleware.ts';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access-secret-key';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh-secret-key';

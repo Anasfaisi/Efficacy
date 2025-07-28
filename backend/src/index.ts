@@ -1,8 +1,8 @@
 import express from "express"
 import dotenv from "dotenv"
-import connectDB from "./config/db"
-import authRoutes from "./routes/authRoutes"
-import adminRoutes from "./routes/adminRoutes"
+import connectDB from "./config/db.ts"
+import authRoutes from "./routes/authRoutes.ts"
+import adminRoutes from "./routes/adminRoutes.ts"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
@@ -10,10 +10,10 @@ import cors from "cors"
 dotenv.config()
 const app = express()
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow requests from the frontend
-  credentials: true, // Allow cookies/auth headers
-  methods: ['GET', 'POST', 'OPTIONS'], // Allow specific methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  origin: 'http://localhost:5173',
+  credentials: true, 
+  methods: ['GET', 'POST', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
 };
 
 app.use(cors(corsOptions));
