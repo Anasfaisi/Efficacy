@@ -1,101 +1,55 @@
-// client/src/redux/slices/authSlice.ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../axiosConfig';
-import type { AuthState, User, LoginCredentials, RegisterCredentials } from '../types';
+// src/store/authSlice.ts
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+interface User {
+  id: string;
+  name: string;
+  roles: string[];  // e.g. ['user'], ['admin']
+}
 
-export const register = createAsyncThunk<
-  { token: string; user: User },
-  RegisterCredentials,
-  { rejectValue: string }
->('auth/register', async ({ email, password, name }, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${API_URL}/register`, { email, password, name });
-    console.log('Register response:', response);
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Registration failed');
-  }
-});
-
-export const refresh = createAsyncThunk<
-  { token: string; user: User },
-  void,
-  { rejectValue: string }
->('auth/refresh', async (_, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${API_URL}/refresh`);
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Refresh failed');
-  }
-});
-
-export const login = createAsyncThunk<
-  { token: string; user: User },
-  LoginCredentials,
-  { rejectValue: string }
->('auth/login', async ({ email, password }, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${API_URL}/login`, { email, password });
-    console.log('Login response:', response);
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Login failed');
-  }
-});
-
+interface AuthState {
+  accessToken: string | null;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+}
 
 const initialState: AuthState = {
-  token: null,
+  accessToken: null,
   user: null,
-  isLoading: false,
+  loading: false,
   error: null,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      state.token = null;
-      state.user = null;
-      localStorage.removeItem('token');
+    loginStart(state) {
+      state.loading = true;
+      state.error = null;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(register.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(register.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-        localStorage.setItem('token', action.payload.token);
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || 'Registration failed';
-      })
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-    
+    loginSuccess(state, action: PayloadAction<{ accessToken: string; user: User }>) {
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      state.loading = false;
+      state.isAuthenticated = true;
+    },
+    loginFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    logout(state) {
+      state.accessToken = null;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
+    },
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
 export default authSlice.reducer;

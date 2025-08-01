@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import { store } from './redux/store';
+// import { setupAxiosInterceptors } from './axiosConfig';
 
 
 createRoot(document.getElementById('root')!).render(
