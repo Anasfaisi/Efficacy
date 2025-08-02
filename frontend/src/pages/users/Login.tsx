@@ -13,12 +13,13 @@ const Login: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
+
   useEffect(() => {
     console.log("use effect worked")
     console.log(token)
     if (token) {
       console.log('Token detected in useEffect:', token);
-      navigate('/dashboard');
+      navigate('/home');
     }
   }, [token, navigate]);
 

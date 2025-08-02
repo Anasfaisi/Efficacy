@@ -1,11 +1,11 @@
-// client/src/pages/Dashboard.tsx
+// client/src/pages/Home.tsx
 import React from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 
-const Dashboard: React.FC = () => {
+const Home: React.FC = () => {
   const { user, token } = useAppSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg text-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">Dashboard</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">Home</h2>
         {token && user ? (
           <>
             <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
@@ -37,4 +37,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default Home;
