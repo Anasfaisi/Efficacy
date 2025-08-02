@@ -40,7 +40,7 @@ export const login  = async (req:Request,res:Response):Promise<any>=>{
         maxAge:7*24*60*60*1000,
         sameSite:isProduction ? "strict" : "lax"
     })
-      res.json({ token: result.token, user: result.user });
+      res.json({ accessToken: result.token, user: result.user });
   } catch (error:any) {
     res.status(401).json({ message: error.message});
   }  
