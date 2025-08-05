@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 
 const Home: React.FC = () => {
-  const { user, token } = useAppSelector((state) => state.auth);
+  const { user, accessToken } = useAppSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const Home: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg text-center">
         <h2 className="text-4xl font-bold text-gray-800 mb-4">Home</h2>
-        {token && user ? (
+        {accessToken && user ? (
           <>
             <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
             <button

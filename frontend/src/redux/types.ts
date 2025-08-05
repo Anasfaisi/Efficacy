@@ -9,7 +9,7 @@ export interface User {
 }
 
 export interface AuthState {
-  token: string | null;
+  accessToken: string | null;
   user: User | null;
   isLoading: boolean;
   error: string | null;

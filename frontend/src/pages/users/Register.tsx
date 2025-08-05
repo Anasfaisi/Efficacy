@@ -11,7 +11,7 @@ import type { RegisterFormData } from "@/types/authSchema";
 
 const Register: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, token } = useAppSelector((state) => state.auth);
+  const { isLoading, error, accessToken } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const {
@@ -24,10 +24,10 @@ const Register: React.FC = () => {
   });
 
   useEffect(() => {
-    if (token) {
+    if (accessToken) {
       navigate("/home");
     }
-  }, [token, navigate]);
+  }, [accessToken, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;

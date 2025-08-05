@@ -7,8 +7,8 @@ import type { JSX } from 'react';
 import Home from '../pages/users/Home';
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
-  const { token } = useAppSelector((state) => state.auth);
-  return token ? children : <Navigate to="/login" replace />;
+  const { accessToken } = useAppSelector((state) => state.auth);
+  return accessToken ? children : <Navigate to="/login" replace />;
 };
 
 const Logout: React.FC = () => {
