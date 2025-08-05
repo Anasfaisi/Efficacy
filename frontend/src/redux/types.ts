@@ -5,7 +5,7 @@ export interface User {
   id:string;
   email: string;
   name: string;
-  role:"user"|"admin"
+role: 'admin' | 'mentor' | 'user';
 }
 
 export interface AuthState {

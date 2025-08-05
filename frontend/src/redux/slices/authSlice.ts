@@ -223,7 +223,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
-      // Custom actions as requested
        .addCase(updateToken, (state, action: PayloadAction<string>) => {
         state.accessToken = action.payload;
         state.isLoading = false;

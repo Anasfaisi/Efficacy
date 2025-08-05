@@ -24,13 +24,13 @@ const Login: React.FC = () => {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    console.log("reached in login")
-    if (accessToken) {
-      console.log("Token detected in useEffect:", accessToken);
-      navigate("/home");
-    }
-  }, [accessToken, navigate]);
+  // useEffect(() => {
+  //   console.log("reached in login")
+  //   if (accessToken) {
+  //     console.log("Token detected in useEffect:", accessToken);
+  //     navigate("/home");
+  //   }
+  // }, [accessToken]);
 
   const onSubmit = async (data: loginFormSchema) => {
     const { email, password } = data;
