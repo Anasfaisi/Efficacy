@@ -1,8 +1,10 @@
 // import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import type { PayloadAction } from '@reduxjs/toolkit';
-// import { api } from '../../axiosConfig.ts';
-// import type { RootState } from '../store.ts';
-// import { refreshAccessToken, logoutAdmin } from '../../ApiServices/api.ts';
+// import { adminApi } from '../../axiosAdminConfig';
+// import type { RootState } from '../store';
+// import { refreshAccessToken, logoutAdmin } from '../../ApiServices/api';
+
+// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // interface AdminUser {
 //   id: string;
@@ -34,7 +36,7 @@
 //   { rejectValue: string }
 // >('adminAuth/adminLogin', async ({ email, password }, { rejectWithValue }) => {
 //   try {
-//     const response = await api.post('/admin/login', { email, password });
+//     const response = await adminApi.post('/login', { email, password });
 //     console.log('Admin login response:', response.data);
 //     return response.data;
 //   } catch (error: any) {
@@ -49,29 +51,13 @@
 //   { rejectValue: string }
 // >('adminAuth/checkAdminSession', async (_, { rejectWithValue }) => {
 //   try {
-//     const response = await refreshAccessToken(true);
+//     const response = await refreshAccessToken();
 //     return response.data;
 //   } catch (error: any) {
 //     console.error('Session check error:', error);
 //     return rejectWithValue(error.response?.data?.message || 'Session check failed');
 //   }
 // });
-
-
-// export const adminLogoutThunk = createAsyncThunk<
-//   void,
-//   void,
-//   { rejectValue: string }
-// >('adminAuth/adminLogoutThunk', async (_, { dispatch, rejectWithValue }) => {
-//   try {
-//     await logoutAdmin();
-//     dispatch(adminLogout());
-//   } catch (error: any) {
-//     console.error('Admin logout error:', error);
-//     return rejectWithValue(error.response?.data?.message || 'Admin logout failed');
-//   }
-// });
-
 
 // const adminAuthSlice = createSlice({
 //   name: 'adminAuth',

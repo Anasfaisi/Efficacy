@@ -1,5 +1,5 @@
-// // client/src/routes/AdminRoutes.tsx
-// import { Navigate, Route, Routes } from 'react-router-dom';
+// client/src/routes/AdminRoutes.tsx
+import { Navigate, Route, Routes } from 'react-router-dom';
 // import AdminLogin from '../pages/admin/AdminLogin';
 // import AdminDashboard from '../pages/admin/AdminDashboard';
 // import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -20,20 +20,20 @@
 
 // const AdminRoutes: React.FC = () => {
   
-//   return (
-//     <Routes>
-//       <Route path="login" element={<AdminLogin />} />
-//       <Route
-//         path="dashboard"
-//         element={
-//           <ProtectedAdminRoute>
-//             <AdminDashboard />
-//           </ProtectedAdminRoute>
-//         }
-//       />
-//       <Route path="logout" element={<AdminLogout />} />
-//     </Routes>
-//   );
-// };
+  return (
+    <Routes>
+      {/* <Route path="login" element={<AdminLogin />} />
+      <Route
+        path="dashboard"
+        element={
+          <ProtectedAdminRoute>
+            <AdminDashboard />
+          </ProtectedAdminRoute>
+        }
+      />
+      <Route path="logout" element={<AdminLogout />} /> */}
+    </Routes>
+  );
+};
 
 // export default AdminRoutes;

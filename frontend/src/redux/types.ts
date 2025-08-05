@@ -1,3 +1,6 @@
+import {z} from "zod";
+
+
 export interface User {
   id:string;
   email: string;
@@ -6,7 +9,7 @@ export interface User {
 }
 
 export interface AuthState {
-  token: string | null;
+  accessToken: string | null;
   user: User | null;
   isLoading: boolean;
   error: string | null;
@@ -21,3 +24,5 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
+
+

@@ -1,6 +1,6 @@
 // import axios, { AxiosError } from 'axios';
 // import type { AxiosResponse } from 'axios';
-// import store  from './redux/store.ts';
+// import { store } from './redux/store';
 // import { refreshAccessToken, logoutAdmin } from './ApiServices/api';
 
 // interface ApiErrorResponse {
@@ -19,7 +19,7 @@
 //       const originalRequest = error.config as any;
 //       if (
 //         error.response?.status === 401 &&
-//         !originalRequest._retry &&
+        // !originalRequest._retry &&
 //         error.response?.data?.message === 'Token expired'
 //       ) {
 //         if (isRefreshing) {
@@ -34,7 +34,7 @@
 //         }
 
 //         originalRequest._retry = true;
-//         isRefreshing = true; // Reset isRefreshing to false to allow retry
+//         isRefreshing = false; // Reset isRefreshing to false to allow retry
 
 //         try {
 //           const response = await refreshAccessToken();

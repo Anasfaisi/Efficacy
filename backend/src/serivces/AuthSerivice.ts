@@ -9,21 +9,21 @@ class AuthService {
         this.userRepository = new UserRepository();
     }
 
-  async register (email:string,password:string,name:string):Promise<{token:string;refreshToken: string,user:{email:string,name:string}}>{
+  async register (email:string,password:string,name:string):Promise<{accessToken:string;refreshToken: string,user:{email:string,name:string}}>{
     const existingUser = await this.userRepository.findByEmail(email);
     if(existingUser){
         throw new Error("User already exist")
     }
     const hashPassword = await bcrypt.hash(password,10)
     const user = await this.userRepository.create({name,email,password:hashPassword})
-    const token = await this.generateAccessToken(user)
+    const accessToken = this.generateAccessToken(user)
  const refreshToken = this.generateRefreshToken(user);
     await this.userRepository.updateRefreshToken(user._id!.toString(), refreshToken);
-    return {token, refreshToken, user:{email:user.email,name:user.name}}
+    return {accessToken, refreshToken, user:{email:user.email,name:user.name}}
   }
 
 
-    async login(email: string, password: string): Promise<{ token: string;refreshToken: string, user: { email: string; name: string } }> {
+    async login(email: string, password: string): Promise<{ accessToken: string;refreshToken: string, user: { email: string; name: string } }> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new Error('Invalid credentials'); 
@@ -32,13 +32,13 @@ class AuthService {
     if (!isMatch) {
       throw new Error('Invalid credentials');
     }
-    const token = this.generateAccessToken(user);
+    const accessToken = this.generateAccessToken(user);
     const refreshToken = this.generateRefreshToken(user);
     await this.userRepository.updateRefreshToken(user._id!.toString(), refreshToken);
-    return { token,refreshToken, user: { email: user.email, name: user.name } };
+    return { accessToken,refreshToken, user: { email: user.email, name: user.name } };
   }
 
-  async refreshToken(refreshToken:string):Promise<{token : string;user :{email:string,name:string}}>{
+  async refreshToken(refreshToken:string):Promise<{accessToken : string;user :{email:string,name:string}}>{
     try{
     const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET || 'refreshSecret') as {id:string ;email:string};
     const user = await this.userRepository.findByRefreshToken(refreshToken);
@@ -46,14 +46,14 @@ class AuthService {
         throw new Error("Invalid refresh token")
     }
     const newAccessToken = this.generateAccessToken(user);
-    return {token:newAccessToken,user:{email:user.email,name:user.name}};
+    return {accessToken:newAccessToken,user:{email:user.email,name:user.name}};
    }catch(error){
     throw new Error("Invalid refresh Token")
    } 
   }
 
     private generateAccessToken(user:IUser):string{
-        return jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET || "secret",{expiresIn:"1h"})
+        return jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET || "secret",{expiresIn:"1m"})
     }
     private generateRefreshToken(user:IUser):string{
         return jwt.sign({id:user._id,email:user.email},process.env.JWT_REFRESH_SECRET || "refreshSecret",{

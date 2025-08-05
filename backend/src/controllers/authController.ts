@@ -5,7 +5,7 @@ const authservice = new AuthService()
 
 export const register = async (req: Request, res: Response):Promise<any> => {
   try {
-    console.log(req.body)
+    console.log(req.body,'it is in the backend register controller')
     const { email, password, name } = req.body;
     const result = await authservice.register(email, password, name);
     const isProduction = process.env.NODE_ENV === 'production';
@@ -18,7 +18,7 @@ export const register = async (req: Request, res: Response):Promise<any> => {
     if (!isProduction) {
       console.log('Refresh token set in development:', result.refreshToken);
     }
-    res.json({ token: result.token, user: result.user });
+    res.json({ accessToken: result.accessToken, user: result.user,extra:"just for cheking" });
     
   } catch (error: any) {
     console.log(error)
@@ -40,7 +40,7 @@ export const login  = async (req:Request,res:Response):Promise<any>=>{
         maxAge:7*24*60*60*1000,
         sameSite:isProduction ? "strict" : "lax"
     })
-      res.json({ token: result.token, user: result.user });
+      res.json({ accessToken: result.accessToken, user: result.user, });
   } catch (error:any) {
     res.status(401).json({ message: error.message});
   }  

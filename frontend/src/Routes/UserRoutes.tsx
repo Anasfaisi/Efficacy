@@ -1,15 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/users/Login';
-// import Register from '../pages/users/Register';
-import Dashboard from '../pages/users/Dashboard';
+import Register from '../pages/users/Register';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { logout } from '../redux/slices/authSlice'; // Adjust based on your Redux setup
 import type { JSX } from 'react';
-import Register from '@/pages/users/Register';
+import Home from '../pages/users/Home';
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const { accessToken } = useAppSelector((state) => state.auth);
-  console.log(accessToken,"in the dashboard")
   return accessToken ? children : <Navigate to="/login" replace />;
 };
 
@@ -26,10 +24,10 @@ const UserRoutes: React.FC = () => {
       <Route path="logout" element={<Logout />} />
       <Route path="register" element={<Register />}/>
       <Route
-        path="dashboard"
+        path="home"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Home />
           </ProtectedRoute>
         }
       />
