@@ -1,19 +1,14 @@
 // client/src/pages/Home.tsx
 import React from 'react';
 import { useAppSelector } from '../../redux/hooks';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../redux/slices/authSlice';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const Home: React.FC = () => {
   const { user, accessToken } = useAppSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+ 
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
-  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
@@ -22,12 +17,13 @@ const Home: React.FC = () => {
         {accessToken && user ? (
           <>
             <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              Logout
-            </button>
+             <Link
+          to="/logout"
+          className="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+        >
+          Logout
+        </Link>
+          
           </>
         ) : (
           <p className="text-red-500">No authentication data available.</p>

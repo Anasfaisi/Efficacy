@@ -1,20 +1,26 @@
-import User,{IUser} from "../models/User.ts" // Adjust the path if your IUser type/interface is elsewhere
 
-class UserRepository{
-    async findByEmail(email:string):Promise<IUser|null>{
-        return await User.findOne({email})
-    }
 
-    async create(userData:Partial<IUser>):Promise <IUser>{
-        return await User.create(userData)
-    }
+import { BaseRepository } from './baseRepository';
+import { IUserRepository } from './interfaces/IUserRepository';
+import UserModel, { IUser } from "../models/User";
 
-    async updateRefreshToken(userId:string,refreshToken:string|null):Promise<void> {
-        await User.updateOne({_id :userId},{refreshToken})
+export class UserRepository extends BaseRepository implements IUserRepository {
+  constructor() {
+    super(UserModel);
+  }
+
+  async findByEmail(email: string): Promise<IUser | null> {
+    return this.findOne({ email });
+  }
+
+  async createUser(data: { email: string; password: string; name: string; role: string }): Promise<IUser> {
+    return this.create(data);
+  }
+  async findById(id: string): Promise<IUser | null> {
+    return this.findById(id);
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string | null): Promise<void> {
+    await this.updateOne(id, { refreshToken });
+  }
 }
-
-    async findByRefreshToken(refreshToken:string):Promise<IUser |null>{
-       return await User.findOne({refreshToken})
-    }
-}
-export default UserRepository

@@ -178,7 +178,10 @@ const AdminLogin = () => {
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setRoleError(null);
-    await dispatch(login(data)).unwrap();
+    const result = await dispatch(login({ ...data, role: 'admin' })).unwrap();
+    if(login.fulfilled.match(result)){
+      navigate("/admin/dashboard")
+    }
   };
 
   return (

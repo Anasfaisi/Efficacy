@@ -1,12 +1,14 @@
-import { Router } from "express";
-import {register ,login ,refresh ,logout} from "../controllers/authController.ts"
+import { Router } from 'express';
+import { UserController } from '../controllers/UserController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
-const router = Router()
+export default function authRoutes(userController:UserController) {
+  const router = Router();
 
-router.post('/register', register);
-router.post('/login', login);
-router.post('/refresh',refresh);
-router.post('/logout' , logout);
+  router.post('/register', userController.register.bind(userController));
+  router.post('/login', userController.login.bind(userController));
+  router.post('/refresh', userController.refresh.bind(userController));
+  router.post('/logout',  userController.logout.bind(userController));
 
-
-export default router
+  return router;
+}

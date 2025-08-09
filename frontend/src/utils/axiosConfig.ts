@@ -24,7 +24,7 @@ api.interceptors.response.use(
       try {
         const response = await axios.post('http://localhost:5000/api/refresh', null, { withCredentials: true });
         const newToken = response.data.accessToken;
-        console.log("this is the new token generated",newToken)
+        // console.log("this is the new token generated",newToken)
         store.dispatch({ type: 'auth/updateToken', payload: newToken });
         localStorage.setItem('token', newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
