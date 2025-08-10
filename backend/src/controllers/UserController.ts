@@ -86,7 +86,7 @@ export class UserController {
       res.json({ message: "Logged out successfully" });
     } catch (error: any) {
       console.error("Logout error:", error.message);
-      return res.status(500).json({ message: "Logout failed" });
+      res.status(500).json({ message: "Logout failed" });
     }
   }
 }

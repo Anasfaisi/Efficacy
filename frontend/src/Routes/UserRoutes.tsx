@@ -40,16 +40,15 @@
 
 
 import { Routes, Route } from 'react-router-dom';
-import Login from '../pages/users/Login';
 import Register from '../pages/users/Register';
 import Home from '../pages/users/Home';
-import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { logout } from '@/redux/slices/authSlice';
+import { useAppDispatch } from '@/redux/hooks';
 
 
 const Logout: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   dispatch(logout({role:"user"}));
   return <Navigate to="/login" replace />;
 };

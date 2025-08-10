@@ -47,6 +47,7 @@ export class AdminController {
 
 async adminLogout(req: Request, res: Response) {
   try {
+    
     console.log("Logout controller reached");
     const refreshToken = req.cookies.refreshToken;
 
@@ -62,10 +63,10 @@ async adminLogout(req: Request, res: Response) {
       sameSite: "strict",
     });
 
-    return res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error: any) {
     console.error("Logout error:", error.message);
-    return res.status(500).json({ message: "Logout failed" });
+    res.status(500).json({ message: "Logout failed" });
   }
 }
 
