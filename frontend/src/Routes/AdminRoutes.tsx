@@ -66,6 +66,6 @@ const AdminRoutes: React.FC = () => {
       <Route path="logout" element ={<Logout />} />
     </Routes>
   );
-}; */}
+}; 
 
-// export default AdminRoutes;
+export default AdminRoutes;

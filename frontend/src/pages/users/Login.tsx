@@ -9,8 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "@/types/authSchema";
 import { useForm } from "react-hook-form";
 
-const Login = () => {
-  const { isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
+const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading, error, accessToken} = useAppSelector(
     (state) => state.auth
@@ -86,7 +85,6 @@ const Login = () => {
               </p>
             )}
           </div>
-          {error && <div className="text-red-500 mb-4">{error}</div>}
           <button
             type="submit"
             className={cn(
