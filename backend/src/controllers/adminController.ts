@@ -1,53 +1,73 @@
-import { Request, Response } from 'express';
-import adminRepository from '../repositories/adminRepository.ts';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { AdminAuthRequest } from '../middleware/adminAuthMiddleware.ts';
+import { Request, Response } from "express";
+import { AuthService } from "../serivces/AuthSerivice";
+import { ValidationService } from "../serivces/ValidationService";
+import { injectable, inject } from "inversify";
+import { TYPES } from "@/types";
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access-secret-key';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh-secret-key';
+@injectable()
+export class AdminController {
+  constructor(
+    @inject(TYPES.AuthService) private authService: AuthService,
+    @inject(TYPES.ValidationService)
+    private validationService: ValidationService
+  ) {}
 
-declare global {
-  // eslint-disable-next-line no-var
-  var refreshTokens: Set<string>;
+  async adminLogin(req: Request, res: Response) {
+    try {
+      const { email, password, role } = req.body;
+      this.validationService.validateLoginInput({
+        email,
+        password,
+        role,
+        endpoint: "admin",
+      });
+      const result = await this.authService.login(email, password,role);
+      res.cookie("refreshToken", result.refreshToken, {
+        httpOnly: true,
+        secure: true,
+      });
+      res.json({ accessToken: result.accessToken, user: result.user });
+    } catch (error: any) {
+      res.status(401).json({ message: error.message });
+    }
+  }
+
+  async refreshAdminToken(req: Request, res: Response) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) {
+        throw new Error("No refresh token provided");
+      }
+      const result = await this.authService.refreshToken(refreshToken, "admin");
+      res.json({ accessToken: result.accessToken });
+    } catch (error: any) {
+      res.status(401).json({ message: error.message });
+    }
+  }
+
+async adminLogout(req: Request, res: Response) {
+  try {
+    
+    console.log("Logout controller reached");
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(204).send(); 
+    }
+
+    await this.authService.logout(refreshToken);
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error: any) {
+    console.error("Logout error:", error.message);
+    res.status(500).json({ message: "Logout failed" });
+  }
 }
 
-globalThis.refreshTokens = globalThis.refreshTokens || new Set<string>();
-
-export const adminLogin = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    console.log('reached in admin login', email, password);
-    const admin = await adminRepository.findOne({ email });
-    console.log(admin);
-    if (!admin || !(await bcrypt.compare(password, admin.password))) {
-      const hash = await bcrypt.hash(password, 10);
-      console.log(hash, admin?.password);
-      res.status(401).json({ message: 'Invalid credentials' });
-      return;
-    }
-    const accessToken = jwt.sign({ id: admin.id, email: admin.email, role: admin.role }, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: admin.id, email: admin.email, role: admin.role }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-    globalThis.refreshTokens.add(refreshToken);
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-    res.json({ accessToken, user: { id: admin.id, email: admin.email, role: admin.role } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-export const refreshAdminToken = (req: AdminAuthRequest, res: Response) => {
-  const user = req.user as { id: string; email: string; role: string };
-  const accessToken = jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
-    ACCESS_TOKEN_SECRET,
-    { expiresIn: '15m' }
-  );
-  res.json({ accessToken, user: { id: user.id, email: user.email, role: user.role } });
-};
+}

@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 const Login = () => {
   const { isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken } = useAppSelector(
+  const { isLoading, error, accessToken} = useAppSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
@@ -25,17 +25,16 @@ const Login = () => {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    console.log("reached in login")
-    if (accessToken) {
-      console.log("Token detected in useEffect:", accessToken);
-      navigate("/home");
-    }
-  }, [accessToken, navigate]);
+  // useEffect(() => {
+  //   console.log("reached in login")
+  //   if (!accessToken) {
+  //     console.log("Token detected in useEffect:", accessToken);
+  //     navigate("/login");
+  //   }
+  // }, [accessToken]);
 
   const onSubmit = async (data: loginFormSchema) => {
-    const { email, password } = data;
-    const result = await dispatch(login({ email, password }));
+    const result = await dispatch(login({ ...data, role: 'user' }));
     if (login.fulfilled.match(result)) {
       navigate("/home");
     }

@@ -1,11 +1,10 @@
-import {z} from "zod";
-
+import { z } from "zod";
 
 export interface User {
-  id:string;
+  id: string;
   email: string;
   name: string;
-  role:"user"|"admin"
+  role: "admin" | "mentor" | "user";
 }
 
 export interface AuthState {
@@ -23,6 +22,9 @@ export interface RegisterCredentials {
 export interface LoginCredentials {
   email: string;
   password: string;
+  role?: 'admin' | 'user';
 }
 
-
+export interface LogoutCredentials {
+  role: "admin" | "user" | "mentor";
+}

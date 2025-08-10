@@ -2,10 +2,10 @@
 import React from 'react';
 import { useAppSelector } from '@/redux/hooks';
 import { Link } from 'react-router-dom';
+import type { RootState } from '@/redux/store';
 
 const AdminDashboard: React.FC = () => {
-  const { user } = useAppSelector((state) => state.adminAuth);
-
+ const { user } = useAppSelector((state: RootState) => state.auth);
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">

@@ -1,68 +1,152 @@
-import bcrypt from "bcrypt"
-import UserRepository from "../repositories/UserRepository.ts"
-import jwt from "jsonwebtoken"
-import { IUser } from "../models/User.ts"
+import bcrypt from "bcrypt";
+import { IUserRepository } from "../repositories/interfaces/IUserRepository";
+import { UserRepository } from "../repositories/UserRepository";
+import { TokenService } from "./TokenService";
+import { injectable, inject } from "inversify";
+import { TYPES } from "@/types";
 
-class AuthService {
-    private userRepository: UserRepository
-    constructor(){
-        this.userRepository = new UserRepository();
-    }
+@injectable()
+export class AuthService {
+  constructor(
+    @inject(TYPES.AdminRepository) private adminRepository: IUserRepository,
+    @inject(TYPES.UserRepository) private userRepository: UserRepository,
+    @inject(TYPES.TokenService) private tokenService: TokenService
+  ) {}
 
-  async register (email:string,password:string,name:string):Promise<{accessToken:string;refreshToken: string,user:{email:string,name:string}}>{
-    const existingUser = await this.userRepository.findByEmail(email);
-    if(existingUser){
-        throw new Error("User already exist")
+async login(email: string, password: string, role: "admin" | "user" | "mentor") {
+  let repository: IUserRepository | UserRepository;
+    switch (role) {
+      case "admin":
+        repository = this.adminRepository;
+        break;
+      case "user":
+        repository = this.userRepository;
+        break;
+      default:
+        throw new Error("Invalid role");
     }
-    const hashPassword = await bcrypt.hash(password,10)
-    const user = await this.userRepository.create({name,email,password:hashPassword})
-    const accessToken = this.generateAccessToken(user)
- const refreshToken = this.generateRefreshToken(user);
-    await this.userRepository.updateRefreshToken(user._id!.toString(), refreshToken);
-    return {accessToken, refreshToken, user:{email:user.email,name:user.name}}
+ const account = await repository.findByEmail(email);
+    if (!account || account.role !== role) {
+      throw new Error(`Not authorized as ${role}`);
+    }
+       if (!(await bcrypt.compare(password, account.password))) {
+      throw new Error("Invalid email or password");
+    }
+    const accessToken = this.tokenService.generateAccessToken(
+      account.id,
+      account.role
+    );
+    const refreshToken = this.tokenService.generateRefreshToken(
+      account.id,
+      account.role
+    );
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: account.id,
+        email: account.email,
+        name: account.name || "Admin",
+        role: account.role,
+      },
+    };
   }
 
-
-    async login(email: string, password: string): Promise<{ accessToken: string;refreshToken: string, user: { email: string; name: string } }> {
+  async loginUser(email: string, password: string) {
     const user = await this.userRepository.findByEmail(email);
-    if (!user) {
-      throw new Error('Invalid credentials'); 
+    if (!user || user.role !== "user") {
+      throw new Error("Not authorized as user");
     }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      throw new Error('Invalid credentials');
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new Error("Invalid email or password");
     }
-    const accessToken = this.generateAccessToken(user);
-    const refreshToken = this.generateRefreshToken(user);
-    await this.userRepository.updateRefreshToken(user._id!.toString(), refreshToken);
-    return { accessToken,refreshToken, user: { email: user.email, name: user.name } };
+    const accessToken = this.tokenService.generateAccessToken(
+      user.id,
+      user.role
+    );
+    const refreshToken = this.tokenService.generateRefreshToken(
+      user.id,
+      user.role
+    );
+    await this.userRepository.updateRefreshToken(user.id, refreshToken);
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    };
   }
 
-  async refreshToken(refreshToken:string):Promise<{accessToken : string;user :{email:string,name:string}}>{
-    try{
-    const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET || 'refreshSecret') as {id:string ;email:string};
-    const user = await this.userRepository.findByRefreshToken(refreshToken);
-    if(!user || user._id!.toString() !== decoded.id){
-        throw new Error("Invalid refresh token")
+  async registerUser({
+    email,
+    password,
+    name,
+  }: {
+    email: string;
+    password: string;
+    name: string;
+  }) {
+    const existingUser = await this.userRepository.findByEmail(email);
+    if (existingUser) {
+      throw new Error("User already exists");
     }
-    const newAccessToken = this.generateAccessToken(user);
-    return {accessToken:newAccessToken,user:{email:user.email,name:user.name}};
-   }catch(error){
-    throw new Error("Invalid refresh Token")
-   } 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.userRepository.createUser({
+      email,
+      password: hashedPassword,
+      name,
+      role: "user",
+    });
+    const accessToken = this.tokenService.generateAccessToken(
+      user.id,
+      user.role
+    );
+    const refreshToken = this.tokenService.generateRefreshToken(
+      user.id,
+      user.role
+    );
+    await this.userRepository.updateRefreshToken(user.id, refreshToken);
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    };
   }
 
-    private generateAccessToken(user:IUser):string{
-        return jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET || "secret",{expiresIn:"1m"})
+  async refreshToken(refreshToken: string, role: "admin" | "user") {
+    const repository =
+      role === "admin" ? this.adminRepository : this.userRepository;
+    const decoded = this.tokenService.verifyRefreshToken(refreshToken);
+    const user = (await repository.findById(decoded.id)) || "";
+    if (!user || user.role !== role || user.refreshToken !== refreshToken) {
+      throw new Error("Invalid refresh token");
     }
-    private generateRefreshToken(user:IUser):string{
-        return jwt.sign({id:user._id,email:user.email},process.env.JWT_REFRESH_SECRET || "refreshSecret",{
-            expiresIn:"7d"
-        })
-    }
-    async logout (userId:string):Promise<void>{
-        await this.userRepository.updateRefreshToken(userId,null)
-    }
+    const accessToken = this.tokenService.generateAccessToken(
+      user.id,
+      user.role
+    );
+    return { accessToken };
+  }
+
+async logout(refreshToken: string) {
+  
+  try {
+    const decoded = this.tokenService.verifyRefreshToken(refreshToken);
+    console.log("Logout request for user:", decoded.id, decoded.role);
+  } catch {
+    console.warn("Invalid refresh token during logout");
+  }
+
 }
 
-export default AuthService
+
+}
