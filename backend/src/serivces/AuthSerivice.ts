@@ -5,6 +5,7 @@ import { TokenService } from "./TokenService";
 import { injectable, inject } from "inversify";
 import { TYPES } from "@/types";
 import bcrypt from "bcrypt";
+import { GoogleVerificationService } from "./GoogleVerificationService";
 
 @injectable()
 export class AuthService {
@@ -12,7 +13,9 @@ export class AuthService {
     @inject(TYPES.AdminRepository) private adminRepository: AdminRepository,
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
     @inject(TYPES.MentorRepository) private mentorRepository: MentorRepository,
-    @inject(TYPES.TokenService) private tokenService: TokenService
+    @inject(TYPES.TokenService) private tokenService: TokenService,
+    @inject(TYPES.GoogleVerificationService)
+    private googleVerificationService: GoogleVerificationService
   ) {}
 
   async login(
@@ -135,6 +138,59 @@ export class AuthService {
     } catch {
       console.warn("Invalid refresh token during logout");
     }
+  }
+
+  async loginWithGoogle(googleToken: string, role: "user" | "mentor") {
+    const ticket = await this.googleVerificationService.verify(googleToken);
+    const payload = ticket.getPayload();
+
+    if (!payload?.email) {
+      throw new Error("Google login failed: No email found");
+    }
+
+    let repository: UserRepository | MentorRepository;
+    switch (role) {
+      case "mentor":
+        repository = this.mentorRepository;
+        break;
+      case "user":
+        repository = this.userRepository;
+        break;
+      default:
+        throw new Error("Invalid role for Google login");
+    }
+
+    let account = await repository.findByEmail(payload.email);
+    if (!account) {
+      account = await repository.create({
+        email: payload.email,
+        name: payload.name || "Google User",
+        googleId: payload.sub,
+        role,
+        password:
+          "$2a$10$BvNq8r.X.3zVWQs2Q7wJmeyGYqLMV/P6cyVUFyoLsEL1rXEmWMiiW" /*string = Abcd@1234*/,
+      });
+    }
+
+    const accessToken = this.tokenService.generateAccessToken(
+      account!.id,
+      account!.role
+    );
+    const refreshToken = this.tokenService.generateRefreshToken(
+      account!.id,
+      account!.role
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: account!.id,
+        email: account!.email,
+        name: account!.name,
+        role: account!.role,
+      },
+    };
   }
 
   // async loginUser(email: string, password: string) {

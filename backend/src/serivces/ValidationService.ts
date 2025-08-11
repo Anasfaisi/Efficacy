@@ -1,3 +1,6 @@
+import { OAuth2Client } from "google-auth-library";
+import { injectable } from "inversify";
+
 export class ValidationService {
   validateLoginInput({
     email,
@@ -8,9 +11,9 @@ export class ValidationService {
     email: string;
     password: string;
     role?: string;
-    endpoint: "admin" | "user"|"mentor";
+    endpoint: "admin" | "user" | "mentor";
   }) {
-    console.log("it is reached in validationlogininput",email,role);
+    console.log("it is reached in validationlogininput", email, role);
     if (!email || !password) {
       console.error(Error);
       throw new Error("Email and password are required");
@@ -29,7 +32,6 @@ export class ValidationService {
       throw new Error(`Invalid role for ${endpoint} login`);
     }
     console.log("successfully validated at backend");
-    
   }
 
   validateRegisterInput({
@@ -50,5 +52,23 @@ export class ValidationService {
     if (password.length < 6) {
       throw new Error("Password must be at least 6 characters");
     }
+  }
+
+  validateGoogleLoginInput({
+    role,
+    endpoint,
+  }: {
+    role?: string;
+    endpoint: "admin" | "user" | "mentor";
+  }) {
+    if (
+      role &&
+      ((endpoint === "admin" && role !== "admin") ||
+        (endpoint === "user" && role !== "user") ||
+        (endpoint === "mentor" && role !== "mentor"))
+    ) {
+      throw new Error(`Invalid role for ${endpoint} Google login`);
+    }
+    console.log("Successfully validated Google login at backend");
   }
 }

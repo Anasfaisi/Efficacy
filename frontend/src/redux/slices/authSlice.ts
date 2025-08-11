@@ -102,12 +102,13 @@
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import type {
-  AuthState,
-  User,
-  LoginCredentials,
-  RegisterCredentials,
-  LogoutCredentials,
+import {
+  type AuthState,
+  type User,
+  type LoginCredentials,
+  type RegisterCredentials,
+  type LogoutCredentials,
+  type GoogleLoginArg,
 } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "[invalid url, do not cite]";
@@ -169,6 +170,7 @@ export const login = createAsyncThunk<
     return rejectWithValue(error.response?.data?.message || "Login failed");
   }
 });
+
 export const logout = createAsyncThunk<
   void,
   LogoutCredentials,
@@ -185,13 +187,30 @@ export const logout = createAsyncThunk<
         : "/logout";
 
     await api.post(endpoint);
-
-    // localStorage.removeItem("accessToken");
-    // localStorage.removeItem("user");
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || "Logout failed");
   }
 });
+
+export const loginWithGoogle = createAsyncThunk<
+  { accessToken: string; user: User },
+  GoogleLoginArg,
+  { rejectValue: string }
+>(
+  "auth/loginWithGoogle",
+  async ({ googleToken, role }, { rejectWithValue }) => {
+    try {
+      const api = createApi();
+      const endpoint =
+        role === "mentor" ? "/mentor/googleLogin" : "/googleLogin";
+      const res = await api.post(endpoint, { googleToken: googleToken, role });
+      console.log(res.data);
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Login failed");
+    }
+  }
+);
 
 export const refresh = createAsyncThunk<
   { accessToken: string; user: User },
@@ -284,6 +303,20 @@ const authSlice = createSlice({
 
       .addCase(logout.rejected, (state, action) => {
         state.error = action.payload || "Logout failed";
+      })
+
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.accessToken = action.payload.accessToken;
+        state.user = action.payload.user;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || "Google login failed";
       });
   },
 });

@@ -20,13 +20,6 @@ const ProtectedRoute: React.FC<{ role: 'admin' | 'user' | 'mentor'; children: Re
 };
 
 const AppRoutes: React.FC = () => {
-  // const dispatch = useDispatch<AppDispatch>();
-//   useEffect(() => {
-//     const token = localStorage.getItem('accessToken');
-//     if (token) {
-//       dispatch(updateToken(token));
-//     }
-//   }, [dispatch]);
 
   return (
     <Routes>
