@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { login } from "../../redux/slices/authSlice";
+import { login, loginWithGoogle } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
@@ -8,9 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "@/types/authSchema";
 import { useForm } from "react-hook-form";
 
-const MentorLogin:React.FC =()=>{
+import { GoogleLogin } from "@react-oauth/google";
+
+const MentorLogin: React.FC = () => {
+  const [googleError, setGoogleError] = useState<string | null>(null);
+
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken} = useAppSelector(
+  const { isLoading, error, accessToken } = useAppSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
@@ -24,11 +28,33 @@ const MentorLogin:React.FC =()=>{
   });
 
   const onSubmit = async (data: loginFormSchema) => {
-      const result = await dispatch(login({ ...data, role: 'mentor' }));
-      if (login.fulfilled.match(result)) {
+    const result = await dispatch(login({ ...data, role: "mentor" }));
+    if (login.fulfilled.match(result)) {
+      navigate("/mentor/dashboard");
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setGoogleError(null);
+    if (credentialResponse.credential) {
+      let result = await dispatch(
+        loginWithGoogle({
+          googleToken: credentialResponse.credential,
+          role: "mentor",
+        })
+      );
+      if (loginWithGoogle.fulfilled.match(result)) {
         navigate("/mentor/dashboard");
       }
-}
+    } else {
+      setGoogleError("No Google credentials received");
+    }
+  };
+
+  const handleGoogleError = () => {
+    setGoogleError("Google authentication failed. Please try again.");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center ">
       <div className={cn("w-full max-w-md p-6 bg-white rounded-xl shadow-lg")}>
@@ -36,6 +62,12 @@ const MentorLogin:React.FC =()=>{
           Welcome Back Mentor
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {googleError && (
+            <p className="text-red-500 text-sm text-center mt-2">
+              {googleError}
+            </p>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -93,13 +125,19 @@ const MentorLogin:React.FC =()=>{
               to="/mentor/register"
               className="hover:text-gray-700 hover:underline"
             >
-             Mentor Sign up
+              Mentor Sign up
             </Link>
+          </p>
+
+          <p>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
           </p>
         </form>
       </div>
     </div>
   );
-
-}
-export default MentorLogin
+};
+export default MentorLogin;
