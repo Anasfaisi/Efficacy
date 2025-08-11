@@ -1,5 +1,3 @@
-
-
 import { BaseRepository } from './baseRepository';
 import { IUserRepository } from './interfaces/IUserRepository';
 import UserModel, { IUser } from "../models/User";
@@ -20,7 +18,5 @@ export class UserRepository extends BaseRepository implements IUserRepository {
     return this.findById(id);
   }
 
-  async updateRefreshToken(id: string, refreshToken: string | null): Promise<void> {
-    await this.updateOne(id, { refreshToken });
-  }
+  
 }

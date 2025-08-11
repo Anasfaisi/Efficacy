@@ -36,12 +36,13 @@ export class UserController {
 
   async register(req: Request, res: Response) {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name ,role} = req.body;
       this.validationService.validateRegisterInput({ email, password, name });
       const result = await this.authService.registerUser({
         email,
         password,
         name,
+        role
       });
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,

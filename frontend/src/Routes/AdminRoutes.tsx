@@ -62,7 +62,6 @@ const AdminRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="dashboard" element={<AdminDashboard />} />
-      <Route path="login" element={<AdminLogin />} />
       <Route path="logout" element ={<Logout />} />
     </Routes>
   );
