@@ -107,9 +107,8 @@ import type {
   User,
   LoginCredentials,
   RegisterCredentials,
-  LogoutCredentials
+  LogoutCredentials,
 } from "../types";
-
 
 const API_URL = import.meta.env.VITE_API_URL || "[invalid url, do not cite]";
 export const updateToken = createAction<string>("auth/updateToken");
@@ -126,15 +125,71 @@ export const register = createAsyncThunk<
   { accessToken: string; user: User },
   RegisterCredentials,
   { rejectValue: string }
->("auth/register", async ({ email, password, name }, { rejectWithValue }) => {
+>(
+  "auth/register",
+  async ({ email, password, name, role }, { rejectWithValue }) => {
+    try {
+      const api = createApi();
+      const endpoint = role === "mentor" ? "/mentor/register" : "/register";
+      console.log(endpoint);
+      const response = await api.post(endpoint, {
+        email,
+        password,
+        name,
+        role,
+      });
+      console.log(response);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration failed"
+      );
+    }
+  }
+);
+
+export const login = createAsyncThunk<
+  { accessToken: string; user: User },
+  LoginCredentials,
+  { rejectValue: string }
+>("auth/login", async ({ email, password, role }, { rejectWithValue }) => {
   try {
     const api = createApi();
-    const response = await api.post("/register", { email, password, name });
+    const endpoint =
+      role === "admin"
+        ? "/admin/login"
+        : role === "mentor"
+        ? "/mentor/login"
+        : "/login";
+    console.log(endpoint);
+    const response = await api.post(endpoint, { email, password, role });
+    console.log(response);
     return response.data;
   } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || "Registration failed"
-    );
+    return rejectWithValue(error.response?.data?.message || "Login failed");
+  }
+});
+export const logout = createAsyncThunk<
+  void,
+  LogoutCredentials,
+  { rejectValue: string }
+>("auth/logout", async ({ role }, { rejectWithValue }) => {
+  try {
+    const api = createApi();
+
+    const endpoint =
+      role === "admin"
+        ? "/admin/logout"
+        : role === "mentor"
+        ? "/mentor/logout"
+        : "/logout";
+
+    await api.post(endpoint);
+
+    // localStorage.removeItem("accessToken");
+    // localStorage.removeItem("user");
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Logout failed");
   }
 });
 
@@ -151,51 +206,6 @@ export const refresh = createAsyncThunk<
     return rejectWithValue(error.response?.data?.message || "Refresh failed");
   }
 });
-
-export const login = createAsyncThunk<
-  { accessToken: string; user: User },
-  LoginCredentials,
-  { rejectValue: string }
->("auth/login", async ({ email, password, role }, { rejectWithValue }) => {
-  try {
-    const api = createApi();
-    const endpoint = role === "admin" ? "/admin/login" : "/login";
-    console.log(endpoint)
-    const response = await api.post(endpoint, { email, password,role });
-    console.log(response);
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Login failed");
-  }
-});
-export const logout = createAsyncThunk<
-  void,                    
-  LogoutCredentials,       
-  { rejectValue: string }  
->(
-  "auth/logout",
-  async ({ role }, { rejectWithValue }) => {
-    try {
-      const api = createApi();
-      
-      const endpoint =
-        role === "admin"
-          ? "/admin/logout"
-          : role === "mentor"
-          ? "/mentor/logout"
-          : "/logout"; 
-
-      await api.post(endpoint);
-      
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("user");
-
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Logout failed");
-    }
-  }
-)
-
 
 const initialState: AuthState = {
   accessToken: null,
@@ -268,18 +278,15 @@ const authSlice = createSlice({
         localStorage.removeItem("accessToken");
       })
 
-      .addCase(logout.fulfilled,(state)=>{
-        state.user = null,
-        state.accessToken = null
+      .addCase(logout.fulfilled, (state) => {
+        (state.user = null), (state.accessToken = null);
       })
 
-      .addCase(logout.rejected,(state,action)=>{
-        state.error = action.payload ||"Logout failed"
-      })
+      .addCase(logout.rejected, (state, action) => {
+        state.error = action.payload || "Logout failed";
+      });
   },
 });
 
 // export const { logout } = authSlice.actions;
 export default authSlice.reducer;
-
-

@@ -12,6 +12,8 @@ import { AdminController } from "./controllers/adminController";
 import { container } from "./config/inversify.config";
 import { TYPES } from "./types";
 import { AdminAccessMiddleware } from "./middleware/adminAuthMiddleware";
+import mentorRoutes from "./routes/mentorRoutes";
+import { MentorController } from "./controllers/mentorController";
 
 const app = express();
 const corsOptions = {
@@ -26,12 +28,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 const adminController = container.get<AdminController>(TYPES.AdminController);
-
+const mentorController = container.get<MentorController>(TYPES.MentorController);
 const userController = container.get<UserController>(TYPES.UserController);
 connectDB();
 
-app.use("/api/admin", adminRoutes(adminController));
 app.use('/api', userRoutes(userController));
+app.use("/api/admin", adminRoutes(adminController));
+app.use("/api/mentor",mentorRoutes(mentorController));
 
 const port = process.env.PORT;
 

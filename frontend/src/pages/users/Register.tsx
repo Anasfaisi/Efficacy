@@ -31,7 +31,7 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;
-    const result = await dispatch(register({ name, email, password }));
+    const result = await dispatch(register({ name, email, password ,role:"user"}));
     if (register.fulfilled.match(result)) {
       navigate("/home");
     }

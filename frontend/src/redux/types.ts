@@ -18,11 +18,12 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   name: string;
+  role : 'user' | 'mentor';
 }
 export interface LoginCredentials {
   email: string;
   password: string;
-  role?: 'admin' | 'user';
+  role?: 'admin' | 'user' | 'mentor';
 }
 
 export interface LogoutCredentials {

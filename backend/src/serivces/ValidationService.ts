@@ -8,7 +8,7 @@ export class ValidationService {
     email: string;
     password: string;
     role?: string;
-    endpoint: "admin" | "user";
+    endpoint: "admin" | "user"|"mentor";
   }) {
     console.log("it is reached in validationlogininput",email,role);
     if (!email || !password) {
