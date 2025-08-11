@@ -25,6 +25,10 @@ export class AuthService {
       case "admin":
         repository = this.adminRepository;
         break;
+      case "mentor":
+        repository = this.mentorRepository;
+        break;
+
       case "user":
         repository = this.userRepository;
         break;

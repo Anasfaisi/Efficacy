@@ -6,6 +6,9 @@ export default function mentorRoutes( mentorController : MentorController) {
   const router = Router();
 
   router.post("/register", mentorController.register.bind(mentorController))
+  router.post("/login",mentorController.login.bind(mentorController))
+  router.post("/logout",mentorController.logout.bind(mentorController))
+  
     return router;
 
 }
