@@ -7,7 +7,7 @@ import MentorDashboard from "@/pages/mentors/MentorDashboard";
 const Logout: React.FC = () => {
   const dispatch = useAppDispatch();
   dispatch(logout({role:"mentor"}));
-  return <Navigate to="/Mentor/login" replace />;
+  return <Navigate to="/mentor/login" replace />;
 };
 
 const MentorRoutes : React.FC =()=>{

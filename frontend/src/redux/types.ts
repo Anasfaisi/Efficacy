@@ -9,9 +9,11 @@ export interface User {
 
 export interface AuthState {
   accessToken: string | null;
+  tempUserId:string | null
   user: User | null;
   isLoading: boolean;
-  error: string | null;
+  error: string | null |undefined;
+  email:string|null
 }
 
 export interface RegisterCredentials {
@@ -19,6 +21,7 @@ export interface RegisterCredentials {
   password: string;
   name: string;
   role: "user" | "mentor";
+  tempUserId:string
 }
 export interface LoginCredentials {
   email: string;

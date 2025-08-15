@@ -4,16 +4,16 @@ import connectDB from "./config/db";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-import adminRoutes from "./routes/adminRoutes";
-import userRoutes from "./routes/authRoutes";
+import adminRoutes from "./routes/admin.routes";
+import userRoutes from "./routes/user.routes";
 
-import { UserController } from "./controllers/UserController";
-import { AdminController } from "./controllers/adminController";
+import { UserController } from "./controllers/user.controller";
+import { AdminController } from "./controllers/admin.controller";
 import { container } from "./config/inversify.config";
 import { TYPES } from "./types";
-import { AdminAccessMiddleware } from "./middleware/adminAuthMiddleware";
-import mentorRoutes from "./routes/mentorRoutes";
-import { MentorController } from "./controllers/mentorController";
+import { AdminAccessMiddleware } from "./middleware/admin-auth.middleware";
+import mentorRoutes from "./routes/mentor.routes";
+import { MentorController } from "./controllers/mentor.controller";
 
 const app = express();
 const corsOptions = {

@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { AuthService } from "../serivces/AuthSerivice";
-import { ValidationService } from "../serivces/ValidationService";
+import { AuthService } from "../serivces/auth.service";
+import { ValidationService } from "../serivces/validation.service";
 import { TYPES } from "@/types";
 import { inject } from "inversify";
+import code from "@/types/http-status.enum"
 
 export class MentorController {
   constructor(
@@ -27,7 +28,7 @@ export class MentorController {
       });
       res.json({ accessToken: result.accessToken, user: result.user });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.status(code.BAD_REQUEST).json({ message: error.message });
     }
   }
 
@@ -52,7 +53,7 @@ export class MentorController {
 
       res.json({ accessToken: result.accessToken, user: result.user });
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.status(code.UNAUTHORIZED).json({ message: error.message });
     }
   }
 
@@ -73,7 +74,7 @@ export class MentorController {
       res.json({ accessToken: result.accessToken, user: result.user });
     } catch (error: any) {
       console.error(error);
-      res.status(401).json({ message: error.message });
+      res.status(code.UNAUTHORIZED).json({ message: error.message });
     }
   }
 
@@ -95,7 +96,7 @@ export class MentorController {
       res.json({ message: "Logged out successfully" });
     } catch (error: any) {
       console.error("Logout error:", error.message);
-      res.status(500).json({ message: "Logout failed" });
+      res.status(code.INTERNAL_SERVER_ERROR).json({ message: "Logout failed" });
     }
   }
 }

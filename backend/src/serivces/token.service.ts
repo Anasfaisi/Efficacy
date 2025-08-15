@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
+import { ITokenService } from './Interfaces/IToken.service';
 
-export class TokenService {
+export class TokenService implements ITokenService {
   private accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET || 'access-secret-key';
   private refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET || 'refresh-secret-key';
 
   generateAccessToken(userId: string, role: string): string {
-    return jwt.sign({ id: userId, role }, this.accessTokenSecret, { expiresIn: '1m' });
+    return jwt.sign({ id: userId, role }, this.accessTokenSecret, { expiresIn: '1m' });//read from env
   }
 
   generateRefreshToken(userId: string, role: string): string {

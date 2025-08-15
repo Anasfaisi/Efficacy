@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { register } from "../../redux/slices/authSlice";
+import { registerInit } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -31,10 +31,10 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;
-    const result = await dispatch(register({ name, email, password ,role:"user"}));
-    if (register.fulfilled.match(result)) {
-      navigate("/home");
-    }
+    const result = await dispatch(registerInit({ email, password, name, role :"user", tempUserId: ""}));
+    // if (registerInit.fulfilled.match(result)) {
+    //   navigate("/home");
+    // }
   };
 
   return (

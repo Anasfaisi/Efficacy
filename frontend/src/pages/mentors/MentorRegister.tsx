@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { register } from "../../redux/slices/authSlice";
+import { registerInit } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -28,10 +28,10 @@ const MentorRegister: React.FC = () => {
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;
     const result = await dispatch(
-      register({ name, email, password, role: "mentor" })
+      registerInit({ name, email, password, role: "mentor" ,tempUserId:""})
     );
     console.log(result, "from result in mentor login");
-    if (register.fulfilled.match(result)) {
+    if (registerInit.fulfilled.match(result)) {
       navigate("/mentor/dashboard");
     }
   };

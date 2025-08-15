@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { IBaseRepository } from './interfaces/IBaseRepository';
+import { IBaseRepository } from './interfaces/IBase.repository';
 
 export class BaseRepository implements IBaseRepository {
   protected model: Model<any>;

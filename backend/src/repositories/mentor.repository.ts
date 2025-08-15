@@ -1,13 +1,14 @@
-import { BaseRepository } from './baseRepository';
+import { BaseRepository } from './base.repository';
 import MentorModel, {IMentor} from "@/models/Mentor"
-import { IMentorRepository } from './interfaces/IMentorRepository';
+import { IMentorRepository } from './interfaces/IMentor.repository';
+
 
 export class MentorRepository extends BaseRepository implements IMentorRepository{
     constructor(){
         super(MentorModel)
     }
     
-      async findByEmail(email: string): Promise<IMentor | null> {
+      async findByEmail(email: string): Promise<IMentor|null> {
         return this.findOne({ email });
       }
     

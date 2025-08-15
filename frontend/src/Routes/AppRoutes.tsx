@@ -11,11 +11,14 @@ import MentorLogin from '@/pages/mentors/MentorLogin';
 import Register from '@/pages/users/Register';
 import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/pages/mentors/MentorRegister';
+import { OTPPage } from '@/pages/OTPPage';
 
 
-const ProtectedRoute: React.FC<{ role: 'admin' | 'user' | 'mentor'; children: React.ReactNode }> = ({ role, children }) => {
+const ProtectedRoute: React.FC<{ role: 'admin' | 'user' | 'mentor', children: React.ReactNode }> = ({ role, children }) => {
   const { accessToken, user } = useSelector((state: RootState) => state.auth);
-  const redirectTo = role === 'admin' ? '/admin/login' : '/login';
+  let redirectTo = '/login';
+  if (role === 'admin') redirectTo = '/admin/login';
+  if (role === 'mentor') redirectTo = '/mentor/login';
   return accessToken && user?.role === role ? <>{children}</> : <Navigate to={redirectTo} replace />;
 };
 
@@ -28,6 +31,8 @@ const AppRoutes: React.FC = () => {
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path='/mentor/login' element ={<MentorLogin />} />
       <Route path="/mentor/register" element ={<MentorRegister />} />
+
+      <Route path="/verify-otp" element={<OTPPage/>} />
       <Route path="/*" element={<ProtectedRoute role="user"><UserRoutes /></ProtectedRoute>} />
       <Route path="/admin/*" element={<ProtectedRoute role="admin"><AdminRoutes /></ProtectedRoute>} />
       <Route path ="/mentor/*" element={<ProtectedRoute role="mentor"> <MentorRoutes/> </ProtectedRoute>} />

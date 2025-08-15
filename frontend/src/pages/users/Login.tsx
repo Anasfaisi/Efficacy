@@ -1,17 +1,20 @@
 // client/src/pages/Login.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { login } from "../../redux/slices/authSlice";
+import { login, loginWithGoogle } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "@/types/authSchema";
 import { useForm } from "react-hook-form";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login: React.FC = () => {
+  const [googleError, setGoogleError] = useState<string | null>(null);
+
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken} = useAppSelector(
+  const { isLoading, error, accessToken, user } = useAppSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
@@ -23,20 +26,41 @@ const Login: React.FC = () => {
     resolver: zodResolver(loginFormSchema),
     mode: "onChange",
   });
-
-  // useEffect(() => {
-  //   console.log("reached in login")
-  //   if (!accessToken) {
-  //     console.log("Token detected in useEffect:", accessToken);
-  //     navigate("/login");
-  //   }
-  // }, [accessToken]);
+  useEffect(() => {
+    if (accessToken && user?.role) {
+      let endPoint = "/home";
+      if (user.role === "admin") endPoint = "/admin/dashboard";
+      if (user.role === "mentor") endPoint = "/mentor/dashboard";
+      navigate(endPoint);
+    }
+  }, [navigate, accessToken]);
 
   const onSubmit = async (data: loginFormSchema) => {
-    const result = await dispatch(login({ ...data, role: 'user' }));
+    const result = await dispatch(login({ ...data, role: "user" }));
     if (login.fulfilled.match(result)) {
       navigate("/home");
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setGoogleError(null);
+    if (credentialResponse.credential) {
+      let result = await dispatch(
+        loginWithGoogle({
+          googleToken: credentialResponse.credential,
+          role: "user",
+        })
+      );
+      if (loginWithGoogle.fulfilled.match(result)) {
+        navigate("/mentor/dashboard");
+      }
+    } else {
+      setGoogleError("No Google credentials received");
+    }
+  };
+
+  const handleGoogleError = () => {
+    setGoogleError("Google authentication failed. Please try again.");
   };
 
   return (
@@ -46,6 +70,11 @@ const Login: React.FC = () => {
           Welcome Back
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {googleError && (
+            <p className="text-red-500 text-sm text-center mt-2">
+              {googleError}
+            </p>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -96,7 +125,12 @@ const Login: React.FC = () => {
             {isLoading ? "Logging in ..." : "Log in"}
           </button>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
+          <p>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
+          </p>
           <p className="text-sm text-gray-500 text-center">
             Don’t have an account?{" "}
             <Link

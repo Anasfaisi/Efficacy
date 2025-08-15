@@ -1,5 +1,5 @@
 import { RequestHandler, Router } from "express";
-import { MentorController } from "@/controllers/mentorController";
+import { MentorController } from "@/controllers/mentor.controller";
 
 export default function mentorRoutes(mentorController: MentorController) {
   const router = Router();
@@ -8,7 +8,7 @@ export default function mentorRoutes(mentorController: MentorController) {
   router.post("/login", mentorController.login.bind(mentorController));
   router.post("/logout", mentorController.logout.bind(mentorController));
   router.post(
-    "/googleLogin",
+    "/google-login",
     mentorController.googleAuth.bind(mentorController)
   );
 

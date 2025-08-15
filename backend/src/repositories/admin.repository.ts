@@ -1,6 +1,6 @@
-import { BaseRepository } from './baseRepository';
+import { BaseRepository } from './base.repository';
 import AdminModel, { IAdmin } from '../models/Admin';
-import { IAdminRepository } from './interfaces/IAdminRepository';
+import { IAdminRepository } from './interfaces/IAdmin.repository';
 
 export class AdminRepository extends BaseRepository implements IAdminRepository {
   constructor() {

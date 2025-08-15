@@ -1,15 +1,16 @@
-import { OAuth2Client } from "google-auth-library";
+import { LoginTicket, OAuth2Client } from "google-auth-library";
 import { injectable } from "inversify";
+import { IGoogleVerificationService } from "./Interfaces/IGoogle-verifcation.service";
 
 @injectable()
-export class GoogleVerificationService {
+export class GoogleVerificationService implements IGoogleVerificationService {
   private client: OAuth2Client;
 
   constructor() {
     this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   }
 
-  async verify(googleToken: string) {
+  async verify(googleToken: string) : Promise<LoginTicket>{
     return this.client.verifyIdToken({
       idToken: googleToken,
       audience: process.env.GOOGLE_CLIENT_ID,
