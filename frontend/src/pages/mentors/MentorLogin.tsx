@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { login, loginWithGoogle } from "../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,15 +9,25 @@ import { loginFormSchema } from "@/types/authSchema";
 import { useForm } from "react-hook-form";
 
 import { GoogleLogin } from "@react-oauth/google";
+import { tr } from "zod/v4/locales";
 
 const MentorLogin: React.FC = () => {
   const [googleError, setGoogleError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken } = useAppSelector(
+  const { isLoading, error, accessToken ,user} = useAppSelector(
     (state) => state.auth
   );
-  const navigate = useNavigate();
+  useEffect(()=>{
+    if(accessToken&&user?.role){
+      let endPoint ='/mentor/dashboard';
+  if (user.role === 'admin') endPoint = '/admin/dashboard';
+  if (user.role === 'user') endPoint = '/home';
+  navigate(endPoint)
+    }
+  },[navigate,accessToken])
+ 
   const {
     register: formRegister,
     handleSubmit,
@@ -30,7 +40,7 @@ const MentorLogin: React.FC = () => {
   const onSubmit = async (data: loginFormSchema) => {
     const result = await dispatch(login({ ...data, role: "mentor" }));
     if (login.fulfilled.match(result)) {
-      navigate("/mentor/dashboard");
+      navigate("/mentor/dashboard",{replace:true});
     }
   };
 
