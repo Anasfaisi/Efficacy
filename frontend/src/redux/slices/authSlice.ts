@@ -29,21 +29,20 @@ export const registerInit = createAsyncThunk<
   async ({ email, password, name, role }, { rejectWithValue }) => {
     try {
       const api = createApi();
-      const endpoint = role === "mentor" 
-        ? "/mentor/register/init" 
-        : "/register/init";
+      const endpoint =
+        role === "mentor" ? "/mentor/register/init" : "/register/init";
 
       const { data } = await api.post(endpoint, {
         email,
         password,
         name,
-        role
+        role,
       });
-      console.log(data)
+      console.log(data);
 
       return {
         tempUserId: data.tempUserId,
-        email: data.email
+        email: data.email,
       };
     } catch (error: any) {
       return rejectWithValue(
@@ -53,29 +52,49 @@ export const registerInit = createAsyncThunk<
   }
 );
 
-export const clearRegisterState = createAsyncThunk("auth/clearRegisterState", async () => {
-  return true;
-});
-
-export const verifyOtp = createAsyncThunk<
-    { success: boolean },
-  { email: string|null; otp: string|null; tempUserId: string|null },
-  { rejectValue: string }
-
->(
-  "auth/verifyOtp",
-  async ({email, otp, tempUserId  }, { rejectWithValue }) => {
-    try {
-      const api = createApi();
-      const response = await api.post("/verify-otp", {email, tempUserId, otp });
-      console.log(response)
-      return { success: response.data.success } // { accessToken, user }
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "OTP verification failed");
-    }
+export const clearRegisterState = createAsyncThunk(
+  "auth/clearRegisterState",
+  async () => {
+    return true;
   }
 );
 
+export const verifyOtp = createAsyncThunk<
+  { accessToken: string; refreshToken: string; user: any },
+  { email: string | null; otp: string | null; tempUserId: string | null },
+  { rejectValue: string }
+>("auth/verifyOtp", async ({ email, otp, tempUserId }, { rejectWithValue }) => {
+  try {
+    const api = createApi();
+    const response = await api.post("/register/verify", {
+      email,
+      otp,
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "OTP verification failed"
+    );
+  }
+});
+
+export const resendOtp = createAsyncThunk<
+  { tempUserId: string; email: string },
+  { email: string | null },
+  { rejectValue: string }
+>("auth/resendOtp", async ({ email }, { rejectWithValue }) => {
+  try {
+    const api = createApi();
+    const response = await api.post("/register/resend-otp", {
+      email,
+    })
+    console.log(response.data)
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || "Resend OTP failed");
+  }
+});
 
 export const login = createAsyncThunk<
   { accessToken: string; user: User },
@@ -113,7 +132,8 @@ export const logout = createAsyncThunk<
         ? "/mentor/logout"
         : "/logout";
 
-    await api.post(endpoint);
+    const result = await api.post(endpoint);
+    console.log(result.data);
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || "Logout failed");
   }
@@ -128,11 +148,11 @@ export const loginWithGoogle = createAsyncThunk<
   async ({ googleToken, role }, { rejectWithValue }) => {
     try {
       console.log("reached in login with google");
-      
+
       const api = createApi();
       const endpoint =
-        role === "mentor" ? "/mentor/google-login" :"/google-login";
-        console.log(endpoint,"endpoint")
+        role === "mentor" ? "/mentor/google-login" : "/google-login";
+      console.log(endpoint, "endpoint");
       const res = await api.post(endpoint, { googleToken: googleToken, role });
       console.log(res.data);
       return res.data;
@@ -158,8 +178,8 @@ export const refresh = createAsyncThunk<
 
 const initialState: AuthState = {
   accessToken: null,
-  email:null,
-  tempUserId:null,
+  email: null,
+  tempUserId: null,
   user: null,
   isLoading: false,
   error: null,
@@ -187,11 +207,42 @@ const authSlice = createSlice({
       })
 
       .addCase(clearRegisterState.fulfilled, (state) => {
-      state.tempUserId = null;
-      state.email = null;
-      state.error = null;
-      state.isLoading = false;
-    })
+        state.tempUserId = null;
+        state.email = null;
+        state.error = null;
+        state.isLoading = false;
+      })
+
+      // Verify OTP
+      .addCase(verifyOtp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(verifyOtp.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.accessToken = action.payload.accessToken;
+        state.user = action.payload.user;
+      })
+      .addCase(verifyOtp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "OTP verification failed";
+      })
+
+      // Resend OTP
+      .addCase(resendOtp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(resendOtp.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tempUserId = action.payload.tempUserId;
+        state.email = action.payload.email;
+      })
+      .addCase(resendOtp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Resend OTP failed";
+      })
+
       // Login
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -240,7 +291,7 @@ const authSlice = createSlice({
       })
 
       .addCase(logout.rejected, (state, action) => {
-        state.error = action.payload ;
+        state.error = action.payload;
       })
 
       .addCase(loginWithGoogle.pending, (state) => {

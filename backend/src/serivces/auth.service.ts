@@ -12,6 +12,7 @@ import { IAuthService } from "./Interfaces/IAuth.service";
 import { Types } from "mongoose";
 import { ValidationService } from "./validation.service";
 import { LoginResponseDTO } from "@/Dto/login.dto";
+import {  OtpVerificationResponseDto, RegisterInitResponseDto } from "@/Dto/register.dto";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -88,7 +89,7 @@ export class AuthService implements IAuthService {
     email: string;
     password: string;
     name: string;
-    role: "mentor" | "user";
+    role: "mentor" | "user"|"admin";
   }) {
     this._validationService.validateRegisterInput({ email, password, name });
 
@@ -110,7 +111,7 @@ export class AuthService implements IAuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = await this._otpService.generateOtp();
-
+console.log(otp,"in register")
     const unverifiedUser = await this.unverifiedUserRepository.create({
       email,
       password: hashedPassword,
@@ -121,10 +122,11 @@ export class AuthService implements IAuthService {
     });
 
     await this._otpService.sendOtp(email, otp);
-    return {
-      tempUserId: unverifiedUser._id.toString(),
-      email: unverifiedUser.email,
-    };
+  return  new RegisterInitResponseDto(
+      unverifiedUser._id.toString(),
+      unverifiedUser.email
+    );
+    
   }
 
   async registerVerify(email: string, otp: string) {
@@ -153,17 +155,13 @@ export class AuthService implements IAuthService {
       user.id,
       user.role
     );
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
-    };
+await this.unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
+     return new OtpVerificationResponseDto(accessToken, refreshToken, {
+    id: user._id.toString(),
+    email: user.email,
+    name: user.name,
+    role: user.role,
+  });
   }
 
   async registerUser({
@@ -219,6 +217,27 @@ export class AuthService implements IAuthService {
       },
     };
   }
+
+  async resendOtp( email: string) {
+  const unverifiedUser = await this.unverifiedUserRepository.findByEmail(email);
+  if (!unverifiedUser )
+    throw new Error("Session expired, please register again");
+
+  const otp = await this._otpService.generateOtp();
+  console.log(otp,"in resend")
+const updatedUser = await this.unverifiedUserRepository.updateByEmail(email, {
+    otp,
+    otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
+  });
+  await this._otpService.sendOtp(email, otp);
+  console.log(updatedUser)
+
+ return  new RegisterInitResponseDto(
+      unverifiedUser._id.toString(),
+      unverifiedUser.email
+    );
+}
+
 
   async refreshToken(refreshToken: string, role: "admin" | "user") {
     const repository =

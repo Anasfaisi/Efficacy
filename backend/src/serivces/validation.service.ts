@@ -50,6 +50,7 @@ export class ValidationService implements IValidationService{
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new Error("Invalid email format");
     }
+    console.log("email...",email)
     if (password.length < 6) {
       throw new Error("Password must be at least 6 characters");
     }
