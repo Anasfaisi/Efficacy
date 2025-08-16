@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import { AuthService } from "../serivces/auth.service";
-import { ValidationService } from "../serivces/validation.service";
 import { TYPES } from "@/types";
 import { inject } from "inversify";
-import { OtpService } from "@/serivces/otp.service";
-import { CodeChallengeMethod } from "google-auth-library";
 import code from "@/types/http-status.enum";
-import { BADFAMILY } from "dns";
 import { LoginRequestDto } from "@/Dto/login.dto";
+import { OtpVerificationRequestDto, RegisterRequestDto, resendOtpRequestDto } from "@/Dto/register.dto";
+
 
 export class UserController {
   constructor(
@@ -40,35 +38,60 @@ export class UserController {
   }
 
   async registerInit(req: Request, res: Response) {
+
     try {
-      const { email, password, name, role } = req.body;
-      await this.authService.registerInit({ email, password, name, role });
-      res.status(code.OK).json({ message: "OTP sent to email" });
+      const dto = new RegisterRequestDto(
+        req.body.name,
+        req.body.email,
+        req.body.password,
+        req.body.role,
+      )
+      const result = await this.authService.registerInit({
+        name: dto.name,
+        email: dto.email,
+        password: dto.password,
+        role: dto.role
+      });
+      res.status(code.OK).json({ ...result, message: "OTP sent to email" });
     } catch (error: any) {
       res.status(code.BAD_REQUEST).json({ message: error.message });
+      console.log(error)
     }
   }
 
-  async register(req: Request, res: Response) {
+ async registerVerify(req: Request, res: Response) {
     try {
-      const { email, password, name, role } = req.body;
-      const result = await this.authService.registerUser({
-        email,
-        password,
-        name,
-        role,
-      });
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-      });
-      res
-        .status(code.OK)
-        .json({ accessToken: result.accessToken, user: result.user });
-    } catch (error: any) {
-      res.status(code.BAD_REQUEST).json({ message: error.message });
+      console.log("it is reached in verify otp")
+      const dto = new OtpVerificationRequestDto(
+        req.body.email,
+        req.body.otp
+      )
+      const result = await this.authService.registerVerify(dto.email, dto.otp );
+
+      res.status(200).json(result);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message || "OTP verification failed" });
+      console.log(err)
     }
   }
+
+
+  async resendOtp(req: Request, res: Response) {
+  try {
+    const dto = new resendOtpRequestDto(
+      req.body.email 
+    )
+
+    const {  email: userEmail } =
+      await this.authService.resendOtp( dto.email );
+
+    res.status(code.OK).json({ email: userEmail });
+  } catch (error: any) {
+    res.status(code.BAD_REQUEST).json({ message: error.message });
+    console.log(error)
+  }
+}
+
 
   async refresh(req: Request, res: Response) {
     try {

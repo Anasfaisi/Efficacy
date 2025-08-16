@@ -1,4 +1,5 @@
 import { LoginResponseDTO } from "@/Dto/login.dto";
+import { RegisterInitResponseDto  } from "@/Dto/register.dto";
 import { Types } from "mongoose";
 export interface IAuthService {
   login(
@@ -12,7 +13,7 @@ export interface IAuthService {
     password: string;
     name: string;
     role: "mentor" | "user";
-  }): Promise<{ tempUserId: string; email: string }>;
+  }): Promise<RegisterInitResponseDto >;
 
   registerVerify(
     email: string,

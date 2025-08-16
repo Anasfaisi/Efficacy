@@ -32,9 +32,9 @@ const Register: React.FC = () => {
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;
     const result = await dispatch(registerInit({ email, password, name, role :"user", tempUserId: ""}));
-    // if (registerInit.fulfilled.match(result)) {
-    //   navigate("/home");
-    // }
+    if (registerInit.fulfilled.match(result)) {
+      navigate("/verify-otp");
+    }
   };
 
   return (

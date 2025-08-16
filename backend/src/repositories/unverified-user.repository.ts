@@ -1,6 +1,7 @@
 // backend/src/repositories/unverifiedUser.repository.ts
 import UnverifiedUserModel, { IUnverifiedUser } from "@/models/Unverified-user";
 import { IUnverifiedUserRepository } from "./interfaces/IUnverified-user.repository";
+import { UpdateWriteOpResult } from "mongoose";
 
 export class UnverifiedUserRepository implements IUnverifiedUserRepository {
   async findByEmail(email: string) {
@@ -14,4 +15,14 @@ export class UnverifiedUserRepository implements IUnverifiedUserRepository {
   async deleteByEmail(email: string) {
     return UnverifiedUserModel.deleteOne({ email });
   }
+
+async updateByEmail(
+  email: string,
+  updateData: Partial<IUnverifiedUser>
+): Promise<UpdateWriteOpResult> {
+  return UnverifiedUserModel.updateOne(
+    { email },
+    { $set: updateData }
+  );
+}
 }
