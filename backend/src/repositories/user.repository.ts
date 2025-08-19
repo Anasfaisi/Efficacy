@@ -22,7 +22,9 @@ export class UserRepository extends BaseRepository implements IUserRepository {
   }
   async findById(id: string): Promise<IUser | null> {
     return await UserModel.findById(id);
-   
-   
+  }
+
+   async updatePasswordById(userId: string, newPassword: string): Promise<void> {
+    await UserModel.updateOne({ _id: userId }, { $set: { password: newPassword } });
   }
 }

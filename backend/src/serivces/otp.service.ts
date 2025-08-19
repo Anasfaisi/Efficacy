@@ -23,11 +23,28 @@ export class OtpService implements IOtpService{
     });
 
     await transporter.sendMail({
-      from: `"My App" <${process.env.EMAIL_USER}>`,
+      from: `"Efficacy" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
     });
     console.log(`OTP for ${email}: ${otp}`);
+  }
+
+   async sendEmail(email: string, subject: string, text: string) {
+     const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+    await transporter.sendMail({
+      from: `"Efficacy" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject,
+      text,
+    });
+    console.log(`OTP for ${email}: ${subject}`);
   }
 }

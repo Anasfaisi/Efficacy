@@ -162,6 +162,34 @@ export const loginWithGoogle = createAsyncThunk<
   }
 );
 
+
+export const forgotPasswordRequest = createAsyncThunk<
+  { message: string },
+  { email: string },
+  { rejectValue: string }
+>("auth/forgotPasswordRequest", async ({ email }, { rejectWithValue }) => {
+  try {
+    const response = await createApi().post("/forgot-password/init", { email });
+    return { message: response.data.message };
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || "Request failed");
+  }
+});
+
+export const resetPassword = createAsyncThunk<
+  { message: string },
+  { token: string; newPassword: string },
+  { rejectValue: string }
+>("auth/resetPassword", async ({ token, newPassword }, { rejectWithValue }) => {
+  try {
+    const response = await createApi().post("/forgot-password/verify", { token, newPassword });
+    return { message: response.data.message };
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || "Reset failed");
+  }
+});
+
+
 export const refresh = createAsyncThunk<
   { accessToken: string; user: User },
   void,
@@ -183,12 +211,18 @@ const initialState: AuthState = {
   user: null,
   isLoading: false,
   error: null,
+  successMessage: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+      clearMessages(state) {
+      state.error = null;
+      state.successMessage = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Register
@@ -241,6 +275,35 @@ const authSlice = createSlice({
       .addCase(resendOtp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Resend OTP failed";
+      })
+
+            // Forgot password request
+      .addCase(forgotPasswordRequest.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(forgotPasswordRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(forgotPasswordRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Request failed";
+      })
+      // Reset password
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Reset failed";
       })
 
       // Login

@@ -12,7 +12,10 @@ import { IAuthService } from "./Interfaces/IAuth.service";
 import { Types } from "mongoose";
 import { ValidationService } from "./validation.service";
 import { LoginResponseDTO } from "@/Dto/login.dto";
-import {  OtpVerificationResponseDto, RegisterInitResponseDto } from "@/Dto/register.dto";
+import {
+  OtpVerificationResponseDto,
+  RegisterInitResponseDto,
+} from "@/Dto/register.dto";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -89,7 +92,7 @@ export class AuthService implements IAuthService {
     email: string;
     password: string;
     name: string;
-    role: "mentor" | "user"|"admin";
+    role: "mentor" | "user" | "admin";
   }) {
     this._validationService.validateRegisterInput({ email, password, name });
 
@@ -111,7 +114,7 @@ export class AuthService implements IAuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = await this._otpService.generateOtp();
-console.log(otp,"in register")
+    console.log(otp, "in register");
     const unverifiedUser = await this.unverifiedUserRepository.create({
       email,
       password: hashedPassword,
@@ -122,11 +125,10 @@ console.log(otp,"in register")
     });
 
     await this._otpService.sendOtp(email, otp);
-  return  new RegisterInitResponseDto(
+    return new RegisterInitResponseDto(
       unverifiedUser._id.toString(),
       unverifiedUser.email
     );
-    
   }
 
   async registerVerify(email: string, otp: string) {
@@ -155,13 +157,13 @@ console.log(otp,"in register")
       user.id,
       user.role
     );
-await this.unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
-     return new OtpVerificationResponseDto(accessToken, refreshToken, {
-    id: user._id.toString(),
-    email: user.email,
-    name: user.name,
-    role: user.role,
-  });
+    await this.unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
+    return new OtpVerificationResponseDto(accessToken, refreshToken, {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
   }
 
   async registerUser({
@@ -218,26 +220,53 @@ await this.unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
     };
   }
 
-  async resendOtp( email: string) {
-  const unverifiedUser = await this.unverifiedUserRepository.findByEmail(email);
-  if (!unverifiedUser )
-    throw new Error("Session expired, please register again");
+  async resendOtp(email: string) {
+    const unverifiedUser =
+      await this.unverifiedUserRepository.findByEmail(email);
+    if (!unverifiedUser)
+      throw new Error("Session expired, please register again");
 
-  const otp = await this._otpService.generateOtp();
-  console.log(otp,"in resend")
-const updatedUser = await this.unverifiedUserRepository.updateByEmail(email, {
-    otp,
-    otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
-  });
-  await this._otpService.sendOtp(email, otp);
-  console.log(updatedUser)
+    const otp = await this._otpService.generateOtp();
+    console.log(otp, "in resend");
+    const updatedUser = await this.unverifiedUserRepository.updateByEmail(
+      email,
+      {
+        otp,
+        otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
+      }
+    );
+    await this._otpService.sendOtp(email, otp);
+    console.log(updatedUser);
 
- return  new RegisterInitResponseDto(
+    return new RegisterInitResponseDto(
       unverifiedUser._id.toString(),
       unverifiedUser.email
     );
-}
+  }
 
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findByEmail(email);
+    console.log(user);
+    if (!user) throw new Error("User not found");
+
+    const resetToken = this._tokenService.generatePasswordResetToken(user.id);
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+   await this._otpService.sendEmail(user.email, "Reset Your Password", `Click here to reset: ${resetLink}`);
+    return { message: "Reset link sent to email" };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    try {
+      const payload = this._tokenService.verifyPasswordResetToken(token)
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      await this.userRepository.updatePasswordById(payload.id, hashedPassword);
+
+      return { message: "Password reset successful" };
+    } catch (err) {
+      throw new Error("Invalid or expired token");
+    }
+  }
 
   async refreshToken(refreshToken: string, role: "admin" | "user") {
     const repository =

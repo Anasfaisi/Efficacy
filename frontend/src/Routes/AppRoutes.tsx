@@ -12,6 +12,7 @@ import Register from '@/pages/users/Register';
 import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/pages/mentors/MentorRegister';
 import { OTPPage } from '@/pages/OTPPage';
+import { ForgotResetPassword } from '@/components/app/ResetPassword';
 
 
 const ProtectedRoute: React.FC<{ role: 'admin' | 'user' | 'mentor', children: React.ReactNode }> = ({ role, children }) => {
@@ -33,6 +34,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/mentor/register" element ={<MentorRegister />} />
 
       <Route path="/verify-otp" element={<OTPPage/>} />
+
+      <Route path="/forgot-password" element={<ForgotResetPassword/>}  />
+      <Route path="/reset-password" element={<ForgotResetPassword/>} />
+
       <Route path="/*" element={<ProtectedRoute role="user"><UserRoutes /></ProtectedRoute>} />
       <Route path="/admin/*" element={<ProtectedRoute role="admin"><AdminRoutes /></ProtectedRoute>} />
       <Route path ="/mentor/*" element={<ProtectedRoute role="mentor"> <MentorRoutes/> </ProtectedRoute>} />
