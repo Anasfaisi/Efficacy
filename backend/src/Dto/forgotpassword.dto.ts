@@ -10,3 +10,10 @@ export class ForgotPasswordVerifyDto {
     public readonly tempUserId: string
   ) {}
 }
+
+export class ResetPasswordrequestDto{
+  constructor(
+    public readonly token:string,
+    public readonly newPassword:string,
+  ){}
+}

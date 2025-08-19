@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "@/types/authSchema";
 import { useForm } from "react-hook-form";
 import { GoogleLogin } from "@react-oauth/google";
+import { ForgotPasswordLink } from "@/components/app/ForgotPassowrd";
 
 const Login: React.FC = () => {
   const [googleError, setGoogleError] = useState<string | null>(null);
@@ -124,6 +125,9 @@ const Login: React.FC = () => {
           >
             {isLoading ? "Logging in ..." : "Log in"}
           </button>
+          <div className="flex flex-col items-center justify-center gap-0">
+            <ForgotPasswordLink />
+          </div>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <p>
             <GoogleLogin

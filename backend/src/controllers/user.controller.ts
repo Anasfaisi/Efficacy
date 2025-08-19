@@ -5,11 +5,14 @@ import { inject } from "inversify";
 import code from "@/types/http-status.enum";
 import { LoginRequestDto } from "@/Dto/login.dto";
 import { OtpVerificationRequestDto, RegisterRequestDto, resendOtpRequestDto } from "@/Dto/register.dto";
+import { ForgotPasswordRequestDto, ResetPasswordrequestDto } from "@/Dto/forgotpassword.dto";
+import "@/config/env.config";
+import { IAuthService } from "@/serivces/Interfaces/IAuth.service";
 
 
 export class UserController {
   constructor(
-    @inject(TYPES.AuthService) private authService: AuthService,
+    @inject(TYPES.AuthService) private authService: IAuthService,
 
   ) {}
 
@@ -92,6 +95,33 @@ export class UserController {
   }
 }
 
+
+  async forgotPassword(req: Request, res: Response) {
+    try {
+      const dto = new ForgotPasswordRequestDto(
+        req.body.email
+      )
+      const result = await this.authService.forgotPassword(dto.email);
+      res.status(200).json(result);
+
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+      console.error(error)
+    }
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    try {
+      const dto = new ResetPasswordrequestDto(
+        req.body.token,
+        req.body.newPassword
+      )
+      const result = await this.authService.resetPassword(dto.token, dto.newPassword);
+      res.status(200).json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 
   async refresh(req: Request, res: Response) {
     try {

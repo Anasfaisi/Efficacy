@@ -14,6 +14,7 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null |undefined;
   email:string|null
+  successMessage?: string | null;
 }
 
 export interface RegisterCredentials {

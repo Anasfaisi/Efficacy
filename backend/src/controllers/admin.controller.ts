@@ -64,7 +64,7 @@ async adminLogout(req: Request, res: Response) {
       sameSite: "strict",
     });
 
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(code.OK).json({ message: "Logged out successfully" });
   } catch (error: any) {
     console.error("Logout error:", error.message);
     res.status(code.INTERNAL_SERVER_ERROR).json({ message: "Logout failed" });
