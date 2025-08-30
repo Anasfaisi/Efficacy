@@ -1,4 +1,3 @@
-// backend/src/services/otp.service.ts
 import otpGenerator from "otp-generator";
 import nodemailer from "nodemailer";
 import { IOtpService } from "./Interfaces/IOtp.service";

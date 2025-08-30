@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
 import { AuthService } from "../serivces/auth.service";
-import { ValidationService } from "../serivces/validation.service";
 import { TYPES } from "@/types";
 import { inject } from "inversify";
 import code from "@/types/http-status.enum"
+import { IAuthService } from "@/serivces/Interfaces/IAuth.service";
+import { AuthMessages } from "@/types/response-messages.types";
 
 export class MentorController {
   constructor(
-    @inject(TYPES.AuthService) private authService: AuthService,
-    @inject(TYPES.ValidationService)
-    private validationService: ValidationService
+    @inject(TYPES.AuthService) private _authService:IAuthService,
+    
   ) {}
 
   async register(req: Request, res: Response) {
     try {
       const { email, password, name, role } = req.body;
-      this.validationService.validateRegisterInput({ email, password, name });
-      const result = await this.authService.registerUser({
+      const result = await this._authService.registerUser({
         email,
         password,
         name,
@@ -35,16 +34,9 @@ export class MentorController {
   async login(req: Request, res: Response) {
     try {
       const { email, password, role } = req.body;
-      console.log(email, password, role, "data coming from the frontend");
-      this.validationService.validateLoginInput({
-        email,
-        password,
-        role,
-        endpoint: "mentor",
-      });
-      console.log("finished validaton and the result now");
+    
 
-      const result = await this.authService.login(email, password, role);
+      const result = await this._authService.login(email, password, role);
       console.log(result);
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
@@ -60,11 +52,8 @@ export class MentorController {
   async googleAuth(req: Request, res: Response) {
     try {
       const { googleToken, role } = req.body;
-      this.validationService.validateGoogleLoginInput({
-        role,
-        endpoint: "mentor",
-      });
-      const result = await this.authService.loginWithGoogle(googleToken, role);
+     
+      const result = await this._authService.loginWithGoogle(googleToken, role);
 
       console.log("Google login result:", result);
       res.cookie("refreshToken", result.refreshToken, {
@@ -85,7 +74,7 @@ export class MentorController {
       if (!refreshToken) {
         throw new Error("Invalid refresh token or no refresh token");
       }
-      await this.authService.logout(refreshToken);
+      await this._authService.logout(refreshToken);
 
       res.clearCookie("refreshToken", {
         httpOnly: true,
@@ -93,10 +82,10 @@ export class MentorController {
         sameSite: "strict",
       });
 
-      res.json({ message: "Logged out successfully" });
+      res.json(AuthMessages.LogoutSuccess);
     } catch (error: any) {
       console.error("Logout error:", error.message);
-      res.status(code.INTERNAL_SERVER_ERROR).json({ message: "Logout failed" });
+      res.status(code.INTERNAL_SERVER_ERROR).json(AuthMessages.LogoutFailed);
     }
   }
 }

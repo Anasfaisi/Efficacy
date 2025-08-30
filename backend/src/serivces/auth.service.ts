@@ -1,57 +1,54 @@
-import { UserRepository } from "../repositories/user.repository";
-import { MentorRepository } from "@/repositories/mentor.repository";
-import { AdminRepository } from "@/repositories/admin.repository";
-import { TokenService } from "./token.service";
 import { injectable, inject } from "inversify";
 import { TYPES } from "@/types";
 import bcrypt from "bcrypt";
-import { GoogleVerificationService } from "./google-verification.service";
-import { UnverifiedUserRepository } from "@/repositories/unverified-user.repository";
-import { OtpService } from "./otp.service";
 import { IAuthService } from "./Interfaces/IAuth.service";
-import { Types } from "mongoose";
-import { ValidationService } from "./validation.service";
-import { LoginResponseDTO } from "@/Dto/login.dto";
+import { IAdminRepository } from "@/repositories/interfaces/IAdmin.repository";
+import { IUserRepository } from "@/repositories/interfaces/IUser.repository";
+import { IMentorRepository } from "@/repositories/interfaces/IMentor.repository";
+import { IUnverifiedUserRepository } from "@/repositories/interfaces/IUnverified-user.repository";
+import { ITokenService } from "./Interfaces/IToken.service";
+import { IOtpService } from "./Interfaces/IOtp.service";
+import { IValidationService } from "./Interfaces/IValidation.service";
+import { IGoogleVerificationService } from "./Interfaces/IGoogle-verifcation.service";
+import { Role } from "@/types/role.types";
 import {
+  LoginResponseDTO,
   OtpVerificationResponseDto,
   RegisterInitResponseDto,
-} from "@/Dto/register.dto";
+} from "@/Dto/responseDto";
 
 @injectable()
 export class AuthService implements IAuthService {
   constructor(
-    @inject(TYPES.AdminRepository) private adminRepository: AdminRepository,
-    @inject(TYPES.UserRepository) private userRepository: UserRepository,
-    @inject(TYPES.MentorRepository) private mentorRepository: MentorRepository,
+    @inject(TYPES.AdminRepository) private _adminRepository: IAdminRepository,
+    @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
+    @inject(TYPES.MentorRepository)
+    private _mentorRepository: IMentorRepository,
     @inject(TYPES.UnverifiedUserRepository)
-    private unverifiedUserRepository: UnverifiedUserRepository,
+    private _unverifiedUserRepository: IUnverifiedUserRepository,
 
-    @inject(TYPES.TokenService) private _tokenService: TokenService,
-    @inject(TYPES.OtpService) private _otpService: OtpService,
+    @inject(TYPES.TokenService) private _tokenService: ITokenService,
+    @inject(TYPES.OtpService) private _otpService: IOtpService,
     @inject(TYPES.ValidationService)
-    private _validationService: ValidationService,
+    private _validationService: IValidationService,
     @inject(TYPES.GoogleVerificationService)
-    private _googleVerificationService: GoogleVerificationService
+    private _googleVerificationService: IGoogleVerificationService
   ) {}
 
-  async login(
-    email: string,
-    password: string,
-    role: "admin" | "user" | "mentor"
-  ) {
+  async login(email: string, password: string, role: Role) {
     this._validationService.validateLoginInput({
       email,
       password,
       role,
       endpoint: "user",
     });
-    let repository: AdminRepository | UserRepository | MentorRepository;
+    let repository: IAdminRepository | IUserRepository | IMentorRepository;
     if (role === "admin") {
-      repository = this.adminRepository;
+      repository = this._adminRepository;
     } else if (role === "mentor") {
-      repository = this.mentorRepository;
+      repository = this._mentorRepository;
     } else if (role === "user") {
-      repository = this.userRepository;
+      repository = this._userRepository;
     } else {
       throw new Error("Invalid role");
     }
@@ -92,15 +89,15 @@ export class AuthService implements IAuthService {
     email: string;
     password: string;
     name: string;
-    role: "mentor" | "user" | "admin";
+    role: Role;
   }) {
     this._validationService.validateRegisterInput({ email, password, name });
 
-    let repository: UserRepository | MentorRepository;
+    let repository: IUserRepository | IMentorRepository;
     if (role === "mentor") {
-      repository = this.mentorRepository;
+      repository = this._mentorRepository;
     } else if (role === "user") {
-      repository = this.userRepository;
+      repository = this._userRepository;
     } else {
       throw new Error("invalid role");
     }
@@ -109,13 +106,13 @@ export class AuthService implements IAuthService {
     if (account) throw new Error("Email already registered");
 
     const existingUnverified =
-      await this.unverifiedUserRepository.findByEmail(email);
+      await this._unverifiedUserRepository.findByEmail(email);
     if (existingUnverified) throw new Error(`OTP already sent to ${email}`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = await this._otpService.generateOtp();
     console.log(otp, "in register");
-    const unverifiedUser = await this.unverifiedUserRepository.create({
+    const unverifiedUser = await this._unverifiedUserRepository.create({
       email,
       password: hashedPassword,
       name,
@@ -126,14 +123,13 @@ export class AuthService implements IAuthService {
 
     await this._otpService.sendOtp(email, otp);
     return new RegisterInitResponseDto(
-      unverifiedUser._id.toString(),
       unverifiedUser.email
     );
   }
 
   async registerVerify(email: string, otp: string) {
     const unverifiedUser =
-      await this.unverifiedUserRepository.findByEmail(email);
+      await this._unverifiedUserRepository.findByEmail(email);
     if (!unverifiedUser)
       throw new Error("No pending registration for this email");
 
@@ -141,14 +137,14 @@ export class AuthService implements IAuthService {
     if (unverifiedUser.otpExpiresAt < new Date())
       throw new Error("OTP expired");
 
-    const user = await this.userRepository.createUser({
+    const user = await this._userRepository.createUser({
       email: unverifiedUser.email,
       password: unverifiedUser.password,
       name: unverifiedUser.name,
       role: unverifiedUser.role,
     });
 
-    await this.unverifiedUserRepository.deleteByEmail(email);
+    await this._unverifiedUserRepository.deleteByEmail(email);
     const accessToken = this._tokenService.generateAccessToken(
       user.id,
       user.role
@@ -157,7 +153,7 @@ export class AuthService implements IAuthService {
       user.id,
       user.role
     );
-    await this.unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
+    await this._unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
     return new OtpVerificationResponseDto(accessToken, refreshToken, {
       id: user._id.toString(),
       email: user.email,
@@ -165,70 +161,15 @@ export class AuthService implements IAuthService {
       role: user.role,
     });
   }
-
-  async registerUser({
-    email,
-    password,
-    name,
-    role,
-  }: {
-    email: string;
-    password: string;
-    name: string;
-    role: "mentor" | "user";
-  }) {
-    this._validationService.validateRegisterInput({ email, password, name });
-
-    let repository: UserRepository | MentorRepository;
-    if (role === "mentor") {
-      repository = this.mentorRepository;
-    } else if (role === "user") {
-      repository = this.userRepository;
-    } else {
-      throw new Error("invalid role");
-    }
-    const existingUser = await repository.findByEmail(email);
-    if (existingUser) {
-      throw new Error(`${role} already exists`);
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await repository.createUser({
-      email,
-      password: hashedPassword,
-      name,
-      role,
-    });
-
-    const accessToken = this._tokenService.generateAccessToken(
-      user.id,
-      user.role
-    );
-    const refreshToken = this._tokenService.generateRefreshToken(
-      user.id,
-      user.role
-    );
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
-    };
-  }
-
   async resendOtp(email: string) {
     const unverifiedUser =
-      await this.unverifiedUserRepository.findByEmail(email);
+      await this._unverifiedUserRepository.findByEmail(email);
     if (!unverifiedUser)
       throw new Error("Session expired, please register again");
 
     const otp = await this._otpService.generateOtp();
     console.log(otp, "in resend");
-    const updatedUser = await this.unverifiedUserRepository.updateByEmail(
+    const updatedUser = await this._unverifiedUserRepository.updateByEmail(
       email,
       {
         otp,
@@ -239,28 +180,34 @@ export class AuthService implements IAuthService {
     console.log(updatedUser);
 
     return new RegisterInitResponseDto(
-      unverifiedUser._id.toString(),
       unverifiedUser.email
     );
   }
 
   async forgotPassword(email: string): Promise<{ message: string }> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this._userRepository.findByEmail(email);
     console.log(user);
     if (!user) throw new Error("User not found");
 
     const resetToken = this._tokenService.generatePasswordResetToken(user.id);
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-   await this._otpService.sendEmail(user.email, "Reset Your Password", `Click here to reset: ${resetLink}`);
+    await this._otpService.sendEmail(
+      user.email,
+      "Reset Your Password",
+      `Click here to reset: ${resetLink}`
+    );
     return { message: "Reset link sent to email" };
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+  async resetPassword(
+    token: string,
+    newPassword: string
+  ): Promise<{ message: string }> {
     try {
-      const payload = this._tokenService.verifyPasswordResetToken(token)
+      const payload = this._tokenService.verifyPasswordResetToken(token);
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      await this.userRepository.updatePasswordById(payload.id, hashedPassword);
+      await this._userRepository.updatePasswordById(payload.id, hashedPassword);
 
       return { message: "Password reset successful" };
     } catch (err) {
@@ -268,19 +215,25 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async refreshToken(refreshToken: string, role: "admin" | "user") {
+  async refreshToken(refreshToken: string) {
+    const payload = this._tokenService.verifyRefreshToken(refreshToken);
     const repository =
-      role === "admin" ? this.adminRepository : this.userRepository;
-    const decoded = this._tokenService.verifyRefreshToken(refreshToken);
-    const user = (await repository.findById(decoded.id)) || "";
-    if (!user || user.role !== role) {
-      throw new Error("Invalid refresh token");
+      payload.role === "admin"
+        ? this._adminRepository
+        : payload.role === "mentor"
+          ? this._mentorRepository
+          : this._userRepository;
+
+    const account = await repository.findById(payload.id)
+    if(!account){
+      throw new Error("User not found")
     }
-    const accessToken = this._tokenService.generateAccessToken(
-      user.id,
-      user.role
-    );
-    return { accessToken };
+
+    const accessToken = this._tokenService.generateAccessToken(account.id,account.role);
+    const newRefreshToken = this._tokenService.generateRefreshToken(account.id,account.role);
+
+    return {accessToken,refreshToken:newRefreshToken}
+
   }
 
   async logout(refreshToken: string) {
@@ -304,18 +257,18 @@ export class AuthService implements IAuthService {
       throw new Error("Google login failed: No email found");
     }
 
-    let repository: UserRepository | MentorRepository;
+    let repository: IUserRepository | IMentorRepository;
     if (role === "mentor") {
-      repository = this.mentorRepository;
+      repository = this._mentorRepository;
     } else if (role === "user") {
-      repository = this.userRepository;
+      repository = this._userRepository;
     } else {
       throw new Error("invalid role");
     }
 
     let account = await repository.findByEmail(payload.email);
     if (!account) {
-      account = await repository.create({
+      account = await repository.createUser({
         email: payload.email,
         name: payload.name || "Google User",
         googleId: payload.sub,

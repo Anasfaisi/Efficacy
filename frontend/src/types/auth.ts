@@ -1,47 +1,45 @@
 import { z } from "zod";
 
+export type Role = "admin" | "mentor" | "user"; 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "mentor" | "user";
+  role: Role;
 }
 
 export interface AuthState {
-  accessToken: string | null;
-  tempUserId:string | null
+  accessToken: null,
   user: User | null;
   isLoading: boolean;
-  error: string | null |undefined;
-  email:string|null
+  error: string | null | undefined;
+  tempEmail: string | null;
   successMessage?: string | null;
 }
-
 export interface RegisterCredentials {
   email: string;
   password: string;
   name: string;
-  role: "user" | "mentor";
-  tempUserId:string
+    role: Role;
 }
 export interface LoginCredentials {
   email: string;
   password: string;
-  role?: "admin" | "user" | "mentor";
+  role?: Role;
 }
 
 export interface LogoutCredentials {
-  role: "admin" | "user" | "mentor";
+  role:Role;
 }
 
 export interface GooglecredentialUser {
   email: string;
   name: string;
   password: string;
-  role: "user" | "admin" | "mentor";
+  role: Role;
 }
 
 export interface GoogleLoginArg {
   googleToken: string;
-  role: "user" | "mentor" | "admin";
+  role: Role;
 }

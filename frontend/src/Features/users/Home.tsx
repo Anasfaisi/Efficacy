@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 const Home: React.FC = () => {
-  const { user, accessToken } = useAppSelector((state) => state.auth);
+  const { user} = useAppSelector((state) => state.auth);
  
 
 
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg text-center">
         <h2 className="text-4xl font-bold text-gray-800 mb-4">Home</h2>
-        {accessToken && user ? (
+        {user ? (
           <>
             <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
              <Link

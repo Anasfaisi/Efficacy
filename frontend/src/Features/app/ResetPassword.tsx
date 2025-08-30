@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { forgotPasswordRequest, resetPassword } from "@/redux/slices/authSlice";
+import  { forgotPasswordApi, resetPasswordApi } from "@/Services/auth.api";
+import { AuthMessages } from "@/utils/Constants";
 
 export function ForgotResetPassword() {
   const [email, setEmail] = useState("");
@@ -32,20 +34,20 @@ console.log(token)
           setIsLoading(false);
           return;
         }
-        const result = await dispatch(resetPassword({ token, newPassword: password }));
-        if (resetPassword.fulfilled.match(result)) {
-          setSuccessMessage(result.payload.message);
+        const result = await resetPasswordApi( token, password );
+        if (result) {
+          setSuccessMessage(result.message);
           setTimeout(() => navigate("/login"), 1500);
         } else {
-          setErrorMessage(result.payload || "Reset failed");
+          setErrorMessage(AuthMessages.ResetPasswordFailed);
         }
       } else {
 
-        const result = await dispatch(forgotPasswordRequest({ email }));
-        if (forgotPasswordRequest.fulfilled.match(result)) {
-          setSuccessMessage(result.payload.message);
+        const result = await forgotPasswordApi(email);
+        if (result) {
+          setSuccessMessage(result.message);
         } else {
-          setErrorMessage(result.payload || "Request failed");
+          setErrorMessage(AuthMessages.ForgotFailed);
         }
       }
     } catch (err: any) {

@@ -7,6 +7,7 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,

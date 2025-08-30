@@ -2,17 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { resendOtp, verifyOtp } from "@/redux/slices/authSlice";
+import { setCredentials, } from "@/redux/slices/authSlice";
+import { resendOtpApi, verifyOtpApi } from "@/Services/auth.api";
 // import { verifyOtp, resendOtp } from "@/redux/slices/authSlice";
 
 export function OTPPage() {
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(30); // 60 seconds countdown
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
-  const { email, tempUserId, isLoading } = useAppSelector(
-    (state) => state.auth
-  );
+  const navigate = useNavigate();
+  const { tempEmail, isLoading } = useAppSelector((state) => state.auth);
 
   // Countdown timer logic
   useEffect(() => {
@@ -22,16 +21,19 @@ export function OTPPage() {
   }, [timer]);
 
   const handleVerify = async () => {
-    const result = await dispatch(verifyOtp({ email, otp, tempUserId }));
-    if (verifyOtp.fulfilled.match(result)) {
+    const result = await verifyOtpApi(tempEmail, otp);
+    if (result) {
+      dispatch(setCredentials( result ));
       navigate("/home");
     }
   };
 
-  const handleResend = () => {
-    dispatch(resendOtp({ email }));
-    setTimer(30); 
-    setOtp(""); 
+  const handleResend = async () => {
+    const result = await resendOtpApi(tempEmail);
+    if(result){
+    setTimer(30);
+    setOtp("");
+  }
   };
 
   return (
@@ -47,7 +49,9 @@ export function OTPPage() {
       }}
     >
       <h2>Verify your OTP</h2>
-      <p>We sent an OTP to <strong>{email}</strong></p>
+      <p>
+        We sent an OTP to <strong>{tempEmail}</strong>
+      </p>
 
       <OtpInput
         value={otp}

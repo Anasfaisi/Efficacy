@@ -38,5 +38,4 @@ app.use("/api/admin", adminRoutes(adminController));
 app.use("/api/mentor",mentorRoutes(mentorController));
 
 const port = process.env.PORT;
-
 app.listen(port, () => console.log("http://localhost:5000"));

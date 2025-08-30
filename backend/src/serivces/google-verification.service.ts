@@ -4,14 +4,14 @@ import { IGoogleVerificationService } from "./Interfaces/IGoogle-verifcation.ser
 
 @injectable()
 export class GoogleVerificationService implements IGoogleVerificationService {
-  private client: OAuth2Client;
+  private _client: OAuth2Client;
 
   constructor() {
-    this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    this._client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   }
 
   async verify(googleToken: string) : Promise<LoginTicket>{
-    return this.client.verifyIdToken({
+    return this._client.verifyIdToken({
       idToken: googleToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });

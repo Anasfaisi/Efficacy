@@ -1,0 +1,58 @@
+import { Role } from "@/types/role.types";
+
+//Login
+export class LoginRequestDto {
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+    public readonly role :Role,
+    public readonly name? : string,
+  ) {}
+}
+
+
+//Register
+export class RegisterRequestDto {
+  constructor(
+    public readonly name: string,
+    public readonly email: string,
+    public readonly password: string,
+    public readonly role: Role
+  ) {}
+}
+
+//otp verification
+export class OtpVerificationRequestDto {
+  constructor(
+    public readonly email: string,
+    public readonly otp: string
+  ) {}
+}
+
+
+//resend otp
+export class resendOtpRequestDto {
+  constructor(
+    public readonly email:string,
+  ){}
+}
+
+
+//forget password
+export class ForgotPasswordRequestDto {
+  constructor(public readonly email: string) {}
+}
+
+
+//reset password
+
+export class ResetPasswordrequestDto{
+  constructor(
+    public readonly token:string,
+    public readonly newPassword:string,
+  ){}
+}
+
+
+//refreshing access token
+export class RefreshRequestDto {}

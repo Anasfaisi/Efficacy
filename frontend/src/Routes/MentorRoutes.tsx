@@ -2,7 +2,7 @@ import { Routes,Route } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { logout } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
-import MentorDashboard from "@/pages/mentors/MentorDashboard";
+import MentorDashboard from "@/Features/mentors/MentorDashboard";
 
 const Logout: React.FC = () => {
   const dispatch = useAppDispatch();

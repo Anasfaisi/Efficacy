@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { registerInit } from "../../redux/slices/authSlice";
+import {  setTempUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -8,10 +8,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/types/authSchema";
 import type { RegisterFormData } from "@/types/authSchema";
+import { registerInitApi } from "@/Services/auth.api";
 
 const Register: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken } = useAppSelector((state) => state.auth);
+  const { isLoading, error, user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const {
@@ -24,15 +25,17 @@ const Register: React.FC = () => {
   });
 
   useEffect(() => {
-    if (accessToken) {
+    if (user) {
       navigate("/home");
     }
-  }, [accessToken, navigate]);
+  }, [user, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;
-    const result = await dispatch(registerInit({ email, password, name, role :"user", tempUserId: ""}));
-    if (registerInit.fulfilled.match(result)) {
+    const result = await registerInitApi({name,email,password,role:"user"})
+    dispatch(setTempUser({email:result.tempEmail}))
+    console.log(result)
+    if (result) {
       navigate("/verify-otp");
     }
   };

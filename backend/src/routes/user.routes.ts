@@ -11,7 +11,7 @@ export default function authRoutes(userController: UserController) {
   router.post("/logout",userController.logout.bind(userController) as RequestHandler);
   router.post("/google-login", userController.googleAuth.bind(userController));
   
-  router.post("/refresh", userController.refresh.bind(userController));
+  router.post("/refresh", userController.refreshTokenHandler.bind(userController));
 
   router.post("/register/init",userController.registerInit.bind(userController));
   router.post("/register/verify",userController.registerVerify.bind(userController));

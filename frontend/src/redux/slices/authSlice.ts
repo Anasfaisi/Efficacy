@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {
   type AuthState,
@@ -8,7 +8,7 @@ import {
   type RegisterCredentials,
   type LogoutCredentials,
   type GoogleLoginArg,
-} from "../types";
+} from "@/types/auth";
 
 const API_URL = import.meta.env.VITE_API_URL || "[invalid url, do not cite]";
 export const updateToken = createAction<string>("auth/updateToken");
@@ -20,7 +20,7 @@ const createApi = () =>
     withCredentials: true,
   });
 
-export const registerInit = createAsyncThunk<
+  export const registerInit = createAsyncThunk<
   { tempUserId: string; email: string },
   RegisterCredentials,
   { rejectValue: string }
@@ -52,50 +52,6 @@ export const registerInit = createAsyncThunk<
   }
 );
 
-export const clearRegisterState = createAsyncThunk(
-  "auth/clearRegisterState",
-  async () => {
-    return true;
-  }
-);
-
-export const verifyOtp = createAsyncThunk<
-  { accessToken: string; refreshToken: string; user: any },
-  { email: string | null; otp: string | null; tempUserId: string | null },
-  { rejectValue: string }
->("auth/verifyOtp", async ({ email, otp, tempUserId }, { rejectWithValue }) => {
-  try {
-    const api = createApi();
-    const response = await api.post("/register/verify", {
-      email,
-      otp,
-    });
-    console.log(response.data);
-    return response.data;
-  } catch (err: any) {
-    return rejectWithValue(
-      err.response?.data?.message || "OTP verification failed"
-    );
-  }
-});
-
-export const resendOtp = createAsyncThunk<
-  { tempUserId: string; email: string },
-  { email: string | null },
-  { rejectValue: string }
->("auth/resendOtp", async ({ email }, { rejectWithValue }) => {
-  try {
-    const api = createApi();
-    const response = await api.post("/register/resend-otp", {
-      email,
-    })
-    console.log(response.data)
-    return response.data;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Resend OTP failed");
-  }
-});
-
 export const login = createAsyncThunk<
   { accessToken: string; user: User },
   LoginCredentials,
@@ -117,27 +73,34 @@ export const login = createAsyncThunk<
   }
 });
 
-export const logout = createAsyncThunk<
-  void,
-  LogoutCredentials,
+export const clearRegisterState = createAsyncThunk(
+  "auth/clearRegisterState",
+  async () => {
+    return true;
+  }
+);
+
+
+
+export const resendOtp = createAsyncThunk<
+  { tempUserId: string; email: string },
+  { email: string | null },
   { rejectValue: string }
->("auth/logout", async ({ role }, { rejectWithValue }) => {
+>("auth/resendOtp", async ({ email }, { rejectWithValue }) => {
   try {
     const api = createApi();
-
-    const endpoint =
-      role === "admin"
-        ? "/admin/logout"
-        : role === "mentor"
-        ? "/mentor/logout"
-        : "/logout";
-
-    const result = await api.post(endpoint);
-    console.log(result.data);
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Logout failed");
+    const response = await api.post("/register/resend-otp", {
+      email,
+    })
+    console.log(response.data)
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || "Resend OTP failed");
   }
 });
+
+
+
 
 export const loginWithGoogle = createAsyncThunk<
   { accessToken: string; user: User },
@@ -206,8 +169,7 @@ export const refresh = createAsyncThunk<
 
 const initialState: AuthState = {
   accessToken: null,
-  email: null,
-  tempUserId: null,
+  tempEmail: null,
   user: null,
   isLoading: false,
   error: null,
@@ -218,50 +180,26 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setCredentials:(state,action:PayloadAction<{user:User}>)=>{
+       state.user = action.payload.user;
+       state.isLoading= false;
+       state.error = null
+    },
       clearMessages(state) {
-      state.error = null;
+      state.user = null;
       state.successMessage = null;
     },
+    logout:(state)=>{
+      state.user = null;
+    },
+    setTempUser:(state,action:PayloadAction<{email:string}>)=>{
+      state.tempEmail = action.payload.email
+    }
   },
   extraReducers: (builder) => {
     builder
-      // Register
-      .addCase(registerInit.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(registerInit.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.tempUserId = action.payload.tempUserId;
-        state.email = action.payload.email;
-      })
-      .addCase(registerInit.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || "Registration failed";
-      })
-
-      .addCase(clearRegisterState.fulfilled, (state) => {
-        state.tempUserId = null;
-        state.email = null;
-        state.error = null;
-        state.isLoading = false;
-      })
-
-      // Verify OTP
-      .addCase(verifyOtp.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(verifyOtp.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.accessToken = action.payload.accessToken;
-        state.user = action.payload.user;
-      })
-      .addCase(verifyOtp.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || "OTP verification failed";
-      })
-
+      
+    
       // Resend OTP
       .addCase(resendOtp.pending, (state) => {
         state.isLoading = true;
@@ -349,13 +287,6 @@ const authSlice = createSlice({
         localStorage.removeItem("accessToken");
       })
 
-      .addCase(logout.fulfilled, (state) => {
-        (state.user = null), (state.accessToken = null);
-      })
-
-      .addCase(logout.rejected, (state, action) => {
-        state.error = action.payload;
-      })
 
       .addCase(loginWithGoogle.pending, (state) => {
         state.isLoading = true;
@@ -373,5 +304,5 @@ const authSlice = createSlice({
   },
 });
 
-// export const { logout } = authSlice.actions;
+export const { setCredentials,logout,setTempUser} = authSlice.actions;
 export default authSlice.reducer;
