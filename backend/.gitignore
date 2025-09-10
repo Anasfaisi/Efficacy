@@ -1,5 +1,2 @@
-node_modules/
-backend/dist
-backend/.env
-frontend/build/
-frontend/.env
+node_modules
+.env

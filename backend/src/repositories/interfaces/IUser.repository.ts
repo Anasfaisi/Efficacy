@@ -1,7 +1,13 @@
+import { ISubscription, IUser } from "@/models/User";
+
 export interface IUserRepository {
-  findByEmail(email: string): Promise<any>;
-  findById(id: string): Promise<any>;
-  createUser(data: { email: string; password: string; name: string; role: string;googleId?:string }): Promise<any>;
-    updatePasswordById(id: string, newPassword: string): Promise<any>;
+  findByEmail(email: string): Promise<IUser|null>;
+  findById(id: string): Promise<IUser|null>;
+  createUser(data: { email: string; password: string; name: string; role: string;googleId?:string }): Promise<IUser>;
+  updatePasswordById(id: string, newPassword: string): Promise<void>;
+
+  updateSubscriptionByEmail(email: string, subscriptionData:ISubscription): Promise<IUser | null>;
+  updateSubscriptionById(userId: string, subscriptionData: ISubscription): Promise<IUser | null>;
+  findByStripeCustomerId(customerId:string):Promise<IUser|null>
 
 }

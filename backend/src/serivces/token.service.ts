@@ -3,7 +3,6 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { ITokenService } from "./Interfaces/IToken.service";
 import { Types } from "mongoose";
-console.log("Loaded env:", process.env.ACCESS_TOKEN_SECRET, process.env.ACCESS_TOKEN_EXPIRY);
 export interface JwtPayload {
   id: string;
   role?: string;

@@ -5,12 +5,12 @@ import type { RootState, AppDispatch } from '../redux/store';
 import { updateToken } from '../redux/slices/authSlice';
 import UserRoutes from './UserRoutes';
 import AdminRoutes from './AdminRoutes';
-import AdminLogin from '../Features/admin/AdminLogin';
-import Login from '@/Features/users/Login';
-import MentorLogin from '@/Features/mentors/MentorLogin';
-import Register from '@/Features/users/Register';
+import AdminLogin from '../Features/admin/pages/AdminLogin';
+import Login from '@/Features/users/pages/Login';
+import MentorLogin from '@/Features/mentors/pages/MentorLogin';
+import Register from '@/Features/users/pages/Register';
 import MentorRoutes from './MentorRoutes';
-import MentorRegister from '@/Features/mentors/MentorRegister';
+import MentorRegister from '@/Features/mentors/pages/MentorRegister';
 import { OTPPage } from '@/Features/app/OTPPage';
 import { ForgotResetPassword } from '@/Features/app/ResetPassword';
 

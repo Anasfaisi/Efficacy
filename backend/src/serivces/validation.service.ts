@@ -1,18 +1,16 @@
 import { OAuth2Client } from "google-auth-library";
 import { injectable } from "inversify";
 import { IValidationService } from "./Interfaces/IValidation.service";
-
+import { Role } from "@/types/role.types";
 export class ValidationService implements IValidationService{
   validateLoginInput({
     email,
     password,
     role,
-    endpoint,
   }: {
     email: string;
     password: string;
     role?: string;
-    endpoint: "admin" | "user" | "mentor";
   }) {
     console.log("it is reached in validationlogininput", email, role);
     if (!email || !password) {
@@ -25,13 +23,7 @@ export class ValidationService implements IValidationService{
     if (password.length < 6) {
       throw new Error("Password must be at least 6 characters");
     }
-    if (
-      role &&
-      ((endpoint === "admin" && role !== "admin") ||
-        (endpoint === "user" && role !== "user"))
-    ) {
-      throw new Error(`Invalid role for ${endpoint} login`);
-    }
+
     console.log("successfully validated at backend");
   }
 

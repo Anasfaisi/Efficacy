@@ -1,7 +1,7 @@
-export interface IBaseRepository {
-  findOne(query: any): Promise<any>;
-  create(data: any): Promise<any>;
-  findById(id: string): Promise<any>;
-  updateOne(id: string, data: any): Promise<void>;
+export interface IBaseRepository<T> {
+  findOne(query: Partial<T>): Promise<T | null>;
+  create(data: Partial<T>): Promise<T>;
+  findById(id: string): Promise<T | null>;
+  updateOne(id: string, data: Partial<T>): Promise<void>;
   deleteOne(id: string): Promise<void>;
 }

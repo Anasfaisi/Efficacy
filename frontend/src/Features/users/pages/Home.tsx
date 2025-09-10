@@ -1,7 +1,8 @@
 // client/src/pages/Home.tsx
 import React from 'react';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppSelector } from '../../../redux/hooks';
 import { Link, useNavigate } from 'react-router-dom';
+import CheckoutForm from '../payment/CheckoutForm';
 
 
 const Home: React.FC = () => {
@@ -17,11 +18,15 @@ const Home: React.FC = () => {
         {user ? (
           <>
             <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
+            <div>
+            <CheckoutForm />
+          </div>
              <Link
           to="/logout"
           className="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
         >
-          Logout
+          
+          Logout 
         </Link>
           
           </>

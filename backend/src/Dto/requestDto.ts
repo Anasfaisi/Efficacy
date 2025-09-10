@@ -56,3 +56,27 @@ export class ResetPasswordrequestDto{
 
 //refreshing access token
 export class RefreshRequestDto {}
+
+
+//stripe checkout dto
+export class CreateCheckoutDto {
+  constructor(
+    public readonly priceId: string,
+    public readonly success_url: string,
+    public readonly cancel_url: string,
+    public readonly customerEmail?: string
+  ) {
+    if (!priceId) throw new Error("priceId is required");
+  }
+}
+
+//request payment dto
+// Dto/requestDto/RequestPayment.dto.ts
+export class RequestPaymentDto {
+  constructor(
+    public readonly userId: string,
+    public readonly priceId: string,
+    public readonly successUrl: string,
+    public readonly cancelUrl: string
+  ) {}
+}

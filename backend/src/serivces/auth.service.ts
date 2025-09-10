@@ -10,7 +10,7 @@ import { ITokenService } from "./Interfaces/IToken.service";
 import { IOtpService } from "./Interfaces/IOtp.service";
 import { IValidationService } from "./Interfaces/IValidation.service";
 import { IGoogleVerificationService } from "./Interfaces/IGoogle-verifcation.service";
-import { Role } from "@/types/role.types";
+import { Repositories, Role } from "@/types/role.types";
 import {
   LoginResponseDTO,
   OtpVerificationResponseDto,
@@ -40,9 +40,8 @@ export class AuthService implements IAuthService {
       email,
       password,
       role,
-      endpoint: "user",
     });
-    let repository: IAdminRepository | IUserRepository | IMentorRepository;
+    let repository: Repositories;
     if (role === "admin") {
       repository = this._adminRepository;
     } else if (role === "mentor") {
@@ -53,7 +52,7 @@ export class AuthService implements IAuthService {
       throw new Error("Invalid role");
     }
     const account = await repository.findByEmail(email);
-
+    console.log(account)
     if (!account || account.role !== role) {
       throw new Error(`Not authorized as ${role}`);
     }
@@ -79,6 +78,7 @@ export class AuthService implements IAuthService {
       role: account.role,
     });
   }
+
 
   async registerInit({
     email,
@@ -123,7 +123,8 @@ export class AuthService implements IAuthService {
 
     await this._otpService.sendOtp(email, otp);
     return new RegisterInitResponseDto(
-      unverifiedUser.email
+      unverifiedUser.email,
+      unverifiedUser.role
     );
   }
 
@@ -136,8 +137,16 @@ export class AuthService implements IAuthService {
     if (unverifiedUser.otp !== otp) throw new Error("Invalid OTP");
     if (unverifiedUser.otpExpiresAt < new Date())
       throw new Error("OTP expired");
+      let repository: IUserRepository | IMentorRepository;
+    if (unverifiedUser.role === "mentor") {
+      repository = this._mentorRepository;
+    } else if (unverifiedUser.role === "user") {
+      repository = this._userRepository;
+    } else {
+      throw new Error("invalid role");
+    }
 
-    const user = await this._userRepository.createUser({
+    const user = await repository.createUser({
       email: unverifiedUser.email,
       password: unverifiedUser.password,
       name: unverifiedUser.name,
@@ -153,7 +162,7 @@ export class AuthService implements IAuthService {
       user.id,
       user.role
     );
-    await this._unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
+    // await this._unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
     return new OtpVerificationResponseDto(accessToken, refreshToken, {
       id: user._id.toString(),
       email: user.email,
@@ -161,6 +170,8 @@ export class AuthService implements IAuthService {
       role: user.role,
     });
   }
+
+
   async resendOtp(email: string) {
     const unverifiedUser =
       await this._unverifiedUserRepository.findByEmail(email);
@@ -180,9 +191,11 @@ export class AuthService implements IAuthService {
     console.log(updatedUser);
 
     return new RegisterInitResponseDto(
-      unverifiedUser.email
+      unverifiedUser.email,
+      unverifiedUser.role
     );
   }
+
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     const user = await this._userRepository.findByEmail(email);
@@ -215,6 +228,8 @@ export class AuthService implements IAuthService {
     }
   }
 
+
+
   async refreshToken(refreshToken: string) {
     const payload = this._tokenService.verifyRefreshToken(refreshToken);
     const repository =
@@ -236,6 +251,7 @@ export class AuthService implements IAuthService {
 
   }
 
+
   async logout(refreshToken: string) {
     const decoded = this._tokenService.verifyRefreshToken(refreshToken);
     console.log("decodedd", decoded);
@@ -245,10 +261,12 @@ export class AuthService implements IAuthService {
     console.log("Logout request for user:", decoded.id, decoded.role);
   }
 
+
+
   async loginWithGoogle(googleToken: string, role: "user" | "mentor") {
     this._validationService.validateGoogleLoginInput({
       role,
-      endpoint: "user",
+      endpoint: role,
     });
     const ticket = await this._googleVerificationService.verify(googleToken);
     const payload = ticket.getPayload();

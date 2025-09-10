@@ -1,5 +1,7 @@
+import { IAdmin } from "@/models/Admin";
+
 export interface IAdminRepository {
-  findByEmail(email: string): Promise<any>;
-  findById(id: string): Promise<any>;
-  createUser(data: { email: string; password: string; name: string; role: string }): Promise<any>;
+  findByEmail(email: string): Promise<IAdmin|null>;
+  findById(id: string): Promise<IAdmin|null>;
+  createUser(data: { email: string; password: string; name: string; role: string }): Promise<IAdmin>;
 }

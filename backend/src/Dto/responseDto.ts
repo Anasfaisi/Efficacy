@@ -28,6 +28,7 @@ export class LoginResponseDTO {
 export class RegisterInitResponseDto  {
   constructor(
    public readonly tempEmail: string,
+   public readonly  role :string
 
   ) {}
 }
@@ -64,3 +65,27 @@ export class RefreshResponseDto {
     public readonly success:string
   ){}
 }
+
+// export class SubscriptionResponseDTO {
+//   constructor(
+//     public readonly id: string,                
+//     public readonly status: string,            
+//     public readonly priceId: string,           
+//     public readonly currentPeriodEnd: Date,    
+//     public readonly user: {
+//       id: string;
+//       name: string;
+//       email: string;
+//     }
+//   ) {}
+// }
+
+
+// Dto/responseDto/ResponsePayment.dto.ts
+export class ResponsePaymentDto {
+  constructor(
+    public readonly sessionId: string,
+    public readonly url: string
+  ) {}
+}
+

@@ -9,10 +9,10 @@ export default function adminRoutes(adminController: AdminController) {
   const router = express.Router();
   const adminAccessMiddleware = container.get<AdminAccessMiddleware>(TYPES.AdminAccessMiddleware)
 
-  router.post('/login',adminController.adminLogin.bind(adminController));
+  router.post('/login',adminController.login.bind(adminController));
   
-  router.post('/refresh-token',adminAccessMiddleware.handle, adminController.refreshAdminToken.bind(adminController));
-  router.post('/logout', adminController.adminLogout.bind(adminController) as express.RequestHandler);
-
+  router.post('/logout', adminController.logout.bind(adminController) as express.RequestHandler);
+  
+  router.post('/refresh-token',adminAccessMiddleware.handle, adminController.refreshTokenHandler.bind(adminController));
   return router;
 }

@@ -1,9 +1,9 @@
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "./interfaces/IUser.repository";
-import UserModel, { IUser } from "../models/User";
+import UserModel, { ISubscription, IUser } from "../models/User";
 import { hashPassword } from "@/utils";
 
-export class UserRepository extends BaseRepository implements IUserRepository {
+export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
   constructor() {
     super(UserModel);
   }
@@ -27,4 +27,32 @@ export class UserRepository extends BaseRepository implements IUserRepository {
    async updatePasswordById(userId: string, newPassword: string): Promise<void> {
     await UserModel.updateOne({ _id: userId }, { $set: { password: newPassword } });
   }
+
+  async updateSubscriptionByEmail(email: string, subscriptionData: ISubscription): Promise<IUser | null> {
+   return UserModel.findOneAndUpdate(
+   {email},
+    {$set:{subscription:subscriptionData}},
+    {new:true}
+   ) 
+  }
+
+    async updateSubscriptionById(userId: string, subscriptionData: ISubscription): Promise<IUser | null> {
+    return UserModel.findByIdAndUpdate(
+      userId,
+      { $set: { subscription: subscriptionData } },
+      { new: true }
+    );
+  }
+
+   async findByStripeCustomerId(customerId:string):Promise<IUser|null> {
+    return UserModel.findOne({ stripeCustomerId: customerId }).exec();
+  }
 }
+
+
+/*await userRepository.updateSubscriptionByEmail(customerEmail, {
+  id: subscription.id,
+  status: subscription.status,
+  priceId: subscription.items.data[0].price.id,
+  current_period_end: new Date(subscription.current_period_end * 1000),
+}); */

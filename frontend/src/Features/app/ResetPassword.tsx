@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { forgotPasswordRequest, resetPassword } from "@/redux/slices/authSlice";
+// import { forgotPasswordRequest, resetPassword } from "@/redux/slices/authSlice";
 import  { forgotPasswordApi, resetPasswordApi } from "@/Services/auth.api";
 import { AuthMessages } from "@/utils/Constants";
 

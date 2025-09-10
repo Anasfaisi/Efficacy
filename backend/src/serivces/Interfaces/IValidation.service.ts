@@ -4,7 +4,6 @@ export interface IValidationService {
     email: string;
     password: string;
     role?: string;
-    endpoint: "admin" | "user" | "mentor";
   }): void;
 
   validateRegisterInput(params: {

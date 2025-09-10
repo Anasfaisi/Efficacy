@@ -5,6 +5,7 @@ import { inject } from "inversify";
 import code from "@/types/http-status.enum"
 import { IAuthService } from "@/serivces/Interfaces/IAuth.service";
 import { AuthMessages } from "@/types/response-messages.types";
+import { OtpVerificationRequestDto, RegisterRequestDto } from "@/Dto/requestDto";
 
 export class MentorController {
   constructor(
@@ -12,24 +13,51 @@ export class MentorController {
     
   ) {}
 
-  async register(req: Request, res: Response) {
+   async registerInit(req: Request, res: Response) {
     try {
-      const { email, password, name, role } = req.body;
-      const result = await this._authService.registerUser({
-        email,
-        password,
-        name,
-        role,
+      const dto = new RegisterRequestDto(
+        req.body.name,
+        req.body.email,
+        req.body.password,
+        req.body.role
+      );
+      const result = await this._authService.registerInit({
+        name: dto.name,
+        email: dto.email,
+        password: dto.password,
+        role: dto.role,
       });
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-      });
-      res.json({ accessToken: result.accessToken, user: result.user });
+      res.status(code.OK).json({ ...result, message:AuthMessages.OtpSuccess  });
     } catch (error: any) {
       res.status(code.BAD_REQUEST).json({ message: error.message });
+      console.log(error);
     }
   }
+
+   async registerVerify(req: Request, res: Response) {
+      try {
+        console.log("it is reached in verify otp");
+        const dto = new OtpVerificationRequestDto(req.body.email, req.body.otp);
+        const {accessToken,refreshToken,user} = await this._authService.registerVerify(dto.email, dto.otp);
+  
+          res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: true,
+        });
+        res.cookie("accessToken",accessToken,{
+          httpOnly:true,
+          secure:true
+        })
+        const result={user:user}
+        
+        res.status(200).json(result);
+      } catch (err: any) {
+        res
+          .status(400)
+          .json({ message: err.message || AuthMessages.OtpFailed });
+        console.log(err);
+      }
+    }
 
   async login(req: Request, res: Response) {
     try {
@@ -43,7 +71,13 @@ export class MentorController {
         secure: true,
       });
 
-      res.json({ accessToken: result.accessToken, user: result.user });
+      res.cookie("accessToken",result.accessToken,{
+        httpOnly:true,
+        secure:true
+      }
+      )
+
+      res.json({ user: result.user });
     } catch (error: any) {
       res.status(code.UNAUTHORIZED).json({ message: error.message });
     }
@@ -52,21 +86,26 @@ export class MentorController {
   async googleAuth(req: Request, res: Response) {
     try {
       const { googleToken, role } = req.body;
-     
-      const result = await this._authService.loginWithGoogle(googleToken, role);
 
+      const result = await this._authService.loginWithGoogle(googleToken, role);
       console.log("Google login result:", result);
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         secure: true,
       });
-      res.json({ accessToken: result.accessToken, user: result.user });
+      res.cookie("accessToken", result.accessToken, {
+        httpOnly: true,
+        secure: true,
+      });
+      
+      res
+        .status(code.OK)
+        .json({  user: result.user });
     } catch (error: any) {
       console.error(error);
       res.status(code.UNAUTHORIZED).json({ message: error.message });
     }
   }
-
   async logout(req: Request, res: Response) {
     try {
       console.log("at the mentor logout route", req.cookies);

@@ -5,6 +5,7 @@ import { TYPES } from "@/types";
 import code from "@/types/http-status.enum";
 import { IAuthService } from "@/serivces/Interfaces/IAuth.service";
 import { AuthMessages } from "@/types/response-messages.types";
+import { LoginRequestDto } from "@/Dto/requestDto";
 
 @injectable()
 export class AdminController {
@@ -13,57 +14,80 @@ export class AdminController {
   
   ) {}
 
-  async adminLogin(req: Request, res: Response) {
+  async login(req: Request, res: Response) {
     try {
-      const { email, password, role } = req.body;
-    
-      const result = await this._authService.login(email, password,role);
-      res.cookie("refreshToken", result.refreshToken, {
+      const dto = new LoginRequestDto(
+        req.body.email,
+        req.body.password,
+        req.body.role
+      );
+
+      const responseDto = await this._authService.login(
+        dto.email,
+        dto.password,
+        dto.role
+      );
+
+      res.cookie("refreshToken", responseDto.refreshToken, {
         httpOnly: true,
         secure: true,
       });
-      res.json({ accessToken: result.accessToken, user: result.user });
+      res.cookie("accessToken",responseDto.accessToken,{
+        httpOnly:true,
+        secure:true
+      })
+      res.status(code.OK).json(responseDto.toJSON());
     } catch (error: any) {
       res.status(code.UNAUTHORIZED).json({ message: error.message });
     }
   }
 
-  async refreshAdminToken(req: Request, res: Response) {
+async refreshTokenHandler(req:Request,res:Response){
+try {
+  const token  = req.cookies.refreshToken;
+  if(!token){
+    throw new Error("No refresh token provided")
+  }
+  const {accessToken,refreshToken}=await this._authService.refreshToken(token);
+  
+  res.cookie("accessToken",accessToken,{
+    httpOnly:true,
+    secure:true,
+    sameSite:"strict",
+  })
+
+  res.cookie("refreshToken",refreshToken,{
+    httpOnly:true,
+    secure:true,
+    sameSite:"strict",
+  })
+
+   res.json({success:true})
+} catch (error:any) {
+   res.status(code.UNAUTHORIZED).json({message:error.message})
+}
+}
+
+  async logout(req: Request, res: Response) {
     try {
-      const refreshToken = req.cookies.refreshToken;
-      if (!refreshToken) {
-        throw new Error(AuthMessages.InvalidRefreshToken);
-      }
-      const result = await this._authService.refreshToken(refreshToken, "admin");
-      res.json({ accessToken: result.accessToken });
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+      
+      res.status(code.OK).json(AuthMessages.LogoutSuccess);
     } catch (error: any) {
-      res.status(code.UNAUTHORIZED).json({ message: error.message });
+      console.error("Logout error:", error);
+      res.status(code.INTERNAL_SERVER_ERROR).json(AuthMessages.LogoutFailed);
     }
-  }
-
-async adminLogout(req: Request, res: Response) {
-  try {
-    
-    console.log("Logout controller reached");
-    const refreshToken = req.cookies.refreshToken;
-
-    if (!refreshToken) {
-      return res.status(code.NO_CONTENT).send(); 
-    }
-
-    await this._authService.logout(refreshToken);
-
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-
-    res.status(code.OK).json(AuthMessages.LogoutSuccess);
-  } catch (error: any) {
-    console.error("Logout error:", error.message);
-    res.status(code.INTERNAL_SERVER_ERROR).json(AuthMessages.LogoutFailed);
   }
 }
 
-}
+
+

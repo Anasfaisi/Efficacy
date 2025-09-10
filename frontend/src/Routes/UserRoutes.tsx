@@ -1,10 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
-import Register from '../Features/users/Register';
-import Home from '../Features/users/Home';
+import Register from '@/Features/users/pages/Register';
+import Home from '../Features/users/pages/Home';
 import { Navigate } from 'react-router-dom';
 import { logout } from '@/redux/slices/authSlice';
 import { useAppDispatch } from '@/redux/hooks';
 import { logoutApi } from '@/Services/auth.api';
+import SuccessPage from '@/Features/users/payment/SuccessPage';
+import CancelPage from '@/Features/users/payment/CancelPage';
 
 
 const Logout: React.FC = async() => {
@@ -21,6 +23,8 @@ const UserRoutes: React.FC = () => {
     <Routes>
       <Route path="home" element={<Home />} />
       <Route path="logout" element={<Logout />} />
+      <Route path="success" element = {<SuccessPage />} />
+      <Route path="failed" element = {<CancelPage />} />
     </Routes>
   );
 };

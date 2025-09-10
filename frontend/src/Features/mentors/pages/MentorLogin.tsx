@@ -1,67 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { registerInit } from "../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import {   setCredentials } from "@/redux/slices/authSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "@/types/authSchema";
-import type { RegisterFormData } from "@/types/authSchema";
+import { loginFormSchema } from "@/types/authSchema";
+import { useForm } from "react-hook-form";
 
-const MentorRegister: React.FC = () => {
+import { GoogleLogin } from "@react-oauth/google";
+import { tr } from "zod/v4/locales";
+import { googleLoginApi, loginApi } from "@/Services/auth.api";
+
+const MentorLogin: React.FC = () => {
+  const [googleError, setGoogleError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, error, accessToken } = useAppSelector(
+  const { isLoading, error,user} = useAppSelector(
     (state) => state.auth
   );
-  const navigate = useNavigate();
-
+  useEffect(() => {
+    if (user?.role) {
+      let endPoint = "/home";
+      if (user.role === "admin") endPoint = "/admin/dashboard";
+      if (user.role === "mentor") endPoint = "/mentor/dashboard";
+      navigate(endPoint);
+    }
+  }, [navigate,user]);
+ 
   const {
     register: formRegister,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<loginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
     mode: "onChange",
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
-    const { name, email, password } = data;
-    const result = await dispatch(
-      registerInit({ name, email, password, role: "mentor" ,tempUserId:""})
-    );
-    console.log(result, "from result in mentor login");
-    if (registerInit.fulfilled.match(result)) {
-      navigate("/mentor/dashboard");
+  const onSubmit = async (data: loginFormSchema) => {
+     const user = await loginApi({ ...data, role: "mentor" });
+       if (user) {
+         dispatch(setCredentials({ user }));
+         navigate("/home");
+       }
+  };
+
+ const handleGoogleSuccess = async (credentialResponse: any) => {
+    setGoogleError(null);
+    if (credentialResponse.credential) {
+      let result = await googleLoginApi  (credentialResponse.credential, "user");
+      dispatch(setCredentials({ user: result.user }));
+     
+    } else {
+      setGoogleError("No Google credentials received");
     }
   };
 
+  const handleGoogleError = () => {
+    setGoogleError("Google authentication failed. Please try again.");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black-200">
+    <div className="min-h-screen flex items-center justify-center ">
       <div className={cn("w-full max-w-md p-6 bg-white rounded-xl shadow-lg")}>
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-          {" "}
-          Create your Mentor Account{" "}
+          Welcome Back Mentor
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              {...formRegister("name")}
-              placeholder="Enter your name"
-              className={cn(
-                "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent",
-                errors.name && "border-red-500"
-              )}
-              required
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
-          </div>
+          {googleError && (
+            <p className="text-red-500 text-sm text-center mt-2">
+              {googleError}
+            </p>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -102,27 +113,6 @@ const MentorRegister: React.FC = () => {
               </p>
             )}
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              {...formRegister("confirmPassword")}
-              placeholder="Confirm your password"
-              className={cn(
-                "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent",
-                errors.confirmPassword && "border-red-500"
-              )}
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-
           <button
             type="submit"
             className={cn(
@@ -131,22 +121,29 @@ const MentorRegister: React.FC = () => {
             )}
             disabled={isLoading}
           >
-            {isLoading ? "Registering..." : "Sign up"}
+            {isLoading ? "Logging in ..." : "Log in"}
           </button>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
           <p className="text-sm text-gray-500 text-center">
-            Already have an account?{" "}
+            Don’t have an account?{" "}
             <Link
-              to="/mentor/login"
+              to="/mentor/register"
               className="hover:text-gray-700 hover:underline"
             >
-              Mentor Login
+              Mentor Sign up
             </Link>
+          </p>
+
+          <p>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
           </p>
         </form>
       </div>
     </div>
   );
 };
-
-export default MentorRegister;
+export default MentorLogin;

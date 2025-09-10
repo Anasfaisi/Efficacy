@@ -10,6 +10,6 @@ export interface ITokenService {
   verifyAccessToken(token: string): { id: string; role: string; email: string };
   verifyRefreshToken(refreshToken: string): { id: string; role: string };
   generatePasswordResetToken(userId: Types.ObjectId):  string 
-    verifyPasswordResetToken(token: string):  JwtPayload;
+  verifyPasswordResetToken(token: string):  JwtPayload;
 
 }

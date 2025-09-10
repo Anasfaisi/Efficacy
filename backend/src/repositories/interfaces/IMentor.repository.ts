@@ -1,5 +1,7 @@
+import { IMentor } from "@/models/Mentor";
+
 export interface IMentorRepository {
-  findByEmail(email: string): Promise<any>;
-  findById(id: string): Promise<any>;
-  createUser(data: { email: string; password: string; name: string; role: string }): Promise<any>;
+  findByEmail(email: string): Promise<IMentor|null>;
+  findById(id: string): Promise<IMentor|null>;
+  createUser(data: { email: string; password: string; name: string; role: string }): Promise<IMentor>;
 }

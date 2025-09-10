@@ -11,7 +11,7 @@ export function OTPPage() {
   const [timer, setTimer] = useState(30); // 60 seconds countdown
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { tempEmail, isLoading } = useAppSelector((state) => state.auth);
+  const { tempEmail, isLoading ,role} = useAppSelector((state) => state.auth);
 
   // Countdown timer logic
   useEffect(() => {
@@ -21,7 +21,7 @@ export function OTPPage() {
   }, [timer]);
 
   const handleVerify = async () => {
-    const result = await verifyOtpApi(tempEmail, otp);
+    const result = await verifyOtpApi(tempEmail, otp,role);
     if (result) {
       dispatch(setCredentials( result ));
       navigate("/home");

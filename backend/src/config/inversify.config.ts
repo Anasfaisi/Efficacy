@@ -13,12 +13,15 @@ import { MentorController } from "@/controllers/mentor.controller";
 import { GoogleVerificationService } from "@/serivces/google-verification.service";
 import { UnverifiedUserRepository } from "@/repositories/unverified-user.repository";
 import { OtpService } from "@/serivces/otp.service";
+import { PaymentService } from "@/serivces/payment.service";
+import { PaymentController } from "@/controllers/payment.controller";
 
 export const container = new Container();
 
 container.bind<AdminController>(TYPES.AdminController).to(AdminController);
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<MentorController>(TYPES.MentorController).to(MentorController);
+container.bind<PaymentController>(TYPES.PaymentController).to(PaymentController)
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -29,6 +32,7 @@ container
 container
   .bind<GoogleVerificationService>(TYPES.GoogleVerificationService)
   .to(GoogleVerificationService);
+container.bind<PaymentService>(TYPES.PaymentService).to(PaymentService)
 
 container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<AdminRepository>(TYPES.AdminRepository).to(AdminRepository);

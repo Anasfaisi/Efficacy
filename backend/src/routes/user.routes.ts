@@ -15,9 +15,9 @@ export default function authRoutes(userController: UserController) {
 
   router.post("/register/init",userController.registerInit.bind(userController));
   router.post("/register/verify",userController.registerVerify.bind(userController));
-  router.post("/register/resend-otp", userController.resendOtp.bind(userController))
+  router.post("/register/resend-otp", userController.resendOtp.bind(userController));
 
-  router.post("/forgot-password/init",userController.forgotPassword.bind(userController))
-  router.post("/forgot-password/verify",userController.resetPassword.bind(userController))
+  router.post("/forgot-password/init",userController.forgotPassword.bind(userController));
+  router.post("/forgot-password/verify",userController.resetPassword.bind(userController));
   return router;
 }

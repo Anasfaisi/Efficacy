@@ -2,7 +2,7 @@ import { BaseRepository } from './base.repository';
 import AdminModel, { IAdmin } from '../models/Admin';
 import { IAdminRepository } from './interfaces/IAdmin.repository';
 
-export class AdminRepository extends BaseRepository implements IAdminRepository {
+export class AdminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
   constructor() {
     super(AdminModel);
   }
@@ -18,8 +18,6 @@ export class AdminRepository extends BaseRepository implements IAdminRepository 
     return this.create(data);
   }
 
-  async updateRefreshToken(id: string, refreshToken: string | null): Promise<void> {
-    await this.updateOne(id, { refreshToken });
-  }
+
   
 }

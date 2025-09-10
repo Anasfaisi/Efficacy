@@ -36,7 +36,7 @@ export const logoutApi = async():Promise<{message:string}>=>{
    }
 }
 
-export const registerInitApi = async (credentials:RegisterCredentials):Promise<{tempEmail:string}>=>{
+export const registerInitApi = async (credentials:RegisterCredentials):Promise<{tempEmail:string,role:string}>=>{
 try {
      const endpoint =credentials?.role === "mentor" ? "/mentor/register/init" : "/register/init";
     const response  = await api.post(endpoint,credentials)
@@ -49,9 +49,11 @@ throw error
 }    
 }
 
-export const verifyOtpApi = async(email:string|null,otp:string):Promise<{user:User}>=>{
+export const verifyOtpApi = async(email:string|null,otp:string,role:string|null):Promise<{user:User}>=>{
     try {
-    const response = await api.post("/register/verify",{email,otp });
+     const endpoint = role === "mentor" ? "/mentor/register/verify" : "/register/verify";
+
+    const response = await api.post(endpoint,{email,otp });
     return response.data
 } catch (error:unknown) {
       if(error instanceof AxiosError){
@@ -106,6 +108,7 @@ export const googleLoginApi = async ( googleToken: string,role: "user" | "mentor
   try {
     const endpoint = role === "mentor" ? "/mentor/google-login" : "/google-login";
   const res = await api.post(endpoint, { googleToken, role });
+  console.log(res,"res")
   return res.data; 
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
