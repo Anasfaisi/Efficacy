@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from '../redux/store';
-import { updateToken } from '../redux/slices/authSlice';
+// import { updateToken } from '../redux/slices/authSlice';
 import UserRoutes from './UserRoutes';
 import AdminRoutes from './AdminRoutes';
 import AdminLogin from '../Features/admin/pages/AdminLogin';

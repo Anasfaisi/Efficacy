@@ -1,16 +1,24 @@
 import { z } from "zod";
 
-export type Role = "admin" | "mentor" | "user"; 
+export type Role = "admin" | "mentor" | "user";
+
+export interface Subscription {
+  id: string;
+  status: "active" | "inactive" | "canceled";
+  plan?: string;
+  current_period_end?: Date;
+}
 export interface User {
   id: string;
   email: string;
   name: string;
   role: Role;
+  subscription?: Subscription | null;
 }
 
 export interface AuthState {
-  role: string|null
-  accessToken: null,
+  role: string | null;
+  accessToken: null;
   user: User | null;
   isLoading: boolean;
   error: string | null | undefined;
@@ -21,7 +29,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   name: string;
-    role: Role;
+  role: Role;
 }
 export interface LoginCredentials {
   email: string;
@@ -30,7 +38,7 @@ export interface LoginCredentials {
 }
 
 export interface LogoutCredentials {
-  role:Role;
+  role: Role;
 }
 
 export interface GooglecredentialUser {

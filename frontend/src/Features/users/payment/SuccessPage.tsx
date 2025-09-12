@@ -1,8 +1,26 @@
 import { CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useAppDispatch } from "@/redux/hooks";
+import { useEffect } from "react";
+import { fetchCurrentUser } from "@/Services/auth.api";
+import { setCredentials } from "@/redux/slices/authSlice";
 
 const SuccessPage = () => {
+   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const refreshUser = async () => {
+      try {
+        const user = await fetchCurrentUser(); // call backend /me
+        dispatch(setCredentials({ user }));   // update redux with new user + subscription
+      } catch (err) {
+        console.error("Failed to refresh user after payment", err);
+      }
+    };
+
+    refreshUser();
+  }, [dispatch]);
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
       <motion.div

@@ -50,7 +50,7 @@ export class PaymentService implements IPaymentService {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-    console.log("event created with webhook", event, "type =", event.type);
+
     if (!event) {
       throw new Error("webhook signature verification failed");
     }
@@ -62,8 +62,7 @@ export class PaymentService implements IPaymentService {
 
       const subscription =await this._stripe.subscriptions.retrieve(subscriptionId);
 
-        console.log("===>subscription",subscription,"subscription================>")
-         console.log("Period end:", subscription.current_period_end);
+  
          const startDate = new Date();
 const endDate = new Date(startDate);
 endDate.setFullYear(endDate.getFullYear() + 1);

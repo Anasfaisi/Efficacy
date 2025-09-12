@@ -9,6 +9,16 @@ mentor: "/mentor/login",
 user: "/login"
 }
 
+export const fetchCurrentUser = async ():Promise<User> =>{
+  try {
+    const res = await api.get("/me")
+    return res.data.user as User
+  } catch (error) {
+    console.error("Failed to fetch the current user",error)
+    throw new Error("unable to fetch user data")
+  }
+}
+
 export const loginApi = async (credentials:LoginCredentials):Promise<User>=>{
 const role : Role=(credentials.role??"user")as Role;
 const endpoint = ENDPOINTS[role]

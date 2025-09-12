@@ -7,6 +7,7 @@ export default function paymentRoutes (PaymentController:PaymentController){
     router.post("/checkout",PaymentController.createCheckoutSession.bind(PaymentController))
     router.get('/verify/:sessionId',PaymentController.verifyCheckoutSession.bind(PaymentController))
     router.post("/webhook",PaymentController.handleWebhook.bind(PaymentController))
+    
 
     return router
 }
