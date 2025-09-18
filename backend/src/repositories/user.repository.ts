@@ -1,6 +1,6 @@
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "./interfaces/IUser.repository";
-import UserModel, { ISubscription, IUser } from "../models/User";
+import UserModel, { ISubscription, IUser } from "../models/User.model";
 import { hashPassword } from "@/utils";
 
 export class UserRepository extends BaseRepository<IUser> implements IUserRepository {

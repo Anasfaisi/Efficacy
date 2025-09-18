@@ -1,5 +1,5 @@
 import { BaseRepository } from './base.repository';
-import MentorModel, {IMentor} from "@/models/Mentor"
+import MentorModel, {IMentor} from "@/models/Mentor.model"
 import { IMentorRepository } from './interfaces/IMentor.repository';
 
 

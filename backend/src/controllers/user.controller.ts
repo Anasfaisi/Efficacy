@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../serivces/auth.service";
-import { TYPES } from "@/types";
+import { TYPES } from "@/types/symbol-key";
 import { inject } from "inversify";
 import code from "@/types/http-status.enum";
 import "@/config/env.config";
@@ -29,6 +29,7 @@ export class UserController {
         httpOnly: true,
         secure: true,
       });
+      
       res.cookie("accessToken",responseDto.accessToken,{
         httpOnly:true,
         secure:true

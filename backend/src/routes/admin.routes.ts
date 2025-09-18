@@ -1,6 +1,6 @@
 import express, { RequestHandler } from 'express';
 import { AdminController } from '../controllers/admin.controller';
-import { TYPES } from '@/types';
+import { TYPES } from '@/types/symbol-key';
 import { container } from '@/config/inversify.config';
 import { AdminAccessMiddleware } from '@/middleware/admin-auth.middleware';
 

@@ -1,3 +1,4 @@
+import { IUser } from "@/models/User.model";
 import { Role } from "@/types/role.types";
 
 //Login
@@ -45,7 +46,6 @@ export class ForgotPasswordRequestDto {
 
 
 //reset password
-
 export class ResetPasswordrequestDto{
   constructor(
     public readonly token:string,
@@ -71,7 +71,6 @@ export class CreateCheckoutDto {
 }
 
 //request payment dto
-// Dto/requestDto/RequestPayment.dto.ts
 export class RequestPaymentDto {
   constructor(
     public readonly userId: string,
@@ -80,3 +79,24 @@ export class RequestPaymentDto {
     public readonly cancelUrl: string
   ) {}
 }
+
+// DTO forincoming messages
+export class SendMessageDto{
+  constructor(
+    public readonly roomId:string,
+    public readonly senderId :string,
+    public readonly senderName:string,
+    public readonly message : String,
+    public readonly createdAt : Date = new Date()
+  ){}
+}
+
+
+//DTO for joining Room
+export class JoinRoomDto{
+  constructor(
+    public readonly roomId :string,
+    public readonly user: IUser
+  ){}
+}
+//

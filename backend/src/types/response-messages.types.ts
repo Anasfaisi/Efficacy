@@ -5,3 +5,25 @@ export const AuthMessages = {
   OtpFailed: "OTP verification failed",
   OtpSuccess: "OTP sent to email",
 };
+
+// types for chat controller
+export interface joinRoomPayload{
+  roomId:string;
+  user:string;
+}
+
+export interface SendMessagePayload{
+  roomId:string;
+  senderId:string;
+  senderName:string;
+  message:string;
+
+}
+
+export interface ChatMessageResponse{
+  roomId:string;
+  senderId:string;
+  senderName:string;
+  message:string;
+  createdAt:Date
+}

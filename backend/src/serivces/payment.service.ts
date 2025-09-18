@@ -2,7 +2,7 @@ import "@/config/env.config";
 
 import { injectable, inject } from "inversify";
 import Stripe from "stripe";
-import { TYPES } from "@/types";
+import { TYPES } from "@/types/symbol-key";
 import { IPaymentService } from "./Interfaces/IPayment.service";
 import { RequestPaymentDto } from "@/Dto/requestDto";
 import { ResponsePaymentDto } from "@/Dto/responseDto";

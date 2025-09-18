@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import { TYPES } from "@/types";
+import { TYPES } from "@/types/symbol-key";
 import bcrypt from "bcrypt";
 import { IAuthService } from "./Interfaces/IAuth.service";
 import { IAdminRepository } from "@/repositories/interfaces/IAdmin.repository";

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { TokenService } from '../serivces/token.service';
 import { injectable, inject } from "inversify";
-import { TYPES } from "../types";
+import { TYPES } from "../types/symbol-key";
 import code from "@/types/http-status.enum"
 
 

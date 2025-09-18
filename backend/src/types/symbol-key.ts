@@ -5,16 +5,20 @@ export const TYPES = {
   GoogleVerificationService: Symbol("GooGoogleVerificationService"),
   OtpService :Symbol('OtpService'),
   PaymentService:Symbol('PaymentService'),
+  ChatService:Symbol('ChatService'),
+  SocketService:Symbol('SockerService'),
 
   AdminRepository: Symbol("AdminRepository"),
   UserRepository: Symbol("UserRepository"),
   MentorRepository: Symbol("MentorRepository"),
   UnverifiedUserRepository :Symbol("UnverifiedUserRepository"),
+  ChatMessageRepository:Symbol("ChatRepository"),
 
   AdminController: Symbol("AdminController"),
   UserController: Symbol("UserController"),
   MentorController: Symbol("MentorController"),
   PaymentController: Symbol("paymentController"),
+  ChatController:Symbol("chatController"),
 
   AdminAccessMiddleware: Symbol("AdminAccessMiddleware"),
 };

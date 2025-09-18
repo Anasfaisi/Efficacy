@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../serivces/auth.service";
-import { TYPES } from "@/types";
+import { TYPES } from "@/types/symbol-key";
 import { inject } from "inversify";
 import code from "@/types/http-status.enum"
 import { IAuthService } from "@/serivces/Interfaces/IAuth.service";

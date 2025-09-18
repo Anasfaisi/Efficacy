@@ -1,4 +1,4 @@
-import { IMentor } from "@/models/Mentor";
+import { IMentor } from "@/models/Mentor.model";
 
 export interface IMentorRepository {
   findByEmail(email: string): Promise<IMentor|null>;
