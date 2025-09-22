@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import OtpInput from "react-otp-input";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setCredentials, } from "@/redux/slices/authSlice";
-import { resendOtpApi, verifyOtpApi } from "@/Services/auth.api";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import OtpInput from 'react-otp-input';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setCredentials } from '@/redux/slices/authSlice';
+import { resendOtpApi, verifyOtpApi } from '@/Services/auth.api';
 // import { verifyOtp, resendOtp } from "@/redux/slices/authSlice";
 
 export function OTPPage() {
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(30); // 60 seconds countdown
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { tempEmail, isLoading ,role} = useAppSelector((state) => state.auth);
+  const { tempEmail, isLoading, role } = useAppSelector((state) => state.auth);
 
   // Countdown timer logic
   useEffect(() => {
@@ -21,31 +21,31 @@ export function OTPPage() {
   }, [timer]);
 
   const handleVerify = async () => {
-    const result = await verifyOtpApi(tempEmail, otp,role);
+    const result = await verifyOtpApi(tempEmail, otp, role);
     if (result) {
-      dispatch(setCredentials( result ));
-      navigate("/home");
+      dispatch(setCredentials(result));
+      navigate('/home');
     }
   };
 
   const handleResend = async () => {
     const result = await resendOtpApi(tempEmail);
-    if(result){
-    setTimer(30);
-    setOtp("");
-  }
+    if (result) {
+      setTimer(30);
+      setOtp('');
+    }
   };
 
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "80vh",
-        textAlign: "center",
-        gap: "1rem",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '80vh',
+        textAlign: 'center',
+        gap: '1rem',
       }}
     >
       <h2>Verify your OTP</h2>
@@ -62,50 +62,50 @@ export function OTPPage() {
           <input
             {...props}
             style={{
-              width: "3rem",
-              height: "3rem",
-              fontSize: "1.5rem",
-              textAlign: "center",
-              margin: "0 0.25rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              outline: "none",
-              caretColor: "#1976d2", // blue blinking cursor
+              width: '3rem',
+              height: '3rem',
+              fontSize: '1.5rem',
+              textAlign: 'center',
+              margin: '0 0.25rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              outline: 'none',
+              caretColor: '#1976d2', // blue blinking cursor
             }}
           />
         )}
-        containerStyle={{ justifyContent: "center" }}
+        containerStyle={{ justifyContent: 'center' }}
       />
 
       <button
         onClick={handleVerify}
         disabled={isLoading || otp.length < 6}
         style={{
-          marginTop: "1rem",
-          padding: "0.5rem 1.5rem",
-          fontSize: "1rem",
-          cursor: "pointer",
-          backgroundColor: "#1976d2",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
+          marginTop: '1rem',
+          padding: '0.5rem 1.5rem',
+          fontSize: '1rem',
+          cursor: 'pointer',
+          backgroundColor: '#1976d2',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
         }}
       >
-        {isLoading ? "Verifying..." : "Verify"}
+        {isLoading ? 'Verifying...' : 'Verify'}
       </button>
 
-      <div style={{ marginTop: "1rem", fontSize: "0.9rem" }}>
+      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
         {timer > 0 ? (
-          <span>Resend OTP in 00:{timer.toString().padStart(2, "0")}</span>
+          <span>Resend OTP in 00:{timer.toString().padStart(2, '0')}</span>
         ) : (
           <button
             onClick={handleResend}
             style={{
-              background: "none",
-              border: "none",
-              color: "#1976d2",
-              cursor: "pointer",
-              textDecoration: "underline",
+              background: 'none',
+              border: 'none',
+              color: '#1976d2',
+              cursor: 'pointer',
+              textDecoration: 'underline',
             }}
           >
             Resend OTP

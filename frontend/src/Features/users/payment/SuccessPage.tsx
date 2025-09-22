@@ -1,21 +1,21 @@
-import { CheckCircle } from "lucide-react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { useAppDispatch } from "@/redux/hooks";
-import { useEffect } from "react";
-import { fetchCurrentUser } from "@/Services/auth.api";
-import { setCredentials } from "@/redux/slices/authSlice";
+import { CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useAppDispatch } from '@/redux/hooks';
+import { useEffect } from 'react';
+import { fetchCurrentUser } from '@/Services/auth.api';
+import { setCredentials } from '@/redux/slices/authSlice';
 
 const SuccessPage = () => {
-   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const refreshUser = async () => {
       try {
         const user = await fetchCurrentUser(); // call backend /me
-        dispatch(setCredentials({ user }));   // update redux with new user + subscription
+        dispatch(setCredentials({ user })); // update redux with new user + subscription
       } catch (err) {
-        console.error("Failed to refresh user after payment", err);
+        console.error('Failed to refresh user after payment', err);
       }
     };
 
@@ -34,7 +34,8 @@ const SuccessPage = () => {
           Payment Successful 🎉
         </h1>
         <p className="text-gray-600 text-lg mb-8">
-          Thank you for subscribing! Your account has been upgraded successfully. 🚀
+          Thank you for subscribing! Your account has been upgraded
+          successfully. 🚀
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

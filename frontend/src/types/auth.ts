@@ -1,10 +1,10 @@
-import { z } from "zod";
+// import { z } from 'zod';
 
-export type Role = "admin" | "mentor" | "user";
+export type Role = 'admin' | 'mentor' | 'user';
 
 export interface Subscription {
   id: string;
-  status: "active" | "inactive" | "canceled";
+  status: 'active' | 'inactive' | 'canceled';
   plan?: string;
   current_period_end?: Date;
 }
@@ -51,4 +51,8 @@ export interface GooglecredentialUser {
 export interface GoogleLoginArg {
   googleToken: string;
   role: Role;
+}
+
+export interface CredentialResponse {
+  credential?: string;
 }

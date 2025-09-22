@@ -14,9 +14,9 @@ export interface joinRoomPayload{
 
 export interface SendMessagePayload{
   roomId:string;
+  message:string;
   senderId:string;
   senderName:string;
-  message:string;
 
 }
 

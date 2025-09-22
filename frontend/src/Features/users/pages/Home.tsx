@@ -1,15 +1,11 @@
 // client/src/pages/Home.tsx
 import React from 'react';
 import { useAppSelector } from '../../../redux/hooks';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import CheckoutForm from '../payment/CheckoutForm';
 
-
 const Home: React.FC = () => {
-  const { user} = useAppSelector((state) => state.auth);
- 
-
-
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
@@ -17,18 +13,26 @@ const Home: React.FC = () => {
         <h2 className="text-4xl font-bold text-gray-800 mb-4">Home</h2>
         {user ? (
           <>
-            <p className="text-lg text-gray-700">Welcome, {user.name || user.email}!</p>
+            <p className="text-lg text-gray-700">
+              Welcome, {user.name || user.email}!
+            </p>
             <div>
-            <CheckoutForm />
-          </div>
-             <Link
-          to="/logout"
-          className="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-        >
-          
-          Logout 
-        </Link>
-          
+              <CheckoutForm />
+            </div>
+
+            <Link
+              to="/chat"
+              className="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+            >
+              Go to Chat
+            </Link>
+
+            <Link
+              to="/logout"
+              className="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            >
+              Logout
+            </Link>
           </>
         ) : (
           <p className="text-red-500">No authentication data available.</p>

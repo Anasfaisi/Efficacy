@@ -19,6 +19,7 @@ export const TYPES = {
   MentorController: Symbol("MentorController"),
   PaymentController: Symbol("paymentController"),
   ChatController:Symbol("chatController"),
+  SocketController:Symbol("SocketController"),
 
   AdminAccessMiddleware: Symbol("AdminAccessMiddleware"),
 };

@@ -1,49 +1,32 @@
-// import { configureStore } from '@reduxjs/toolkit';
-// import authReducer from './slices/authSlice';
-
-// export const store = configureStore({
-//   reducer: {
-//     auth: authReducer,
-//   },
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware({
-//       serializableCheck: {
-//         ignoredActions: [
-//           'auth/login',
-//           'auth/checkSession',
-//           'adminAuth/adminLogin',
-//           'adminAuth/checkAdminSession',
-//         ],
-//         ignoredPaths: ['auth.error', 'adminAuth.error'],
-//       },
-//     }),
-// });
-
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
-
-// store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // localStorage
+import storage from 'redux-persist/lib/storage';
 import authReducer from './slices/authSlice';
+import chatReducer from '@/redux/slices/chatSlice';
 
-// persist config for the auth slice
 const persistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['user', 'accessToken', 'role'], // fields you want to persist
+  whitelist: ['user', 'accessToken', 'role'],
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+// ✅ Optional: Persist config for chat (if you want to keep messages)
+const chatPersistConfig = {
+  key: 'chat',
+  storage,
+  whitelist: ['messages', 'currentRoomId'], // store messages and last active room
+};
 
+const persistedChatReducer = persistReducer(chatPersistConfig, chatReducer);
 export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
+    chat: persistedChatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // simplify for persist
+      serializableCheck: false,
     }),
 });
 

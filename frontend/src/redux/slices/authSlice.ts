@@ -1,6 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { type AuthState, type User } from "@/types/auth";
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { type AuthState, type User } from '@/types/auth';
 
 const initialState: AuthState = {
   accessToken: null,
@@ -13,16 +13,13 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setCredentials: (state, action: PayloadAction<{ user: User }>) => {
       state.user = action.payload.user;
       state.isLoading = false;
       state.error = null;
-      if (state.user.subscription) {
-        state.user.subscription = state.user.subscription;
-      }
     },
     clearMessages(state) {
       state.user = null;
@@ -33,7 +30,7 @@ const authSlice = createSlice({
     },
     setTempUser: (
       state,
-      action: PayloadAction<{ email: string; role: string }>
+      action: PayloadAction<{ email: string; role: string }>,
     ) => {
       state.tempEmail = action.payload.email;
       state.role = action.payload.role;

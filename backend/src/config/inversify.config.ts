@@ -1,7 +1,7 @@
 import { UserRepository } from "@/repositories/user.repository";
 import { AdminController } from "@/controllers/admin.controller";
 import { AuthService } from "@/serivces/auth.service";
-import { TYPES } from "@/types/symbol-key";
+import { TYPES } from "@/types/inversify-key.types";
 import { Container, ContainerModule } from "inversify";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { TokenService } from "@/serivces/token.service";
@@ -18,7 +18,8 @@ import { PaymentController } from "@/controllers/payment.controller";
 import { ChatService } from "@/serivces/chat-message.service";
 import { ChatMessageRepository } from "@/repositories/chat-message.respository";
 import { ChatController } from "@/controllers/chat.controller";
-import { SocketService } from "@/serivces/socker.service";
+import { SocketService } from "@/serivces/socket.service";
+import { SocketController } from "@/controllers/socket.controller";
 
 export const container = new Container();
 
@@ -28,7 +29,7 @@ container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<MentorController>(TYPES.MentorController).to(MentorController);
 container.bind<PaymentController>(TYPES.PaymentController).to(PaymentController)
 container.bind<ChatController>(TYPES.ChatController).to(ChatController)
-
+container.bind<SocketController>(TYPES.SocketController).to(SocketController)
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -42,6 +43,7 @@ container
 container.bind<PaymentService>(TYPES.PaymentService).to(PaymentService)
 container.bind<ChatService>(TYPES.ChatService).to(ChatService)
 container.bind<SocketService>(TYPES.SocketService).to(SocketService)
+
 
 container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<AdminRepository>(TYPES.AdminRepository).to(AdminRepository);

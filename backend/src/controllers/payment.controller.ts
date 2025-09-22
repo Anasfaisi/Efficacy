@@ -1,7 +1,7 @@
 import { Request,Response } from "express";
 import { inject,injectable } from "inversify";
 import { IPaymentService } from "@/serivces/Interfaces/IPayment.service";
-import { TYPES } from "@/types/symbol-key";
+import { TYPES } from "@/types/inversify-key.types";
 import code from "@/types/http-status.enum"
 
 @injectable()

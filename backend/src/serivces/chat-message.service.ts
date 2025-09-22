@@ -2,7 +2,7 @@ import { IChatMessage } from "@/models/Chat-message.model";
 import { IChatMessageRepository } from "@/repositories/interfaces/IChat-message.repository";
 import { IChatService } from "./Interfaces/IChat-message.service";
 import { inject, injectable } from "inversify";
-import { TYPES } from "@/types/symbol-key";
+import { TYPES } from "@/types/inversify-key.types";
 @injectable()
 export class ChatService implements IChatService {
   constructor(
