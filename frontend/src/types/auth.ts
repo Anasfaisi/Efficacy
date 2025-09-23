@@ -5,7 +5,7 @@ export type Role = 'admin' | 'mentor' | 'user';
 export interface Subscription {
   id: string;
   status: 'active' | 'inactive' | 'canceled';
-  plan?: string;
+  priceId?: string;
   current_period_end?: Date;
 }
 export interface User {

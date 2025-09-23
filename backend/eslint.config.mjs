@@ -13,7 +13,7 @@ export default [
     plugins: { '@typescript-eslint': tsPlugin, prettier: prettierPlugin },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
-      'prettier/prettier': ['warn', { semi: true, singleQuote: true }],
+       'prettier/prettier': ['warn', { semi: true, singleQuote: true }],
     },
   },
 ];

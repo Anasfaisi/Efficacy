@@ -12,6 +12,7 @@ import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/Features/mentors/pages/MentorRegister';
 import { OTPPage } from '@/Features/app/OTPPage';
 import { ForgotResetPassword } from '@/Features/app/ResetPassword';
+import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute: React.FC<{
   role: 'admin' | 'user' | 'mentor';
@@ -30,6 +31,7 @@ const ProtectedRoute: React.FC<{
 
 const AppRoutes: React.FC = () => {
   return (
+    <>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -69,6 +71,18 @@ const AppRoutes: React.FC = () => {
       />
       <Route path="*" element={<Navigate to="/users/login" replace />} />
     </Routes>
+     <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
   );
 };
 

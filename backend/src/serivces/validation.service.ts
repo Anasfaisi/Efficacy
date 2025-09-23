@@ -12,7 +12,6 @@ export class ValidationService implements IValidationService{
     password: string;
     role?: string;
   }) {
-    console.log("it is reached in validationlogininput", email, role);
     if (!email || !password) {
       console.error(Error);
       throw new Error("Email and password are required");
@@ -24,7 +23,6 @@ export class ValidationService implements IValidationService{
       throw new Error("Password must be at least 6 characters");
     }
 
-    console.log("successfully validated at backend");
   }
 
   validateRegisterInput({

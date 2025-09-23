@@ -2,12 +2,9 @@
 import { LoginResponseDTO, RegisterInitResponseDto } from "@/Dto/responseDto";
 import { Role } from "@/types/role.types";
 import { Types } from "mongoose";
+import {LoginRequestDto}from "@/Dto/requestDto"
 export interface IAuthService {
-  login(
-    email: string,
-    password: string,
-    role: Role
-  ): Promise<LoginResponseDTO>;
+  login(loginDto:LoginRequestDto): Promise<LoginResponseDTO>;
 
   registerInit(params: {
     email: string;
@@ -31,7 +28,6 @@ export interface IAuthService {
     refreshToken: string,
   ): Promise<{ accessToken: string,refreshToken :string }>;
 
-  logout(refreshToken: string): Promise<void>;
 
   loginWithGoogle(
     googleToken: string,

@@ -65,7 +65,7 @@ export class PaymentService implements IPaymentService {
   
          const startDate = new Date();
 const endDate = new Date(startDate);
-endDate.setFullYear(endDate.getFullYear() + 1);
+endDate.setDate(endDate.getDate() + 7);
       await this._userRepository.updateSubscriptionByEmail(customerEmail!, {
         id: subscriptionId,
         status: subscription.status,
