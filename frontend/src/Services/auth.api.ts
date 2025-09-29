@@ -14,9 +14,12 @@ const ENDPOINTS: Record<Role, string> = {
   user: '/login',
 };
 
-export const fetchCurrentUser = async (): Promise<User> => {
+export const fetchCurrentUser = async (
+  id: string | undefined,
+): Promise<User> => {
   try {
-    const res = await api.get('/me');
+    const res = await api.get(`/me/${id}`);
+    console.log(res);
     return res.data.user as User;
   } catch (error) {
     console.error('Failed to fetch the current user', error);

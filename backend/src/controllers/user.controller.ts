@@ -36,9 +36,8 @@ export class UserController {
 
     async getCurrentUser(req: Request, res: Response) {
     try {
-      const token = req.cookies.accessToken
-      const user = await this._authService.getCurrentUser(token)
-
+      const id = req.params.id
+      const {user} = await this._authService.getCurrentUser(id)
       if (!user) {
         return res.status(code.UNAUTHORIZED).json({ message: 'User not authenticated' });
       }

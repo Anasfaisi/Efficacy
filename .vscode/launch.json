@@ -1,40 +1,34 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Chrome",
-      "request": "launch",
-      "type": "chrome",
-      "url": "http://localhost:5173/login",
-      "webRoot": "${workspaceFolder}/frontend/src/index.js"
-    },
-    {
-      "name": "Debug Backend (Node + TSX)",
+      "name": "Attach to tsx",
       "type": "node",
       "request": "launch",
-        "runtimeExecutable": "npx",
-      "args": [
-        "tsx",
-        "watch",
-        "src/index.ts"
-      ],
-        "env": {
-        "NODE_ENV": "local"
+      "restart": true,
+            "runtimeExecutable": "npx",
+      "args": ["tsx", "watch", "src/index.ts"],
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/**/*.ts"]
+    },
+    {
+      "name": "Debug Backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "args": ["tsx", "watch", "src/index.ts"],
+      "env": {
+        "NODE_ENV": "development"
       },
-       "sourceMaps": true,
-      "cwd": "${workspaceFolder}/backend",          
-     "outFiles": ["${workspaceFolder}/backend/src/**/*.ts"],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/backend/src",
+      "outFiles": ["${workspaceFolder}/backend/src/**/*.ts"],
       "restart": true,
       "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
       "autoAttachChildProcesses": true,
-       "runtimeArgs": [
-        "--inspect-brk"
-      ]
-    
+      "runtimeArgs": ["--inspect-brk"]
     }
   ]
 }

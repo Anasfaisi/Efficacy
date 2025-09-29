@@ -46,7 +46,8 @@ export class OtpVerificationResponseDto {
       id: string;
       name: string;
       email: string;
-      role: string;
+      role?: Role;
+      subscription?: subscription;
     }
   ) {}
 }
@@ -85,5 +86,17 @@ export class ResponsePaymentDto {
   constructor(
     public readonly sessionId: string,
     public readonly url: string
+  ) {}
+}
+
+export class CurrentUserResDto {
+  constructor(
+    public readonly user: {
+      id: string;
+      name: string;
+      email: string;
+      role?: string;
+      subscription?: subscription;
+    }
   ) {}
 }

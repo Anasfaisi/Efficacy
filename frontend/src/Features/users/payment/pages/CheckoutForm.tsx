@@ -85,9 +85,11 @@ const SubscriptionForm = () => {
 
   return (
     <>
-      <div className={`flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-50 p-6
-    ${user?.subscription?.status !== "active" ? "hidden" : ""}`}>
-        {user?.subscription?.status ==="active" && (
+      <div
+        className={`flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-50 p-6
+    ${user?.subscription?.status !== 'active' ? 'hidden' : ''}`}
+      >
+        {user?.subscription?.status === 'active' && (
           <SubscriptionInfo subscription={user.subscription} />
         )}
       </div>

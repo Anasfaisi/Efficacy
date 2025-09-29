@@ -99,4 +99,10 @@ export class JoinRoomDto{
     public readonly user: IUser
   ){}
 }
-//
+
+
+export class CurrentUserReqDto{
+  constructor(
+    public readonly id:string
+  ){}
+}

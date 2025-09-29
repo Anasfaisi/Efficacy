@@ -13,13 +13,13 @@ import { IValidationService } from "./Interfaces/IValidation.service";
 import { IGoogleVerificationService } from "./Interfaces/IGoogle-verifcation.service";
 import { Repositories, Role } from "@/types/role.types";
 import {
+  CurrentUserResDto,
   LoginResponseDTO,
   OtpVerificationResponseDto,
   RegisterInitResponseDto,
 } from "@/Dto/responseDto";
-import { LoginRequestDto } from "@/Dto/requestDto";
-import { Resolver } from "dns";
-import { JWT } from "google-auth-library";
+import { CurrentUserReqDto, LoginRequestDto } from "@/Dto/requestDto";
+
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -117,7 +117,21 @@ export class AuthService implements IAuthService {
     });
   }
 
+ async getCurrentUser(id: string) {
+      const reqDto = new CurrentUserReqDto(id)
+      const user = await this._userRepository.findById(reqDto.id)
+      const resDto = new CurrentUserResDto({
+        id:user?.id!,
+        name:user?.name!,
+        email:user?.email!,
+        role:user?.role!,
+        subscription:user?.subscription!
 
+      })
+      console.log(resDto,2222);
+      
+      return resDto
+  }
   
 
   async registerInit({
@@ -167,6 +181,8 @@ export class AuthService implements IAuthService {
       unverifiedUser.role
     );
   }
+
+
 
   async registerVerify(email: string, otp: string) {
     const unverifiedUser =
@@ -348,6 +364,9 @@ export class AuthService implements IAuthService {
     };
   }
 
+
+   
+
   /*======= admin auth ===========*/
 
   async AdminLogin(email: string, password: string, role: Role) {
@@ -383,18 +402,7 @@ export class AuthService implements IAuthService {
     });
   }
 
-  async getCurrentUser(token: string) {
-    if (!token) throw new Error('No token provided');
 
-    try {
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!); // decode JWT
-      const user = await this._userRepository.findById(decoded.id); // fetch user from DB
-      if (!user) throw new Error('User not found');
-      return user;
-    } catch (error) {
-      throw new Error('Invalid token');
-    }
-  }
 
   /*=============== mentor Auth =======================*/
   async mentorLogin(email: string, password: string, role: Role) {

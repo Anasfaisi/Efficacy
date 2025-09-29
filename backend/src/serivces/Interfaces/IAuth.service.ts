@@ -1,5 +1,5 @@
 
-import { LoginResponseDTO, RegisterInitResponseDto } from "@/Dto/responseDto";
+import { CurrentUserResDto, LoginResponseDTO, RegisterInitResponseDto } from "@/Dto/responseDto";
 import { Role } from "@/types/role.types";
 import { Types } from "mongoose";
 import {LoginRequestDto}from "@/Dto/requestDto"
@@ -24,7 +24,9 @@ export interface IAuthService {
   }>;
 
 
-getCurrentUser(token: string): Promise<IUser>;
+getCurrentUser(id: string): Promise<CurrentUserResDto>;
+
+
   refreshToken(
     refreshToken: string,
   ): Promise<{ accessToken: string,refreshToken :string }>;
