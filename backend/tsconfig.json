@@ -5,6 +5,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
+     "sourceMap": true,        
+    "inlineSources": true,
     "esModuleInterop": true,
     "moduleResolution": "node10",
     "ignoreDeprecations": "6.0",

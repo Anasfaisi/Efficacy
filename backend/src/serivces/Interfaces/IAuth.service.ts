@@ -3,6 +3,7 @@ import { LoginResponseDTO, RegisterInitResponseDto } from "@/Dto/responseDto";
 import { Role } from "@/types/role.types";
 import { Types } from "mongoose";
 import {LoginRequestDto}from "@/Dto/requestDto"
+import { IUser } from "@/models/User.model";
 export interface IAuthService {
   login(loginDto:LoginRequestDto): Promise<LoginResponseDTO>;
 
@@ -23,7 +24,7 @@ export interface IAuthService {
   }>;
 
 
-
+getCurrentUser(token: string): Promise<IUser>;
   refreshToken(
     refreshToken: string,
   ): Promise<{ accessToken: string,refreshToken :string }>;

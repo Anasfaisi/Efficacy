@@ -1,5 +1,5 @@
 import express from "express";
-import connectDB from "./config/db";
+// import connectDB from "./config/db";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan"

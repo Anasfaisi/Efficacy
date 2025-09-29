@@ -7,8 +7,6 @@ import {Server as SocketIOServer} from "socket.io"
 
 const setUpSocket = (server:HTTPServer)=>{
     try {
-        console.log("it is reaching in the setupsocket")
-        console.log(process.env.FRONTEND_URL)
             const io = new SocketIOServer(server,{
         cors:{
             origin:process.env.FRONTEND_URL,

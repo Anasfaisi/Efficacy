@@ -16,7 +16,6 @@ export class UserController {
     
       
       const {accessToken,refreshToken,user} = await this._authService.login(req.body);
-      console.log(accessToken,refreshToken,user,"all from the user controller")
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
@@ -33,6 +32,23 @@ export class UserController {
       console.log(error)
     }
   }
+
+
+    async getCurrentUser(req: Request, res: Response) {
+    try {
+      const token = req.cookies.accessToken
+      const user = await this._authService.getCurrentUser(token)
+
+      if (!user) {
+        return res.status(code.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      }
+
+      res.status(code.OK).json({ user });
+    } catch (error: any) {
+      res.status(code.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
 
   async registerInit(req: Request, res: Response) {
     try {

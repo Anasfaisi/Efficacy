@@ -12,6 +12,7 @@ import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
   const wait = await logoutApi();
+  console.log(wait,"wair from the user routes")
   if (wait) {
     dispatch(logout());
   }

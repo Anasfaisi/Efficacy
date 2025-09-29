@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import jwt from "jsonwebtoken";
 import { TYPES } from "@/types/inversify-key.types";
 import bcrypt from "bcrypt";
 import { IAuthService } from "./Interfaces/IAuth.service";
@@ -18,6 +19,7 @@ import {
 } from "@/Dto/responseDto";
 import { LoginRequestDto } from "@/Dto/requestDto";
 import { Resolver } from "dns";
+import { JWT } from "google-auth-library";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -82,6 +84,7 @@ export class AuthService implements IAuthService {
   // }
 
   async login(loginDto : LoginRequestDto):Promise<LoginResponseDTO> {
+    debugger
     this._validationService.validateLoginInput({
       email:loginDto.email,
       password:loginDto.password,
@@ -113,6 +116,9 @@ export class AuthService implements IAuthService {
       subscription: account.subscription,
     });
   }
+
+
+  
 
   async registerInit({
     email,
@@ -377,7 +383,18 @@ export class AuthService implements IAuthService {
     });
   }
 
-  
+  async getCurrentUser(token: string) {
+    if (!token) throw new Error('No token provided');
+
+    try {
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!); // decode JWT
+      const user = await this._userRepository.findById(decoded.id); // fetch user from DB
+      if (!user) throw new Error('User not found');
+      return user;
+    } catch (error) {
+      throw new Error('Invalid token');
+    }
+  }
 
   /*=============== mentor Auth =======================*/
   async mentorLogin(email: string, password: string, role: Role) {

@@ -31,16 +31,16 @@ export const loginApi = async (
   const endpoint = ENDPOINTS[role];
 
   try {
-    console.log('sdfdsf')
+    console.log('sdfdsf');
     const res = await api.post(endpoint, credentials);
-    console.log(res.data,"res from api service ")
+    console.log(res.data, 'res from api service ');
     return res.data.user as User;
   } catch (error) {
-    console.log("error from the axioserror",error)
+    console.log('error from the axioserror', error);
     if (error instanceof AxiosError) {
       throw error.response?.data?.message || 'Login failed';
     }
-    console.log(error)
+    console.log(error);
     throw AuthMessages.LoginFailure;
   }
 };
@@ -48,10 +48,11 @@ export const loginApi = async (
 export const logoutApi = async (): Promise<{ message: string }> => {
   try {
     const response = await api.post('/logout');
+    console.log(response);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
-      throw error.response?.data.message || ' logout failer';
+      throw error.response?.data.message || ' logout failed';
     }
     throw AuthMessages.LogoutFailed;
   }
