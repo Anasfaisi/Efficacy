@@ -1,34 +1,26 @@
 {
+
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to tsx",
-      "type": "node",
+      "name": "Launch via NPM",
       "request": "launch",
-      "restart": true,
-            "runtimeExecutable": "npx",
-      "args": ["tsx", "watch", "src/index.ts"],
-      "skipFiles": ["<node_internals>/**", "node_modules/**"],
-      "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/**/*.ts"]
-    },
-    {
-      "name": "Debug Backend",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "npx",
-      "args": ["tsx", "watch", "src/index.ts"],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "sourceMaps": true,
-      "cwd": "${workspaceFolder}/backend/src",
-      "outFiles": ["${workspaceFolder}/backend/src/**/*.ts"],
-      "restart": true,
+      "runtimeArgs": ["run-script", "debug"],
+      "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
-      "console": "integratedTerminal",
-      "autoAttachChildProcesses": true,
-      "runtimeArgs": ["--inspect-brk"]
+      "type": "node",
+      "cwd": "${workspaceFolder}/backend"
+    },
+
+    {
+      "type": "node-terminal",
+      "name": "Run Script: debug (backend)",
+      "request": "launch",
+      "command": "npm run debug",
+      "cwd": "${workspaceFolder}/backend",
+       "env": {
+        "NODE_PATH": "${workspaceFolder}/backend/node_modules"
+      }
     }
   ]
 }
