@@ -1,5 +1,11 @@
 import { Role } from "@/types/role.types";
 
+type subscription = {
+  id?: string;
+  status?: string;
+  priceId?: string;
+  current_period_end?: Date;
+};
 //login
 export class LoginResponseDTO {
   constructor(
@@ -10,6 +16,7 @@ export class LoginResponseDTO {
       name: string;
       email: string;
       role?: Role;
+      subscription?: subscription;
     }
   ) {}
 
@@ -17,22 +24,18 @@ export class LoginResponseDTO {
     return {
       accessToken: this.accessToken,
       refreshToken: this.refreshToken,
-      user: this.user
+      user: this.user,
     };
   }
 }
 
-
-
 //Register
-export class RegisterInitResponseDto  {
+export class RegisterInitResponseDto {
   constructor(
-   public readonly tempEmail: string,
-   public readonly  role :string
-
+    public readonly tempEmail: string,
+    public readonly role: string
   ) {}
 }
-
 
 //otpverification
 export class OtpVerificationResponseDto {
@@ -43,7 +46,8 @@ export class OtpVerificationResponseDto {
       id: string;
       name: string;
       email: string;
-      role: string;
+      role?: Role;
+      subscription?: subscription;
     }
   ) {}
 }
@@ -58,20 +62,17 @@ export class ForgotPasswordVerifyDto {
   ) {}
 }
 
-
 //refreshing access token
 export class RefreshResponseDto {
-  constructor(
-    public readonly success:string
-  ){}
+  constructor(public readonly success: string) {}
 }
 
 // export class SubscriptionResponseDTO {
 //   constructor(
-//     public readonly id: string,                
-//     public readonly status: string,            
-//     public readonly priceId: string,           
-//     public readonly currentPeriodEnd: Date,    
+//     public readonly id: string,
+//     public readonly status: string,
+//     public readonly priceId: string,
+//     public readonly currentPeriodEnd: Date,
 //     public readonly user: {
 //       id: string;
 //       name: string;
@@ -79,7 +80,6 @@ export class RefreshResponseDto {
 //     }
 //   ) {}
 // }
-
 
 // Dto/responseDto/ResponsePayment.dto.ts
 export class ResponsePaymentDto {
@@ -89,3 +89,14 @@ export class ResponsePaymentDto {
   ) {}
 }
 
+export class CurrentUserResDto {
+  constructor(
+    public readonly user: {
+      id: string;
+      name: string;
+      email: string;
+      role?: string;
+      subscription?: subscription;
+    }
+  ) {}
+}

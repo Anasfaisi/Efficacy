@@ -41,6 +41,7 @@ export class PaymentController{
 
 
     async handleWebhook(req: Request, res: Response) {
+      
     try {
       console.log("it is reaching in handle web hook")
       const sig = req.headers["stripe-signature"] as string;

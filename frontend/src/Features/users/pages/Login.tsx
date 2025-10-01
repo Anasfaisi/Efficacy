@@ -12,6 +12,8 @@ import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordLink } from '@/Features/app/ForgotPassowrd';
 import { googleLoginApi, loginApi } from '@/Services/auth.api';
 import type { CredentialResponse } from '@/types/auth';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login: React.FC = () => {
   const [googleError, setGoogleError] = useState<string | null>(null);
@@ -37,10 +39,20 @@ const Login: React.FC = () => {
   }, [navigate, user]);
 
   const onSubmit = async (data: loginFormSchema) => {
-    const user = await loginApi({ ...data, role: 'user' });
-    if (user) {
-      dispatch(setCredentials({ user }));
-      navigate('/home');
+    try {
+      const user = await loginApi({ ...data, role: 'user' });
+      console.log(user, 'user in the login');
+
+      if (user) {
+        dispatch(setCredentials({ user }));
+        navigate('/home');
+        toast.success('Login successful!');
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+
+      const message = typeof err === 'string' ? err : 'Login failed';
+      toast.error(message);
     }
   };
 

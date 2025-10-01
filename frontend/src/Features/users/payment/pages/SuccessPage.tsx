@@ -1,26 +1,31 @@
 import { CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { useAppDispatch } from '@/redux/hooks';
-import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchCurrentUser } from '@/Services/auth.api';
 import { setCredentials } from '@/redux/slices/authSlice';
 
 const SuccessPage = () => {
   const dispatch = useAppDispatch();
+  const userId = useAppSelector((state) => state.auth.user);
 
-  useEffect(() => {
-    const refreshUser = async () => {
-      try {
-        const user = await fetchCurrentUser(); // call backend /me
-        dispatch(setCredentials({ user })); // update redux with new user + subscription
-      } catch (err) {
-        console.error('Failed to refresh user after payment', err);
-      }
-    };
+  const refreshUser = async () => {
+    try {
+      if (!userId?.id) return;
+      const user = await fetchCurrentUser(userId?.id);
+      dispatch(setCredentials({ user }));
+    } catch (err) {
+      console.error('Failed to refresh user after payment', err);
+    }
+  };
 
-    refreshUser();
-  }, [dispatch]);
+  const navigate = useNavigate();
+
+  const goToSubscription = async () => {
+    await refreshUser();
+    navigate('/subscription', { replace: true });
+  };
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
       <motion.div
@@ -39,18 +44,12 @@ const SuccessPage = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            to="/home"
+          <button
             className="px-6 py-3 bg-green-500 text-white rounded-xl shadow hover:bg-green-600 transition"
+            onClick={goToSubscription}
           >
-            Go to Dashboard
-          </Link>
-          <Link
-            to="/home"
-            className="px-6 py-3 border border-gray-300 rounded-xl shadow hover:bg-gray-100 transition"
-          >
-            View Profile
-          </Link>
+            subscription details
+          </button>
         </div>
       </motion.div>
     </div>

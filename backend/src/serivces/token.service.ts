@@ -1,5 +1,4 @@
 import "@/config/env.config";
-import express from "express";
 import jwt from "jsonwebtoken";
 import { ITokenService } from "./Interfaces/IToken.service";
 import { Types } from "mongoose";

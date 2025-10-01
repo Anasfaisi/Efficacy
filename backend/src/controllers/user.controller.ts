@@ -13,32 +13,41 @@ export class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const dto = new LoginRequestDto(
-        req.body.email,
-        req.body.password,
-        req.body.role
-      );
-
-      const responseDto = await this._authService.login(
-        dto.email,
-        dto.password,
-        dto.role
-      );
-
-      res.cookie("refreshToken", responseDto.refreshToken, {
+    
+      
+      const {accessToken,refreshToken,user} = await this._authService.login(req.body);
+      res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
       });
       
-      res.cookie("accessToken",responseDto.accessToken,{
+      res.cookie("accessToken",accessToken,{
         httpOnly:true,
         secure:true
       })
-      res.status(code.OK).json(responseDto.toJSON());
+      console.log(user,"user from the controller")
+      res.status(code.OK).json({user});
     } catch (error: any) {
-      res.status(code.UNAUTHORIZED).json({ message: error.message });
+      res.status(code.BAD_REQUEST).json({ message: error.message });
+      console.log(error)
     }
   }
+
+
+    async getCurrentUser(req: Request, res: Response) {
+    try {
+      const id = req.params.id
+      const {user} = await this._authService.getCurrentUser(id)
+      if (!user) {
+        return res.status(code.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      }
+
+      res.status(code.OK).json({ user });
+    } catch (error: any) {
+      res.status(code.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
 
   async registerInit(req: Request, res: Response) {
     try {
@@ -173,6 +182,7 @@ try {
     } catch (error: any) {
       console.error(error);
       res.status(code.UNAUTHORIZED).json({ message: error.message });
+      console.log(error)
     }
   }
 

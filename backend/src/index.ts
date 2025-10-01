@@ -1,8 +1,10 @@
 import express from "express";
-import connectDB from "./config/db";
+// import connectDB from "./config/db";
+console.log(require.resolve('express'));
+
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import morgan from "morgan"
+import morgan from "morgan";
 
 import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes";
@@ -11,7 +13,6 @@ import { UserController } from "./controllers/user.controller";
 import { AdminController } from "./controllers/admin.controller";
 import { container } from "./config/inversify.config";
 import { TYPES } from "./types/inversify-key.types";
-import { AdminAccessMiddleware } from "./middleware/admin-auth.middleware";
 import mentorRoutes from "./routes/mentor.routes";
 import { MentorController } from "./controllers/mentor.controller";
 import { PaymentController } from "./controllers/payment.controller";
@@ -34,7 +35,9 @@ app.post(
   "/api/payments/webhook",
   bodyParser.raw({ type: "application/json" }),
   (req, res) => {
-    const paymentController = container.get<PaymentController>(TYPES.PaymentController);
+    const paymentController = container.get<PaymentController>(
+      TYPES.PaymentController
+    );
     return paymentController.handleWebhook(req, res);
   }
 );
@@ -43,21 +46,23 @@ app.use(express.json());
 app.use(cookieParser());
 
 const adminController = container.get<AdminController>(TYPES.AdminController);
-const mentorController = container.get<MentorController>(TYPES.MentorController);
+const mentorController = container.get<MentorController>(
+  TYPES.MentorController
+);
 const userController = container.get<UserController>(TYPES.UserController);
-const paymentController = container.get<PaymentController>(TYPES.PaymentController)
-const chatController = container.get<ChatController>(TYPES.ChatController)
-// connectDB();
+const paymentController = container.get<PaymentController>(
+  TYPES.PaymentController
+);
+const chatController = container.get<ChatController>(TYPES.ChatController);
+// connectDB()
 app.use(morgan("dev"));
-app.use('/api', userRoutes(userController));
+app.use("/api", userRoutes(userController));
 app.use("/api/admin", adminRoutes(adminController));
-app.use("/api/mentor",mentorRoutes(mentorController));
-app.use("/api/payments",paymentRoutes(paymentController))
+app.use("/api/mentor", mentorRoutes(mentorController));
+app.use("/api/payments", paymentRoutes(paymentController));
 app.use("/api/chat", chatRoutes(chatController));
 
 // const port = process.env.PORT;
 // app.listen(port, () => console.log("http://localhost:5000"));
 
-
-
-export default app
+export default app;  

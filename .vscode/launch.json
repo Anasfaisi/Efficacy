@@ -1,0 +1,26 @@
+{
+
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch via NPM",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "debug"],
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "cwd": "${workspaceFolder}/backend"
+    },
+
+    {
+      "type": "node-terminal",
+      "name": "Run Script: debug (backend)",
+      "request": "launch",
+      "command": "npm run debug",
+      "cwd": "${workspaceFolder}/backend",
+       "env": {
+        "NODE_PATH": "${workspaceFolder}/backend/node_modules"
+      }
+    }
+  ]
+}

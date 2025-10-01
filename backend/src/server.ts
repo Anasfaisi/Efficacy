@@ -1,4 +1,5 @@
-import app from "@/index"
+import app from "./index"
+
 import connectDB from "./config/db"
 import setUpSocket from "./socket/socket-setup.socket"
 import "@/config/env.config";
