@@ -1,5 +1,4 @@
 import express from "express";
-// import connectDB from "./config/db";
 console.log(require.resolve('express'));
 
 import cookieParser from "cookie-parser";
@@ -54,7 +53,7 @@ const paymentController = container.get<PaymentController>(
   TYPES.PaymentController
 );
 const chatController = container.get<ChatController>(TYPES.ChatController);
-// connectDB()
+
 app.use(morgan("dev"));
 app.use("/api", userRoutes(userController));
 app.use("/api/admin", adminRoutes(adminController));
@@ -62,7 +61,5 @@ app.use("/api/mentor", mentorRoutes(mentorController));
 app.use("/api/payments", paymentRoutes(paymentController));
 app.use("/api/chat", chatRoutes(chatController));
 
-// const port = process.env.PORT;
-// app.listen(port, () => console.log("http://localhost:5000"));
 
 export default app;  

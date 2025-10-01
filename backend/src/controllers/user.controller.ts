@@ -70,6 +70,7 @@ export class UserController {
     }
   }
 
+  
   async registerVerify(req: Request, res: Response) {
     try {
       console.log("it is reached in verify otp");
