@@ -6,14 +6,56 @@ import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
 import {
+    ForgotPasswordRequestDto,
+    LoginRequestDto,
     OtpVerificationRequestDto,
+    RefreshRequestDto,
     RegisterRequestDto,
+    resendOtpRequestDto,
+    ResetPasswordrequestDto,
 } from '@/Dto/requestDto';
 
-export class MentorController {
+export class UserController {
     constructor(
         @inject(TYPES.AuthService) private _authService: IAuthService
     ) {}
+
+    async login(req: Request, res: Response) {
+        try {
+            const { accessToken, refreshToken, user } =
+                await this._authService.login(req.body);
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,
+            });
+
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: true,
+            });
+            console.log(user, 'user from the controller');
+            res.status(code.OK).json({ user });
+        } catch (error: any) {
+            res.status(code.BAD_REQUEST).json({ message: error.message });
+            console.log(error);
+        }
+    }
+
+    async getCurrentUser(req: Request, res: Response) {
+        try {
+            const id = req.params.id;
+            const { user } = await this._authService.getCurrentUser(id);
+            if (!user) {
+                return res
+                    .status(code.UNAUTHORIZED)
+                    .json({ message: 'User not authenticated' });
+            }
+
+            res.status(code.OK).json({ user });
+        } catch (error: any) {
+            res.status(code.BAD_REQUEST).json({ message: error.message });
+        }
+    }
 
     async registerInit(req: Request, res: Response) {
         try {
@@ -68,23 +110,70 @@ export class MentorController {
         }
     }
 
-    async login(req: Request, res: Response) {
+    async resendOtp(req: Request, res: Response) {
         try {
-            const { email, password, role } = req.body;
+            const dto = new resendOtpRequestDto(req.body.email);
 
-            const result = await this._authService.login(email, password, role);
-            console.log(result);
-            res.cookie('refreshToken', result.refreshToken, {
+            const { tempEmail: userEmail } = await this._authService.resendOtp(
+                dto.email
+            );
+
+            res.status(code.OK).json({ email: userEmail });
+        } catch (error: any) {
+            res.status(code.BAD_REQUEST).json({ message: error.message });
+            console.log(error);
+        }
+    }
+
+    async forgotPassword(req: Request, res: Response) {
+        try {
+            const dto = new ForgotPasswordRequestDto(req.body.email);
+            const result = await this._authService.forgotPassword(dto.email);
+            res.status(200).json(result);
+        } catch (error: any) {
+            res.status(400).json({ message: error.message });
+            console.error(error);
+        }
+    }
+
+    async resetPassword(req: Request, res: Response) {
+        try {
+            const dto = new ResetPasswordrequestDto(
+                req.body.token,
+                req.body.newPassword
+            );
+            const result = await this._authService.resetPassword(
+                dto.token,
+                dto.newPassword
+            );
+            res.status(200).json(result);
+        } catch (error: any) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async refreshTokenHandler(req: Request, res: Response) {
+        try {
+            const token = req.cookies.refreshToken;
+            if (!token) {
+                throw new Error('No refresh token provided');
+            }
+            const { accessToken, refreshToken } =
+                await this._authService.refreshToken(token);
+
+            res.cookie('accessToken', accessToken, {
                 httpOnly: true,
                 secure: true,
+                sameSite: 'strict',
             });
 
-            res.cookie('accessToken', result.accessToken, {
+            res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
+                sameSite: 'strict',
             });
 
-            res.json({ user: result.user });
+            res.json({ success: true });
         } catch (error: any) {
             res.status(code.UNAUTHORIZED).json({ message: error.message });
         }
@@ -112,26 +201,26 @@ export class MentorController {
         } catch (error: any) {
             console.error(error);
             res.status(code.UNAUTHORIZED).json({ message: error.message });
+            console.log(error);
         }
     }
+
     async logout(req: Request, res: Response) {
         try {
-            console.log('at the mentor logout route', req.cookies);
-            const refreshToken = req.cookies.refreshToken;
-            if (!refreshToken) {
-                throw new Error('Invalid refresh token or no refresh token');
-            }
-            await this._authService.logout(refreshToken);
-
             res.clearCookie('refreshToken', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
             });
+            res.clearCookie('accessToken', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+            });
 
-            res.json(AuthMessages.LogoutSuccess);
+            res.status(code.OK).json(AuthMessages.LogoutSuccess);
         } catch (error: any) {
-            console.error('Logout error:', error.message);
+            console.error('Logout error:', error);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
             );

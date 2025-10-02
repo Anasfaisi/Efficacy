@@ -1,48 +1,50 @@
-
-import { CurrentUserResDto, LoginResponseDTO, RegisterInitResponseDto } from "@/Dto/responseDto";
-import { Role } from "@/types/role.types";
-import { Types } from "mongoose";
-import {LoginRequestDto}from "@/Dto/requestDto"
-import { IUser } from "@/models/User.model";
+import {
+    CurrentUserResDto,
+    LoginResponseDTO,
+    RegisterInitResponseDto,
+} from '@/Dto/responseDto';
+import { Role } from '@/types/role.types';
+import { Types } from 'mongoose';
+import { LoginRequestDto } from '@/Dto/requestDto';
+import { IUser } from '@/models/User.model';
 export interface IAuthService {
-  login(loginDto:LoginRequestDto): Promise<LoginResponseDTO>;
+    login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 
-  registerInit(params: {
-    email: string;
-    password: string;
-    name: string;
-    role: Role;
-  }): Promise<RegisterInitResponseDto >;
+    registerInit(params: {
+        email: string;
+        password: string;
+        name: string;
+        role: Role;
+    }): Promise<RegisterInitResponseDto>;
 
-  registerVerify(
-    email: string,
-    otp: string
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    user: { id: string; email: string; name: string; role: string };
-  }>;
+    registerVerify(
+        email: string,
+        otp: string
+    ): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        user: { id: string; email: string; name: string; role: string };
+    }>;
 
+    getCurrentUser(id: string): Promise<CurrentUserResDto>;
 
-getCurrentUser(id: string): Promise<CurrentUserResDto>;
+    refreshToken(
+        refreshToken: string
+    ): Promise<{ accessToken: string; refreshToken: string }>;
 
+    loginWithGoogle(
+        googleToken: string,
+        role: Role
+    ): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        user: { id: string; email: string; name: string; role: string };
+    }>;
 
-  refreshToken(
-    refreshToken: string,
-  ): Promise<{ accessToken: string,refreshToken :string }>;
-
-
-  loginWithGoogle(
-    googleToken: string,
-    role: Role
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    user: { id: string; email: string; name: string; role: string };
-  }>;
-
-  resendOtp(email:string):Promise<RegisterInitResponseDto>
-  forgotPassword(email:string):Promise<{ message: string }>
-  resetPassword (token:string , newPassword:string):Promise<{ message: string }>
+    resendOtp(email: string): Promise<RegisterInitResponseDto>;
+    forgotPassword(email: string): Promise<{ message: string }>;
+    resetPassword(
+        token: string,
+        newPassword: string
+    ): Promise<{ message: string }>;
 }
-

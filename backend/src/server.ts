@@ -1,21 +1,17 @@
-import app from "./index"
+import 'dotenv/config';
+import { createApp } from './app';
+import connectDB from './config/db';
+import setUpSocket from './socket/socket-setup.socket';
 
-import connectDB from "./config/db"
-import setUpSocket from "./socket/socket-setup.socket"
-import "@/config/env.config";
+const PORT = process.env.PORT;
 
-const PORT = process.env.PORT
-
-const startServer = async ()=>{
-    try{
-        await connectDB();
-        const server = app.listen(PORT,()=>{
-            console.log("Server is listening on the http://localhost: ",PORT)
-        })
-        setUpSocket(server)
-    }catch(error:unknown){
-        console.error("failed to start the server",error)
-    }
+const startServer = async () => {
+    const app = createApp();
+    await connectDB();
+    const server = app.listen(PORT, () => {
+        console.log('Server is listening on the http://localhost: ', PORT);
+    });
+    setUpSocket(server);
 };
 
-startServer()
+startServer();
