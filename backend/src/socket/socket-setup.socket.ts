@@ -1,7 +1,7 @@
 import { SocketController } from '@/controllers/socket.controller';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/types/inversify-key.types';
-import '@/config/env.config';
+
 import { Server as HTTPServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 

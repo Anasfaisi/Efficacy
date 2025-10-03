@@ -21,15 +21,10 @@ export function applyRoutes(app: Express) {
         TYPES.MentorController
     );
     const userController = container.get<UserController>(TYPES.UserController);
+
+    const chatController = container.get<ChatController>(TYPES.ChatController);
     const paymentController = container.get<PaymentController>(
         TYPES.PaymentController
-    );
-    const chatController = container.get<ChatController>(TYPES.ChatController);
-
-    app.post(
-        '/api/payments/webhook',
-        bodyParser.raw({ type: 'application/json' }),
-        paymentController.handleWebhook
     );
 
     app.use('/api', userRoutes(userController));

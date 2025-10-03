@@ -1,6 +1,7 @@
 import { BaseRepository } from './base.repository';
 import { IUserRepository } from './interfaces/IUser.repository';
 import UserModel, { ISubscription, IUser } from '../models/User.model';
+import { Role } from '@/types/role.types';
 
 export class UserRepository
     extends BaseRepository<IUser>
@@ -18,7 +19,7 @@ export class UserRepository
         email: string;
         password: string;
         name: string;
-        role: string;
+        role: Role.User;
     }): Promise<IUser> {
         return this.create(data);
     }
@@ -46,6 +47,7 @@ export class UserRepository
             { new: true }
         );
     }
+    
 
     async updateSubscriptionById(
         userId: string,

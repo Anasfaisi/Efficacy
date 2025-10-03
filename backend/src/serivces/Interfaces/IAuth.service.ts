@@ -1,12 +1,11 @@
+import { Role } from '@/types/role.types';
+import { LoginRequestDto } from '@/Dto/requestDto';
 import {
     CurrentUserResDto,
     LoginResponseDTO,
     RegisterInitResponseDto,
 } from '@/Dto/responseDto';
-import { Role } from '@/types/role.types';
-import { Types } from 'mongoose';
-import { LoginRequestDto } from '@/Dto/requestDto';
-import { IUser } from '@/models/User.model';
+
 export interface IAuthService {
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 

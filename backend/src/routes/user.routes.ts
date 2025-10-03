@@ -2,17 +2,23 @@ import { Router } from 'express';
 import { RequestHandler } from 'express';
 import { UserController } from '../controllers/auth.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import { TokenService } from '@/serivces/token.service';
+import { Role } from '@/types/role.types';
 
 export default function authRoutes(userController: UserController) {
     const router = Router();
-
+    const tokenService = new TokenService();
     router.get(
         '/me/:id',
-        authenticateAndAuthorize(),
+        authenticateAndAuthorize(tokenService, Role.User),
         userController.getCurrentUser.bind(userController) as RequestHandler
     );
 
-    router.post('/login', userController.login.bind(userController));
+    router.post(
+        '/login',
+        authenticateAndAuthorize(tokenService, Role.User),
+        userController.login.bind(userController)
+    );
     router.post(
         '/logout',
         userController.logout.bind(userController) as RequestHandler

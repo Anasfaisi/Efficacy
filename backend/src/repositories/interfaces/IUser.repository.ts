@@ -1,4 +1,5 @@
 import { ISubscription, IUser } from '@/models/User.model';
+import { Role } from '@/types/role.types';
 
 export interface IUserRepository {
     findByEmail(email: string): Promise<IUser | null>;
@@ -7,7 +8,7 @@ export interface IUserRepository {
         email: string;
         password: string;
         name: string;
-        role: string;
+        role: Role.User;
         googleId?: string;
     }): Promise<IUser>;
     updatePasswordById(id: string, newPassword: string): Promise<void>;

@@ -1,36 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Role } from '@/types/role.types';
-const authenticateAndAuthorize = (roles?: typeof Role) => {
+import { TokenService } from '@/serivces/token.service';
+const authenticateAndAuthorize = (_tokenService: TokenService, roles: Role) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const token = req.headers.authorization?.split(' ')[1];
-
+        const token = req.cookies?.accessToken;
+        console.log(token,"token")
         if (!token) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
+        
 
-        const JWT_SECRET = process.env.JWT_SECRET;
+        const user = _tokenService.verifyAccessToken(token);
 
-        if (!JWT_SECRET) {
-            res.status(500).json({ message: 'Internal server error' });
+        req.user = user;
+
+        if (roles && (!req.user || !roles.includes(req.user.role))) {
+            res.status(403).json({ message: 'Permission denied' });
             return;
         }
-
-        jwt.verify(token, JWT_SECRET, async (err, user) => {
-            if (err) {
-                next(err);
-                return;
-            }
-
-            req.user = user as Request['user'];
-
-            if (roles && (!req.user || !roles.includes(req.user.role))) {
-                res.status(403).json({ message: 'Permission denied' });
-                return;
-            }
-            next();
-        });
+        next();
     };
 };
 

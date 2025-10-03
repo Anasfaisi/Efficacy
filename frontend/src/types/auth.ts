@@ -37,6 +37,11 @@ export interface LoginCredentials {
   role?: Role;
 }
 
+export interface LoginResponse {
+  user?: User;
+  message?: string;
+}
+
 export interface LogoutCredentials {
   role: Role;
 }

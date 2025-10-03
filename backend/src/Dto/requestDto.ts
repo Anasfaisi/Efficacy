@@ -6,7 +6,7 @@ export class LoginRequestDto {
     constructor(
         public readonly email: string,
         public readonly password: string,
-        public readonly role: typeof Role,
+        public readonly role: Role,
         public readonly name?: string
     ) {}
 }

@@ -95,7 +95,7 @@ export class CurrentUserResDto {
             id: string;
             name: string;
             email: string;
-            role?: string;
+            role?: Role;
             subscription?: subscription;
         }
     ) {}
