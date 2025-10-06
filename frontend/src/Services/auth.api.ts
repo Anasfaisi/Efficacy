@@ -4,6 +4,7 @@ import type {
   User,
   Role,
   RegisterCredentials,
+  LoginResponse,
 } from '@/types/auth';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
@@ -29,29 +30,30 @@ export const fetchCurrentUser = async (
 
 export const loginApi = async (
   credentials: LoginCredentials,
-): Promise<User> => {
+): Promise<LoginResponse> => {
   const role: Role = (credentials.role ?? 'user') as Role;
   const endpoint = ENDPOINTS[role];
 
   try {
-    console.log('sdfdsf');
     const res = await api.post(endpoint, credentials);
-    console.log(res.data, 'res from api service ');
-    return res.data.user as User;
+    console.log(res);
+    
+    return {
+      user: res.data.user as User,
+      message: res.data.message,
+    };
   } catch (error) {
-    console.log('error from the axioserror', error);
     if (error instanceof AxiosError) {
-      throw error.response?.data?.message || 'Login failed';
+      return { message: error.response?.data?.message || 'Login failed' };
     }
     console.log(error);
-    throw AuthMessages.LoginFailure;
+    return { message: 'Login failed' };
   }
 };
 
 export const logoutApi = async (): Promise<{ message: string }> => {
   try {
     const response = await api.post('/logout');
-    console.log(response);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

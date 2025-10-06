@@ -1,4 +1,4 @@
-import { LoginTicket } from "google-auth-library";
+import { LoginTicket } from 'google-auth-library';
 export interface IGoogleVerificationService {
-  verify(googleToken: string): Promise<LoginTicket>; 
+    verify(googleToken: string): Promise<LoginTicket>;
 }

@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-    // "target": "es2015",
-    // "module": "commonjs",
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./",
     "sourceMap": true,
     "module": "esnext",
     "target": "esnext",
     "inlineSources": true,
     "esModuleInterop": true,
-    "moduleResolution": "node10",
-    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -22,8 +18,5 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  },
-  "ts-node": {
-    "esm": true
   }
 }

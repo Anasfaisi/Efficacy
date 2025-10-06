@@ -40,9 +40,12 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: loginFormSchema) => {
     try {
-      const user = await loginApi({ ...data, role: 'user' });
+      const { user, message } = await loginApi({ ...data, role: 'user' });
       console.log(user, 'user in the login');
-
+      if (message) {
+        toast.error(message); 
+        return;
+      }
       if (user) {
         dispatch(setCredentials({ user }));
         navigate('/home');
@@ -51,8 +54,7 @@ const Login: React.FC = () => {
     } catch (err) {
       console.error('Login failed:', err);
 
-      const message = typeof err === 'string' ? err : 'Login failed';
-      toast.error(message);
+      toast.error(typeof err === 'string' ? err : 'Login failed');
     }
   };
 
