@@ -5,7 +5,7 @@ import { Role } from '@/types/role.types';
 export interface JwtPayload {
     id: string;
     role?: Role;
-    email?: string
+    email?: string;
 }
 export class TokenService implements ITokenService {
     private _accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET!;
@@ -38,7 +38,7 @@ export class TokenService implements ITokenService {
     verifyRefreshToken(refreshToken: string): { id: string; role: Role } {
         return jwt.verify(refreshToken, this._refreshTokenSecret) as {
             id: string;
-            role:Role;
+            role: Role;
         };
     }
 

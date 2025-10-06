@@ -8,6 +8,12 @@ export enum Role {
     Mentor = 'mentor',
     Admin = 'admin',
 }
+
+export enum MessageStatus {
+    SENT = 'sent',
+    DELIVERED = 'delivered',
+    READ = 'read',
+}
 export type Repositories =
     | IAdminRepository<IAdmin>
     | IUserRepository

@@ -19,10 +19,12 @@ export default function authRoutes(userController: UserController) {
         authenticateAndAuthorize(tokenService, Role.User),
         userController.login.bind(userController)
     );
+
     router.post(
         '/logout',
         userController.logout.bind(userController) as RequestHandler
     );
+
     router.post(
         '/google-login',
         userController.googleAuth.bind(userController)

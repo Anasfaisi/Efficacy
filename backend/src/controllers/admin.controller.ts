@@ -22,10 +22,9 @@ export class AdminController {
             );
 
             const responseDto = await this._authService.login(
-                dto.email,
+               { dto.email,
                 dto.password,
-                dto.role
-            );
+                dto.role}            );
 
             res.cookie('refreshToken', responseDto.refreshToken, {
                 httpOnly: true,

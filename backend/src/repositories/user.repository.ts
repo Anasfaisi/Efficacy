@@ -47,7 +47,6 @@ export class UserRepository
             { new: true }
         );
     }
-    
 
     async updateSubscriptionById(
         userId: string,

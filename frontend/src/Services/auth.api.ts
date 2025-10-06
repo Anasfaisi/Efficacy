@@ -4,7 +4,7 @@ import type {
   User,
   Role,
   RegisterCredentials,
-  LoginResponse
+  LoginResponse,
 } from '@/types/auth';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
@@ -36,23 +36,24 @@ export const loginApi = async (
 
   try {
     const res = await api.post(endpoint, credentials);
-     return {
+    console.log(res);
+    
+    return {
       user: res.data.user as User,
       message: res.data.message,
     };
   } catch (error) {
     if (error instanceof AxiosError) {
-     return { message: error.response?.data?.message || 'Login failed' };
+      return { message: error.response?.data?.message || 'Login failed' };
     }
     console.log(error);
-   return { message: 'Login failed' };
+    return { message: 'Login failed' };
   }
 };
 
 export const logoutApi = async (): Promise<{ message: string }> => {
   try {
     const response = await api.post('/logout');
-    console.log(response);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

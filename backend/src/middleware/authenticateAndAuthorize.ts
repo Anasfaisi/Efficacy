@@ -5,12 +5,11 @@ import { TokenService } from '@/serivces/token.service';
 const authenticateAndAuthorize = (_tokenService: TokenService, roles: Role) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.cookies?.accessToken;
-        console.log(token,"token")
+        console.log(token, 'token');
         if (!token) {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(403).json({ message: 'Unauthorized' });
             return;
         }
-        
 
         const user = _tokenService.verifyAccessToken(token);
 
