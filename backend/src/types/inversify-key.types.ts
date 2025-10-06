@@ -12,7 +12,8 @@ export const TYPES = {
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),
     UnverifiedUserRepository: Symbol('UnverifiedUserRepository'),
-    ChatMessageRepository: Symbol('ChatRepository'),
+    ChatRepository: Symbol('ChatRepository'),
+    MessageRepository: Symbol('MessageRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),

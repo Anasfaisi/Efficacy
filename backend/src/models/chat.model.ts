@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 
-export interface IConversation {
+export interface IChat {
     _id: Types.ObjectId;
     participants: Types.ObjectId[];
     lastMessage?: Types.ObjectId;
@@ -11,7 +11,7 @@ export interface IConversation {
     createdAt?: Date;
     updatedAt?: Date;
 }
-const ConversationSchema = new Schema(
+const ChatSchema = new Schema(
     {
         particpants: [
             {
@@ -32,7 +32,7 @@ const ConversationSchema = new Schema(
     { timestamps: true }
 );
 
-export const ConversationModel = model<IConversation>(
-    'Conversation',
-    ConversationSchema
+export const ChatModel = model<IChat>(
+    'Chat',
+    ChatSchema
 );

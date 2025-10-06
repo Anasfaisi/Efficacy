@@ -1,12 +1,12 @@
 import { Schema, model, Types, Document } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
 export interface IMessage {
-    _id: Types.ObjectId;
-    conversation: Types.ObjectId;
+    _id:Types.ObjectId;
+    conversationId: Types.ObjectId;
     senderId: Types.ObjectId;
     content: string;
     attachments?: string[];
-    status: MessageStatus;
+    status?: MessageStatus;
     seenBy?: Types.ObjectId[];
     createdAt?: Date;
     updatedAt?: Date;
@@ -14,7 +14,7 @@ export interface IMessage {
 
 const MessageSchema = new Schema<IMessage>(
     {
-        conversation: {
+        conversationId: {
             type: Schema.Types.ObjectId,
             ref: 'Conversation',
             required: true,

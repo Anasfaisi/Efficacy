@@ -7,7 +7,6 @@ import { AdminRepository } from '@/repositories/admin.repository';
 import { TokenService } from '@/serivces/token.service';
 import { ValidationService } from '@/serivces/validation.service';
 import { UserController } from '@/controllers/auth.controller';
-import { AdminAccessMiddleware } from '@/middleware/admin-auth.middleware';
 import { MentorRepository } from '@/repositories/mentor.repository';
 import { MentorController } from '@/controllers/mentor.controller';
 import { GoogleVerificationService } from '@/serivces/google-verification.service';
@@ -16,19 +15,21 @@ import { OtpService } from '@/serivces/otp.service';
 import { PaymentService } from '@/serivces/payment.service';
 import { PaymentController } from '@/controllers/payment.controller';
 import { ChatService } from '@/serivces/chat-message.service';
-import { ChatMessageRepository } from '@/repositories/chat-message.respository';
 import { ChatController } from '@/controllers/chat.controller';
 import { SocketService } from '@/serivces/socket.service';
 import { SocketController } from '@/controllers/socket.controller';
 import { IPaymentService } from '@/serivces/Interfaces/IPayment.service';
 import { IChatService } from '@/serivces/Interfaces/IChat-message.service';
 import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
-import { IChatMessageRepository } from '@/repositories/interfaces/IChat-message.repository';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IUnverifiedUserRepository } from '@/repositories/interfaces/IUnverified-user.repository';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { ISocketService } from '@/serivces/Interfaces/ISocket.service';
 import { IAdmin } from '@/models/Admin.model';
+import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
+import { MessageRepository } from '@/repositories/message.repository';
+import { ChatRepository } from '@/repositories/chat.repository';
+import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
 
 export const container = new Container();
 
@@ -62,10 +63,7 @@ container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container
     .bind<IUnverifiedUserRepository>(TYPES.UnverifiedUserRepository)
     .to(UnverifiedUserRepository);
+container.bind<IChatRepository>(TYPES.ChatRepository).to(ChatRepository);
 container
-    .bind<IChatMessageRepository>(TYPES.ChatMessageRepository)
-    .to(ChatMessageRepository);
-
-container
-    .bind<AdminAccessMiddleware>(TYPES.AdminAccessMiddleware)
-    .to(AdminAccessMiddleware);
+    .bind<IMessageRepository>(TYPES.MentorRepository)
+    .to(MessageRepository);

@@ -1,5 +1,5 @@
 import { IUser } from '@/models/User.model';
-import { Role } from '@/types/role.types';
+import { MessageStatus, Role } from '@/types/role.types';
 
 //Login
 export class LoginRequestDto {
@@ -93,4 +93,21 @@ export class JoinRoomDto {
 
 export class CurrentUserReqDto {
     constructor(public readonly id: string) {}
+}
+
+/*============================  Message  ===================================*/
+export class CreateMessageDTO {
+    constructor(
+        readonly conversationId: string,
+        readonly senderId: string,
+        readonly content: string,
+        readonly attachments?: string[]
+    ) {}
+}
+
+export class CreateChatDTO {
+    constructor(
+        readonly userA: string,
+        readonly userB: string
+    ) {}
 }

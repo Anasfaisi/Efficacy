@@ -100,3 +100,30 @@ export class CurrentUserResDto {
         }
     ) {}
 }
+
+
+
+/* =======================  Message   ==========================*/
+
+
+export class MessageResponseDto {
+    constructor(
+        public id: string,
+        public conversationId: string,
+        public senderId: string,
+        public content: string,
+        public attachments?: string[],
+        public status?: string,
+        public seenBy?: string[],
+        public createdAt?: Date,
+        public updatedAt?: Date
+    ) {}
+}
+
+export interface ChatResponseDTO {
+  id: string;
+  participants: string[];
+  lastMessage?: string;
+  isGroup: boolean;
+  createdAt?: Date;
+}

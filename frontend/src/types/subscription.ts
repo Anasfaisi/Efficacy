@@ -1,5 +1,5 @@
 export interface Subscription {
-  priceId:string
+  priceId: string;
   plan: 'Basic' | 'Starter' | 'Pro';
   sessionsLeft: number;
   totalSessions: number;
