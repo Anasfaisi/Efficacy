@@ -1,7 +1,7 @@
 import { Schema, model, Types, Document } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
 export interface IMessage {
-    _id:Types.ObjectId;
+    _id: Types.ObjectId;
     conversationId: Types.ObjectId;
     senderId: Types.ObjectId;
     content: string;
@@ -35,11 +35,11 @@ const MessageSchema = new Schema<IMessage>(
         ],
         status: {
             type: String,
-            enum:Object.values(MessageStatus),
+            enum: Object.values(MessageStatus),
             default: MessageStatus.SENT,
-            required:false
+            required: false,
         },
- 
+
         seenBy: [
             {
                 type: Types.ObjectId,

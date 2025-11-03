@@ -2,6 +2,7 @@
 import React from 'react';
 import BellButton from '../components/BellButton';
 import AvatarMenu from '../components/AvatarMenu';
+import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   return (
@@ -11,6 +12,20 @@ const Navbar: React.FC = () => {
       <div className="flex items-center gap-4">
         <BellButton />
         <AvatarMenu />
+           <Link
+          to="/logout"
+          className="
+            bg-purple-600 
+            text-white 
+            px-4 
+            py-2 
+            rounded-lg 
+            hover:bg-purple-700 
+            transition-colors
+          "
+        >
+          Logout
+        </Link>
       </div>
     </div>
   );

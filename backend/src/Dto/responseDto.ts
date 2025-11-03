@@ -101,10 +101,7 @@ export class CurrentUserResDto {
     ) {}
 }
 
-
-
 /* =======================  Message   ==========================*/
-
 
 export class MessageResponseDto {
     constructor(
@@ -121,9 +118,9 @@ export class MessageResponseDto {
 }
 
 export interface ChatResponseDTO {
-  id: string;
-  participants: string[];
-  lastMessage?: string;
-  isGroup: boolean;
-  createdAt?: Date;
+    id: string;
+    participants: string[];
+    lastMessage?: string;
+    isGroup: boolean;
+    createdAt?: Date;
 }

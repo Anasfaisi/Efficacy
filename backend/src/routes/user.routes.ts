@@ -14,11 +14,7 @@ export default function authRoutes(userController: UserController) {
         userController.getCurrentUser.bind(userController) as RequestHandler
     );
 
-    router.post(
-        '/login',
-        authenticateAndAuthorize(tokenService, Role.User),
-        userController.login.bind(userController)
-    );
+    router.post('/login', userController.login.bind(userController));
 
     router.post(
         '/logout',

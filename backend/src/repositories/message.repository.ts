@@ -41,7 +41,6 @@
 import { Message, IMessage } from '@/models/Message.model';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 
-
 export class MessageRepository implements IMessageRepository {
     async create(message: Omit<IMessage, '_id' | 'status'>): Promise<IMessage> {
         const newMessage = new Message(message);

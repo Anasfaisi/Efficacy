@@ -14,12 +14,10 @@ import { UnverifiedUserRepository } from '@/repositories/unverified-user.reposit
 import { OtpService } from '@/serivces/otp.service';
 import { PaymentService } from '@/serivces/payment.service';
 import { PaymentController } from '@/controllers/payment.controller';
-import { ChatService } from '@/serivces/chat-message.service';
 import { ChatController } from '@/controllers/chat.controller';
 import { SocketService } from '@/serivces/socket.service';
 import { SocketController } from '@/controllers/socket.controller';
 import { IPaymentService } from '@/serivces/Interfaces/IPayment.service';
-import { IChatService } from '@/serivces/Interfaces/IChat-message.service';
 import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IUnverifiedUserRepository } from '@/repositories/interfaces/IUnverified-user.repository';
@@ -28,6 +26,8 @@ import { ISocketService } from '@/serivces/Interfaces/ISocket.service';
 import { IAdmin } from '@/models/Admin.model';
 import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
 import { MessageRepository } from '@/repositories/message.repository';
+import { ChatService } from '@/serivces/chat.service';
+import { IChatService } from '@/serivces/Interfaces/IChat.service';
 import { ChatRepository } from '@/repositories/chat.repository';
 import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
 
@@ -65,5 +65,5 @@ container
     .to(UnverifiedUserRepository);
 container.bind<IChatRepository>(TYPES.ChatRepository).to(ChatRepository);
 container
-    .bind<IMessageRepository>(TYPES.MentorRepository)
+    .bind<IMessageRepository>(TYPES.MessageRepository)
     .to(MessageRepository);

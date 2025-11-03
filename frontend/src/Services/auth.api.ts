@@ -37,7 +37,7 @@ export const loginApi = async (
   try {
     const res = await api.post(endpoint, credentials);
     console.log(res);
-    
+
     return {
       user: res.data.user as User,
       message: res.data.message,

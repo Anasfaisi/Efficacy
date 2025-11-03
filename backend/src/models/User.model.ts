@@ -13,6 +13,7 @@ interface IUser extends Document<ObjectId> {
     stripeCustomerId?: string;
     subscription?: ISubscription;
 }
+
 const subscriptionSchema = new Schema<ISubscription>(
     {
         id: { type: String },

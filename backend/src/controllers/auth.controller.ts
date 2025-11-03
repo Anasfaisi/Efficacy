@@ -22,8 +22,7 @@ export class UserController {
 
     async login(req: Request, res: Response) {
         try {
-            const { accessToken, refreshToken, user } =
-                await this._authService.login(req.body);
+            const { accessToken, refreshToken, user } =await this._authService.login(req.body);
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,

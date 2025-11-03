@@ -123,9 +123,6 @@
 
 // export default SubscriptionInfo;
 
-
-
-
 //3
 import React from 'react';
 
@@ -192,13 +189,13 @@ const SubscriptionInfo: React.FC<Props> = ({ subscription }) => {
   const today = new Date();
   const daysLeft = Math.max(
     Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)),
-    0
+    0,
   );
 
   return (
     <div className="bg-purple-50 p-6 rounded-lg shadow-md mb-6 w-80">
       <h3 className="text-2xl font-bold mb-4">{plan.name} Plan</h3>
-      
+
       <table className="w-full text-left border-collapse">
         <tbody>
           <tr className="border-b">

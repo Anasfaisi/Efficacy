@@ -12,7 +12,7 @@ import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
   const wait = await logoutApi();
-  console.log(wait,"wair from the user routes")
+  console.log(wait, 'wair from the user routes');
   if (wait) {
     dispatch(logout());
   }
@@ -24,7 +24,7 @@ const UserRoutes: React.FC = () => {
     <Routes>
       <Route path="home" element={<Home />} />
       <Route path="logout" element={<Logout />} />
-      
+
       <Route path="success" element={<SuccessPage />} />
       <Route path="failed" element={<CancelPage />} />
       <Route path="subscription" element={<SubscriptionForm />} />

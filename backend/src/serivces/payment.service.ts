@@ -48,7 +48,6 @@ export class PaymentService implements IPaymentService {
         signature: string
     ): Promise<void> {
         let event: Stripe.Event;
-        console.log('reaching in webhook service layer');
 
         event = this._stripe.webhooks.constructEvent(
             rawBody,

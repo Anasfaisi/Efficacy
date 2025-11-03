@@ -1,4 +1,4 @@
-import { ChatModel, IChat } from '@/models/chat.model';
+import { ChatModel, IChat } from '@/models/Conversation.model';
 import { IChatRepository } from './interfaces/IChat.repository';
 
 export class ChatRepository implements IChatRepository {

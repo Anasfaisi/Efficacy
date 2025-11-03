@@ -6,9 +6,8 @@ import globals from 'globals';
 import prettierPlugin from 'eslint-plugin-prettier';
 
 export default defineConfig([
-    // Base JS + TS recommended configs
     js.configs.recommended,
-    ...tseslint.configs.recommended, // Custom config block
+    ...tseslint.configs.recommended, 
     {
         files: ['**/*.{js,ts}'],
         languageOptions: {
@@ -23,7 +22,6 @@ export default defineConfig([
             prettier: prettierPlugin,
         },
         rules: {
-            // Prettier formatting as ESLint errors
             'prettier/prettier': [
                 'warn',
                 {
@@ -32,6 +30,7 @@ export default defineConfig([
                     tabWidth: 4,
                     trailingComma: 'es5',
                     bracketSpacing: true,
+                     endOfLine: "lf"
                 },
             ],
 

@@ -51,6 +51,7 @@ const SubscriptionForm = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   async function handleSubscribe(planId: string) {
+    console.log("it is in checkout form")
     if (!stripe) return;
     setLoading(planId);
     setMessage('');

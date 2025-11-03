@@ -1,4 +1,4 @@
-import { IChat } from '@/models/chat.model';
+import { IChat } from '@/models/Conversation.model';
 
 export interface IChatRepository {
     findById(chatId: string): Promise<IChat | null>;

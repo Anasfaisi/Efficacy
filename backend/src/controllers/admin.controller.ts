@@ -21,10 +21,11 @@ export class AdminController {
                 req.body.role
             );
 
-            const responseDto = await this._authService.login(
-               { dto.email,
-                dto.password,
-                dto.role}            );
+            const responseDto = await this._authService.login({
+                email: dto.email,
+                password: dto.password,
+                role: dto.role,
+            });
 
             res.cookie('refreshToken', responseDto.refreshToken, {
                 httpOnly: true,

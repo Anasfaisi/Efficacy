@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       const { user, message } = await loginApi({ ...data, role: 'user' });
       console.log(user, 'user in the login');
       if (message) {
-        toast.error(message); 
+        toast.error(message);
         return;
       }
       if (user) {

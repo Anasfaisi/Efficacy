@@ -83,8 +83,8 @@ export class AuthService implements IAuthService {
     //   });
     // }
 
-    async login(loginDto: LoginRequestDto): Promise<LoginResponseDTO> {
-        const login = new login();
+    async login(loginDto:LoginRequestDto): Promise<LoginResponseDTO> {
+
         this._validationService.validateLoginInput({
             email: loginDto.email,
             password: loginDto.password,
