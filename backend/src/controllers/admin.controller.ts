@@ -5,7 +5,7 @@ import { TYPES } from '@/types/inversify-key.types';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
-import { LoginRequestDto } from '@/Dto/requestDto';
+import { LoginRequestDto } from '@/Dto/request.dto';
 
 @injectable()
 export class AdminController {

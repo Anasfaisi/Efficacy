@@ -124,3 +124,19 @@ export interface ChatResponseDTO {
     isGroup: boolean;
     createdAt?: Date;
 }
+
+//======================  user profile  =========================//
+
+export class ProfileResponseDto {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public role: Role,
+        public subscription?: subscription,
+        public bio?: string,
+        public headline?: string,
+        public avatarUrl?: string,
+        public dob?: string
+    ) {}
+}

@@ -2,6 +2,7 @@ import { BaseRepository } from './base.repository';
 import { IUserRepository } from './interfaces/IUser.repository';
 import UserModel, { ISubscription, IUser } from '../models/User.model';
 import { Role } from '@/types/role.types';
+import { UserUpdateData } from '@/types/repository.types';
 
 export class UserRepository
     extends BaseRepository<IUser>
@@ -61,6 +62,15 @@ export class UserRepository
 
     async findByStripeCustomerId(customerId: string): Promise<IUser | null> {
         return UserModel.findOne({ stripeCustomerId: customerId }).exec();
+    }
+
+    async updateUser(updatedData: UserUpdateData): Promise<IUser | null> {
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            updatedData.id,
+            { ...updatedData },
+            { new: true, runValidators: true }
+        ).exec();
+        return updatedUser;
     }
 }
 

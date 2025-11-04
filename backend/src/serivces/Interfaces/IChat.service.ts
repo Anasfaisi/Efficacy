@@ -1,5 +1,5 @@
-import { CreateChatDTO, CreateMessageDTO } from '@/Dto/requestDto';
-import { ChatResponseDTO, MessageResponseDto } from '@/Dto/responseDto';
+import { CreateChatDTO, CreateMessageDTO } from '@/Dto/request.dto';
+import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
 import { IChat } from '@/models/Conversation.model';
 import { IMessage } from '@/models/Message.model';
 

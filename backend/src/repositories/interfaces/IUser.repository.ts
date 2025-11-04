@@ -1,4 +1,5 @@
 import { ISubscription, IUser } from '@/models/User.model';
+import { UserUpdateData } from '@/types/repository.types';
 import { Role } from '@/types/role.types';
 
 export interface IUserRepository {
@@ -22,4 +23,6 @@ export interface IUserRepository {
         subscriptionData: ISubscription
     ): Promise<IUser | null>;
     findByStripeCustomerId(customerId: string): Promise<IUser | null>;
+
+    updateUser(updatedData: UserUpdateData): Promise<IUser | null>;
 }

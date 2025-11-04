@@ -8,7 +8,7 @@ import { AuthMessages } from '@/types/response-messages.types';
 import {
     OtpVerificationRequestDto,
     RegisterRequestDto,
-} from '@/Dto/requestDto';
+} from '@/Dto/request.dto';
 
 export class MentorController {
     constructor(

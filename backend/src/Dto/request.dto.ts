@@ -111,3 +111,19 @@ export class CreateChatDTO {
         readonly userB: string
     ) {}
 }
+
+//============================  user profile ==========================//
+export class ProfileRequestDto {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public password: string,
+        public role: Role= Role.User,
+        public bio?: string,
+        public headline?: string,
+        public avatarUrl?: string,
+        public dob?: string,
+        public subscription?: string
+    ) {}
+}

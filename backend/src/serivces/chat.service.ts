@@ -3,8 +3,8 @@ import { IChatService } from './Interfaces/IChat.service';
 import {
     CreateChatDTO,
     CreateMessageDTO,
-} from '@/Dto/requestDto';
-import { ChatResponseDTO, MessageResponseDto } from '@/Dto/responseDto';
+} from '@/Dto/request.dto';
+import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
 import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
 import { TYPES } from '@/types/inversify-key.types';
 import { Types } from 'mongoose';

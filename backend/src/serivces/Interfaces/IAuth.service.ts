@@ -1,12 +1,15 @@
 import { Role } from '@/types/role.types';
-import { LoginRequestDto } from '@/Dto/requestDto';
+import { LoginRequestDto, ProfileRequestDto } from '@/Dto/request.dto';
 import {
     CurrentUserResDto,
     LoginResponseDTO,
+    ProfileResponseDto,
     RegisterInitResponseDto,
-} from '@/Dto/responseDto';
+} from '@/Dto/response.dto';
 
 export interface IAuthService {
+    updateUserProfile(data: ProfileRequestDto): Promise<ProfileResponseDto>;
+
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 
     registerInit(params: {
