@@ -8,6 +8,7 @@ import SuccessPage from '@/Features/users/payment/pages/SuccessPage';
 import CancelPage from '@/Features/users/payment/pages/CancelPage';
 import ChatPage from '@/Features/users/chat/pages/ChatPage';
 import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
+import ProfileSetupPage from '@/Features/users/profile/pages/ProfileSetupPage';
 
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
@@ -30,6 +31,7 @@ const UserRoutes: React.FC = () => {
       <Route path="subscription" element={<SubscriptionForm />} />
 
       <Route path="chat" element={<ChatPage />} />
+      <Route path="profile" element={<ProfileSetupPage />} />
     </Routes>
   );
 };

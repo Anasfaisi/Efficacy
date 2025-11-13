@@ -8,12 +8,39 @@ export interface Subscription {
   priceId?: string;
   current_period_end?: Date;
 }
+
 export interface User {
   id: string;
-  email: string;
+  userId?: string;
   name: string;
+  email: string;
   role: Role;
-  subscription?: Subscription | null;
+
+  bio?: string;
+  headline?: string;
+  profilePic?: string;
+  dob?: string;
+
+  stripeCustomerId?: string;
+  subscription?: Subscription;
+
+  walletBalance?: number;
+  walletCurrency?: string;
+
+  xpPoints?: number;
+  badges?: string[];
+  badge?: string;
+  league?: string;
+
+  currentStreak?: number;
+  longestStreak?: number;
+  lastActiveDate?: string | null;
+  timezone?: string;
+
+  profileCompletion?: number;
+
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuthState {

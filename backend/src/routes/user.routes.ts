@@ -4,6 +4,7 @@ import { UserController } from '../controllers/auth.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';
+import { upload } from '@/config/multer.config';
 
 export default function authRoutes(userController: UserController) {
     const router = Router();
@@ -56,7 +57,13 @@ export default function authRoutes(userController: UserController) {
     router.put(
         '/profile/update',
         authenticateAndAuthorize(_tokenService, Role.User),
-        userController.updateUserProfile.bind(userController)
+        userController.updateUserProfile.bind(userController) 
+    );
+    router.post(
+        '/profile/proPicUpdate/:id',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        upload.single('image'),
+        userController.updateProfilePic.bind(userController)
     );
     return router;
 }

@@ -163,3 +163,37 @@ export const googleLoginApi = async (
     throw error;
   }
 };
+
+
+
+//profile
+export const updateProfilePicture = async (
+  file: File | null,
+  role: Role,
+  id?: string,
+): Promise<{ message: string,user: User }> => {
+  try {
+    if (!file) {
+      throw new Error('no file selected');
+    }
+    if (!id) {
+      throw new Error('no user id was given ');
+    }
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await api.post(`/profile/proPicUpdate/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw error.response?.data?.message || 'profile picture updation failed';
+    }
+    console.error(error);
+    if (error instanceof Error) {
+      throw error.message;
+    }
+    throw new Error('Unknown error during profile picture update');
+  }
+};

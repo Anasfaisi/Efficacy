@@ -15,12 +15,14 @@ import {
     CurrentUserResDto,
     LoginResponseDTO,
     OtpVerificationResponseDto,
+    ProfilePicResponseDto,
     ProfileResponseDto,
     RegisterInitResponseDto,
 } from '@/Dto/response.dto';
 import {
     CurrentUserReqDto,
     LoginRequestDto,
+    ProfilePicUpdateDto,
     ProfileRequestDto,
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
@@ -45,7 +47,9 @@ export class AuthService implements IAuthService {
         private _googleVerificationService: IGoogleVerificationService
     ) {}
 
-    async updateUserProfile(data: ProfileRequestDto): Promise<ProfileResponseDto> {
+    async updateUserProfile(
+        data: ProfileRequestDto
+    ): Promise<ProfileResponseDto> {
         const dto = new ProfileRequestDto(
             data.id,
             data.email,
@@ -54,7 +58,7 @@ export class AuthService implements IAuthService {
             data.role,
             data.bio,
             data.headline,
-            data.avatarUrl,
+            data.profilePic,
             data.dob,
             data.subscription
         );
@@ -70,8 +74,40 @@ export class AuthService implements IAuthService {
             updatedUser?.subscription,
             updatedUser?.bio,
             updatedUser?.headline,
-            updatedUser?.avatarUrl,
+            updatedUser?.profilePic,
             updatedUser?.dob
+        );
+    }
+
+
+
+
+
+
+    async updateUserProfilePic(
+        data: ProfilePicUpdateDto
+    ): Promise<ProfilePicResponseDto> {
+        const dto = new ProfilePicUpdateDto(data.file, data.id);
+
+        const baseUrl = process.env.BASE_URL;
+    
+        const fileUrl = `${baseUrl}/uploads/${dto.file.filename}`;
+        const updatedProfiePic = await this._userRepository.updateProfilePic(
+            dto.id,
+            fileUrl
+        );
+        if (!updatedProfiePic) throw new Error(ErrorMessages.UpdateFailed);
+
+        return new ProfileResponseDto(
+            updatedProfiePic.id,
+            updatedProfiePic.name,
+            updatedProfiePic.email,
+            updatedProfiePic.role,
+            updatedProfiePic?.subscription,
+            updatedProfiePic?.bio,
+            updatedProfiePic?.headline,
+            updatedProfiePic?.profilePic,
+            updatedProfiePic?.dob
         );
     }
 
@@ -104,7 +140,13 @@ export class AuthService implements IAuthService {
             name: account.name,
             email: account.email,
             role: account.role as Role,
-            subscription: account.subscription,
+            subscription: account?.subscription,
+            bio :account?.bio,
+            headline:account?.headline,
+            profilePic:account?.profilePic,
+            dob:account?.dob,
+            xpPoints:account.xpPoints,
+            badge:account?.badge
         });
     }
 

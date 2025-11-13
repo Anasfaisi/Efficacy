@@ -15,8 +15,14 @@ export class LoginResponseDTO {
             id: string;
             name: string;
             email: string;
-            role?: Role;
+            role: Role;
             subscription?: subscription;
+            bio?: string;
+            headline?: string;
+            profilePic?: string;
+            dob?: string;
+            xpPoints?: number;
+            badge?: string;
         }
     ) {}
 
@@ -136,7 +142,9 @@ export class ProfileResponseDto {
         public subscription?: subscription,
         public bio?: string,
         public headline?: string,
-        public avatarUrl?: string,
-        public dob?: string
+        public profilePic?: string,
+        public dob?: string,
+        public xpPoints?: number,
+        public badge?: string
     ) {}
 }

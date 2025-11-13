@@ -13,7 +13,7 @@ export class TokenService implements ITokenService {
 
     generateAccessToken(userId: string, role: Role): string {
         return jwt.sign({ id: userId, role }, this._accessTokenSecret, {
-            expiresIn: '15m',
+            expiresIn: '1d',
         });
     }
 

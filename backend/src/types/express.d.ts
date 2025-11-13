@@ -3,6 +3,7 @@
  */
 
 import { Role } from './role.types';
+import { Multer } from 'multer';
 
 declare global {
     namespace Express {
@@ -12,6 +13,7 @@ declare global {
                 email: string;
                 role: Role;
             };
+            file?: Express.Multer.File;
         }
     }
 }

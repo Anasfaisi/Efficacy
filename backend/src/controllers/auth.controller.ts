@@ -29,19 +29,70 @@ export class UserController {
                 res.status(code.BAD_REQUEST).json({
                     message: ErrorMessages.UpdateUserFailed,
                 });
+                return;
+            } else {
+                res.status(code.OK).json(updatedUser);
             }
-            res.status(code.OK).json(updatedUser);
         } catch (error: unknown) {
+            // 5️⃣ Consistent error handling
             if (error instanceof Error) {
-                console.error(error);
-                res.status(code.BAD_REQUEST).json({ message: error.message });
+                console.error('updateProfilePic error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: error.message,
+                });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: 'An unexpected error occurred',
+                });
             }
-            res.status(code.BAD_REQUEST).json({
-                message: 'An unexpected error occurred',
-            });
         }
     }
 
+    async updateProfilePic(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.file) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.FileNotAttached,
+                });
+                return;
+            }
+
+            if (!req.params.id) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.NoParams,
+                });
+                return;
+            }
+
+            const updatedProfilePic =
+                await this._authService.updateUserProfilePic({
+                    file: req.file,
+                    id: req.params.id,
+                });
+            if (!updatedProfilePic) {
+                res.status(code.BAD_REQUEST).json({
+                    messages: ErrorMessages.UpdateProfilePicFailed,
+                });
+            }
+            res.status(200).json({
+                message: 'Profile picture updated successfully',
+                user: updatedProfilePic,
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error('updateProfilePic error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: error.message,
+                });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: 'An unexpected error occurred',
+                });
+            }
+        }
+    }
     async login(req: Request, res: Response) {
         try {
             const { accessToken, refreshToken, user } =
@@ -55,7 +106,6 @@ export class UserController {
                 httpOnly: true,
                 secure: true,
             });
-            console.log(user, 'user from the controller');
             res.status(code.OK).json({ user });
         } catch (error: any) {
             res.status(code.BAD_REQUEST).json({ message: error.message });

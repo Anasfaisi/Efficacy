@@ -119,11 +119,23 @@ export class ProfileRequestDto {
         public name: string,
         public email: string,
         public password: string,
-        public role: Role= Role.User,
+        public role: Role = Role.User,
         public bio?: string,
         public headline?: string,
-        public avatarUrl?: string,
+        public profilePic?: string,
         public dob?: string,
-        public subscription?: string
+        public subscription?: string,
+        public xpPoints?: number,
+        public badge?: string
     ) {}
+}
+
+export class ProfilePicUpdateDto {
+    file: Express.Multer.File;
+    id: string;
+
+    constructor(file: Express.Multer.File, id: string) {
+        this.file = file;
+        this.id = id;
+    }
 }

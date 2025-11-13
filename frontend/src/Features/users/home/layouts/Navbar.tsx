@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
       <div className="flex items-center gap-4">
         <BellButton />
         <AvatarMenu />
-           <Link
+        <Link
           to="/logout"
           className="
             bg-purple-600 

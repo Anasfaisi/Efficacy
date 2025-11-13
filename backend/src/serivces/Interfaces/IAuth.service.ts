@@ -1,5 +1,5 @@
 import { Role } from '@/types/role.types';
-import { LoginRequestDto, ProfileRequestDto } from '@/Dto/request.dto';
+import { LoginRequestDto, ProfilePicUpdateDto, ProfileRequestDto } from '@/Dto/request.dto';
 import {
     CurrentUserResDto,
     LoginResponseDTO,
@@ -9,6 +9,7 @@ import {
 
 export interface IAuthService {
     updateUserProfile(data: ProfileRequestDto): Promise<ProfileResponseDto>;
+    updateUserProfilePic(data: ProfilePicUpdateDto):Promise<ProfileResponseDto>;
 
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 
