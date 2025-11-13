@@ -15,10 +15,18 @@ import {
     CurrentUserResDto,
     LoginResponseDTO,
     OtpVerificationResponseDto,
+    ProfilePicResponseDto,
+    ProfileResponseDto,
     RegisterInitResponseDto,
-} from '@/Dto/responseDto';
-import { CurrentUserReqDto, LoginRequestDto } from '@/Dto/requestDto';
+} from '@/Dto/response.dto';
+import {
+    CurrentUserReqDto,
+    LoginRequestDto,
+    ProfilePicUpdateDto,
+    ProfileRequestDto,
+} from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -39,52 +47,71 @@ export class AuthService implements IAuthService {
         private _googleVerificationService: IGoogleVerificationService
     ) {}
 
-    // async login(email: string, password: string, role: Role) {
-    //   this._validationService.validateLoginInput({
-    //     email,
-    //     password,
-    //     role,
-    //   });
-    //   let repository: Repositories;
-    //   if (role === "admin") {
-    //     repository = this._adminRepository;
-    //   } else if (role === "mentor") {
-    //     repository = this._mentorRepository;
-    //   } else if (role === "user") {
-    //     repository = this._userRepository;
-    //   } else {
-    //     throw new Error("Invalid role");
-    //   }
-    //   const account = await repository.findByEmail(email);
-    //   console.log(account)
-    //   if (!account || account.role !== role) {
-    //     throw new Error(`Not authorized as ${role}`);
-    //   }
+    async updateUserProfile(
+        data: ProfileRequestDto
+    ): Promise<ProfileResponseDto> {
+        const dto = new ProfileRequestDto(
+            data.id,
+            data.email,
+            data.name,
+            data.password,
+            data.role,
+            data.bio,
+            data.headline,
+            data.profilePic,
+            data.dob,
+            data.subscription
+        );
 
-    //   if (!(await bcrypt.compare(password, account.password))) {
-    //     throw new Error("Invalid email or password");
-    //   }
+        const updatedUser = await this._userRepository.updateUser(dto);
+        if (!updatedUser) throw new Error(ErrorMessages.UpdateFailed);
 
-    //   const accessToken = this._tokenService.generateAccessToken(
-    //     account.id,
-    //     account.role
-    //   );
+        return new ProfileResponseDto(
+            updatedUser.id,
+            updatedUser.name,
+            updatedUser.email,
+            updatedUser.role,
+            updatedUser?.subscription,
+            updatedUser?.bio,
+            updatedUser?.headline,
+            updatedUser?.profilePic,
+            updatedUser?.dob
+        );
+    }
 
-    //   const refreshToken = this._tokenService.generateRefreshToken(
-    //     account.id,
-    //     account.role
-    //   );
 
-    //   return new LoginResponseDTO(accessToken, refreshToken, {
-    //     id: account.id.toString(),
-    //     name: account.name,
-    //     email: account.email,
-    //     role: account.role,
-    //   });
-    // }
+
+
+
+
+    async updateUserProfilePic(
+        data: ProfilePicUpdateDto
+    ): Promise<ProfilePicResponseDto> {
+        const dto = new ProfilePicUpdateDto(data.file, data.id);
+
+        const baseUrl = process.env.BASE_URL;
+    
+        const fileUrl = `${baseUrl}/uploads/${dto.file.filename}`;
+        const updatedProfiePic = await this._userRepository.updateProfilePic(
+            dto.id,
+            fileUrl
+        );
+        if (!updatedProfiePic) throw new Error(ErrorMessages.UpdateFailed);
+
+        return new ProfileResponseDto(
+            updatedProfiePic.id,
+            updatedProfiePic.name,
+            updatedProfiePic.email,
+            updatedProfiePic.role,
+            updatedProfiePic?.subscription,
+            updatedProfiePic?.bio,
+            updatedProfiePic?.headline,
+            updatedProfiePic?.profilePic,
+            updatedProfiePic?.dob
+        );
+    }
 
     async login(loginDto: LoginRequestDto): Promise<LoginResponseDTO> {
-        const login = new login();
         this._validationService.validateLoginInput({
             email: loginDto.email,
             password: loginDto.password,
@@ -113,29 +140,14 @@ export class AuthService implements IAuthService {
             name: account.name,
             email: account.email,
             role: account.role as Role,
-            subscription: account.subscription,
+            subscription: account?.subscription,
+            bio :account?.bio,
+            headline:account?.headline,
+            profilePic:account?.profilePic,
+            dob:account?.dob,
+            xpPoints:account.xpPoints,
+            badge:account?.badge
         });
-    }
-
-    async getCurrentUser(id: string) {
-        const reqDto = new CurrentUserReqDto(id);
-        const user = await this._userRepository.findById(reqDto.id);
-
-        if (!user) {
-            throw new Error('ssww');
-        }
-
-        const resDto = new CurrentUserResDto({
-            id: user?.id,
-            name: user?.name,
-            email: user?.email,
-            role: user?.role,
-            subscription: user?.subscription,
-        });
-
-        console.log(resDto, 2222);
-
-        return resDto;
     }
 
     async registerInit({
@@ -373,6 +385,71 @@ export class AuthService implements IAuthService {
             },
         };
     }
+
+    // async getCurrentUser(id: string) {
+    //     const reqDto = new CurrentUserReqDto(id);
+    //     const user = await this._userRepository.findById(reqDto.id);
+
+    //     if (!user) {
+    //         throw new Error('ssww');
+    //     }
+
+    //     const resDto = new CurrentUserResDto({
+    //         id: user?.id,
+    //         name: user?.name,
+    //         email: user?.email,
+    //         role: user?.role,
+    //         subscription: user?.subscription,
+    //     });
+
+    //     console.log(resDto, 2222);
+
+    //     return resDto;
+    // }
+
+    // async login(email: string, password: string, role: Role) {
+    //   this._validationService.validateLoginInput({
+    //     email,
+    //     password,
+    //     role,
+    //   });
+    //   let repository: Repositories;
+    //   if (role === "admin") {
+    //     repository = this._adminRepository;
+    //   } else if (role === "mentor") {
+    //     repository = this._mentorRepository;
+    //   } else if (role === "user") {
+    //     repository = this._userRepository;
+    //   } else {
+    //     throw new Error("Invalid role");
+    //   }
+    //   const account = await repository.findByEmail(email);
+    //   console.log(account)
+    //   if (!account || account.role !== role) {
+    //     throw new Error(`Not authorized as ${role}`);
+    //   }
+
+    //   if (!(await bcrypt.compare(password, account.password))) {
+    //     throw new Error("Invalid email or password");
+    //   }
+
+    //   const accessToken = this._tokenService.generateAccessToken(
+    //     account.id,
+    //     account.role
+    //   );
+
+    //   const refreshToken = this._tokenService.generateRefreshToken(
+    //     account.id,
+    //     account.role
+    //   );
+
+    //   return new LoginResponseDTO(accessToken, refreshToken, {
+    //     id: account.id.toString(),
+    //     name: account.name,
+    //     email: account.email,
+    //     role: account.role,
+    //   });
+    // }
 
     /*======= admin auth ===========*/
 

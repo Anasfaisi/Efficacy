@@ -4,21 +4,18 @@ import { UserController } from '../controllers/auth.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';
+import { upload } from '@/config/multer.config';
 
 export default function authRoutes(userController: UserController) {
     const router = Router();
-    const tokenService = new TokenService();
-    router.get(
-        '/me/:id',
-        authenticateAndAuthorize(tokenService, Role.User),
-        userController.getCurrentUser.bind(userController) as RequestHandler
-    );
+    const _tokenService = new TokenService();
+    // router.get(
+    //     '/me/:id',
+    //     authenticateAndAuthorize(tokenService, Role.User),
+    //     userController.getCurrentUser.bind(userController) as RequestHandler
+    // );
 
-    router.post(
-        '/login',
-        authenticateAndAuthorize(tokenService, Role.User),
-        userController.login.bind(userController)
-    );
+    router.post('/login', userController.login.bind(userController));
 
     router.post(
         '/logout',
@@ -56,6 +53,17 @@ export default function authRoutes(userController: UserController) {
         '/forgot-password/verify',
         userController.resetPassword.bind(userController)
     );
-    // router.post("/register", userController.register.bind(userController));
+
+    router.put(
+        '/profile/update',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        userController.updateUserProfile.bind(userController) 
+    );
+    router.post(
+        '/profile/proPicUpdate/:id',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        upload.single('image'),
+        userController.updateProfilePic.bind(userController)
+    );
     return router;
 }

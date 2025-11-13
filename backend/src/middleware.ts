@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import { container } from './config/inversify.config';
 import { PaymentController } from './controllers/payment.controller';
 import { TYPES } from './types/inversify-key.types';
+import path from 'path';
+import { fileURLToPath } from 'url';
 export function applyMiddlewares(app: Express) {
     const corsOptions = {
         origin: 'http://localhost:5173',
@@ -14,7 +16,13 @@ export function applyMiddlewares(app: Express) {
         methods: ['GET', 'POST', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     };
-
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    function a() {
+        console.log(__filename, __dirname);
+        return 'hi';
+    }
+    app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
     app.use(cors(corsOptions));
     app.use(morgan('dev'));
     const paymentController = container.get<PaymentController>(

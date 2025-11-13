@@ -5,7 +5,7 @@ import { TYPES } from '@/types/inversify-key.types';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
-import { LoginRequestDto } from '@/Dto/requestDto';
+import { LoginRequestDto } from '@/Dto/request.dto';
 
 @injectable()
 export class AdminController {
@@ -21,10 +21,11 @@ export class AdminController {
                 req.body.role
             );
 
-            const responseDto = await this._authService.login(
-               { dto.email,
-                dto.password,
-                dto.role}            );
+            const responseDto = await this._authService.login({
+                email: dto.email,
+                password: dto.password,
+                role: dto.role,
+            });
 
             res.cookie('refreshToken', responseDto.refreshToken, {
                 httpOnly: true,

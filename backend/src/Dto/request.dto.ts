@@ -1,5 +1,5 @@
 import { IUser } from '@/models/User.model';
-import { Role } from '@/types/role.types';
+import { MessageStatus, Role } from '@/types/role.types';
 
 //Login
 export class LoginRequestDto {
@@ -93,4 +93,49 @@ export class JoinRoomDto {
 
 export class CurrentUserReqDto {
     constructor(public readonly id: string) {}
+}
+
+/*============================  Message  ===================================*/
+export class CreateMessageDTO {
+    constructor(
+        readonly conversationId: string,
+        readonly senderId: string,
+        readonly content: string,
+        readonly attachments?: string[]
+    ) {}
+}
+
+export class CreateChatDTO {
+    constructor(
+        readonly userA: string,
+        readonly userB: string
+    ) {}
+}
+
+//============================  user profile ==========================//
+export class ProfileRequestDto {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public password: string,
+        public role: Role = Role.User,
+        public bio?: string,
+        public headline?: string,
+        public profilePic?: string,
+        public dob?: string,
+        public subscription?: string,
+        public xpPoints?: number,
+        public badge?: string
+    ) {}
+}
+
+export class ProfilePicUpdateDto {
+    file: Express.Multer.File;
+    id: string;
+
+    constructor(file: Express.Multer.File, id: string) {
+        this.file = file;
+        this.id = id;
+    }
 }

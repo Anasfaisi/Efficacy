@@ -6,13 +6,14 @@ export const TYPES = {
     OtpService: Symbol('OtpService'),
     PaymentService: Symbol('PaymentService'),
     ChatService: Symbol('ChatService'),
-    SocketService: Symbol('SockerService'),
+    SocketService: Symbol('SocketService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),
     UnverifiedUserRepository: Symbol('UnverifiedUserRepository'),
-    ChatMessageRepository: Symbol('ChatRepository'),
+    ChatRepository: Symbol('ChatRepository'),
+    MessageRepository: Symbol('MessageRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -20,6 +21,4 @@ export const TYPES = {
     PaymentController: Symbol('paymentController'),
     ChatController: Symbol('chatController'),
     SocketController: Symbol('SocketController'),
-
-    AdminAccessMiddleware: Symbol('AdminAccessMiddleware'),
 };

@@ -2,8 +2,8 @@ import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
 import { TYPES } from '@/types/inversify-key.types';
 import { IPaymentService } from './Interfaces/IPayment.service';
-import { RequestPaymentDto } from '@/Dto/requestDto';
-import { ResponsePaymentDto } from '@/Dto/responseDto';
+import { RequestPaymentDto } from '@/Dto/request.dto';
+import { ResponsePaymentDto } from '@/Dto/response.dto';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 
 @injectable()
@@ -48,7 +48,6 @@ export class PaymentService implements IPaymentService {
         signature: string
     ): Promise<void> {
         let event: Stripe.Event;
-        console.log('reaching in webhook service layer');
 
         event = this._stripe.webhooks.constructEvent(
             rawBody,

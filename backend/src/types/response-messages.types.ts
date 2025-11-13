@@ -6,6 +6,14 @@ export const AuthMessages = {
     OtpSuccess: 'OTP sent to email',
 };
 
+export const ErrorMessages = {
+    UpdateFailed: 'can"t able to find the user with this id',
+    UpdateUserFailed: 'Invalid user data provided',
+    UpdateProfilePicFailed: 'Invalid form of data',
+    FileNotAttached:'No image uploaded',
+    NoParams:'id not found'
+};
+
 // types for chat controller
 export interface joinRoomPayload {
     roomId: string;

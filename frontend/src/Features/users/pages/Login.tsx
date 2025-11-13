@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema } from '@/types/authSchema';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
-import { ForgotPasswordLink } from '@/Features/app/ForgotPassowrd';
+import { ForgotPasswordLink } from '@/Features/users/pages/ForgotPassowrd';
 import { googleLoginApi, loginApi } from '@/Services/auth.api';
 import type { CredentialResponse } from '@/types/auth';
 import { toast } from 'react-toastify';
@@ -41,9 +41,8 @@ const Login: React.FC = () => {
   const onSubmit = async (data: loginFormSchema) => {
     try {
       const { user, message } = await loginApi({ ...data, role: 'user' });
-      console.log(user, 'user in the login');
       if (message) {
-        toast.error(message); 
+        toast.error(message);
         return;
       }
       if (user) {

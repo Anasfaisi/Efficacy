@@ -10,7 +10,13 @@ interface SidebarButtonProps {
   to?: string; // for navigation
 }
 
-const SidebarButton: React.FC<SidebarButtonProps> = ({ icon, label, colorClass = 'hover:bg-[#7F00FF]', onClick, to }) => {
+const SidebarButton: React.FC<SidebarButtonProps> = ({
+  icon,
+  label,
+  colorClass = 'hover:bg-[#7F00FF]',
+  onClick,
+  to,
+}) => {
   const baseClass = `flex items-center gap-3 px-4 py-2 text-gray-700 rounded-lg ${colorClass} hover:text-white transition`;
 
   if (to) {

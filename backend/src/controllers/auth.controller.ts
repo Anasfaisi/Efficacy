@@ -4,7 +4,7 @@ import { TYPES } from '@/types/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
-import { AuthMessages } from '@/types/response-messages.types';
+import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
 import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
@@ -13,13 +13,86 @@ import {
     RegisterRequestDto,
     resendOtpRequestDto,
     ResetPasswordrequestDto,
-} from '@/Dto/requestDto';
+} from '@/Dto/request.dto';
 
 export class UserController {
     constructor(
         @inject(TYPES.AuthService) private _authService: IAuthService
     ) {}
 
+    async updateUserProfile(req: Request, res: Response) {
+        try {
+            const updatedUser = await this._authService.updateUserProfile(
+                req.body
+            );
+            if (!updatedUser) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.UpdateUserFailed,
+                });
+                return;
+            } else {
+                res.status(code.OK).json(updatedUser);
+            }
+        } catch (error: unknown) {
+            // 5️⃣ Consistent error handling
+            if (error instanceof Error) {
+                console.error('updateProfilePic error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: error.message,
+                });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: 'An unexpected error occurred',
+                });
+            }
+        }
+    }
+
+    async updateProfilePic(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.file) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.FileNotAttached,
+                });
+                return;
+            }
+
+            if (!req.params.id) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.NoParams,
+                });
+                return;
+            }
+
+            const updatedProfilePic =
+                await this._authService.updateUserProfilePic({
+                    file: req.file,
+                    id: req.params.id,
+                });
+            if (!updatedProfilePic) {
+                res.status(code.BAD_REQUEST).json({
+                    messages: ErrorMessages.UpdateProfilePicFailed,
+                });
+            }
+            res.status(200).json({
+                message: 'Profile picture updated successfully',
+                user: updatedProfilePic,
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error('updateProfilePic error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: error.message,
+                });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(code.INTERNAL_SERVER_ERROR).json({
+                    message: 'An unexpected error occurred',
+                });
+            }
+        }
+    }
     async login(req: Request, res: Response) {
         try {
             const { accessToken, refreshToken, user } =
@@ -33,27 +106,10 @@ export class UserController {
                 httpOnly: true,
                 secure: true,
             });
-            console.log(user, 'user from the controller');
             res.status(code.OK).json({ user });
         } catch (error: any) {
             res.status(code.BAD_REQUEST).json({ message: error.message });
             console.log(error);
-        }
-    }
-
-    async getCurrentUser(req: Request, res: Response) {
-        try {
-            const id = req.params.id;
-            const { user } = await this._authService.getCurrentUser(id);
-            if (!user) {
-                return res
-                    .status(code.UNAUTHORIZED)
-                    .json({ message: 'User not authenticated' });
-            }
-
-            res.status(code.OK).json({ user });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
         }
     }
 
@@ -227,3 +283,19 @@ export class UserController {
         }
     }
 }
+
+// async getCurrentUser(req: Request, res: Response) {
+//     try {
+//         const id = req.params.id;
+//         const { user } = await this._authService.getCurrentUser(id);
+//         if (!user) {
+//             return res
+//                 .status(code.UNAUTHORIZED)
+//                 .json({ message: 'User not authenticated' });
+//         }
+
+//         res.status(code.OK).json({ user });
+//     } catch (error: any) {
+//         res.status(code.BAD_REQUEST).json({ message: error.message });
+//     }
+// }

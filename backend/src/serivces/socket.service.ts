@@ -5,7 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { IChatService } from './Interfaces/IChat-message.service';
 import { IChatMessage } from '@/models/Chat-message.model';
 import { SendMessagePayload } from '@/types/response-messages.types';
-import { JoinRoomDto } from '@/Dto/requestDto';
+import { JoinRoomDto } from '@/Dto/request.dto';
 
 @injectable()
 export class SocketService {

@@ -15,8 +15,14 @@ export class LoginResponseDTO {
             id: string;
             name: string;
             email: string;
-            role?: Role;
+            role: Role;
             subscription?: subscription;
+            bio?: string;
+            headline?: string;
+            profilePic?: string;
+            dob?: string;
+            xpPoints?: number;
+            badge?: string;
         }
     ) {}
 
@@ -98,5 +104,47 @@ export class CurrentUserResDto {
             role?: Role;
             subscription?: subscription;
         }
+    ) {}
+}
+
+/* =======================  Message   ==========================*/
+
+export class MessageResponseDto {
+    constructor(
+        public id: string,
+        public conversationId: string,
+        public senderId: string,
+        public content: string,
+        public attachments?: string[],
+        public status?: string,
+        public seenBy?: string[],
+        public createdAt?: Date,
+        public updatedAt?: Date
+    ) {}
+}
+
+export interface ChatResponseDTO {
+    id: string;
+    participants: string[];
+    lastMessage?: string;
+    isGroup: boolean;
+    createdAt?: Date;
+}
+
+//======================  user profile  =========================//
+
+export class ProfileResponseDto {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public role: Role,
+        public subscription?: subscription,
+        public bio?: string,
+        public headline?: string,
+        public profilePic?: string,
+        public dob?: string,
+        public xpPoints?: number,
+        public badge?: string
     ) {}
 }

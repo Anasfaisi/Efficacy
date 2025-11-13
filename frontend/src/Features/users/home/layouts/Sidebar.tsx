@@ -16,7 +16,7 @@ const Sidebar = () => {
         <SidebarButton
           icon={<FaCommentDots />}
           label="Chat Room"
-          to="/chat"   // ✅ navigates to chat page
+          to="/chat" // ✅ navigates to chat page
           colorClass="hover:bg-[#7F00FF]"
         />
         <SidebarButton

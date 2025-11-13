@@ -16,5 +16,4 @@ export class MessageMapper {
             doc.updatedAt ?? new Date()
         );
     }
-
 }

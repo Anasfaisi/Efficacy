@@ -2,11 +2,11 @@ import { Schema, model, Types, Document } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
 export interface IMessage {
     _id: Types.ObjectId;
-    conversation: Types.ObjectId;
+    conversationId: Types.ObjectId;
     senderId: Types.ObjectId;
     content: string;
     attachments?: string[];
-    status: MessageStatus;
+    status?: MessageStatus;
     seenBy?: Types.ObjectId[];
     createdAt?: Date;
     updatedAt?: Date;
@@ -14,7 +14,7 @@ export interface IMessage {
 
 const MessageSchema = new Schema<IMessage>(
     {
-        conversation: {
+        conversationId: {
             type: Schema.Types.ObjectId,
             ref: 'Conversation',
             required: true,
@@ -35,11 +35,11 @@ const MessageSchema = new Schema<IMessage>(
         ],
         status: {
             type: String,
-            enum:Object.values(MessageStatus),
+            enum: Object.values(MessageStatus),
             default: MessageStatus.SENT,
-            required:false
+            required: false,
         },
- 
+
         seenBy: [
             {
                 type: Types.ObjectId,
