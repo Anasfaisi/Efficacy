@@ -6,6 +6,7 @@ import type {
   RegisterCredentials,
   LoginResponse,
 } from '@/types/auth';
+import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
 
@@ -164,14 +165,12 @@ export const googleLoginApi = async (
   }
 };
 
-
-
 //profile
 export const updateProfilePicture = async (
   file: File | null,
   role: Role,
   id?: string,
-): Promise<{ message: string,user: User }> => {
+): Promise<{ message: string; user: User }> => {
   try {
     if (!file) {
       throw new Error('no file selected');
@@ -195,5 +194,29 @@ export const updateProfilePicture = async (
       throw error.message;
     }
     throw new Error('Unknown error during profile picture update');
+  }
+};
+
+export const updateProfile = async (
+  form: ProfileForm,
+  id?: string,
+): Promise<{ message: string; user: User }> => {
+  try {
+    if (!id) {
+      throw new Error('no user id was given');
+    }
+    const response = await api.post(`/update/profile/${id}`, form);
+    console.log(response.data)
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      
+      throw error.response?.data?.message || 'profile update failed';
+
+    }
+    if (error instanceof Error) {
+      throw error.message;
+    }
+    throw new Error('Unknown error during profile update');
   }
 };

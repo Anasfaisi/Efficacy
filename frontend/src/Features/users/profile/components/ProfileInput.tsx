@@ -19,16 +19,18 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
   placeholder,
   value,
   onChange,
+  readOnly,
 }) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-gray-700 text-sm font-medium">{label}</label>
+  <div className="flex flex-col gap-1 h-29">
+    <label className="text-gray-700 text-sm font-medium h-10">{label}</label>
     <input
       type={type}
       name={name}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className="border border-purple-200 rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-300 transition-all"
+      readOnly={readOnly}
+      className="w-100% h-20 border border-purple-200 rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-300 transition-all"
     />
   </div>
 );

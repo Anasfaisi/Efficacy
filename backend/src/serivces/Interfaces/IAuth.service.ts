@@ -8,7 +8,7 @@ import {
 } from '@/Dto/response.dto';
 
 export interface IAuthService {
-    updateUserProfile(data: ProfileRequestDto): Promise<ProfileResponseDto>;
+    updateUserProfile(data: ProfileRequestDto,id:string): Promise<ProfileResponseDto>;
     updateUserProfilePic(data: ProfilePicUpdateDto):Promise<ProfileResponseDto>;
 
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;

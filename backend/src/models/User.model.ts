@@ -4,8 +4,8 @@ import { ISubscription } from './subscription.model';
 import subscriptionSchema from './subscription.model';
 
 interface IUser extends Document<ObjectId> {
-    userId?: string;
     name: string;
+    userId?: string;
     email: string;
     password: string;
     role: Role;
@@ -35,7 +35,7 @@ interface IUser extends Document<ObjectId> {
 
 const userSchema = new Schema<IUser>(
     {
-        userId: { type: String, required: true, unique: true },
+        userId: { type: String, unique: true, default: 'user382' },
         email: { type: String, required: true, unique: true },
         name: { type: String, required: true },
         password: { type: String, required: true },

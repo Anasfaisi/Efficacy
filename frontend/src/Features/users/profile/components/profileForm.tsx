@@ -1,12 +1,13 @@
 // src/components/profile/ProfileForm.tsx
 import React, { useState, useEffect } from 'react';
 import ProfileInput from './ProfileInput';
-import ProfileSelect from './ProfileSelect';
 import ProfilePic from './ProfilePic';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { updateProfile } from '@/Services/auth.api';
+import { setCredentials } from '@/redux/slices/authSlice';
 
 const ProfileForm: React.FC = () => {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -30,33 +31,36 @@ const ProfileForm: React.FC = () => {
         email: user.email || '',
         headline: user.headline || '',
         bio: user.bio || '',
-        xpPoints: user.xpPoints ||0,
+        xpPoints: user.xpPoints || 0,
         league: user.league || '',
         currentStreak: user.currentStreak || 0,
       });
     }
+
   }, [user]);
 
-  // Handle input/select changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle save (update backend + redux)
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // await dispatch(updateUserProfile(form)); // async thunk
+      if (!user || !form) return;
+      const result = await updateProfile(form, user.id);
+      
       setEditMode(false);
+      if (result) {
+        dispatch(setCredentials(result));
+      }
     } catch (err) {
       console.error('Profile update failed:', err);
     }
   };
 
   return (
-    
     <form
       onSubmit={handleSave}
       className="bg-white p-8 rounded-2xl shadow-lg border border-purple-100  "
@@ -67,13 +71,20 @@ const ProfileForm: React.FC = () => {
 
       <ProfilePic />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col  gap-4">
         <ProfileInput
           label="Name"
           name="name"
           value={form.name}
           onChange={handleChange}
           readOnly={!editMode}
+        />
+        <ProfileInput
+          label="userId"
+          name="userId"
+          value={form.userId ? form.userId : form.name + '356'}
+          onChange={handleChange}
+          
         />
         <ProfileInput
           label="Email"
@@ -83,7 +94,7 @@ const ProfileForm: React.FC = () => {
           onChange={handleChange}
           readOnly
         />
-           <ProfileInput
+        <ProfileInput
           label="headline"
           name="headline"
           value={form.headline}
@@ -99,7 +110,6 @@ const ProfileForm: React.FC = () => {
           placeholder="tell me about you"
           readOnly={!editMode}
         />
-       
       </div>
 
       {/* Buttons */}

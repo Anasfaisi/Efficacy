@@ -115,8 +115,8 @@ export class CreateChatDTO {
 //============================  user profile ==========================//
 export class ProfileRequestDto {
     constructor(
-        public id: string,
         public name: string,
+        public userId: string,
         public email: string,
         public password: string,
         public role: Role = Role.User,

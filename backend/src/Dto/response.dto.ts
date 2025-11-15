@@ -139,6 +139,7 @@ export class ProfileResponseDto {
         public name: string,
         public email: string,
         public role: Role,
+        public userId?: string,
         public subscription?: subscription,
         public bio?: string,
         public headline?: string,

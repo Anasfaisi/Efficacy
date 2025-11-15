@@ -11,7 +11,8 @@ const ProfileSetupPage: React.FC = () => {
       <Sidebar />
       </div>
     
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-white flex-1 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-white flex-1 p-10
+    ">
       <ProfileForm />
     </div>
     </div>
