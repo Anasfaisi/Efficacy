@@ -1,34 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react';
+import type { KanbanCardProps } from '../types';
 
-interface KanbanCardProps {
-  title: string;
-  description?: string;
-}
-export const KanbanCard: React.FC<KanbanCardProps> = ({ title, description }) => {
+const KanbanCard: React.FC<KanbanCardProps> = ({ task }) => {
   return (
-    <div
-      className="
-        bg-white 
-        shadow-md 
-        rounded-2xl 
-        p-4 
-        cursor-grab 
-        active:cursor-grabbing 
-        border border-transparent 
-        hover:border-purple-500 
-        transition-all
-      "
-    >
-      <h3 className="text-base font-semibold text-gray-800 mb-2">
-        {title}
-      </h3>
-      {description && (
-        <p className="text-sm text-gray-600 leading-snug">
-          {description}
-        </p>
-      )}
+    <div className="mb-3 rounded-lg border border-purple-200 bg-white p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+      <h4 className='text-sm font-semibold text-gray-800'>{task.title}</h4>
+      {task.description && (<p className='mt-1 text-xs text-gray-500'>{task.description}</p>)}
     </div>
   );
-}
+};
 
-export default KanbanCard
+export default KanbanCard;

@@ -34,7 +34,6 @@ export class UserController {
                 res.status(code.OK).json(updatedUser);
             }
         } catch (error: unknown) {
-            // 5️⃣ Consistent error handling
             if (error instanceof Error) {
                 console.error('updateProfilePic error:', error);
                 res.status(code.INTERNAL_SERVER_ERROR).json({
