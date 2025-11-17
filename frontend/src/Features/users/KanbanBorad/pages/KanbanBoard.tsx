@@ -63,6 +63,20 @@ const KanbanBoard: React.FC = () => {
       ),
     );
   };
+
+  const deleteTask = (ColumnId: string, taskId: string) => {
+    console.log(ColumnId,taskId,"sdfdsfsd")
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.columnId === ColumnId
+          ? {
+              ...col,
+              tasks: col.tasks.filter((task) => task.taskId !== taskId),
+            }
+          : col,
+      ),
+    );
+  };
   return (
     <div className="flex h-screen gap-4 p-4">
       <Sidebar />
@@ -76,6 +90,7 @@ const KanbanBoard: React.FC = () => {
               column={column}
               addTask={addtask}
               updateTask={updateTask}
+              deleteTask={deleteTask}
             />
           ))}
         </section>

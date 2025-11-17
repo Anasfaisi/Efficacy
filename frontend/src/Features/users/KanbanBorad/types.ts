@@ -13,6 +13,7 @@ export interface ColumnType {
 export interface KanbanCardProps {
   task: Task;
   editTask: () => void;
+  deleteTask: ()=>void;
 }
 export interface KanbanColumnProps {
   column: ColumnType;
@@ -22,6 +23,7 @@ export interface KanbanColumnProps {
     editingTaskId: string,
     data: Partial<Task>,
   ) => void;
+  deleteTask:(ColumnId:string,taskId:string) => void;
 }
 
 export interface AddTaskCardProps {

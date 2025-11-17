@@ -7,6 +7,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   column,
   addTask,
   updateTask,
+  deleteTask,
 }) => {
   const [form, setForm] = useState({
     title: '',
@@ -16,17 +17,6 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   });
   const [isAdding, setIsAdding] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-
-  const handleEditTask = (task: Task) => {
-    setIsAdding(false);
-    setEditingTaskId(task.taskId);
-    setForm({
-      title: task.title,
-      description: task.description || '',
-      dueDate: task.dueDate || '',
-      approxTimeToFinish: task.approxTimeToFinish || '',
-    });
-  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,6 +46,20 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
     setIsAdding(false);
   };
 
+  const handleEditTask = (task: Task) => {
+    setIsAdding(false);
+    setEditingTaskId(task.taskId);
+    setForm({
+      title: task.title,
+      description: task.description || '',
+      dueDate: task.dueDate || '',
+      approxTimeToFinish: task.approxTimeToFinish || '',
+    });
+  };
+
+  const handleDeleteTask = (task: Task) => {
+    deleteTask(column.columnId, task.taskId);
+  };
   return (
     <div className="flex flex-col rounded-xl bg-purple-50 p-4 w-72 max-h-[80vh] overflow-y-auto border border-purple-300">
       <header className="mb-3 flex items-center justify-between">
@@ -68,6 +72,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
           key={task.taskId}
           task={task}
           editTask={() => handleEditTask(task)}
+          deleteTask={() => handleDeleteTask(task)}
         />
       ))}
       {isAdding || editingTaskId ? (
