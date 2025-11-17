@@ -1,53 +1,86 @@
 import React, { useState } from 'react';
 import Sidebar from '../../home/layouts/Sidebar';
 import KanbanColumn from '../components/KanbanColumn';
-import type { ColumnType } from '../types';
-const intialColumns: ColumnType[] = [
+import type { ColumnType, Task } from '../types';
+
+const initialColumns: ColumnType[] = [
   {
-    id: 'todo',
+    columnId: 'todo',
     title: 'To Do',
     tasks: [
       {
-        id: '1',
+        taskId: '1',
         title: 'Set up project',
         description: 'Create React + Vite + Tailwind base',
       },
       {
-        id: '2',
+        taskId: '2',
         title: 'Design Kanban layout',
         description: 'Structure board, columns, cards',
       },
     ],
   },
   {
-    id: 'in-progress',
+    columnId: 'in-progress',
     title: 'In Progress',
-    tasks: [{ id: '3', title: 'Build KanbanCard component' }],
+    tasks: [{ taskId: '3', title: 'Build KanbanCard component' }],
   },
   {
-    id: 'done',
+    columnId: 'done',
     title: 'Done',
-    tasks: [{ id: '4', title: 'Install dependencies' }],
+    tasks: [{ taskId: '4', title: 'Install dependencies' }],
   },
 ];
 
 const KanbanBoard: React.FC = () => {
-  const [columns] = useState<ColumnType[]>(intialColumns);
+  const [columns, setColumns] = useState<ColumnType[]>(initialColumns);
+  const addtask = (columnId: string, task: Task) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((col) =>
+        col.columnId === columnId
+          ? { ...col, tasks: [...col.tasks, task] }
+          : col,
+      ),
+    );
+    console.log(columns);
+  };
+
+  const updateTask = (
+    columnId: string,
+    taskId: string,
+    data: Partial<Task>,
+  ) => {
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.columnId === columnId
+          ? {
+              ...col,
+              tasks: col.tasks.map((task) =>
+                task.taskId === taskId ? { ...task, ...data } : task,
+              ),
+            }
+          : col,
+      ),
+    );
+  };
   return (
     <div className="flex h-screen gap-4 p-4">
       <Sidebar />
-      <main className='min-h-screen bg-slate-50 px-6 py-8'>
-        <h1 className='mb-6 text-2xl font-bold text-gray-900'>
-          KanbanBoard
-        </h1>
+      <main className="min-h-screen bg-slate-50 px-6 py-8">
+        <h1 className="mb-6 text-2xl font-bold text-gray-900">KanbanBoard</h1>
 
-        <section className='flex gap-4 overflow-x-auto pb-4'>
-          {columns.map((column)=>(
-            <KanbanColumn key={column.id} column={column} />
+        <section className="flex gap-4 overflow-x-auto pb-4">
+          {columns.map((column) => (
+            <KanbanColumn
+              key={column.columnId}
+              column={column}
+              addTask={addtask}
+              updateTask={updateTask}
+            />
           ))}
         </section>
       </main>
-      </div>
+    </div>
   );
 };
 
