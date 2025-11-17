@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import type { KanbanColumnProps, Task } from '../types';
 import KanbanCard from './KanbanCard';
 import AddTaskCard from './AddTaskCard';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import SortableItem from './SortableItem';
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({
   column,
@@ -60,21 +65,31 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   const handleDeleteTask = (task: Task) => {
     deleteTask(column.columnId, task.taskId);
   };
+
   return (
     <div className="flex flex-col rounded-xl bg-purple-50 p-4 w-72 max-h-[80vh] overflow-y-auto border border-purple-300">
       <header className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-bold text-purple-900">{column?.title}</h3>
         <span className="text-xs text-purpel-500">{column.tasks.length}</span>
       </header>
-
-      {column.tasks.map((task: Task) => (
-        <KanbanCard
-          key={task.taskId}
-          task={task}
-          editTask={() => handleEditTask(task)}
-          deleteTask={() => handleDeleteTask(task)}
-        />
-      ))}
+      <SortableContext
+        items={column.tasks.map((task) => task.taskId)}
+        strategy={verticalListSortingStrategy}
+      >
+        {column.tasks.map((task: Task) => (
+          <SortableItem key={task.taskId} id={task.taskId}>
+            {(dragHandleProps: React.HTMLAttributes<HTMLElement>) => (
+              <KanbanCard
+                key={task.taskId}
+                task={task}
+                editTask={() => handleEditTask(task)}
+                deleteTask={() => handleDeleteTask(task)}
+                dragHandleProps={dragHandleProps}
+              />
+            )}
+          </SortableItem>
+        ))}
+      </SortableContext>
       {isAdding || editingTaskId ? (
         <div className="mt-3 p-3 rounded-lg bg-white border border-purple-200 shadow-sm">
           <input

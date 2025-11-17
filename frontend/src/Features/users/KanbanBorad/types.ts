@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export interface Task {
   taskId: string;
   title: string;
@@ -13,7 +15,8 @@ export interface ColumnType {
 export interface KanbanCardProps {
   task: Task;
   editTask: () => void;
-  deleteTask: ()=>void;
+  deleteTask: () => void;
+  dragHandleProps?: React.HTMLAttributes<HTMLElement>;
 }
 export interface KanbanColumnProps {
   column: ColumnType;
@@ -23,9 +26,14 @@ export interface KanbanColumnProps {
     editingTaskId: string,
     data: Partial<Task>,
   ) => void;
-  deleteTask:(ColumnId:string,taskId:string) => void;
+  deleteTask: (ColumnId: string, taskId: string) => void;
 }
 
 export interface AddTaskCardProps {
   onClick: () => void;
+}
+
+export interface SortableItemProps {
+  id: string;
+  children: (dragHandleProps:React.HTMLAttributes<HTMLElement>)=>ReactNode;
 }
