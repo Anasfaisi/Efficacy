@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import { container } from './config/inversify.config';
 import { PaymentController } from './controllers/payment.controller';
-import { TYPES } from './types/inversify-key.types';
+import { TYPES } from './config/inversify-key.types';
 import path from 'path';
 import { fileURLToPath } from 'url';
 export function applyMiddlewares(app: Express) {

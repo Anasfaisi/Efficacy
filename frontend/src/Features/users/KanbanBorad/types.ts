@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 export interface Task {
   taskId: string;
@@ -29,11 +29,16 @@ export interface KanbanColumnProps {
   deleteTask: (ColumnId: string, taskId: string) => void;
 }
 
+export interface KanbanBoardData {
+  userId: string;
+  columns: ColumnType[];
+}
+
 export interface AddTaskCardProps {
   onClick: () => void;
 }
 
 export interface SortableItemProps {
   id: string;
-  children: (dragHandleProps:React.HTMLAttributes<HTMLElement>)=>ReactNode;
+  children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => ReactNode;
 }

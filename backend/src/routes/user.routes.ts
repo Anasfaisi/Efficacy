@@ -5,10 +5,13 @@ import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';
 import { upload } from '@/config/multer.config';
+import { container } from '@/config/inversify.config';
+import { TYPES } from '@/config/inversify-key.types';
 
 export default function authRoutes(userController: UserController) {
     const router = Router();
-    const _tokenService = new TokenService();
+   const _tokenService = container.get<TokenService>(TYPES.TokenService);
+
     // router.get(
     //     '/me/:id',
     //     authenticateAndAuthorize(tokenService, Role.User),

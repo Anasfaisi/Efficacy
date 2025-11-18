@@ -1,4 +1,5 @@
 import { IUser } from '@/models/User.model';
+import { ColumnId } from '@/types/columnEnum.types';
 import { MessageStatus, Role } from '@/types/role.types';
 
 //Login
@@ -138,4 +139,37 @@ export class ProfilePicUpdateDto {
         this.file = file;
         this.id = id;
     }
+}
+
+//=============================  task  ============================================//
+export class KanbabTaskRequestDto {
+    constructor(
+        public taskId: string,
+        public title: string,
+        public description?: string,
+        public dueDate?: string,
+        public approxTimeToFinish?: string,
+        public position: number = 0
+    ) {}
+}
+
+export class kanbanColumnRequestDto {
+    constructor(
+        public columnId: ColumnId,
+        public title: string,
+        public position: number = 0,
+        public tasks: KanbabTaskRequestDto[] = []
+    ) {}
+}
+
+export class KanbanBoardRequestDto {
+    constructor(
+        public userId: string,
+        public columns: kanbanColumnRequestDto[]
+    ) {}
+}
+
+
+export class GetKanbanBoardRequestDto {
+  constructor(public id: string) {}
 }

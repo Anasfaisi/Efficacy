@@ -10,10 +10,16 @@ export const ErrorMessages = {
     UpdateFailed: 'can"t able to find the user with this id',
     UpdateUserFailed: 'Invalid user data provided',
     UpdateProfilePicFailed: 'Invalid form of data',
-    FileNotAttached:'No image uploaded',
-    NoParams:'id not found'
+    FileNotAttached: 'No image uploaded',
+    NoParams: 'id not found',
+
+    NoBoard: 'No kanban board found for this user',
+    NoBody: 'The requested body is empty',
 };
 
+export const SuccessMessages = {
+    ResourceDelivered: 'content delivered successfully',
+};
 // types for chat controller
 export interface joinRoomPayload {
     roomId: string;

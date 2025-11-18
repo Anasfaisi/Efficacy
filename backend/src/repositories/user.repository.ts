@@ -1,6 +1,6 @@
 import { BaseRepository } from './base.repository';
 import { IUserRepository } from './interfaces/IUser.repository';
-import UserModel, { IUser } from '../models/User.model';
+import User, { IUser } from '../models/User.model';
 import { Role } from '@/types/role.types';
 import { UserUpdateData } from '@/types/repository.types';
 import { ISubscription } from '@/models/subscription.model';
@@ -10,7 +10,7 @@ export class UserRepository
     implements IUserRepository
 {
     constructor() {
-        super(UserModel);
+        super(User);
     }
 
     async findByEmail(email: string): Promise<IUser | null> {
@@ -26,14 +26,14 @@ export class UserRepository
         return this.create(data);
     }
     async findById(id: string): Promise<IUser | null> {
-        return await UserModel.findById(id);
+        return await User.findById(id);
     }
 
     async updatePasswordById(
         userId: string,
         newPassword: string
     ): Promise<void> {
-        await UserModel.updateOne(
+        await User.updateOne(
             { _id: userId },
             { $set: { password: newPassword } }
         );
@@ -43,7 +43,7 @@ export class UserRepository
         email: string,
         subscriptionData: ISubscription
     ): Promise<IUser | null> {
-        return UserModel.findOneAndUpdate(
+        return User.findOneAndUpdate(
             { email },
             { $set: { subscription: subscriptionData } },
             { new: true }
@@ -54,7 +54,7 @@ export class UserRepository
         userId: string,
         subscriptionData: ISubscription
     ): Promise<IUser | null> {
-        return UserModel.findByIdAndUpdate(
+        return User.findByIdAndUpdate(
             userId,
             { $set: { subscription: subscriptionData } },
             { new: true }
@@ -62,11 +62,11 @@ export class UserRepository
     }
 
     async findByStripeCustomerId(customerId: string): Promise<IUser | null> {
-        return UserModel.findOne({ stripeCustomerId: customerId }).exec();
+        return User.findOne({ stripeCustomerId: customerId }).exec();
     }
 
     async updateUser(updatedData: UserUpdateData): Promise<IUser | null> {
-        const updatedUser = await UserModel.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             updatedData.id,
             { ...updatedData },
             { new: true, runValidators: true }
@@ -75,7 +75,7 @@ export class UserRepository
     }
 
     async updateProfilePic(id: string, fileUrl: string): Promise<IUser | null> {
-        const updatedUser = await UserModel.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             id,
             { profilePic: fileUrl },
             { new: true, runValidators: true }

@@ -1,40 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import Sidebar from '../../home/layouts/Sidebar';
 import KanbanColumn from '../components/KanbanColumn';
 import type { ColumnType, Task } from '../types';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { getKanbanBoard } from '@/Services/Kanban.api';
+import { useAppSelector } from '@/redux/hooks';
 
-const initialColumns: ColumnType[] = [
-  {
-    columnId: 'todo',
-    title: 'To Do',
-    tasks: [
-      {
-        taskId: '1',
-        title: 'Set up project',
-        description: 'Create React + Vite + Tailwind base',
-      },
-      {
-        taskId: '2',
-        title: 'Design Kanban layout',
-        description: 'Structure board, columns, cards',
-      },
-    ],
-  },
-  {
-    columnId: 'in-progress',
-    title: 'In Progress',
-    tasks: [{ taskId: '3', title: 'Build KanbanCard component' }],
-  },
-  {
-    columnId: 'done',
-    title: 'Done',
-    tasks: [{ taskId: '4', title: 'Install dependencies' }],
-  },
-];
 
 const KanbanBoard: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+
+  const [columns, setColumns] = useState<ColumnType[]>([]);
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -102,7 +80,20 @@ const KanbanBoard: React.FC = () => {
     );
   };
 
-  const [columns, setColumns] = useState<ColumnType[]>(initialColumns);
+  const getBoardData = async (id: string) => {
+    try {
+      const initialColumns = await getKanbanBoard(id);
+      setColumns(initialColumns);
+    } catch (error) {
+      console.error('Error fetching board', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    getBoardData(user.id);
+  }, []);
+
   const addtask = (columnId: string, task: Task) => {
     setColumns((prevColumns) =>
       prevColumns.map((col) =>
@@ -152,7 +143,7 @@ const KanbanBoard: React.FC = () => {
         <h1 className="mb-6 text-2xl font-bold text-gray-900">KanbanBoard</h1>
         <DndContext onDragEnd={handleDragEnd}>
           <section className="flex gap-4 overflow-x-auto pb-4">
-            {columns.map((column) => (
+            {columns?.map((column) => (
               <KanbanColumn
                 key={column.columnId}
                 column={column}

@@ -7,6 +7,7 @@ export const TYPES = {
     PaymentService: Symbol('PaymentService'),
     ChatService: Symbol('ChatService'),
     SocketService: Symbol('SocketService'),
+    KanbanService: Symbol('KanbanService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -14,6 +15,7 @@ export const TYPES = {
     UnverifiedUserRepository: Symbol('UnverifiedUserRepository'),
     ChatRepository: Symbol('ChatRepository'),
     MessageRepository: Symbol('MessageRepository'),
+    KanbanRepository : Symbol('KanbanRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -21,4 +23,5 @@ export const TYPES = {
     PaymentController: Symbol('paymentController'),
     ChatController: Symbol('chatController'),
     SocketController: Symbol('SocketController'),
+    KanbanController: Symbol('KanbanController'),
 };

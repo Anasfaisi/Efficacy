@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../serivces/auth.service';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
@@ -73,6 +73,7 @@ export class UserController {
                 res.status(code.BAD_REQUEST).json({
                     messages: ErrorMessages.UpdateProfilePicFailed,
                 });
+                return;
             }
             res.status(200).json({
                 message: 'Profile picture updated successfully',
