@@ -11,7 +11,7 @@ export class AdminRepository
     }
 
     async findByEmail(email: string): Promise<IAdmin | null> {
-        return this.findOne({ email });
+        return this.model.findOne({ email });
     }
     async findById(id: string): Promise<IAdmin | null> {
         return super.findById(id);

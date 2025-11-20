@@ -8,6 +8,7 @@ export const TYPES = {
     ChatService: Symbol('ChatService'),
     SocketService: Symbol('SocketService'),
     KanbanService: Symbol('KanbanService'),
+    AdminAuthService: Symbol('AdminAuthService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -15,7 +16,7 @@ export const TYPES = {
     UnverifiedUserRepository: Symbol('UnverifiedUserRepository'),
     ChatRepository: Symbol('ChatRepository'),
     MessageRepository: Symbol('MessageRepository'),
-    KanbanRepository : Symbol('KanbanRepository'),
+    KanbanRepository: Symbol('KanbanRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),

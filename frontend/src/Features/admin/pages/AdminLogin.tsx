@@ -8,7 +8,7 @@ import { setCredentials } from '@/redux/slices/authSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { cn } from '@/lib/utils';
 import { loginFormSchema } from '@/types/authSchema';
-import { loginApi } from '@/Services/auth.api';
+import { adminLoginApi } from '@/Services/auth.api';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -38,9 +38,10 @@ const AdminLogin = () => {
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setRoleError(null);
-    const user = await loginApi({ ...data, role: 'admin' });
-    if (user) {
-      dispatch(setCredentials({ user }));
+    const  admin  = await adminLoginApi({ ...data, role: 'admin' });
+    console.log(admin,"from the adminLogin")
+    if (admin) {
+      dispatch(setCredentials({ user:admin }));
       navigate('/admin/dashboard');
     }
   };

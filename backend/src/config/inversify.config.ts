@@ -35,6 +35,8 @@ import { IKanbanService } from '@/serivces/Interfaces/Ikanban.service';
 import { KanbanService } from '@/serivces/kanban.service';
 import { IKanbanRepository } from '@/repositories/interfaces/IKanban.repository';
 import { KanbanRepository } from '@/repositories/Kanban.repository';
+import { AdminAuthService } from '@/serivces/admin-auth.service';
+import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 
 export const container = new Container();
 
@@ -61,6 +63,7 @@ container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
 container.bind<ISocketService>(TYPES.SocketService).to(SocketService);
 container.bind<IKanbanService>(TYPES.KanbanService).to(KanbanService);
+container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
