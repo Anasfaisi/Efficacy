@@ -39,7 +39,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
       dueDate: form.dueDate,
       approxTimeToFinish: form.approxTimeToFinish,
     };
-    console.log(newTask, 'new task');
+    // console.log(newTask, 'new task');
     addTask(column.columnId, newTask);
 
     setForm({

@@ -15,29 +15,83 @@ export class KanbanController {
         @inject(TYPES.KanbanService) private _kanbanService: IKanbanService
     ) {}
     async getKanbanBoard(req: Request, res: Response) {
-        try {
-            if (!req.body.id) throw new Error(ErrorMessages.NoBody);
-
-            const kanbanBoard = await this._kanbanService.getKanbanBoard(req.body.id);
-            console.log(kanbanBoard,'from controller')
-            if (!kanbanBoard){
-                res.status(HttpStatus.NO_CONTENT).json({
-                    message: ErrorMessages.NoBoard,
-                });
-            return;
-            }
-
-            res.status(HttpStatus.OK).json({
-                message: SuccessMessages.ResourceDelivered,
-                kanbanBoard
-            });
-        } catch (error) {
-            if (error instanceof Error) {
-                console.log(error);
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: error.message,
-                });
-            }
+        if (!req.body.id) {
+            throw new Error(ErrorMessages.NoBody);
         }
+
+        const kanbanBoard = await this._kanbanService.getKanbanBoard(req.body);
+
+        if (!kanbanBoard) {
+            res.status(HttpStatus.NO_CONTENT).json({
+                message: ErrorMessages.NoBoard,
+            });
+            return;
+        }
+
+        res.status(HttpStatus.OK).json({
+            message: SuccessMessages.ResourceDelivered,
+            kanbanBoard,
+        });
+    }
+
+    async addKanbanTask(req: Request, res: Response) {
+        if (!req.body) throw new Error(ErrorMessages.NoBody);
+
+        const kanbanBoard = await this._kanbanService.addkanbanTask(req.body);
+
+        if (!kanbanBoard) {
+            res.status(HttpStatus.NO_CONTENT).json({
+                message: ErrorMessages.NotAdded,
+            });
+            return;
+        }
+        res.status(HttpStatus.OK).json({
+            message: SuccessMessages.ResourceDelivered,
+            kanbanBoard,
+        });
+    }
+
+    async updateKanbanTask(req: Request, res: Response) {
+        const kanbanBoard =await  this._kanbanService.updateKanbanTask(req.body);
+        if (!kanbanBoard) {
+            res.status(HttpStatus.NO_CONTENT).json({
+                message: ErrorMessages.NotAdded,
+            });
+            return;
+        }
+        res.status(HttpStatus.OK).json({
+            message: SuccessMessages.ResourceDelivered,
+            kanbanBoard,
+        });
+    }
+
+    async deleteKanbanTask(req: Request, res: Response) {
+        const request = req.body;
+        request.id = req.params.id;
+
+        const kanbanBoard = this._kanbanService.deleteKanbanTask(request);
+        if (!kanbanBoard) {
+            res.status(HttpStatus.NO_CONTENT).json({
+                message: ErrorMessages.NotAdded,
+            });
+            return;
+        }
+    }
+
+    async reorderKanbanTask(req: Request, res: Response) {
+        const kanbanBoard = await this._kanbanService.reorderKanbanTask(req.body);
+        if (!kanbanBoard) {
+            res.status(HttpStatus.NO_CONTENT).json({
+                message: ErrorMessages.NotAdded,
+            });
+            return;
+        }
+
+
+        res.status(HttpStatus.OK).json({
+            message: SuccessMessages.ResourceDelivered,
+            kanbanBoard,
+            
+        });
     }
 }

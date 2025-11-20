@@ -4,20 +4,24 @@ import KanbanColumn from '../components/KanbanColumn';
 import type { ColumnType, Task } from '../types';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { getKanbanBoard } from '@/Services/Kanban.api';
+import {
+  createTaskAPI,
+  getKanbanBoardApi,
+  reorderTaskAPI,
+  updateTaskAPI,
+} from '@/Services/Kanban.api';
 import { useAppSelector } from '@/redux/hooks';
-
 
 const KanbanBoard: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   const [columns, setColumns] = useState<ColumnType[]>([]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-    const activeId = active.id;
-    const overId = over.id;
+    const activeId = String(active.id)
+    const overId = String(over.id);
 
     if (activeId === overId) return;
 
@@ -78,11 +82,27 @@ const KanbanBoard: React.FC = () => {
         return col;
       }),
     );
+
+    try {
+      if (!user) return;
+      const updatedBoard = await reorderTaskAPI(
+        user.id,
+        activeId,
+        sourceColumn.columnId,
+        destColumn.columnId,
+        sourceTaskIndex,
+        destTaskIndex,
+      );
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
   };
 
   const getBoardData = async (id: string) => {
     try {
-      const initialColumns = await getKanbanBoard(id);
+      const initialColumns = await getKanbanBoardApi(id);
       setColumns(initialColumns);
     } catch (error) {
       console.error('Error fetching board', error);
@@ -94,7 +114,7 @@ const KanbanBoard: React.FC = () => {
     getBoardData(user.id);
   }, []);
 
-  const addtask = (columnId: string, task: Task) => {
+  const addtask = async (columnId: string, task: Task) => {
     setColumns((prevColumns) =>
       prevColumns.map((col) =>
         col.columnId === columnId
@@ -102,10 +122,17 @@ const KanbanBoard: React.FC = () => {
           : col,
       ),
     );
-    console.log(columns);
+    try {
+      if (!user) return;
+      const updatedBoard = await createTaskAPI(user.id, columnId, task);
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
   };
 
-  const updateTask = (
+  const updateTask = async (
     columnId: string,
     taskId: string,
     data: Partial<Task>,
@@ -122,6 +149,15 @@ const KanbanBoard: React.FC = () => {
           : col,
       ),
     );
+
+    try {
+      if (!user) return;
+      const updatedBoard = await updateTaskAPI(user.id, columnId, taskId, data);
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
   };
 
   const deleteTask = (ColumnId: string, taskId: string) => {

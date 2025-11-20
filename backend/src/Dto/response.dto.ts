@@ -160,9 +160,8 @@ export class KanbanColumnResponseDto {
     ) {}
 }
 
-export class GetKanbanBoardResponseDto {
+export class KanbanBoardResponseDto {
     constructor(
-        public id: string,
         public columns: KanbanColumnResponseDto[]
     ) {}
 }
@@ -176,3 +175,5 @@ export class KanbanTaskResponseDto {
         public approxTimeToFinish?: string
     ) {}
 }
+
+

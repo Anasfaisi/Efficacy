@@ -142,14 +142,13 @@ export class ProfilePicUpdateDto {
 }
 
 //=============================  task  ============================================//
-export class KanbabTaskRequestDto {
+export class KanbanTaskRequestDto {
     constructor(
         public taskId: string,
         public title: string,
         public description?: string,
         public dueDate?: string,
-        public approxTimeToFinish?: string,
-        public position: number = 0
+        public approxTimeToFinish?: string
     ) {}
 }
 
@@ -157,19 +156,50 @@ export class kanbanColumnRequestDto {
     constructor(
         public columnId: ColumnId,
         public title: string,
-        public position: number = 0,
-        public tasks: KanbabTaskRequestDto[] = []
+        public tasks: KanbanTaskRequestDto[] = []
     ) {}
 }
 
-export class KanbanBoardRequestDto {
-    constructor(
-        public userId: string,
-        public columns: kanbanColumnRequestDto[]
-    ) {}
+export class KanbanBoard {
+    constructor(public columns: kanbanColumnRequestDto[]) {}
 }
-
 
 export class GetKanbanBoardRequestDto {
-  constructor(public id: string) {}
+    constructor(public id: string) {}
+}
+
+export class AddKanbanTaskRequestDto {
+    constructor(
+        public id: string,
+        public columnId: string,
+        public task: KanbanTaskRequestDto
+    ) {}
+}
+
+export class updateKanbanTaskRequestDto {
+    constructor(
+        public id: string,
+        public taskId: string,
+        public columnId: string,
+        public data: Partial<KanbanTaskRequestDto>
+    ) {}
+}
+
+export class deleteKanbanTaskRequestDto {
+    constructor(
+        public id: string,
+        public columnId: string,
+        public taskId: string
+    ) {}
+}
+
+export class reorderKanbanTaskRequestDto {
+    constructor(
+        public id: string,
+        public taskId: string,
+        public sourceColumnId: string,
+        public destColumnId: string,
+        public sourceTaskIndex: number,
+        public destTaskIndex: number
+    ) {}
 }
