@@ -57,8 +57,8 @@ export default function authRoutes(userController: UserController) {
         userController.resetPassword.bind(userController)
     );
 
-    router.put(
-        '/profile/update',
+    router.post(
+        '/update/profile/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         userController.updateUserProfile.bind(userController) 
     );

@@ -139,12 +139,12 @@ const Login: React.FC = () => {
           </button>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          <p>
+          {/* <p>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
             />
-          </p>
+          </p> */}
           <p className="text-sm text-gray-500 text-center">
             Don’t have an account?{' '}
             <Link

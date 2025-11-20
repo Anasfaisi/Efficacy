@@ -5,7 +5,6 @@ import { TokenService } from '@/serivces/token.service';
 const authenticateAndAuthorize = (_tokenService: TokenService, roles: Role) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.cookies?.accessToken;
-        console.log(token, 'token');
         if (!token) {
             res.status(403).json({ message: 'Unauthorized' });
             return;

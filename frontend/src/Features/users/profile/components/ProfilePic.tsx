@@ -12,17 +12,17 @@ const ProfilePic: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.auth.user);
   const [editState, setEditState] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) setProPic(file);
   };
 
-
   const handleProfilePicUpdate = async () => {
     if (!proPic) return;
     const result = await updateProfilePicture(proPic, 'user', user?.id);
+    console.log(result,"propic")
     if (result?.user) {
-      dispatch(setCredentials(result));
+      dispatch(setCredentials({ user: result.user }));
       setEditState(false);
     } else {
       console.error('Unexpected API response:', result);

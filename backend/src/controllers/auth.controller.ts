@@ -22,8 +22,10 @@ export class UserController {
 
     async updateUserProfile(req: Request, res: Response) {
         try {
+
             const updatedUser = await this._authService.updateUserProfile(
-                req.body
+                req.body,
+                req.params.id
             );
             if (!updatedUser) {
                 res.status(code.BAD_REQUEST).json({
@@ -35,7 +37,7 @@ export class UserController {
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.error('updateProfilePic error:', error);
+                console.error('updateProfile error:', error);
                 res.status(code.INTERNAL_SERVER_ERROR).json({
                     message: error.message,
                 });

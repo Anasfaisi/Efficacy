@@ -4,8 +4,8 @@ import { ISubscription } from './subscription.model';
 import subscriptionSchema from './subscription.model';
 
 interface IUser extends Document<ObjectId> {
-    userId?: string;
     name: string;
+    userId?: string;
     email: string;
     password: string;
     role: Role;

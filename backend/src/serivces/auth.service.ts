@@ -15,7 +15,6 @@ import {
     CurrentUserResDto,
     LoginResponseDTO,
     OtpVerificationResponseDto,
-    ProfilePicResponseDto,
     ProfileResponseDto,
     RegisterInitResponseDto,
 } from '@/Dto/response.dto';
@@ -48,12 +47,13 @@ export class AuthService implements IAuthService {
     ) {}
 
     async updateUserProfile(
-        data: ProfileRequestDto
+        data: ProfileRequestDto,
+        id: string
     ): Promise<ProfileResponseDto> {
         const dto = new ProfileRequestDto(
-            data.id,
-            data.email,
             data.name,
+            data.userId,
+            data.email,
             data.password,
             data.role,
             data.bio,
@@ -62,15 +62,18 @@ export class AuthService implements IAuthService {
             data.dob,
             data.subscription
         );
+        
+  
+        const updatedUser = await this._userRepository.updateUser(id, dto);
 
-        const updatedUser = await this._userRepository.updateUser(dto);
         if (!updatedUser) throw new Error(ErrorMessages.UpdateFailed);
 
         return new ProfileResponseDto(
-            updatedUser.id,
+            updatedUser.id.toString(),
             updatedUser.name,
             updatedUser.email,
             updatedUser.role,
+            updatedUser.userId,
             updatedUser?.subscription,
             updatedUser?.bio,
             updatedUser?.headline,
@@ -79,18 +82,13 @@ export class AuthService implements IAuthService {
         );
     }
 
-
-
-
-
-
     async updateUserProfilePic(
         data: ProfilePicUpdateDto
-    ): Promise<ProfilePicResponseDto> {
+    ): Promise<ProfileResponseDto> {
         const dto = new ProfilePicUpdateDto(data.file, data.id);
 
         const baseUrl = process.env.BASE_URL;
-    
+
         const fileUrl = `${baseUrl}/uploads/${dto.file.filename}`;
         const updatedProfiePic = await this._userRepository.updateProfilePic(
             dto.id,
@@ -99,10 +97,11 @@ export class AuthService implements IAuthService {
         if (!updatedProfiePic) throw new Error(ErrorMessages.UpdateFailed);
 
         return new ProfileResponseDto(
-            updatedProfiePic.id,
+            updatedProfiePic.id.toString(),
             updatedProfiePic.name,
             updatedProfiePic.email,
             updatedProfiePic.role,
+            updatedProfiePic?.userId,
             updatedProfiePic?.subscription,
             updatedProfiePic?.bio,
             updatedProfiePic?.headline,
@@ -141,12 +140,12 @@ export class AuthService implements IAuthService {
             email: account.email,
             role: account.role as Role,
             subscription: account?.subscription,
-            bio :account?.bio,
-            headline:account?.headline,
-            profilePic:account?.profilePic,
-            dob:account?.dob,
-            xpPoints:account.xpPoints,
-            badge:account?.badge
+            bio: account?.bio,
+            headline: account?.headline,
+            profilePic: account?.profilePic,
+            dob: account?.dob,
+            xpPoints: account.xpPoints,
+            badge: account?.badge,
         });
     }
 

@@ -7,6 +7,7 @@ import type {
   LoginResponse,
   Admin,
 } from '@/types/auth';
+import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
 
@@ -196,7 +197,7 @@ export const updateProfilePicture = async (
     const response = await api.post(`/profile/proPicUpdate/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log(response.data);
+    console.log(response.data,"from propic api");
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -207,5 +208,29 @@ export const updateProfilePicture = async (
       throw error.message;
     }
     throw new Error('Unknown error during profile picture update');
+  }
+};
+
+export const updateProfile = async (
+  form: ProfileForm,
+  id?: string,
+) => {
+  try {
+    if (!id) {
+      throw new Error('no user id was given');
+    }
+    const response = await api.post(`/update/profile/${id}`, form);
+    console.log(response.data,"from profle api")
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      
+      throw error.response?.data?.message || 'profile update failed';
+
+    }
+    if (error instanceof Error) {
+      throw error.message;
+    }
+    throw new Error('Unknown error during profile update');
   }
 };
