@@ -5,6 +5,7 @@ import type {
   Role,
   RegisterCredentials,
   LoginResponse,
+  Admin,
 } from '@/types/auth';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
@@ -36,7 +37,7 @@ export const loginApi = async (
 
   try {
     const res = await api.post(endpoint, credentials);
-    console.log(res);
+    console.log(res, 'from aut');
 
     return {
       user: res.data.user as User,
@@ -48,6 +49,19 @@ export const loginApi = async (
     }
     console.log(error);
     return { message: 'Login failed' };
+  }
+};
+
+export const adminLoginApi = async (credentials: LoginCredentials) => {
+  const role: Role = (credentials.role ?? 'admin') as Role;
+  const endpoint = ENDPOINTS[role];
+  try {
+    const res = await api.post(endpoint, credentials);
+    console.log(res);
+    return res.data.admin;
+    
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -164,14 +178,12 @@ export const googleLoginApi = async (
   }
 };
 
-
-
 //profile
 export const updateProfilePicture = async (
   file: File | null,
   role: Role,
   id?: string,
-): Promise<{ message: string,user: User }> => {
+): Promise<{ message: string; user: User }> => {
   try {
     if (!file) {
       throw new Error('no file selected');

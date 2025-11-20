@@ -9,6 +9,13 @@ export interface Subscription {
   current_period_end?: Date;
 }
 
+export interface Admin{
+  id:string,
+  email:string,
+  role:Role,
+
+}
+
 export interface User {
   id: string;
   userId?: string;
@@ -65,6 +72,7 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
+  admin?:Admin;
   user?: User;
   message?: string;
 }

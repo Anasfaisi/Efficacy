@@ -16,6 +16,9 @@ export const ErrorMessages = {
     NoBoard: 'No kanban board found for this user',
     NoBody: 'The requested body is empty',
     NotAdded:'could not able to the new task',
+
+    //admin
+    NoAdmin: 'No admin is found on this email'
 };
 
 export const SuccessMessages = {

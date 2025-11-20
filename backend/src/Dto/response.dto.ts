@@ -36,6 +36,18 @@ export class LoginResponseDTO {
     }
 }
 
+export class AdminLoginRespondseDto {
+    constructor(
+        public admin: {
+            id: string;
+            email: string;
+            role: Role;
+        },
+        public accessToken: string,
+        public refreshToken: string
+    ) {}
+}
+
 //Register
 export class RegisterInitResponseDto {
     constructor(
@@ -161,9 +173,7 @@ export class KanbanColumnResponseDto {
 }
 
 export class KanbanBoardResponseDto {
-    constructor(
-        public columns: KanbanColumnResponseDto[]
-    ) {}
+    constructor(public columns: KanbanColumnResponseDto[]) {}
 }
 
 export class KanbanTaskResponseDto {
@@ -175,5 +185,3 @@ export class KanbanTaskResponseDto {
         public approxTimeToFinish?: string
     ) {}
 }
-
-
