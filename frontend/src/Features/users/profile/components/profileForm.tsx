@@ -53,7 +53,7 @@ const ProfileForm: React.FC = () => {
       
       setEditMode(false);
       if (result) {
-        dispatch(setCredentials(result));
+        dispatch(setCredentials({user:result.data}));
       }
     } catch (err) {
       console.error('Profile update failed:', err);

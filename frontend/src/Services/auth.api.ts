@@ -183,7 +183,7 @@ export const updateProfilePicture = async (
     const response = await api.post(`/profile/proPicUpdate/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log(response.data);
+    console.log(response.data,"from propic api");
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -200,14 +200,14 @@ export const updateProfilePicture = async (
 export const updateProfile = async (
   form: ProfileForm,
   id?: string,
-): Promise<{ message: string; user: User }> => {
+) => {
   try {
     if (!id) {
       throw new Error('no user id was given');
     }
     const response = await api.post(`/update/profile/${id}`, form);
-    console.log(response.data)
-    return response.data;
+    console.log(response.data,"from profle api")
+    return response;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       
