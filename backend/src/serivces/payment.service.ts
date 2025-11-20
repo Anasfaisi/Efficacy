@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { IPaymentService } from './Interfaces/IPayment.service';
 import { RequestPaymentDto } from '@/Dto/request.dto';
 import { ResponsePaymentDto } from '@/Dto/response.dto';

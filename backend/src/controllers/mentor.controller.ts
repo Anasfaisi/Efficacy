@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../serivces/auth.service';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';

@@ -1,43 +1,196 @@
-// client/src/KanbanBoard/pages/KanbanBoard.tsx
-import React from 'react';
-import KanbanCard from '../components/KanbanCard';
+import React, { useEffect, useState } from 'react';
+// import Sidebar from '../../home/layouts/Sidebar';
+import KanbanColumn from '../components/KanbanColumn';
+import type { ColumnType, Task } from '../types';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
+import {
+  createTaskAPI,
+  getKanbanBoardApi,
+  reorderTaskAPI,
+  updateTaskAPI,
+} from '@/Services/Kanban.api';
+import { useAppSelector } from '@/redux/hooks';
 
 const KanbanBoard: React.FC = () => {
-  // Temporary sample data
-  const columns = [
-    {
-      id: 'todo',
-      title: 'To Do',
-      tasks: [
-        { id: '1', title: 'Design Dashboard', description: 'Create UI for task dashboard' },
-        { id: '2', title: 'Fix Login Issue', description: 'Resolve token expiration bug' },
-      ],
-    },
-    {
-      id: 'inProgress',
-      title: 'In Progress',
-      tasks: [{ id: '3', title: 'Kanban Board UI', description: 'Implement card drag and drop' }],
-    },
-    {
-      id: 'done',
-      title: 'Done',
-      tasks: [{ id: '4', title: 'Setup Project', description: 'Initialize React + Tailwind setup' }],
-    },
-  ];
+  const { user } = useAppSelector((state) => state.auth);
 
+  const [columns, setColumns] = useState<ColumnType[]>([]);
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const activeId = String(active.id)
+    const overId = String(over.id);
+
+    if (activeId === overId) return;
+
+    let sourceColIndex = -1;
+    let sourceTaskIndex = -1;
+
+    columns.forEach((col, ci) => {
+      const ti = col.tasks.findIndex((task) => task.taskId === activeId);
+      if (ti !== -1) {
+        sourceColIndex = ci;
+        sourceTaskIndex = ti;
+      }
+    });
+
+    let destColIndex = -1;
+    let destTaskIndex = -1;
+
+    columns.forEach((col, ci) => {
+      const ti = col.tasks.findIndex((task) => task.taskId === overId);
+      if (ti !== -1) {
+        destColIndex = ci;
+        destTaskIndex = ti;
+      }
+    });
+
+    if (sourceColIndex === -1 || destColIndex === -1) return;
+
+    const sourceColumn = columns[sourceColIndex];
+    const destColumn = columns[destColIndex];
+
+    if (sourceColIndex === destColIndex) {
+      const newTasks = arrayMove(
+        sourceColumn.tasks,
+        sourceTaskIndex,
+        destTaskIndex,
+      );
+
+      setColumns((cols) =>
+        cols.map((col, i) =>
+          i === sourceColIndex ? { ...col, tasks: newTasks } : col,
+        ),
+      );
+      return;
+    }
+
+    const movingTask = sourceColumn.tasks[sourceTaskIndex];
+
+    const newSourceTasks = [...sourceColumn.tasks];
+    newSourceTasks.splice(sourceTaskIndex, 1);
+
+    const newDestTasks = [...destColumn.tasks];
+    newDestTasks.splice(destTaskIndex, 0, movingTask);
+
+    setColumns((cols) =>
+      cols.map((col, i) => {
+        if (i === sourceColIndex) return { ...col, tasks: newSourceTasks };
+        if (i === destColIndex) return { ...col, tasks: newDestTasks };
+        return col;
+      }),
+    );
+
+    try {
+      if (!user) return;
+      const updatedBoard = await reorderTaskAPI(
+        user.id,
+        activeId,
+        sourceColumn.columnId,
+        destColumn.columnId,
+        sourceTaskIndex,
+        destTaskIndex,
+      );
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
+  };
+
+  const getBoardData = async (id: string) => {
+    try {
+      const initialColumns = await getKanbanBoardApi(id);
+      setColumns(initialColumns);
+    } catch (error) {
+      console.error('Error fetching board', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    getBoardData(user.id);
+  }, []);
+
+  const addtask = async (columnId: string, task: Task) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((col) =>
+        col.columnId === columnId
+          ? { ...col, tasks: [...col.tasks, task] }
+          : col,
+      ),
+    );
+    try {
+      if (!user) return;
+      const updatedBoard = await createTaskAPI(user.id, columnId, task);
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
+  };
+
+  const updateTask = async (
+    columnId: string,
+    taskId: string,
+    data: Partial<Task>,
+  ) => {
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.columnId === columnId
+          ? {
+              ...col,
+              tasks: col.tasks.map((task) =>
+                task.taskId === taskId ? { ...task, ...data } : task,
+              ),
+            }
+          : col,
+      ),
+    );
+
+    try {
+      if (!user) return;
+      const updatedBoard = await updateTaskAPI(user.id, columnId, taskId, data);
+      console.log(updatedBoard.columns, 'from kanban board tsx');
+      setColumns(updatedBoard.columns);
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
+  };
+
+  const deleteTask = (ColumnId: string, taskId: string) => {
+    setColumns((prev) =>
+      prev.map((col) =>
+        col.columnId === ColumnId
+          ? {
+              ...col,
+              tasks: col.tasks.filter((task) => task.taskId !== taskId),
+            }
+          : col,
+      ),
+    );
+  };
   return (
-    <div className="flex w-full bg-[#E8F1FF] rounded-xl shadow-inner p-6 gap-6 overflow-x-auto">
-      {columns.map((col) => (
-        <div key={col.id} className="flex flex-col bg-white/40 backdrop-blur-sm rounded-xl p-4 w-80 min-w-[300px]">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">{col.title}</h2>
-
-          <div className="flex flex-col gap-4">
-            {col.tasks.map((task) => (
-              <KanbanCard key={task.id} title={task.title} description={task.description} />
+    <div className="flex h-screen gap-4 p-4">
+      {/* <Sidebar /> */}
+      <main className="min-h-screen bg-slate-50 px-6 py-8">
+        <h1 className="mb-6 text-2xl font-bold text-gray-900">KanbanBoard</h1>
+        <DndContext onDragEnd={handleDragEnd}>
+          <section className="flex gap-4 overflow-x-auto pb-4">
+            {columns?.map((column) => (
+              <KanbanColumn
+                key={column.columnId}
+                column={column}
+                addTask={addtask}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              />
             ))}
-          </div>
-        </div>
-      ))}
+          </section>
+        </DndContext>
+      </main>
     </div>
   );
 };

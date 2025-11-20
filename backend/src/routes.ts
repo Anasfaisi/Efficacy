@@ -11,7 +11,9 @@ import chatRoutes from './routes/chat.routes';
 import mentorRoutes from './routes/mentor.routes';
 import paymentRoutes from './routes/payment.routes';
 import userRoutes from './routes/user.routes';
-import { TYPES } from './types/inversify-key.types';
+import { TYPES } from './config/inversify-key.types';
+import { KanbanController } from './controllers/Kanban.controller';
+import KanbanRoutes from './routes/Kanban.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -26,10 +28,14 @@ export function applyRoutes(app: Express) {
     const paymentController = container.get<PaymentController>(
         TYPES.PaymentController
     );
+    const kanbanController = container.get<KanbanController>(
+        TYPES.KanbanController
+    );
 
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
     app.use('/api/mentor', mentorRoutes(mentorController));
     app.use('/api/payments', paymentRoutes(paymentController));
     app.use('/api/chat', chatRoutes(chatController));
+    app.use('/api/kanban', KanbanRoutes(kanbanController));
 }

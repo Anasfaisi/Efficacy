@@ -1,7 +1,7 @@
 import { UserRepository } from '@/repositories/user.repository';
 import { AdminController } from '@/controllers/admin.controller';
 import { AuthService } from '@/serivces/auth.service';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { Container } from 'inversify';
 import { AdminRepository } from '@/repositories/admin.repository';
 import { TokenService } from '@/serivces/token.service';
@@ -30,6 +30,11 @@ import { ChatService } from '@/serivces/chat.service';
 import { IChatService } from '@/serivces/Interfaces/IChat.service';
 import { ChatRepository } from '@/repositories/chat.repository';
 import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
+import { KanbanController } from '@/controllers/Kanban.controller';
+import { IKanbanService } from '@/serivces/Interfaces/Ikanban.service';
+import { KanbanService } from '@/serivces/kanban.service';
+import { IKanbanRepository } from '@/repositories/interfaces/IKanban.repository';
+import { KanbanRepository } from '@/repositories/Kanban.repository';
 
 export const container = new Container();
 
@@ -41,6 +46,7 @@ container
     .to(PaymentController);
 container.bind<ChatController>(TYPES.ChatController).to(ChatController);
 container.bind<SocketController>(TYPES.SocketController).to(SocketController);
+container.bind<KanbanController>(TYPES.KanbanController).to(KanbanController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -54,6 +60,7 @@ container
 container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
 container.bind<ISocketService>(TYPES.SocketService).to(SocketService);
+container.bind<IKanbanService>(TYPES.KanbanService).to(KanbanService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -67,3 +74,4 @@ container.bind<IChatRepository>(TYPES.ChatRepository).to(ChatRepository);
 container
     .bind<IMessageRepository>(TYPES.MessageRepository)
     .to(MessageRepository);
+container.bind<IKanbanRepository>(TYPES.KanbanRepository).to(KanbanRepository);

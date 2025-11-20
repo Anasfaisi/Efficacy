@@ -6,7 +6,7 @@ import {
 } from '@/Dto/request.dto';
 import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
 import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { Types } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
 import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
