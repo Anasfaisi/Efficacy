@@ -1,44 +1,35 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../serivces/auth.service';
 import { injectable, inject } from 'inversify';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
 import { LoginRequestDto } from '@/Dto/request.dto';
+import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 
 @injectable()
 export class AdminController {
     constructor(
-        @inject(TYPES.AuthService) private _authService: IAuthService
+        @inject(TYPES.AdminAuthService)
+        private _adminAuthService: IAdminAuthService
     ) {}
 
     async login(req: Request, res: Response) {
-        try {
-            const dto = new LoginRequestDto(
-                req.body.email,
-                req.body.password,
-                req.body.role
-            );
-
-            const responseDto = await this._authService.login({
-                email: dto.email,
-                password: dto.password,
-                role: dto.role,
-            });
-
-            res.cookie('refreshToken', responseDto.refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.cookie('accessToken', responseDto.accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.status(code.OK).json(responseDto.toJSON());
-        } catch (error: any) {
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
-        }
+     
+        const response = await this._adminAuthService.adminLogin(req.body);
+        res.cookie('refreshToken', response.refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.cookie('accessToken', response.accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.status(code.OK).json({
+            message: 'adminlogin succesful',
+            admin: response.admin,
+        });
     }
 
     async refreshTokenHandler(req: Request, res: Response) {

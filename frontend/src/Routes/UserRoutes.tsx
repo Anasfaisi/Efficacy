@@ -9,6 +9,7 @@ import CancelPage from '@/Features/users/payment/pages/CancelPage';
 import ChatPage from '@/Features/users/chat/pages/ChatPage';
 import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
 import ProfileSetupPage from '@/Features/users/profile/pages/ProfileSetupPage';
+import KanbanBoard from '@/Features/users/KanbanBorad/pages/KanbanBoard';
 
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
@@ -32,6 +33,8 @@ const UserRoutes: React.FC = () => {
 
       <Route path="chat" element={<ChatPage />} />
       <Route path="profile" element={<ProfileSetupPage />} />
+
+      <Route path="kanbanBoard" element={<KanbanBoard />}  />
     </Routes>
   );
 };

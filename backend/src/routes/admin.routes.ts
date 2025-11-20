@@ -1,10 +1,11 @@
 import express, { RequestHandler } from 'express';
 import { AdminController } from '../controllers/admin.controller';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { container } from '@/config/inversify.config';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { Role } from '@/types/role.types';
 import { TokenService } from '@/serivces/token.service';
+import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function adminRoutes(adminController: AdminController) {
     const router = express.Router();
@@ -12,8 +13,7 @@ export default function adminRoutes(adminController: AdminController) {
     const tokenService = new TokenService();
     router.post(
         '/login',
-        authenticateAndAuthorize(tokenService, Role.Admin),
-        adminController.login.bind(adminController)
+       asyncWrapper(adminController.login.bind(adminController))
     );
 
     router.post(

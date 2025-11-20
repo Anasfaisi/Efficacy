@@ -14,9 +14,15 @@ const Sidebar = () => {
       {/* Menu */}
       <nav className="flex-1 px-4 py-2 flex flex-col gap-2">
         <SidebarButton
+          icon={<FaCreditCard />}
+          label="Kanban Board"
+          to="/kanbanBoard"
+          colorClass="hover:bg-[#00897B]"
+        />
+        <SidebarButton
           icon={<FaCommentDots />}
           label="Chat Room"
-          to="/chat" // ✅ navigates to chat page
+          to="/chat" 
           colorClass="hover:bg-[#7F00FF]"
         />
         <SidebarButton

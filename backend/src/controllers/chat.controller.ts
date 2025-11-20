@@ -1,4 +1,4 @@
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { inject, injectable } from 'inversify';
 import { IChatService } from '@/serivces/Interfaces/IChat.service';
 import { Request, Response } from 'express';

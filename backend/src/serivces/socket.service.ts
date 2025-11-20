@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { TYPES } from '@/types/inversify-key.types';
+import { TYPES } from '@/config/inversify-key.types';
 import { ChatController } from '@/controllers/chat.controller';
 import { Server, Socket } from 'socket.io';
 import { IChatService } from './Interfaces/IChat-message.service';

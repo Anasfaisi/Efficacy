@@ -5,6 +5,7 @@ import type {
   Role,
   RegisterCredentials,
   LoginResponse,
+  Admin,
 } from '@/types/auth';
 import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
@@ -37,7 +38,7 @@ export const loginApi = async (
 
   try {
     const res = await api.post(endpoint, credentials);
-    console.log(res);
+    console.log(res, 'from aut');
 
     return {
       user: res.data.user as User,
@@ -49,6 +50,19 @@ export const loginApi = async (
     }
     console.log(error);
     return { message: 'Login failed' };
+  }
+};
+
+export const adminLoginApi = async (credentials: LoginCredentials) => {
+  const role: Role = (credentials.role ?? 'admin') as Role;
+  const endpoint = ENDPOINTS[role];
+  try {
+    const res = await api.post(endpoint, credentials);
+    console.log(res);
+    return res.data.admin;
+    
+  } catch (error) {
+    console.log(error);
   }
 };
 

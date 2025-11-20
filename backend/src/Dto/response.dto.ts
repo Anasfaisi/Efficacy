@@ -1,3 +1,4 @@
+import { ColumnId } from '@/types/columnEnum.types';
 import { Role } from '@/types/role.types';
 
 type subscription = {
@@ -33,6 +34,18 @@ export class LoginResponseDTO {
             user: this.user,
         };
     }
+}
+
+export class AdminLoginRespondseDto {
+    constructor(
+        public admin: {
+            id: string;
+            email: string;
+            role: Role;
+        },
+        public accessToken: string,
+        public refreshToken: string
+    ) {}
 }
 
 //Register
@@ -147,5 +160,29 @@ export class ProfileResponseDto {
         public dob?: string,
         public xpPoints?: number,
         public badge?: string
+    ) {}
+}
+
+//========================= kanbana board ============================//
+
+export class KanbanColumnResponseDto {
+    constructor(
+        public columnId: ColumnId,
+        public title: string,
+        public tasks: KanbanTaskResponseDto[]
+    ) {}
+}
+
+export class KanbanBoardResponseDto {
+    constructor(public columns: KanbanColumnResponseDto[]) {}
+}
+
+export class KanbanTaskResponseDto {
+    constructor(
+        public taskId: string,
+        public title: string,
+        public description?: string,
+        public dueDate?: string,
+        public approxTimeToFinish?: string
     ) {}
 }
