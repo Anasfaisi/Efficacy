@@ -62,8 +62,7 @@ export class AuthService implements IAuthService {
             data.dob,
             data.subscription
         );
-        
-  
+
         const updatedUser = await this._userRepository.updateUser(id, dto);
 
         if (!updatedUser) throw new Error(ErrorMessages.UpdateFailed);
@@ -210,10 +209,8 @@ export class AuthService implements IAuthService {
         if (unverifiedUser.otp !== otp) throw new Error('Invalid OTP');
         if (unverifiedUser.otpExpiresAt < new Date())
             throw new Error('OTP expired');
-        let repository: IUserRepository | IMentorRepository;
-        if (unverifiedUser.role === 'mentor') {
-            repository = this._mentorRepository;
-        } else if (unverifiedUser.role === 'user') {
+        let repository: IUserRepository;
+        if (unverifiedUser.role === 'user') {
             repository = this._userRepository;
         } else {
             throw new Error('invalid role');
