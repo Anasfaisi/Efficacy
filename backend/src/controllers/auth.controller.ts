@@ -22,7 +22,6 @@ export class UserController {
 
     async updateUserProfile(req: Request, res: Response) {
         try {
-
             const updatedUser = await this._authService.updateUserProfile(
                 req.body,
                 req.params.id
@@ -95,6 +94,7 @@ export class UserController {
             }
         }
     }
+
     async login(req: Request, res: Response) {
         try {
             const { accessToken, refreshToken, user } =
@@ -133,9 +133,11 @@ export class UserController {
                 ...result,
                 message: AuthMessages.OtpSuccess,
             });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
-            console.log(error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(code.BAD_REQUEST).json({ message: error.message });
+                console.log(error);
+            }
         }
     }
 
@@ -172,14 +174,23 @@ export class UserController {
         try {
             const dto = new resendOtpRequestDto(req.body.email);
 
-            const { tempEmail: userEmail } = await this._authService.resendOtp(
-                dto.email
-            );
+            const { tempEmail, resendAvailableAt } =
+                await this._authService.resendOtp(dto.email);
 
-            res.status(code.OK).json({ email: userEmail });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
-            console.log(error);
+            res.status(code.OK).json({
+
+                message: 'OTP sent succesfully',
+                 tempEmail,
+                resendAvailableAt,
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(code.BAD_REQUEST).json({
+                    success: false,
+                    message: error.message,
+                });
+                console.log(error);
+            }
         }
     }
 

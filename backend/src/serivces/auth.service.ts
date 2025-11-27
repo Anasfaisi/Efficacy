@@ -165,10 +165,8 @@ export class AuthService implements IAuthService {
             name,
         });
 
-        let repository: IUserRepository | IMentorRepository;
-        if (role === 'mentor') {
-            repository = this._mentorRepository;
-        } else if (role === 'user') {
+        let repository: IUserRepository;
+        if (role === 'user') {
             repository = this._userRepository;
         } else {
             throw new Error('invalid role');
@@ -190,13 +188,16 @@ export class AuthService implements IAuthService {
             name,
             role,
             otp,
-            otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
+            otpExpiresAt: new Date(Date.now() + 2 * 60 * 1000),
+            // lastOtpSent: new Date(Date.now()),
+            resendAvailableAt: new Date(Date.now() + 0.5 * 60 * 1000),
         });
 
         await this._otpService.sendOtp(email, otp);
         return new RegisterInitResponseDto(
             unverifiedUser.email,
-            unverifiedUser.role
+            unverifiedUser.role,
+            unverifiedUser.resendAvailableAt
         );
     }
 
@@ -208,15 +209,15 @@ export class AuthService implements IAuthService {
 
         if (unverifiedUser.otp !== otp) throw new Error('Invalid OTP');
         if (unverifiedUser.otpExpiresAt < new Date())
-            throw new Error('OTP expired');
-        let repository: IUserRepository;
+            throw new Error(ErrorMessages.OtpExpired);
+        let _repository: IUserRepository;
         if (unverifiedUser.role === 'user') {
-            repository = this._userRepository;
+            _repository = this._userRepository;
         } else {
             throw new Error('invalid role');
         }
 
-        const user = await repository.createUser({
+        const user = await _repository.createUser({
             email: unverifiedUser.email,
             password: unverifiedUser.password,
             name: unverifiedUser.name,
@@ -244,24 +245,38 @@ export class AuthService implements IAuthService {
     async resendOtp(email: string) {
         const unverifiedUser =
             await this._unverifiedUserRepository.findByEmail(email);
-        if (!unverifiedUser)
+        if (!unverifiedUser) {
             throw new Error('Session expired, please register again');
+        }
 
-        const otp = await this._otpService.generateOtp();
-        console.log(otp, 'in resend');
-        const updatedUser = await this._unverifiedUserRepository.updateByEmail(
+        const now = Date.now();
+        const OTP_EXPIRY_MS = 5 * 60 * 1000;
+        const RESEND_DELAY_MS = 30 * 1000;
+
+        let otp = unverifiedUser.otp;
+        let otpExpiresAt = new Date(unverifiedUser.otpExpiresAt).getTime();
+
+        if (now >= otpExpiresAt) {
+            otp = await this._otpService.generateOtp();
+            otpExpiresAt = now + OTP_EXPIRY_MS;
+        }
+
+        const updated = await this._unverifiedUserRepository.updateByEmail(
             email,
             {
                 otp,
-                otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
+                otpExpiresAt: new Date(otpExpiresAt),
+                lastOtpSent: new Date(now),
+                resendAvailableAt: new Date(now + RESEND_DELAY_MS),
             }
         );
+
         await this._otpService.sendOtp(email, otp);
-        console.log(updatedUser);
 
         return new RegisterInitResponseDto(
             unverifiedUser.email,
-            unverifiedUser.role
+            unverifiedUser.role,
+            unverifiedUser.resendAvailableAt,
         );
     }
 

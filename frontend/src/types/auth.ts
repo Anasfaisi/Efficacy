@@ -9,11 +9,10 @@ export interface Subscription {
   current_period_end?: Date;
 }
 
-export interface Admin{
-  id:string,
-  email:string,
-  role:Role,
-
+export interface Admin {
+  id: string;
+  email: string;
+  role: Role;
 }
 
 export interface User {
@@ -57,6 +56,7 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null | undefined;
   tempEmail: string | null;
+  resendAvailableAt: string | null;
   successMessage?: string | null;
 }
 export interface RegisterCredentials {
@@ -72,7 +72,7 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
-  admin?:Admin;
+  admin?: Admin;
   user?: User;
   message?: string;
 }
@@ -95,4 +95,24 @@ export interface GoogleLoginArg {
 
 export interface CredentialResponse {
   credential?: string;
+}
+
+// otp
+export type VerifyOtpSuccess = {
+  success: true;
+  user: User;
+};
+
+export type VerifyOtpError = {
+  success: false;
+  message: string;
+};
+
+export type VerifyOtpResponse = VerifyOtpSuccess | VerifyOtpError;
+
+export interface ResendOtpResponse {
+  tempEmail: string;
+  message: string;
+  resendAvailableAt: string;
+  role: string;
 }

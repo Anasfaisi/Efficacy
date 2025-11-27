@@ -2,115 +2,145 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setCredentials } from '@/redux/slices/authSlice';
+import { setCredentials, setTempUser } from '@/redux/slices/authSlice';
 import { resendOtpApi, verifyOtpApi } from '@/Services/auth.api';
+import { toast } from 'react-toastify';
 // import { verifyOtp, resendOtp } from "@/redux/slices/authSlice";
 
 export function OTPPage() {
+  const { tempEmail, isLoading, role, user, resendAvailableAt } =
+    useAppSelector((state) => state.auth);
+
   const [otp, setOtp] = useState('');
-  const [timer, setTimer] = useState(30); // 60 seconds countdown
+  const [timer, setTimer] = useState<number>(0);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { tempEmail, isLoading, role } = useAppSelector((state) => state.auth);
 
-  // Countdown timer logic
   useEffect(() => {
-    if (timer <= 0) return;
-    const interval = setInterval(() => setTimer((t) => t - 1), 1000);
+    if (!resendAvailableAt) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const available = new Date(resendAvailableAt).getTime();
+
+      const diffInSeconds = Math.max(0, Math.floor((available - now) / 1000));
+      console.log(diffInSeconds);
+      setTimer(diffInSeconds);
+      if (diffInSeconds === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [timer]);
+  }, [resendAvailableAt]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/home');
+      return;
+    }
+    if (!tempEmail) {
+      navigate('/signup'); // or wherever your flow starts
+    }
+  }, [user, tempEmail]);
 
   const handleVerify = async () => {
     const result = await verifyOtpApi(tempEmail, otp, role);
-    if (result) {
-      dispatch(setCredentials(result));
+
+    if (result.success) {
+      dispatch(setCredentials({ user: result.user }));
       navigate('/home');
+    } else {
+      toast.error(result.message);
     }
   };
 
   const handleResend = async () => {
-    const result = await resendOtpApi(tempEmail);
-    if (result) {
-      setTimer(30);
-      setOtp('');
+    try {
+      const result = await resendOtpApi(tempEmail);
+      if (result) {
+        setOtp('');
+        dispatch(
+          setTempUser({
+            email: result.tempEmail,
+            role: result.role,
+            resendAvailableAt: result.resendAvailableAt,
+          }),
+        );
+        toast.success(`Resend otp sent successfully`);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Unexpected error';
+
+      toast.error(message);
     }
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '80vh',
-        textAlign: 'center',
-        gap: '1rem',
-      }}
-    >
-      <h2>Verify your OTP</h2>
-      <p>
-        We sent an OTP to <strong>{tempEmail}</strong>
-      </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4">
+      <div className="w-full max-w-2xl text-center bg-white shadow-2xl p-8 rounded-3xl border border-purple-300">
+        <h2 className="text-2xl font-semibold text-purple-900 mb-2">
+          Verify OTP
+        </h2>
+        <p className="text-gray-500 text-sm mb-6">
+          We sent an OTP to{' '}
+          <span className="font-medium text-purple-600">{tempEmail}</span>
+        </p>
 
-      <OtpInput
-        value={otp}
-        onChange={setOtp}
-        numInputs={6}
-        inputType="number"
-        renderInput={(props) => (
-          <input
-            {...props}
-            style={{
-              width: '3rem',
-              height: '3rem',
-              fontSize: '1.5rem',
-              textAlign: 'center',
-              margin: '0 0.25rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              outline: 'none',
-              caretColor: '#1976d2', // blue blinking cursor
-            }}
-          />
-        )}
-        containerStyle={{ justifyContent: 'center' }}
-      />
+        {/* OTP boxes */}
+        <OtpInput
+          value={otp}
+          onChange={setOtp}
+          numInputs={6}
+          inputType="number"
+          containerStyle={{ justifyContent: 'center', gap: '8px' }}
+          renderInput={(props) => (
+            <input
+              {...props}
+              className="
+                 text-xl font-semibold rounded-t-md text-center 
+                border border-gray-300
+                focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                bg-white shadow-sm
+              "
+            />
+          )}
+        />
 
-      <button
-        onClick={handleVerify}
-        disabled={isLoading || otp.length < 6}
-        style={{
-          marginTop: '1rem',
-          padding: '0.5rem 1.5rem',
-          fontSize: '1rem',
-          cursor: 'pointer',
-          backgroundColor: '#1976d2',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-        }}
-      >
-        {isLoading ? 'Verifying...' : 'Verify'}
-      </button>
+        {/* Verify Button */}
+        <button
+          onClick={handleVerify}
+          disabled={isLoading || otp.length < 6}
+          className="
+            w-full mt-6 py-3 text-sm font-medium rounded-xl
+            bg-gradient-to-r from-purple-500 to-purple-700 
+            text-white shadow-md
+            hover:brightness-110 transition
+            disabled:opacity-40 disabled:cursor-not-allowed
+          "
+        >
+          {isLoading ? 'Verifying...' : 'Verify'}
+        </button>
 
-      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
-        {timer > 0 ? (
-          <span>Resend OTP in 00:{timer.toString().padStart(2, '0')}</span>
-        ) : (
-          <button
-            onClick={handleResend}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#1976d2',
-              cursor: 'pointer',
-              textDecoration: 'underline',
-            }}
-          >
-            Resend OTP
-          </button>
-        )}
+        {/* Resend */}
+        <div className="mt-5 text-sm">
+          {timer > 0 ? (
+            <span className="text-gray-500">
+              Resend OTP in{' '}
+              <span className="font-medium text-purple-700">
+                00:{timer.toString().padStart(2, '0')}
+              </span>
+            </span>
+          ) : (
+            <button
+              onClick={handleResend}
+              className="text-purple-600 font-medium underline hover:text-purple-800"
+            >
+              Resend OTP
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

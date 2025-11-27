@@ -52,7 +52,9 @@ export class AdminLoginRespondseDto {
 export class RegisterInitResponseDto {
     constructor(
         public readonly tempEmail: string,
-        public readonly role: string
+        public readonly role: string,
+        public readonly resendAvailableAt:Date
+
     ) {}
 }
 

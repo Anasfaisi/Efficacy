@@ -5,7 +5,8 @@ import type {
   Role,
   RegisterCredentials,
   LoginResponse,
-  Admin,
+  VerifyOtpResponse,
+  ResendOtpResponse,
 } from '@/types/auth';
 import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
@@ -60,7 +61,6 @@ export const adminLoginApi = async (credentials: LoginCredentials) => {
     const res = await api.post(endpoint, credentials);
     console.log(res);
     return res.data.admin;
-    
   } catch (error) {
     console.log(error);
   }
@@ -80,13 +80,15 @@ export const logoutApi = async (): Promise<{ message: string }> => {
 
 export const registerInitApi = async (
   credentials: RegisterCredentials,
-): Promise<{ tempEmail: string; role: string }> => {
+): Promise<{tempEmail:string,message:string,role:string,resendAvailableAt:string}> => {
   try {
     const endpoint =
       credentials?.role === 'mentor'
         ? '/mentor/register/init'
         : '/register/init';
     const response = await api.post(endpoint, credentials);
+    console.log(response, 'from auth api');
+
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -100,32 +102,46 @@ export const verifyOtpApi = async (
   email: string | null,
   otp: string,
   role: string | null,
-): Promise<{ user: User }> => {
+): Promise<VerifyOtpResponse> => {
   try {
     const endpoint =
       role === 'mentor' ? '/mentor/register/verify' : '/register/verify';
 
     const response = await api.post(endpoint, { email, otp });
-    return response.data;
-  } catch (error: unknown) {
+
+    return {
+      success: true,
+      user: response.data.user,
+    };
+  } catch (error) {
     if (error instanceof AxiosError) {
-      throw error.response?.data.message || AuthMessages.OtpFailed;
+      return {
+        success: false,
+        message: error.response?.data?.message ?? 'Verification failed',
+      };
     }
-    throw AuthMessages.OtpFailed;
+
+    return {
+      success: false,
+      message: 'Unknown error occurred',
+    };
   }
 };
 
 export const resendOtpApi = async (
   email: string | null,
-): Promise<{ message: string }> => {
+): Promise<ResendOtpResponse > => {
   try {
     const response = await api.post('/register/resend-otp', { email });
+    console.log(response.data, 'response from auth api ');
     return response.data;
-  } catch (error: unknown) {
+} catch (error: unknown) {
     if (error instanceof AxiosError) {
-      throw error.response?.data?.message || AuthMessages.ResenOtpFail;
+      throw error.response?.data.message;
+    }else if(error instanceof Error){
+      throw new Error(error.message)
     }
-    throw error;
+    throw new Error("something went wrong")
   }
 };
 
@@ -197,7 +213,7 @@ export const updateProfilePicture = async (
     const response = await api.post(`/profile/proPicUpdate/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log(response.data,"from propic api");
+    console.log(response.data, 'from propic api');
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -211,22 +227,17 @@ export const updateProfilePicture = async (
   }
 };
 
-export const updateProfile = async (
-  form: ProfileForm,
-  id?: string,
-) => {
+export const updateProfile = async (form: ProfileForm, id?: string) => {
   try {
     if (!id) {
       throw new Error('no user id was given');
     }
     const response = await api.post(`/update/profile/${id}`, form);
-    console.log(response.data,"from profle api")
+    console.log(response.data, 'from profle api');
     return response;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
-      
       throw error.response?.data?.message || 'profile update failed';
-
     }
     if (error instanceof Error) {
       throw error.message;

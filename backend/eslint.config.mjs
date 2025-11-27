@@ -30,7 +30,8 @@ export default defineConfig([
                     tabWidth: 4,
                     trailingComma: 'es5',
                     bracketSpacing: true,
-                     endOfLine: "lf"
+                     endOfLine: "lf",
+                     
                 },
             ],
 

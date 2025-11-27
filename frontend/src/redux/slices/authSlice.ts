@@ -5,6 +5,7 @@ import { type AuthState, type User } from '@/types/auth';
 const initialState: AuthState = {
   accessToken: null,
   tempEmail: null,
+  resendAvailableAt: null,
   user: null,
   role: null,
   isLoading: false,
@@ -30,10 +31,15 @@ const authSlice = createSlice({
     },
     setTempUser: (
       state,
-      action: PayloadAction<{ email: string; role: string }>,
+      action: PayloadAction<{
+        email: string;
+        role: string;
+        resendAvailableAt:string;
+      }>,
     ) => {
       state.tempEmail = action.payload.email;
       state.role = action.payload.role;
+      state.resendAvailableAt = action.payload.resendAvailableAt;
     },
   },
 });
