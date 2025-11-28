@@ -12,13 +12,12 @@ export function ForgotResetPassword() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const location = useLocation();
+    const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
   // const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
-  console.log(token);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,57 +56,71 @@ export function ForgotResetPassword() {
   };
 
   return (
-    <div style={{ textAlign: 'center', maxWidth: '400px', margin: '0 auto' }}>
-      <h2>{token ? 'Reset Password' : 'Forgot Password'}</h2>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 w-full max-w-sm mx-auto"
-      >
-        {!token && (
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-            required
-          />
-        )}
-        {token && (
-          <>
-            <input
-              type="password"
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </>
-        )}
-        <button type="submit" disabled={isLoading}>
-          {isLoading
-            ? token
-              ? 'Resetting...'
-              : 'Sending...'
-            : token
-              ? 'Reset Password'
-              : 'Send Reset Link'}
-        </button>
-      </form>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && (
-        <p style={{ color: 'green' }}>
-          {successMessage}{' '}
-          {token && <button onClick={() => navigate('/login')}>Login</button>}
+    <div className="min-h-screen  flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4">
+      <div className="w-full  max-w-md bg-white shadow-xl p-8 rounded-2xl border border-purple-300 ">
+        <h2 className="text-3xl font-bold text-purple-900 text-center mb-1">
+          {token ? 'Reset Password' : 'Forgot Password'}
+        </h2>
+        <p className="text-gray-600 text-center mb-6">
+          {token
+            ? 'Enter your new password below'
+            : 'Enter your email and we’ll send you a reset link'}
         </p>
-      )}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 w-full max-w-sm mx-auto"
+        >
+          {!token && (
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none tranistion"
+              required
+            />
+          )}
+          {token && (
+            <>
+              <input
+                type="password"
+                placeholder="New Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 transition focus:outline-none"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 transition focus:outline-none"
+                required
+              />
+            </>
+          )}
+          <button type="submit" disabled={isLoading}
+          className='w-full py-2 bg-purple-600 text-white  font-semibold rounded-lg hover:bg-purple-700 disabled:opacity-50 ' >
+            {isLoading
+              ? token
+                ? 'Resetting...'
+                : 'Sending...'
+              : token
+                ? 'Reset Password'
+                : 'Send Reset Link'}
+          </button>
+        </form>
+        {errorMessage && <p className='text-red-600 text-center mt-4'>{errorMessage}</p>}
+        {successMessage && (
+          <p className='text-green-600 text-center mt-4'>
+            {successMessage}{' '}
+            {token && <button
+            className='underline text-purple-700 ml-2'
+            onClick={() => navigate('/login')}>Login</button>}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
