@@ -80,7 +80,12 @@ export const logoutApi = async (): Promise<{ message: string }> => {
 
 export const registerInitApi = async (
   credentials: RegisterCredentials,
-): Promise<{tempEmail:string,message:string,role:string,resendAvailableAt:string}> => {
+): Promise<{
+  tempEmail: string;
+  message: string;
+  role: string;
+  resendAvailableAt: string;
+}> => {
   try {
     const endpoint =
       credentials?.role === 'mentor'
@@ -130,18 +135,18 @@ export const verifyOtpApi = async (
 
 export const resendOtpApi = async (
   email: string | null,
-): Promise<ResendOtpResponse > => {
+): Promise<ResendOtpResponse> => {
   try {
     const response = await api.post('/register/resend-otp', { email });
     console.log(response.data, 'response from auth api ');
     return response.data;
-} catch (error: unknown) {
+  } catch (error: unknown) {
     if (error instanceof AxiosError) {
       throw error.response?.data.message;
-    }else if(error instanceof Error){
-      throw new Error(error.message)
+    } else if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw new Error("something went wrong")
+    throw new Error('something went wrong');
   }
 };
 

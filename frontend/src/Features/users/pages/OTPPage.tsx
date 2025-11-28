@@ -17,12 +17,11 @@ export function OTPPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(resendAvailableAt, 'insdien teh use efect');
     if (!resendAvailableAt) return;
-
     const interval = setInterval(() => {
       const now = Date.now();
       const available = new Date(resendAvailableAt).getTime();
-
       const diffInSeconds = Math.max(0, Math.floor((available - now) / 1000));
       console.log(diffInSeconds);
       setTimer(diffInSeconds);
@@ -30,7 +29,6 @@ export function OTPPage() {
         clearInterval(interval);
       }
     }, 1000);
-
     return () => clearInterval(interval);
   }, [resendAvailableAt]);
 
@@ -40,7 +38,7 @@ export function OTPPage() {
       return;
     }
     if (!tempEmail) {
-      navigate('/signup'); // or wherever your flow starts
+      navigate('/signup');
     }
   }, [user, tempEmail]);
 
@@ -60,6 +58,7 @@ export function OTPPage() {
       const result = await resendOtpApi(tempEmail);
       if (result) {
         setOtp('');
+        setTimer(30);
         dispatch(
           setTempUser({
             email: result.tempEmail,

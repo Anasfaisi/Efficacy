@@ -190,7 +190,7 @@ export class AuthService implements IAuthService {
             otp,
             otpExpiresAt: new Date(Date.now() + 2 * 60 * 1000),
             // lastOtpSent: new Date(Date.now()),
-            resendAvailableAt: new Date(Date.now() + 0.5 * 60 * 1000),
+            resendAvailableAt: new Date(Date.now() + 60 * 1000),
         });
 
         await this._otpService.sendOtp(email, otp);
@@ -251,7 +251,7 @@ export class AuthService implements IAuthService {
 
         const now = Date.now();
         const OTP_EXPIRY_MS = 5 * 60 * 1000;
-        const RESEND_DELAY_MS = 30 * 1000;
+        const RESEND_DELAY_MS = 60 * 1000;
 
         let otp = unverifiedUser.otp;
         let otpExpiresAt = new Date(unverifiedUser.otpExpiresAt).getTime();
@@ -267,7 +267,7 @@ export class AuthService implements IAuthService {
                 otp,
                 otpExpiresAt: new Date(otpExpiresAt),
                 lastOtpSent: new Date(now),
-                resendAvailableAt: new Date(now + RESEND_DELAY_MS),
+                resendAvailableAt: new Date(now + RESEND_DELAY_MS+1),
             }
         );
 
