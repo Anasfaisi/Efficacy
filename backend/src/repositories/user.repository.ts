@@ -65,9 +65,9 @@ export class UserRepository
         return User.findOne({ stripeCustomerId: customerId }).exec();
     }
 
-    async updateUser(updatedData: UserUpdateData): Promise<IUser | null> {
+    async updateUser(id:string,updatedData: UserUpdateData): Promise<IUser | null> {
         const updatedUser = await User.findByIdAndUpdate(
-            updatedData.id,
+            id,
             { ...updatedData },
             { new: true, runValidators: true }
         ).exec();
