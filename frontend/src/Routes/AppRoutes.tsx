@@ -11,7 +11,7 @@ import Register from '@/Features/users/pages/Register';
 import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/Features/mentors/pages/MentorRegister';
 import { OTPPage } from '@/Features/users/pages/OTPPage';
-import { ForgotResetPassword } from '@/Features/users/pages/ResetPassword';
+import { ForgotResetPassword }from '@/Features/users/pages/ResetPassword';
 import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute: React.FC<{

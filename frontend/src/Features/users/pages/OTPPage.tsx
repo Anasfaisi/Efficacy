@@ -58,7 +58,6 @@ export function OTPPage() {
       const result = await resendOtpApi(tempEmail);
       if (result) {
         setOtp('');
-        setTimer(30);
         dispatch(
           setTempUser({
             email: result.tempEmail,
@@ -91,17 +90,17 @@ export function OTPPage() {
         <OtpInput
           value={otp}
           onChange={setOtp}
+          shouldAutoFocus={true}
           numInputs={6}
-          inputType="number"
-          containerStyle={{ justifyContent: 'center', gap: '8px' }}
+          containerStyle={{ justifyContent: 'center', gap: '15px'}}
           renderInput={(props) => (
             <input
               {...props}
               className="
-                 text-xl font-semibold rounded-t-md text-center 
-                border border-gray-300
+                w-14 font-semibold rounded-t
+                border border-gray-400
                 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                bg-white shadow-sm
+                bg-white shadow-sm 
               "
             />
           )}
@@ -134,7 +133,7 @@ export function OTPPage() {
           ) : (
             <button
               onClick={handleResend}
-              className="text-purple-600 font-medium underline hover:text-purple-800"
+              className="bg-purple-500 font-medium  hover:bg-purple-700 border py-2 rounded-lg px-5 text-white"
             >
               Resend OTP
             </button>

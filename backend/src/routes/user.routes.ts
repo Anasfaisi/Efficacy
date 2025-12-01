@@ -7,10 +7,11 @@ import { Role } from '@/types/role.types';
 import { upload } from '@/config/multer.config';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
+import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function authRoutes(userController: UserController) {
     const router = Router();
-   const _tokenService = container.get<TokenService>(TYPES.TokenService);
+    const _tokenService = container.get<TokenService>(TYPES.TokenService);
 
     // router.get(
     //     '/me/:id',
@@ -50,17 +51,17 @@ export default function authRoutes(userController: UserController) {
 
     router.post(
         '/forgot-password/init',
-        userController.forgotPassword.bind(userController)
+        asyncWrapper(userController.forgotPassword.bind(userController))
     );
     router.post(
         '/forgot-password/verify',
-        userController.resetPassword.bind(userController)
+        asyncWrapper(userController.resetPassword.bind(userController))
     );
 
     router.post(
         '/update/profile/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
-        userController.updateUserProfile.bind(userController) 
+        userController.updateUserProfile.bind(userController)
     );
     router.post(
         '/profile/proPicUpdate/:id',

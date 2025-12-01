@@ -1,5 +1,12 @@
 import { Role } from '@/types/role.types';
-import { LoginRequestDto, ProfilePicUpdateDto, ProfileRequestDto } from '@/Dto/request.dto';
+import {
+    ForgotPasswordRequestDto,
+    LoginRequestDto,
+    ProfilePicUpdateDto,
+    ProfileRequestDto,
+    resendOtpRequestDto,
+    ResetPasswordrequestDto,
+} from '@/Dto/request.dto';
 import {
     CurrentUserResDto,
     LoginResponseDTO,
@@ -8,8 +15,13 @@ import {
 } from '@/Dto/response.dto';
 
 export interface IAuthService {
-    updateUserProfile(data: ProfileRequestDto,id:string): Promise<ProfileResponseDto>;
-    updateUserProfilePic(data: ProfilePicUpdateDto):Promise<ProfileResponseDto>;
+    updateUserProfile(
+        data: ProfileRequestDto,
+        id: string
+    ): Promise<ProfileResponseDto>;
+    updateUserProfilePic(
+        data: ProfilePicUpdateDto
+    ): Promise<ProfileResponseDto>;
 
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 
@@ -44,10 +56,7 @@ export interface IAuthService {
         user: { id: string; email: string; name: string; role: string };
     }>;
 
-    resendOtp(email: string): Promise<RegisterInitResponseDto>;
-    forgotPassword(email: string): Promise<{ message: string }>;
-    resetPassword(
-        token: string,
-        newPassword: string
-    ): Promise<{ message: string }>;
+    resendOtp(dto: resendOtpRequestDto): Promise<RegisterInitResponseDto>;
+    forgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }>;
+    resetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }>;
 }

@@ -21,7 +21,11 @@ export class UnverifiedUserRepository implements IUnverifiedUserRepository {
     async updateByEmail(
         email: string,
         updateData: Partial<IUnverifiedUser>
-    ): Promise<UpdateWriteOpResult> {
-        return UnverifiedUserModel.updateOne({ email }, { $set: updateData });
+    ): Promise<IUnverifiedUser | null> {
+        return UnverifiedUserModel.findOneAndUpdate(
+            { email },
+            { $set: updateData },
+            { new: true }
+        );
     }
 }

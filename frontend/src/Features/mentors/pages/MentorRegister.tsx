@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema } from '@/types/authSchema';
-import type { RegisterFormData } from '@/types/authSchema';
+import { registerSchema } from '@/types/zodSchemas';
+import type { RegisterFormData } from '@/types/zodSchemas';
 import { registerInitApi } from '@/Services/auth.api';
 
 const MentorRegister: React.FC = () => {

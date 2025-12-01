@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginFormSchema } from '@/types/authSchema';
+import { loginFormSchema } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 
 import { GoogleLogin } from '@react-oauth/google';

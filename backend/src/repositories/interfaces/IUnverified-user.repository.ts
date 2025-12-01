@@ -10,5 +10,5 @@ export interface IUnverifiedUserRepository {
     updateByEmail(
         email: string,
         update: Partial<IUnverifiedUser>
-    ): Promise<UpdateWriteOpResult>;
+    ): Promise<IUnverifiedUser |null>;
 }

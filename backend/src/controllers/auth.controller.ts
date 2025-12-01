@@ -171,54 +171,26 @@ export class UserController {
     }
 
     async resendOtp(req: Request, res: Response) {
-        try {
-            const dto = new resendOtpRequestDto(req.body.email);
+        const dto = new resendOtpRequestDto(req.body.email);
 
-            const { tempEmail, resendAvailableAt } =
-                await this._authService.resendOtp(dto.email);
+        const { tempEmail, resendAvailableAt } =
+            await this._authService.resendOtp(req.body);
 
-            res.status(code.OK).json({
-
-                message: 'OTP sent succesfully',
-                 tempEmail,
-                resendAvailableAt,
-            });
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                res.status(code.BAD_REQUEST).json({
-                    success: false,
-                    message: error.message,
-                });
-                console.log(error);
-            }
-        }
+        res.status(code.OK).json({
+            message: 'OTP sent succesfully',
+            tempEmail,
+            resendAvailableAt,
+        });
     }
 
     async forgotPassword(req: Request, res: Response) {
-        try {
-            const dto = new ForgotPasswordRequestDto(req.body.email);
-            const result = await this._authService.forgotPassword(dto.email);
-            res.status(200).json(result);
-        } catch (error: any) {
-            res.status(400).json({ message: error.message });
-            console.error(error);
-        }
+        const result = await this._authService.forgotPassword(req.body);
+        res.status(200).json(result);
     }
 
     async resetPassword(req: Request, res: Response) {
-        try {
-            const dto = new ResetPasswordrequestDto(
-                req.body.token,
-                req.body.newPassword
-            );
-            const result = await this._authService.resetPassword(
-                dto.token,
-                dto.newPassword
-            );
-            res.status(200).json(result);
-        } catch (error: any) {
-            res.status(400).json({ message: error.message });
-        }
+        const result = await this._authService.resetPassword(req.body);
+        res.status(200).json(result);
     }
 
     async refreshTokenHandler(req: Request, res: Response) {

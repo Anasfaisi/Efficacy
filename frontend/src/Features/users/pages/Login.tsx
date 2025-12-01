@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginFormSchema } from '@/types/authSchema';
+import { loginFormSchema } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordLink } from '@/Features/users/pages/ForgotPassowrd';
@@ -145,12 +145,12 @@ const Login: React.FC = () => {
               <p className="text-red-500 text-sm text-center">{error}</p>
             )}
 
-            {/* <p>
+            <p>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
             />
-          </p> */}
+          </p>
             <p className="text-sm text-gray-500 text-center">
               Don’t have an account?{' '}
               <Link

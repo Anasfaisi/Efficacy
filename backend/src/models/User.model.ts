@@ -35,7 +35,7 @@ interface IUser extends Document<ObjectId> {
 
 const userSchema = new Schema<IUser>(
     {
-        userId: { type: String, unique: true }, 
+        userId: { type: String }, 
         email: { type: String, required: true, unique: true },
         name: { type: String, required: true },
         password: { type: String, required: true },

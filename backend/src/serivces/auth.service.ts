@@ -20,9 +20,12 @@ import {
 } from '@/Dto/response.dto';
 import {
     CurrentUserReqDto,
+    ForgotPasswordRequestDto,
     LoginRequestDto,
     ProfilePicUpdateDto,
     ProfileRequestDto,
+    resendOtpRequestDto,
+    ResetPasswordrequestDto,
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
 import { ErrorMessages } from '@/types/response-messages.types';
@@ -242,9 +245,10 @@ export class AuthService implements IAuthService {
         });
     }
 
-    async resendOtp(email: string) {
-        const unverifiedUser =
-            await this._unverifiedUserRepository.findByEmail(email);
+    async resendOtp(dto: resendOtpRequestDto) {
+        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
+            dto.email
+        );
         if (!unverifiedUser) {
             throw new Error('Session expired, please register again');
         }
@@ -261,29 +265,34 @@ export class AuthService implements IAuthService {
             otpExpiresAt = now + OTP_EXPIRY_MS;
         }
 
-        const updated = await this._unverifiedUserRepository.updateByEmail(
-            email,
+        const updatedUser = await this._unverifiedUserRepository.updateByEmail(
+            dto.email,
             {
                 otp,
                 otpExpiresAt: new Date(otpExpiresAt),
                 lastOtpSent: new Date(now),
-                resendAvailableAt: new Date(now + RESEND_DELAY_MS+1),
+                resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
             }
         );
-
-        await this._otpService.sendOtp(email, otp);
+        console.log(updatedUser);
+        if (!updatedUser) {
+            throw new Error('error happened in creating new user');
+        }
+        await this._otpService.sendOtp(dto.email, otp);
 
         return new RegisterInitResponseDto(
-            unverifiedUser.email,
-            unverifiedUser.role,
-            unverifiedUser.resendAvailableAt,
+            updatedUser.email,
+            updatedUser.role,
+            updatedUser.resendAvailableAt
         );
     }
 
-    async forgotPassword(email: string): Promise<{ message: string }> {
-        const user = await this._userRepository.findByEmail(email);
+    async forgotPassword(
+        dto: ForgotPasswordRequestDto
+    ): Promise<{ message: string }> {
+        const user = await this._userRepository.findByEmail(dto.email);
         console.log(user);
-        if (!user) throw new Error('User not found');
+        if (!user) throw new Error('User not exist in this email');
 
         const resetToken = this._tokenService.generatePasswordResetToken(
             user.id
@@ -298,22 +307,17 @@ export class AuthService implements IAuthService {
     }
 
     async resetPassword(
-        token: string,
-        newPassword: string
+        dto: ResetPasswordrequestDto
     ): Promise<{ message: string }> {
-        try {
-            const payload = this._tokenService.verifyPasswordResetToken(token);
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const payload = this._tokenService.verifyPasswordResetToken(dto.token);
+        const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
 
-            await this._userRepository.updatePasswordById(
-                payload.id,
-                hashedPassword
-            );
+        await this._userRepository.updatePasswordById(
+            payload.id,
+            hashedPassword
+        );
 
-            return { message: 'Password reset successful' };
-        } catch (err) {
-            throw new Error('Invalid or expired token');
-        }
+        return { message: 'Password reset successful' };
     }
 
     async refreshToken(refreshToken: string) {

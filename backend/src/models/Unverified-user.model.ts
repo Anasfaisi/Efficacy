@@ -9,19 +9,19 @@ interface IUnverifiedUser extends Document<ObjectId> {
     role: Role;
     otp: string;
     otpExpiresAt: Date;
-    lastOtpSent:Date;
-    resendAvailableAt:Date
+    lastOtpSent: Date;
+    resendAvailableAt: Date;
 }
 
 const unverifiedUserSchema = new Schema<IUnverifiedUser>({
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum:Object.values(Role), default: Role.User},
+    role: { type: String, enum: Object.values(Role), default: Role.User },
     otp: { type: String, required: true },
     otpExpiresAt: { type: Date, required: true },
-    lastOtpSent:{type:Date},
-    resendAvailableAt:{type:Date}
+    lastOtpSent: { type: Date },
+    resendAvailableAt: { type: Date },
 });
 
 export { IUnverifiedUser };

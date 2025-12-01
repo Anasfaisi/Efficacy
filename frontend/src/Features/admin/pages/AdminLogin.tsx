@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '@/redux/slices/authSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { cn } from '@/lib/utils';
-import { loginFormSchema } from '@/types/authSchema';
+import { loginFormSchema } from '@/types/zodSchemas';
 import { adminLoginApi } from '@/Services/auth.api';
 
 const AdminLogin = () => {
