@@ -221,29 +221,17 @@ export class UserController {
     }
 
     async googleAuth(req: Request, res: Response) {
-        try {
-            const { googleToken, role } = req.body;
+        const result = await this._authService.userLoginWithGoogle(req.body);
+        res.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.cookie('accessToken', result.accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
 
-            const result = await this._authService.loginWithGoogle(
-                googleToken,
-                role
-            );
-            console.log('Google login result:', result);
-            res.cookie('refreshToken', result.refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.cookie('accessToken', result.accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-
-            res.status(code.OK).json({ user: result.user });
-        } catch (error: any) {
-            console.error(error);
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
-            console.log(error);
-        }
+        res.status(code.OK).json({ user: result.user });
     }
 
     async logout(req: Request, res: Response) {

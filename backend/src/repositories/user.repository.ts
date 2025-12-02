@@ -22,6 +22,7 @@ export class UserRepository
         password: string;
         name: string;
         role: Role.User;
+        googleId?: string;
     }): Promise<IUser> {
         return this.create(data);
     }
@@ -65,9 +66,12 @@ export class UserRepository
         return User.findOne({ stripeCustomerId: customerId }).exec();
     }
 
-    async updateUser(updatedData: UserUpdateData): Promise<IUser | null> {
+    async updateUser(
+        id: string,
+        updatedData: UserUpdateData
+    ): Promise<IUser | null> {
         const updatedUser = await User.findByIdAndUpdate(
-            updatedData.id,
+            id,
             { ...updatedData },
             { new: true, runValidators: true }
         ).exec();

@@ -155,13 +155,13 @@ export const forgotPasswordApi = async (
 ): Promise<{ message: string }> => {
   try {
     const response = await api.post('/forgot-password/init', { email });
-    console.log(response.data,'from auth api')
+
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       throw error.response?.data?.message || AuthMessages.ForgotFailed;
     }
-    console.log(error,'from auth api')
+
     throw error;
   }
 };

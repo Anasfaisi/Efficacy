@@ -28,7 +28,7 @@ export default function authRoutes(userController: UserController) {
 
     router.post(
         '/google-login',
-        userController.googleAuth.bind(userController)
+        asyncWrapper(userController.googleAuth.bind(userController))
     );
 
     router.post(

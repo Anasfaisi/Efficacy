@@ -84,7 +84,7 @@ const ProfileForm: React.FC = () => {
           name="userId"
           value={form.userId ? form.userId : form.name + '356'}
           onChange={handleChange}
-          
+          readOnly
         />
         <ProfileInput
           label="Email"
