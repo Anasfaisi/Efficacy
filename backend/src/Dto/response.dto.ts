@@ -36,6 +36,18 @@ export class LoginResponseDTO {
     }
 }
 
+export class userGoogleLoginResponseDto {
+    constructor(
+        public accessToken: string,
+        public refreshToken: string,
+        public user: {
+            id: string;
+            email: string;
+            name: string;
+            role: Role;
+        },
+    ) {}
+}
 export class AdminLoginRespondseDto {
     constructor(
         public admin: {
@@ -53,8 +65,7 @@ export class RegisterInitResponseDto {
     constructor(
         public readonly tempEmail: string,
         public readonly role: string,
-        public readonly resendAvailableAt:Date
-
+        public readonly resendAvailableAt: Date
     ) {}
 }
 

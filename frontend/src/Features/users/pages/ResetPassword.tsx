@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { forgotPasswordApi, resetPasswordApi } from '@/Services/auth.api';
 import { AuthMessages } from '@/utils/Constants';
@@ -10,7 +9,7 @@ export const ForgotResetPassword: React.FC = () => {
 
   const token = new URLSearchParams(location.search).get('token');
 
-  // State-based form fields
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,7 +18,7 @@ export const ForgotResetPassword: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Password validation regex
+
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

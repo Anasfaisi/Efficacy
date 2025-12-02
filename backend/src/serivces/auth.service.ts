@@ -17,6 +17,7 @@ import {
     OtpVerificationResponseDto,
     ProfileResponseDto,
     RegisterInitResponseDto,
+    userGoogleLoginResponseDto,
 } from '@/Dto/response.dto';
 import {
     CurrentUserReqDto,
@@ -26,6 +27,7 @@ import {
     ProfileRequestDto,
     resendOtpRequestDto,
     ResetPasswordrequestDto,
+    userGoogleLoginRequestDto,
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
 import { ErrorMessages } from '@/types/response-messages.types';
@@ -35,7 +37,8 @@ export class AuthService implements IAuthService {
     constructor(
         @inject(TYPES.AdminRepository)
         private _adminRepository: IAdminRepository<IAdmin>,
-        @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
+        @inject(TYPES.UserRepository)
+        private _userRepository: IUserRepository,
         @inject(TYPES.MentorRepository)
         private _mentorRepository: IMentorRepository,
         @inject(TYPES.UnverifiedUserRepository)
@@ -346,125 +349,47 @@ export class AuthService implements IAuthService {
         return { accessToken, refreshToken: newRefreshToken };
     }
 
-    async loginWithGoogle(googleToken: string, role: 'user' | 'mentor') {
-        this._validationService.validateGoogleLoginInput({
-            role,
-            endpoint: role,
-        });
-        const ticket =
-            await this._googleVerificationService.verify(googleToken);
+    async userLoginWithGoogle(dto: userGoogleLoginRequestDto) {
+        const ticket = await this._googleVerificationService.verify(
+            dto.googleToken
+        );
         const payload = ticket.getPayload();
 
         if (!payload?.email) {
             throw new Error('Google login failed: No email found');
         }
 
-        let repository: IUserRepository | IMentorRepository;
-        if (role === 'mentor') {
-            repository = this._mentorRepository;
-        } else if (role === 'user') {
-            repository = this._userRepository;
-        } else {
-            throw new Error('invalid role');
-        }
-
-        let account = await repository.findByEmail(payload.email);
+        let account = await this._userRepository.findByEmail(payload.email);
         if (!account) {
-            account = await repository.createUser({
+            account = await this._userRepository.createUser({
                 email: payload.email,
                 name: payload.name || 'Google User',
                 googleId: payload.sub,
-                role,
+                role: Role.User,
                 password:
                     '$2a$10$BvNq8r.X.3zVWQs2Q7wJmeyGYqLMV/P6cyVUFyoLsEL1rXEmWMiiW' /*string = Abcd@1234*/,
             });
         }
 
         const accessToken = this._tokenService.generateAccessToken(
-            account!.id,
-            account!.role
+            account.id,
+            account.role
         );
         const refreshToken = this._tokenService.generateRefreshToken(
-            account!.id,
-            account!.role
+            account.id,
+            account.role
         );
 
-        return {
-            accessToken,
-            refreshToken,
-            user: {
-                id: account!.id,
-                email: account!.email,
-                name: account!.name,
-                role: account!.role,
-            },
-        };
+        return new userGoogleLoginResponseDto(accessToken, refreshToken, {
+            id: account._id.toString(),
+            email: account.email,
+            name: account.name,
+            role: account.role,
+        });
     }
 
-    // async getCurrentUser(id: string) {
-    //     const reqDto = new CurrentUserReqDto(id);
-    //     const user = await this._userRepository.findById(reqDto.id);
 
-    //     if (!user) {
-    //         throw new Error('ssww');
-    //     }
-
-    //     const resDto = new CurrentUserResDto({
-    //         id: user?.id,
-    //         name: user?.name,
-    //         email: user?.email,
-    //         role: user?.role,
-    //         subscription: user?.subscription,
-    //     });
-
-    //     console.log(resDto, 2222);
-
-    //     return resDto;
-    // }
-
-    // async login(email: string, password: string, role: Role) {
-    //   this._validationService.validateLoginInput({
-    //     email,
-    //     password,
-    //     role,
-    //   });
-    //   let repository: Repositories;
-    //   if (role === "admin") {
-    //     repository = this._adminRepository;
-    //   } else if (role === "mentor") {
-    //     repository = this._mentorRepository;
-    //   } else if (role === "user") {
-    //     repository = this._userRepository;
-    //   } else {
-    //     throw new Error("Invalid role");
-    //   }
-    //   const account = await repository.findByEmail(email);
-    //   console.log(account)
-    //   if (!account || account.role !== role) {
-    //     throw new Error(`Not authorized as ${role}`);
-    //   }
-
-    //   if (!(await bcrypt.compare(password, account.password))) {
-    //     throw new Error("Invalid email or password");
-    //   }
-
-    //   const accessToken = this._tokenService.generateAccessToken(
-    //     account.id,
-    //     account.role
-    //   );
-
-    //   const refreshToken = this._tokenService.generateRefreshToken(
-    //     account.id,
-    //     account.role
-    //   );
-
-    //   return new LoginResponseDTO(accessToken, refreshToken, {
-    //     id: account.id.toString(),
-    //     name: account.name,
-    //     email: account.email,
-    //     role: account.role,
-    //   });
-    // }
+    
 
     /*======= admin auth ===========*/
 

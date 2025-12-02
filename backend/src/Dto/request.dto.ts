@@ -12,6 +12,13 @@ export class LoginRequestDto {
     ) {}
 }
 
+export class userGoogleLoginRequestDto{
+    constructor(
+        public readonly googleToken:string,
+        public readonly role: Role
+    ){}
+}
+
 //Register
 export class RegisterRequestDto {
     constructor(

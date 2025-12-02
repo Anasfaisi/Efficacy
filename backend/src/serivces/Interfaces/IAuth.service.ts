@@ -6,12 +6,15 @@ import {
     ProfileRequestDto,
     resendOtpRequestDto,
     ResetPasswordrequestDto,
+    userGoogleLoginRequestDto,
 } from '@/Dto/request.dto';
 import {
     CurrentUserResDto,
     LoginResponseDTO,
+    OtpVerificationResponseDto,
     ProfileResponseDto,
     RegisterInitResponseDto,
+    userGoogleLoginResponseDto,
 } from '@/Dto/response.dto';
 
 export interface IAuthService {
@@ -35,11 +38,7 @@ export interface IAuthService {
     registerVerify(
         email: string,
         otp: string
-    ): Promise<{
-        accessToken: string;
-        refreshToken: string;
-        user: { id: string; email: string; name: string; role: string };
-    }>;
+    ): Promise<OtpVerificationResponseDto>;
 
     getCurrentUser(id: string): Promise<CurrentUserResDto>;
 
@@ -47,14 +46,9 @@ export interface IAuthService {
         refreshToken: string
     ): Promise<{ accessToken: string; refreshToken: string }>;
 
-    loginWithGoogle(
-        googleToken: string,
-        role: Role
-    ): Promise<{
-        accessToken: string;
-        refreshToken: string;
-        user: { id: string; email: string; name: string; role: string };
-    }>;
+    userLoginWithGoogle(
+        dto: userGoogleLoginRequestDto
+    ): Promise<userGoogleLoginResponseDto>;
 
     resendOtp(dto: resendOtpRequestDto): Promise<RegisterInitResponseDto>;
     forgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }>;
