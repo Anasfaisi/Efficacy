@@ -15,39 +15,19 @@ export class MentorController {
         @inject(TYPES.AuthService) private _authService: IAuthService
     ) {}
 
-    async registerInit(req: Request, res: Response) {
-        try {
-            const dto = new RegisterRequestDto(
-                req.body.name,
-                req.body.email,
-                req.body.password,
-                req.body.role
-            );
-            const result = await this._authService.registerInit({
-                name: dto.name,
-                email: dto.email,
-                password: dto.password,
-                role: dto.role,
-            });
-            res.status(code.OK).json({
-                ...result,
-                message: AuthMessages.OtpSuccess,
-            });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
-            console.log(error);
-        }
+    async mentorRegisterInit(req: Request, res: Response) {
+        const result = await this._authService.mentorRegisterInit(req.body);
+        res.status(code.OK).json({
+            ...result,
+            message: AuthMessages.OtpSuccess,
+        });
     }
 
-    async registerVerify(req: Request, res: Response) {
+    async menotrRegisterVerify(req: Request, res: Response) {
         try {
             console.log('it is reached in verify otp');
-            const dto = new OtpVerificationRequestDto(
-                req.body.email,
-                req.body.otp
-            );
             const { accessToken, refreshToken, user } =
-                await this._authService.registerVerify(dto.email, dto.otp);
+                await this._authService.mentorRegisterVerify(req.body);
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -57,9 +37,9 @@ export class MentorController {
                 httpOnly: true,
                 secure: true,
             });
-            const result = { user: user };
-
-            res.status(200).json(result);
+            
+            console.log(user,"from mentor register veriyf")
+            res.status(200).json(user);
         } catch (err: any) {
             res.status(400).json({
                 message: err.message || AuthMessages.OtpFailed,

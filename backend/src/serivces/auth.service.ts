@@ -31,6 +31,15 @@ import {
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
 import { ErrorMessages } from '@/types/response-messages.types';
+import {
+    MentorOtpVerificationRequestDto,
+    MentorRegisterRequestDto,
+} from '@/Dto/mentorRequest.dto';
+import {
+    MentorOtpVerificationResponseDto,
+    MentorRegisterInitResponseDto,
+} from '@/Dto/mentorResponse.dto';
+import { mentorStatus } from '@/types/mentor-status.types';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -388,9 +397,6 @@ export class AuthService implements IAuthService {
         });
     }
 
-
-    
-
     /*======= admin auth ===========*/
 
     async AdminLogin(email: string, password: string, role: Role) {
@@ -458,46 +464,75 @@ export class AuthService implements IAuthService {
         });
     }
 
-    async MentorRegisterInit({
-        email,
-        password,
-        name,
-        role,
-    }: {
-        email: string;
-        password: string;
-        name: string;
-        role: Role;
-    }) {
+    async mentorRegisterInit(dto: MentorRegisterRequestDto) {
         this._validationService.validateRegisterInput({
-            email,
-            password,
-            name,
+            email: dto.email,
+            password: dto.password,
+            name: dto.name,
         });
 
-        const account = await this._mentorRepository.findByEmail(email);
+        const account = await this._mentorRepository.findByEmail(dto.email);
         if (account) throw new Error('Email already registered');
 
         const existingUnverified =
-            await this._unverifiedUserRepository.findByEmail(email);
-        if (existingUnverified) throw new Error(`OTP already sent to ${email}`);
+            await this._unverifiedUserRepository.findByEmail(dto.email);
+        if (existingUnverified)
+            throw new Error(`OTP already sent to ${dto.email}`);
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(dto.password, 10);
         const otp = await this._otpService.generateOtp();
         console.log(otp, 'in register');
         const unverifiedUser = await this._unverifiedUserRepository.create({
-            email,
+            email: dto.email,
             password: hashedPassword,
-            name,
-            role,
+            name: dto.name,
+            role: dto.role,
             otp,
             otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
+            resendAvailableAt: new Date(Date.now() + 60 * 1000),
         });
 
-        await this._otpService.sendOtp(email, otp);
-        return new RegisterInitResponseDto(
+        await this._otpService.sendOtp(dto.email, otp);
+        return new MentorRegisterInitResponseDto(
             unverifiedUser.email,
-            unverifiedUser.role
+            unverifiedUser.role,
+            unverifiedUser.resendAvailableAt
         );
+    }
+
+    async mentorRegisterVerify(dto: MentorOtpVerificationRequestDto) {
+        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
+            dto.email
+        );
+        if (!unverifiedUser)
+            throw new Error('No pending registration for this email');
+
+        if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
+        if (unverifiedUser.otpExpiresAt < new Date())
+            throw new Error(ErrorMessages.OtpExpired);
+
+        const user = await this._mentorRepository.createUser({
+            email: unverifiedUser.email,
+            password: unverifiedUser.password,
+            name: unverifiedUser.name,
+            role: unverifiedUser.role,
+        });
+
+        await this._unverifiedUserRepository.deleteByEmail(dto.email);
+        const accessToken = this._tokenService.generateAccessToken(
+            user.id,
+            user.role
+        );
+        const refreshToken = this._tokenService.generateRefreshToken(
+            user.id,
+            user.role
+        );
+        return new MentorOtpVerificationResponseDto(accessToken, refreshToken, {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: Role.Mentor,
+            status: mentorStatus.Incomplete
+        });
     }
 }

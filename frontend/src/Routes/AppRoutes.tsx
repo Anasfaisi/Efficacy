@@ -18,16 +18,16 @@ const ProtectedRoute: React.FC<{
   role: 'admin' | 'user' | 'mentor';
   children: React.ReactNode;
 }> = ({ role, children }) => {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { currentUser } = useSelector((state: RootState) => state.auth);
   let redirectTo = '/login';
   if (role === 'admin') redirectTo = '/admin/login';
   if (role === 'mentor') redirectTo = '/mentor/login';
-  return user?.role === role ? (
+  return currentUser?.role === role ? (
     <>{children}</>
   ) : (
     <Navigate to={redirectTo} replace />
   );
-};
+}; 
 
 const AppRoutes: React.FC = () => {
   return (

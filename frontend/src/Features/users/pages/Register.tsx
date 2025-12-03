@@ -24,7 +24,9 @@ const Register: React.FC = () => {
   };
 
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector(
+    (state) => state.auth,
+  );
   const navigate = useNavigate();
 
   const {
@@ -35,12 +37,15 @@ const Register: React.FC = () => {
     resolver: zodResolver(registerSchema),
     mode: 'onChange',
   });
-
   useEffect(() => {
-    if (user) {
+    if (!currentUser) return;
+
+    if (currentUser.role === 'mentor') {
+      navigate('/mentor/dashboard');
+    } else {
       navigate('/home');
     }
-  }, [user, navigate]);
+  }, [currentUser, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
     const { name, email, password } = data;

@@ -3,16 +3,16 @@ import { useAppSelector } from '@/redux/hooks';
 import { Link } from 'react-router-dom';
 
 const MentorDashboard: React.FC = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg text-center">
         <h2 className="text-4xl font-bold text-gray-800 mb-4">Home</h2>
-        {user ? (
+        {currentUser ? (
           <>
             <p className="text-lg text-gray-700">
-              Welcome, {user.name || user.email}!
+              Welcome, { currentUser.email}!
             </p>
             <Link
               to="/mentor/logout"

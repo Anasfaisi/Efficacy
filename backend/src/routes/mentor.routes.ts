@@ -1,5 +1,6 @@
 import { RequestHandler, Router } from 'express';
 import { MentorController } from '@/controllers/mentor.controller';
+import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function mentorRoutes(mentorController: MentorController) {
     const router = Router();
@@ -9,12 +10,13 @@ export default function mentorRoutes(mentorController: MentorController) {
 
     router.post(
         '/register/init',
-        mentorController.registerInit.bind(mentorController)
+        asyncWrapper(mentorController.mentorRegisterInit.bind(mentorController))
     );
     router.post(
         '/register/verify',
-        mentorController.registerVerify.bind(mentorController)
+        mentorController.menotrRegisterVerify.bind(mentorController)
     );
+
 
     router.post(
         '/google-login',

@@ -16,6 +16,12 @@ import {
     RegisterInitResponseDto,
     userGoogleLoginResponseDto,
 } from '@/Dto/response.dto';
+import {
+    MentorOtpVerificationRequestDto,
+    MentorRegisterRequestDto,
+    MentorRegisterResponseDto,
+} from '@/Dto/mentorRequest.dto';
+import { MentorRegisterInitResponseDto } from '@/Dto/mentorResponse.dto';
 
 export interface IAuthService {
     updateUserProfile(
@@ -53,4 +59,11 @@ export interface IAuthService {
     resendOtp(dto: resendOtpRequestDto): Promise<RegisterInitResponseDto>;
     forgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }>;
     resetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }>;
+
+    mentorRegisterInit(
+        dto: MentorRegisterRequestDto
+    ): Promise<MentorRegisterInitResponseDto>;
+    mentorRegisterVerify(
+        dto: MentorOtpVerificationRequestDto
+    ): Promise<MentorRegisterResponseDto>;
 }

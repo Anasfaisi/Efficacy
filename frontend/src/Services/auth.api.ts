@@ -113,10 +113,9 @@ export const verifyOtpApi = async (
       role === 'mentor' ? '/mentor/register/verify' : '/register/verify';
 
     const response = await api.post(endpoint, { email, otp });
-
     return {
       success: true,
-      user: response.data.user,
+      user: response.data,
     };
   } catch (error) {
     if (error instanceof AxiosError) {

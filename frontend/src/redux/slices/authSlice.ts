@@ -1,13 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { type AuthState, type User } from '@/types/auth';
+import { type AuthState, type currentUserType } from '@/types/auth';
 
 const initialState: AuthState = {
-  accessToken: null,
   tempEmail: null,
-  resendAvailableAt: null,
-  user: null,
   role: null,
+  resendAvailableAt: null,
+  currentUser: null,
   isLoading: false,
   error: null,
   successMessage: null,
@@ -17,29 +16,34 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ user: User }>) => {
-      state.user = action.payload.user;
+    setCredentials: (
+      state,
+      action: PayloadAction<{ currentUser: currentUserType }>,
+    ) => {
+      state.currentUser = action.payload.currentUser;
       state.isLoading = false;
       state.error = null;
+      state.role = action.payload.currentUser.role;
     },
+
     clearMessages(state) {
-      state.user = null;
+      state.currentUser = null;
       state.successMessage = null;
     },
     logout: (state) => {
-      state.user = null;
+      state.currentUser = null;
     },
     setTempUser: (
       state,
       action: PayloadAction<{
         email: string;
         role: string;
-        resendAvailableAt:string;
+        resendAvailableAt: string;
       }>,
     ) => {
       state.tempEmail = action.payload.email;
-      state.role = action.payload.role;
       state.resendAvailableAt = action.payload.resendAvailableAt;
+      state.role = action.payload.role;
     },
   },
 });

@@ -1,4 +1,4 @@
-import { ColumnId, ColumnIdValues } from '@/types/columnEnum.types';
+import { ColumnId, ColumnIdValues } from '@/types/column-enum.types';
 import { IKanbanTask, KanbanTaskSchema } from './kanban-task.model';
 import { Schema } from 'mongoose';
 
