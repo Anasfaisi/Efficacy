@@ -38,11 +38,11 @@ export default function authRoutes(userController: UserController) {
 
     router.post(
         '/register/init',
-        userController.registerInit.bind(userController)
+        asyncWrapper(userController.registerInit.bind(userController))
     );
     router.post(
         '/register/verify',
-        userController.registerVerify.bind(userController)
+        asyncWrapper(userController.registerVerify.bind(userController))
     );
     router.post(
         '/register/resend-otp',

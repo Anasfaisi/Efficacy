@@ -40,25 +40,20 @@ export class MentorController {
     }
 
     async login(req: Request, res: Response) {
-        try {
-            const { email, password, role } = req.body;
 
-            const result = await this._authService.login(email, password, role);
-            console.log(result);
-            res.cookie('refreshToken', result.refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
+        const result = await this._authService.mentorLogin(req.body);
+        console.log(result);
+        res.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
 
-            res.cookie('accessToken', result.accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
+        res.cookie('accessToken', result.accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
 
-            res.json({ user: result.user });
-        } catch (error: any) {
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
-        }
+        res.json({ user: result.user });
     }
 
     async googleAuth(req: Request, res: Response) {

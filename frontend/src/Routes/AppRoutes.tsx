@@ -41,7 +41,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/mentor/register" element={<MentorRegister />} />
 
         <Route path="/verify-otp" element={<OTPPage />} />
-
         <Route path="/forgot-password" element={<ForgotResetPassword />} />
         <Route path="/reset-password" element={<ForgotResetPassword />} />
 

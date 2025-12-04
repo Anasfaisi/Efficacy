@@ -2,8 +2,10 @@ import { Role } from '@/types/role.types';
 import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
+    OtpVerificationRequestDto,
     ProfilePicUpdateDto,
     ProfileRequestDto,
+    RegisterRequestDto,
     resendOtpRequestDto,
     ResetPasswordrequestDto,
     userGoogleLoginRequestDto,
@@ -36,16 +38,10 @@ export interface IAuthService {
 
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 
-    registerInit(params: {
-        email: string;
-        password: string;
-        name: string;
-        role: Role;
-    }): Promise<RegisterInitResponseDto>;
+    registerInit(dto: RegisterRequestDto): Promise<RegisterInitResponseDto>;
 
     registerVerify(
-        email: string,
-        otp: string
+        dto: OtpVerificationRequestDto
     ): Promise<OtpVerificationResponseDto>;
 
     refreshToken(
@@ -66,4 +62,6 @@ export interface IAuthService {
     mentorRegisterVerify(
         dto: MentorOtpVerificationRequestDto
     ): Promise<MentorOtpVerificationResponseDto>;
+
+    mentorLogin(dto: LoginRequestDto): Promise<LoginResponseDTO>;
 }

@@ -5,7 +5,7 @@ import { asyncWrapper } from '@/utils/asyncWrapper';
 export default function mentorRoutes(mentorController: MentorController) {
     const router = Router();
 
-    router.post('/login', mentorController.login.bind(mentorController));
+    router.post('/login', asyncWrapper(mentorController.login.bind(mentorController)));
     router.post('/logout', mentorController.logout.bind(mentorController));
 
     router.post(
@@ -14,9 +14,10 @@ export default function mentorRoutes(mentorController: MentorController) {
     );
     router.post(
         '/register/verify',
-       asyncWrapper( mentorController.menotrRegisterVerify.bind(mentorController))
+        asyncWrapper(
+            mentorController.menotrRegisterVerify.bind(mentorController)
+        )
     );
-
 
     router.post(
         '/google-login',

@@ -79,8 +79,8 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
-  admin?: Admin;
-  user?: User;
+  // admin?: Admin;
+  user?: currentUserType;
   message?: string;
 }
 

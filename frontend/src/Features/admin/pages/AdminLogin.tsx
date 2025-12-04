@@ -13,7 +13,7 @@ import { adminLoginApi } from '@/Services/auth.api';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { user, error, isLoading } = useSelector(
+  const { currentUser, error, isLoading } = useSelector(
     (state: RootState) => state.auth,
   );
   const [roleError, setRoleError] = useState<string | null>(null);
@@ -28,20 +28,20 @@ const AdminLogin = () => {
   });
 
   useEffect(() => {
-    if (user?.role) {
+    if (currentUser?.role) {
       let endPoint = '/home';
-      if (user.role === 'admin') endPoint = '/admin/dashboard';
-      if (user.role === 'mentor') endPoint = '/mentor/dashboard';
+      if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
+      if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
       navigate(endPoint);
     }
-  }, [navigate, user]);
+  }, [navigate, currentUser]);
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setRoleError(null);
-    const  admin  = await adminLoginApi({ ...data, role: 'admin' });
-    console.log(admin,"from the adminLogin")
-    if (admin) {
-      dispatch(setCredentials({ user:admin }));
+    const  result  = await adminLoginApi({ ...data, role: 'admin' });
+    console.log(result.admin,"from the adminLogin")
+    if (result.admin) {
+      dispatch(setCredentials({ currentUser:result.admin }));
       navigate('/admin/dashboard');
     }
   };

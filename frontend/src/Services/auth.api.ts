@@ -38,13 +38,11 @@ export const loginApi = async (
   const endpoint = ENDPOINTS[role];
 
   try {
+    console.log(credentials,"auth api")
     const res = await api.post(endpoint, credentials);
-    console.log(res, 'from aut');
+    console.log(res.data, 'from aut');
 
-    return {
-      user: res.data.user as User,
-      message: res.data.message,
-    };
+    return res.data 
   } catch (error) {
     if (error instanceof AxiosError) {
       return { message: error.response?.data?.message || 'Login failed' };
@@ -59,8 +57,8 @@ export const adminLoginApi = async (credentials: LoginCredentials) => {
   const endpoint = ENDPOINTS[role];
   try {
     const res = await api.post(endpoint, credentials);
-    console.log(res);
-    return res.data.admin;
+    console.log(res.data,"from auth api");
+    return res.data;
   } catch (error) {
     console.log(error);
   }
