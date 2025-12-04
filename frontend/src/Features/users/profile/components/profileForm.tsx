@@ -8,7 +8,7 @@ import { setCredentials } from '@/redux/slices/authSlice';
 
 const ProfileForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state) => state.auth.currentUser);
 
   const [editMode, setEditMode] = useState<boolean>(false);
   const [form, setForm] = useState({
@@ -53,7 +53,7 @@ const ProfileForm: React.FC = () => {
       
       setEditMode(false);
       if (result) {
-        dispatch(setCredentials({user:result.data}));
+        dispatch(setCredentials({currentUser:result.data}));
       }
     } catch (err) {
       console.error('Profile update failed:', err);

@@ -14,7 +14,7 @@ export default function mentorRoutes(mentorController: MentorController) {
     );
     router.post(
         '/register/verify',
-        mentorController.menotrRegisterVerify.bind(mentorController)
+       asyncWrapper( mentorController.menotrRegisterVerify.bind(mentorController))
     );
 
 

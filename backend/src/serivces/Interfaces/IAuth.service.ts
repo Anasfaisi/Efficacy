@@ -19,9 +19,11 @@ import {
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
-    MentorRegisterResponseDto,
 } from '@/Dto/mentorRequest.dto';
-import { MentorRegisterInitResponseDto } from '@/Dto/mentorResponse.dto';
+import {
+    MentorOtpVerificationResponseDto,
+    MentorRegisterInitResponseDto,
+} from '@/Dto/mentorResponse.dto';
 
 export interface IAuthService {
     updateUserProfile(
@@ -46,8 +48,6 @@ export interface IAuthService {
         otp: string
     ): Promise<OtpVerificationResponseDto>;
 
-    getCurrentUser(id: string): Promise<CurrentUserResDto>;
-
     refreshToken(
         refreshToken: string
     ): Promise<{ accessToken: string; refreshToken: string }>;
@@ -65,5 +65,5 @@ export interface IAuthService {
     ): Promise<MentorRegisterInitResponseDto>;
     mentorRegisterVerify(
         dto: MentorOtpVerificationRequestDto
-    ): Promise<MentorRegisterResponseDto>;
+    ): Promise<MentorOtpVerificationResponseDto>;
 }

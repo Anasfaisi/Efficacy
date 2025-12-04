@@ -24,28 +24,19 @@ export class MentorController {
     }
 
     async menotrRegisterVerify(req: Request, res: Response) {
-        try {
-            console.log('it is reached in verify otp');
-            const { accessToken, refreshToken, user } =
-                await this._authService.mentorRegisterVerify(req.body);
+        const { accessToken, refreshToken, user } =
+            await this._authService.mentorRegisterVerify(req.body);
 
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.cookie('accessToken', accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            
-            console.log(user,"from mentor register veriyf")
-            res.status(200).json(user);
-        } catch (err: any) {
-            res.status(400).json({
-                message: err.message || AuthMessages.OtpFailed,
-            });
-            console.log(err);
-        }
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        res.status(200).json(user);
     }
 
     async login(req: Request, res: Response) {
