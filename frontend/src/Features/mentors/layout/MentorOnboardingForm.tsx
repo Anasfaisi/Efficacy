@@ -10,8 +10,9 @@ import {
 } from '@/types/zodSchemas';
 import api from '@/Services/axiosConfig';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { SelectInput } from '../components/OnboardSelectInput';
+import { useState } from 'react';
 
 export default function MentorOnboardingForm() {
   const {
@@ -23,27 +24,48 @@ export default function MentorOnboardingForm() {
     mode: 'onChange',
   });
 
-  const navigate = useNavigate();
+  const [files, setFiles] = useState({
+    certificate: null as File | null,
+    resume: null as File | null,
+    idProof: null as File | null,
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFiles({ ...files, [e.target.name]: file });
+  };
+  // const navigate = useNavigate();
+
   const onSubmit = async (data: mentorFormSchemaType) => {
+    console.log(data, '============');
     const formData = new FormData();
 
-    // Object.keys(data).forEach((key) => {
-    //   formData.append(key, data[key]);
-    //   console.log(key, data[key]);
-    // });
+    // Append react-hook-form text fields
+    Object.entries(data).forEach(([key, value]) => {
+      console.log(key, value);
+      formData.append(key, value);
+    });
 
+    // Append file fields
+    if (files.certificate) formData.append('certificate', files.certificate);
+    if (files.resume) formData.append('resume', files.resume);
+    if (files.idProof) formData.append('idProof', files.idProof);
+
+    // Append react-hook-form text fields
+    for (const key of formData) {
+      console.log(key);
+    }
     try {
-      console.log(formData, 'form data from the mentoronbaord form');
-      const res = await api.post('/mentor/application', data, {
+      console.log(formData, 'the form data from the tsx');
+      const res = await api.post('/mentor/application', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log(res);
-
-      toast.success('Application submitted!');
-      navigate('/mentor/pending-review');
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message || 'Submission failed');
+      if (res) {
+        toast.success('Application submitted!');
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message || 'Submission failed');
       }
     }
   };
@@ -144,12 +166,13 @@ export default function MentorOnboardingForm() {
             )}
 
             <FileInput
-              label="Education Certificates"
-              {...register('certificates')}
+              label="Education Certificates0"
+              name="certificate"
+              onChange={handleFileChange}
             />
-            {errors.certificates && (
+            {/* {errors.certificates && (
               <p className="text-red-500">{errors.certificates.message}</p>
-            )}
+            )} */}
           </Card>
 
           {/* SECTION: Experience */}
@@ -184,21 +207,26 @@ export default function MentorOnboardingForm() {
 
           {/* SECTION: Resume */}
           <Card title="Resume Upload">
-            <FileInput label="Upload Resume (PDF)" {...register('resume')} />
-            {errors.resume && (
+            <FileInput
+              label="Upload Resume (PDF)"
+              name="resume"
+              onChange={handleFileChange}
+            />
+            {/* {errors.resume && (
               <p className="text-red-500">{errors.resume.message}</p>
-            )}
+            )} */}
           </Card>
 
           {/* SECTION: Identity proof */}
           <Card title="Identity Proof">
             <FileInput
+              name="idProof"
               label="Upload any Proof (e.g. passport/aadhar)"
-              {...register('identityProof')}
+              onChange={handleFileChange}
             />
-            {errors.identityProof && (
+            {/* {errors.identityProof && (
               <p className="text-red-500">{errors.identityProof.message}</p>
-            )}
+            )} */}
           </Card>
 
           {/* SECTION: Availability */}
@@ -228,7 +256,7 @@ export default function MentorOnboardingForm() {
               <p className="text-red-500">{errors.preferredTime.message}</p>
             )}
 
-             <Input
+            <Input
               label="Sessions per week"
               placeholder="5-15"
               {...register('sessionsPerWeek')}
