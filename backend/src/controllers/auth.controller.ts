@@ -116,58 +116,28 @@ export class UserController {
     }
 
     async registerInit(req: Request, res: Response) {
-        try {
-            const dto = new RegisterRequestDto(
-                req.body.name,
-                req.body.email,
-                req.body.password,
-                req.body.role
-            );
-            const result = await this._authService.registerInit({
-                name: dto.name,
-                email: dto.email,
-                password: dto.password,
-                role: dto.role,
-            });
-            res.status(code.OK).json({
-                ...result,
-                message: AuthMessages.OtpSuccess,
-            });
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                res.status(code.BAD_REQUEST).json({ message: error.message });
-                console.log(error);
-            }
-        }
+      
+        const result = await this._authService.registerInit(req.body);
+        res.status(code.OK).json({
+            ...result,
+            message: AuthMessages.OtpSuccess,
+        });
     }
 
     async registerVerify(req: Request, res: Response) {
-        try {
-            console.log('it is reached in verify otp');
-            const dto = new OtpVerificationRequestDto(
-                req.body.email,
-                req.body.otp
-            );
-            const { accessToken, refreshToken, user } =
-                await this._authService.registerVerify(dto.email, dto.otp);
+        const { accessToken, refreshToken, user } =
+            await this._authService.registerVerify(req.body);
 
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.cookie('accessToken', accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            const result = { user: user };
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
 
-            res.status(200).json(result);
-        } catch (err: any) {
-            res.status(400).json({
-                message: err.message || AuthMessages.OtpFailed,
-            });
-            console.log(err);
-        }
+        res.status(200).json(user);
     }
 
     async resendOtp(req: Request, res: Response) {

@@ -1,4 +1,4 @@
-import { ColumnId } from '@/types/columnEnum.types';
+import { ColumnId } from '@/types/column-enum.types';
 import { Role } from '@/types/role.types';
 
 type subscription = {

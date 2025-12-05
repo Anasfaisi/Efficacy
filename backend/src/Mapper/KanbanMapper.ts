@@ -8,7 +8,7 @@ import {
     kanbanTaskToEntity,
 } from '@/entity/toEntity';
 import { IKanbanBoard } from '@/models/Kanban-board.model';
-import { ColumnId } from '@/types/columnEnum.types';
+import { ColumnId } from '@/types/column-enum.types';
 import { Types } from 'mongoose';
 
 export class KanbanMapper {

@@ -20,7 +20,9 @@ const Login: React.FC = () => {
   const [googleError, setGoogleError] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector(
+    (state) => state.auth,
+  );
   const navigate = useNavigate();
   const {
     register: formRegister,
@@ -31,23 +33,26 @@ const Login: React.FC = () => {
     mode: 'onChange',
   });
   useEffect(() => {
-    if (user?.role) {
+    if (currentUser?.role) {
       let endPoint = '/home';
-      if (user.role === 'admin') endPoint = '/admin/dashboard';
-      if (user.role === 'mentor') endPoint = '/mentor/dashboard';
+      if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
+      if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
       navigate(endPoint);
+        console.log(currentUser,"login tsx")
+
     }
-  }, [navigate, user]);
+  }, [navigate, currentUser]);
 
   const onSubmit = async (data: loginFormSchema) => {
     try {
-      const { user, message } = await loginApi({ ...data, role: 'user' });
-      if (message) {
-        toast.error(message);
+      const result = await loginApi({ ...data, role: 'user' });
+      console.log(result,"from login tsx")
+      if (result.message) {
+        toast.error(result.message);
         return;
       }
-      if (user) {
-        dispatch(setCredentials({ user }));
+      if (result.user) {
+        dispatch(setCredentials({ currentUser: result.user }));
         navigate('/home');
         toast.success('Login successful!');
       }
@@ -67,7 +72,7 @@ const Login: React.FC = () => {
         credentialResponse.credential,
         'user',
       );
-      dispatch(setCredentials({ user: result.user }));
+      dispatch(setCredentials({ currentUser: result.user }));
     } else {
       setGoogleError('No Google credentials received');
     }
@@ -146,11 +151,11 @@ const Login: React.FC = () => {
             )}
 
             <p>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-            />
-          </p>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+              />
+            </p>
             <p className="text-sm text-gray-500 text-center">
               Don’t have an account?{' '}
               <Link
@@ -166,7 +171,7 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-         <div className="w-full flex-1 md:w-1/2 bg-gradient-to-tr from-purple-600 via-purple-500 to-purple-400 text-white flex items-center justify-center relative">
+        <div className="w-full flex-1 md:w-1/2 bg-gradient-to-tr from-purple-600 via-purple-500 to-purple-400 text-white flex items-center justify-center relative">
           {/* Glow circles */}
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-purple-900/20 blur-3xl" />

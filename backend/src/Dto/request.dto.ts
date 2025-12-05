@@ -1,5 +1,5 @@
 import { IUser } from '@/models/User.model';
-import { ColumnId } from '@/types/columnEnum.types';
+import { ColumnId } from '@/types/column-enum.types';
 import { MessageStatus, Role } from '@/types/role.types';
 
 //Login

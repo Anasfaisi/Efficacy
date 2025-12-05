@@ -1,6 +1,7 @@
 // import { z } from 'zod';
 
 export type Role = 'admin' | 'mentor' | 'user';
+export type currentUserType = User | Mentor | Admin;
 
 export interface Subscription {
   id: string;
@@ -13,6 +14,13 @@ export interface Admin {
   id: string;
   email: string;
   role: Role;
+}
+
+export interface Mentor {
+  id: string;
+  email: string;
+  role: Role;
+  name: string;
 }
 
 export interface User {
@@ -50,12 +58,11 @@ export interface User {
 }
 
 export interface AuthState {
+  currentUser: currentUserType | null;
+  tempEmail: string | null;
   role: string | null;
-  accessToken: null;
-  user: User | null;
   isLoading: boolean;
   error: string | null | undefined;
-  tempEmail: string | null;
   resendAvailableAt: string | null;
   successMessage?: string | null;
 }
@@ -72,8 +79,8 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
-  admin?: Admin;
-  user?: User;
+  // admin?: Admin;
+  user?: currentUserType;
   message?: string;
 }
 

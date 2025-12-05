@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 // import { verifyOtp, resendOtp } from "@/redux/slices/authSlice";
 
 export function OTPPage() {
-  const { tempEmail, isLoading, role, user, resendAvailableAt } =
+  const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =
     useAppSelector((state) => state.auth);
 
   const [otp, setOtp] = useState('');
@@ -33,21 +33,27 @@ export function OTPPage() {
   }, [resendAvailableAt]);
 
   useEffect(() => {
-    if (user) {
+    if (!currentUser) return;
+
+    if (currentUser.role === 'mentor') {
+      navigate('/mentor/dashboard');
+    } else {
       navigate('/home');
-      return;
     }
-    if (!tempEmail) {
-      navigate('/signup');
-    }
-  }, [user, tempEmail]);
+  }, [currentUser, tempEmail]);
 
   const handleVerify = async () => {
     const result = await verifyOtpApi(tempEmail, otp, role);
-
+    console.log(result)
     if (result.success) {
-      dispatch(setCredentials({ user: result.user }));
-      navigate('/home');
+      dispatch(setCredentials({ currentUser: result.user }));
+      if (!result) return;
+
+      if (result.user.role === 'mentor') {
+        navigate('/mentor/dashboard');
+      } else {
+        navigate('/home');
+      }
     } else {
       toast.error(result.message);
     }
@@ -92,7 +98,7 @@ export function OTPPage() {
           onChange={setOtp}
           shouldAutoFocus={true}
           numInputs={6}
-          containerStyle={{ justifyContent: 'center', gap: '15px'}}
+          containerStyle={{ justifyContent: 'center', gap: '15px' }}
           renderInput={(props) => (
             <input
               {...props}

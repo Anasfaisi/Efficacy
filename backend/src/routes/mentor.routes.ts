@@ -1,19 +1,25 @@
 import { RequestHandler, Router } from 'express';
 import { MentorController } from '@/controllers/mentor.controller';
+import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function mentorRoutes(mentorController: MentorController) {
     const router = Router();
 
-    router.post('/login', mentorController.login.bind(mentorController));
+    router.post(
+        '/login',
+        asyncWrapper(mentorController.login.bind(mentorController))
+    );
     router.post('/logout', mentorController.logout.bind(mentorController));
 
     router.post(
         '/register/init',
-        mentorController.registerInit.bind(mentorController)
+        asyncWrapper(mentorController.mentorRegisterInit.bind(mentorController))
     );
     router.post(
         '/register/verify',
-        mentorController.registerVerify.bind(mentorController)
+        asyncWrapper(
+            mentorController.menotrRegisterVerify.bind(mentorController)
+        )
     );
 
     router.post(

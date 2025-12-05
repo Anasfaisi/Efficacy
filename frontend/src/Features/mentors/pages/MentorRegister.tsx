@@ -12,14 +12,14 @@ import { registerInitApi } from '@/Services/auth.api';
 
 const MentorRegister: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((state) => state.auth);
+  const { isLoading, error,currentUser } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       navigate('/mentor/dashboard');
     }
-  }, [user, navigate]);
+  }, [currentUser, navigate]);
 
   const {
     register: formRegister,
@@ -38,19 +38,19 @@ const MentorRegister: React.FC = () => {
       password,
       role: 'mentor',
     });
-    dispatch(setTempUser({ email: result.tempEmail, role: result.role }));
+    dispatch(setTempUser({ email: result.tempEmail, role: result.role ,resendAvailableAt:result.resendAvailableAt}));
     console.log(result, 'from result in mentor login');
-    if (result) {
+    if (result.tempEmail) {
       navigate('/verify-otp');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black-200">
-      <div className={cn('w-full max-w-md p-6 bg-white rounded-xl shadow-lg')}>
+    <div className="min-h-screen flex items-center  justify-center">
+      <div className={cn('w-full max-w-md p-6 rounded-xl shadow-lg')}>
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
           {' '}
-          Create your Mentor Account{' '}
+          Create Your Mentor Account{' '}
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -62,7 +62,7 @@ const MentorRegister: React.FC = () => {
               {...formRegister('name')}
               placeholder="Enter your name"
               className={cn(
-                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
+                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent',
                 errors.name && 'border-red-500',
               )}
               required
@@ -81,7 +81,7 @@ const MentorRegister: React.FC = () => {
               {...formRegister('email')}
               placeholder="Enter your email"
               className={cn(
-                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
+                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent',
                 errors.email && 'border-red-500',
               )}
             />
@@ -101,7 +101,7 @@ const MentorRegister: React.FC = () => {
               {...formRegister('password')}
               placeholder="Enter your password"
               className={cn(
-                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
+                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent',
                 errors.password && 'border-red-500',
               )}
             />
@@ -121,7 +121,7 @@ const MentorRegister: React.FC = () => {
               {...formRegister('confirmPassword')}
               placeholder="Confirm your password"
               className={cn(
-                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
+                'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent',
                 errors.confirmPassword && 'border-red-500',
               )}
             />
@@ -135,7 +135,7 @@ const MentorRegister: React.FC = () => {
           <button
             type="submit"
             className={cn(
-              'w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 active:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500',
+              'w-full  bg-sky-600  text-white p-3 rounded-lg hover:bg-sky-700 active:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500',
               { 'opacity-50 cursor-not-allowed': isLoading },
             )}
             disabled={isLoading}

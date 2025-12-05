@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import KanbanColumn from '../components/KanbanColumn';
 import type { ColumnType, Task } from '../types';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+
 import { arrayMove } from '@dnd-kit/sortable';
 import {
   createTaskAPI,
@@ -13,7 +14,7 @@ import {
 import { useAppSelector } from '@/redux/hooks';
 
 const KanbanBoard: React.FC = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
   const [columns, setColumns] = useState<ColumnType[]>([]);
 
@@ -84,9 +85,9 @@ const KanbanBoard: React.FC = () => {
     );
 
     try {
-      if (!user) return;
+      if (!currentUser) return;
       const updatedBoard = await reorderTaskAPI(
-        user.id,
+        currentUser.id,
         activeId,
         sourceColumn.columnId,
         destColumn.columnId,
@@ -110,8 +111,8 @@ const KanbanBoard: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
-    getBoardData(user.id);
+    if (!currentUser) return;
+    getBoardData(currentUser.id);
   }, []);
 
   const addtask = async (columnId: string, task: Task) => {
@@ -123,8 +124,8 @@ const KanbanBoard: React.FC = () => {
       ),
     );
     try {
-      if (!user) return;
-      const updatedBoard = await createTaskAPI(user.id, columnId, task);
+      if (!currentUser) return;
+      const updatedBoard = await createTaskAPI(currentUser.id, columnId, task);
       console.log(updatedBoard.columns, 'from kanban board tsx');
       setColumns(updatedBoard.columns);
     } catch (err) {
@@ -151,8 +152,8 @@ const KanbanBoard: React.FC = () => {
     );
 
     try {
-      if (!user) return;
-      const updatedBoard = await updateTaskAPI(user.id, columnId, taskId, data);
+      if (!currentUser) return;
+      const updatedBoard = await updateTaskAPI(currentUser.id, columnId, taskId, data);
       console.log(updatedBoard.columns, 'from kanban board tsx');
       setColumns(updatedBoard.columns);
     } catch (err) {

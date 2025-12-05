@@ -16,11 +16,11 @@ export class AdminAuthService implements IAdminAuthService {
         private _adminRepository: IAdminRepository<IAdmin>,
         @inject(TYPES.TokenService) private _tokenService: ITokenService
     ) {}
-    
+
     async adminLogin(login: LoginRequestDto): Promise<AdminLoginRespondseDto> {
         console.log('from admin service');
         const admin = await this._adminRepository.findByEmail(login.email);
-        console.log(admin,"form service")
+        console.log(admin, 'form service');
         if (!admin) throw new Error(ErrorMessages.NoAdmin);
 
         const accessToken = this._tokenService.generateAccessToken(

@@ -18,15 +18,15 @@ const MentorLogin: React.FC = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector((state) => state.auth);
   useEffect(() => {
-    if (user?.role) {
+    if (currentUser?.role) {
       let endPoint = '/home';
-      if (user.role === 'admin') endPoint = '/admin/dashboard';
-      if (user.role === 'mentor') endPoint = '/mentor/dashboard';
+      if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
+      if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
       navigate(endPoint);
     }
-  }, [navigate, user]);
+  }, [navigate, currentUser]);
 
   const {
     register: formRegister,
@@ -38,9 +38,9 @@ const MentorLogin: React.FC = () => {
   });
 
   const onSubmit = async (data: loginFormSchema) => {
-    const user = await loginApi({ ...data, role: 'mentor' });
-    if (user) {
-      dispatch(setCredentials({ user }));
+    const result = await loginApi({ ...data, role: 'mentor' });
+    if (result.user) {
+      dispatch(setCredentials({ currentUser:result.user }));
       navigate('/home');
     }
   };
@@ -54,7 +54,7 @@ const MentorLogin: React.FC = () => {
         credentialResponse.credential,
         'user',
       );
-      dispatch(setCredentials({ user: result.user }));
+      dispatch(setCredentials({ currentUser: result.user }));
     } else {
       setGoogleError('No Google credentials received');
     }

@@ -6,6 +6,8 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+
 import SortableItem from './SortableItem';
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({
@@ -14,6 +16,10 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   updateTask,
   deleteTask,
 }) => {
+
+  const { setNodeRef } = useDroppable({
+  id: column.columnId,
+});
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -72,24 +78,36 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
         <h3 className="text-sm font-bold text-purple-900">{column?.title}</h3>
         <span className="text-xs text-purpel-500">{column.tasks.length}</span>
       </header>
-      <SortableContext
-        items={column.tasks.map((task) => task.taskId)}
-        strategy={verticalListSortingStrategy}
-      >
-        {column.tasks.map((task: Task) => (
-          <SortableItem key={task.taskId} id={task.taskId}>
-            {(dragHandleProps: React.HTMLAttributes<HTMLElement>) => (
-              <KanbanCard
-                key={task.taskId}
-                task={task}
-                editTask={() => handleEditTask(task)}
-                deleteTask={() => handleDeleteTask(task)}
-                dragHandleProps={dragHandleProps}
-              />
-            )}
-          </SortableItem>
-        ))}
-      </SortableContext>
+      <div ref={setNodeRef} className="flex flex-col gap-2 min-h-[100px]">
+        <SortableContext
+          items={column.tasks.map((task) => task.taskId)}
+          strategy={verticalListSortingStrategy}
+        >
+          {column.tasks.map((task: Task) => (
+            <SortableItem key={task.taskId} id={task.taskId}>
+              {(dragHandleProps: React.HTMLAttributes<HTMLElement>) => (
+                <KanbanCard
+                  key={task.taskId}
+                  task={task}
+                  editTask={() => handleEditTask(task)}
+                  deleteTask={() => handleDeleteTask(task)}
+                  dragHandleProps={dragHandleProps}
+                />
+              )}
+            </SortableItem>
+          ))}
+        </SortableContext>
+        {column.tasks.length === 0 && (
+          <div
+            className="h-20 flex items-center justify-center 
+                 text-gray-400 border border-dashed border-gray-300 
+                 rounded-md"
+          >
+            Drop here
+          </div>
+        )}
+      </div>
+
       {isAdding || editingTaskId ? (
         <div className="mt-3 p-3 rounded-lg bg-white border border-purple-200 shadow-sm">
           <input

@@ -1,6 +1,6 @@
 ///=================== kanban ====================//
 
-import { ColumnId } from '@/types/columnEnum.types';
+import { ColumnId } from '@/types/column-enum.types';
 
 export class kanbanTaskToEntity {
     constructor(

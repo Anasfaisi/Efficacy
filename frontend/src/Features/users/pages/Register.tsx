@@ -10,6 +10,7 @@ import { registerSchema } from '@/types/zodSchemas';
 import type { RegisterFormData } from '@/types/zodSchemas';
 import { registerInitApi } from '@/Services/auth.api';
 import image from '../../../../public/panda with laptop1.jpg';
+import { toast } from 'react-toastify';
 
 const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +25,9 @@ const Register: React.FC = () => {
   };
 
   const dispatch = useAppDispatch();
-  const { isLoading, error, user } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector(
+    (state) => state.auth,
+  );
   const navigate = useNavigate();
 
   const {
@@ -35,31 +38,40 @@ const Register: React.FC = () => {
     resolver: zodResolver(registerSchema),
     mode: 'onChange',
   });
-
   useEffect(() => {
-    if (user) {
+    if (!currentUser) return;
+
+    if (currentUser.role === 'mentor') {
+      navigate('/mentor/dashboard');
+    } else {
       navigate('/home');
     }
-  }, [user, navigate]);
+  }, [currentUser, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
-    const { name, email, password } = data;
-    const result = await registerInitApi({
-      name,
-      email,
-      password,
-      role: 'user',
-    });
-    console.log(result.resendAvailableAt, 'from register');
-    dispatch(
-      setTempUser({
-        email: result.tempEmail,
-        role: result.role,
-        resendAvailableAt: result.resendAvailableAt,
-      }),
-    );
-    if (result) {
-      navigate('/verify-otp');
+    try {
+      const { name, email, password } = data;
+      const result = await registerInitApi({
+        name,
+        email,
+        password,
+        role: 'user',
+      });
+      console.log(result.resendAvailableAt, 'from register');
+      dispatch(
+        setTempUser({
+          email: result.tempEmail,
+          role: result.role,
+          resendAvailableAt: result.resendAvailableAt,
+        }),
+      );
+      if (result) {
+        navigate('/verify-otp');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
   };
 
