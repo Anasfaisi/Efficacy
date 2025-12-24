@@ -21,6 +21,11 @@ export default function mentorRoutes(mentorController: MentorController) {
             mentorController.menotrRegisterVerify.bind(mentorController)
         )
     );
+    // router.post('/application/init',
+    //     asyncWrapper(
+    //         mentorController.mentorApplicationInit.bind(mentorController)
+    //     )
+    // )
 
     router.post(
         '/google-login',

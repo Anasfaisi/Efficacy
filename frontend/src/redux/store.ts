@@ -7,7 +7,7 @@ import chatReducer from '@/redux/slices/chatSlice';
 const persistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['currentUser', 'role'],
+  whitelist: ['currentUser', 'role','resendAvailableAt','tempEmail'],
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);

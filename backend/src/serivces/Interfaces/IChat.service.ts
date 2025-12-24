@@ -8,3 +8,4 @@ export interface IChatService {
     createChat(dto: CreateChatDTO): Promise<ChatResponseDTO>;
     // createMessage(message: CreateMessageDTO): Promise<MessageResponseDto>;
 }
+ 

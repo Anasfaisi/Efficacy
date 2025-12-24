@@ -40,7 +40,6 @@ export class MentorController {
     }
 
     async login(req: Request, res: Response) {
-
         const result = await this._authService.mentorLogin(req.body);
         console.log(result);
         res.cookie('refreshToken', result.refreshToken, {
@@ -55,31 +54,31 @@ export class MentorController {
 
         res.json({ user: result.user });
     }
+    // async googleAuth(req: Request, res: Response) {
+    //     try {
+    //         const { googleToken, role } = req.body;
 
-    async googleAuth(req: Request, res: Response) {
-        try {
-            const { googleToken, role } = req.body;
+    //         const result = await this._authService.loginWithGoogle(
+    //             googleToken,
+    //             role
+    //         );
+    //         console.log('Google login result:', result);
+    //         res.cookie('refreshToken', result.refreshToken, {
+    //             httpOnly: true,
+    //             secure: true,
+    //         });
+    //         res.cookie('accessToken', result.accessToken, {
+    //             httpOnly: true,
+    //             secure: true,
+    //         });
 
-            const result = await this._authService.loginWithGoogle(
-                googleToken,
-                role
-            );
-            console.log('Google login result:', result);
-            res.cookie('refreshToken', result.refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.cookie('accessToken', result.accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-
-            res.status(code.OK).json({ user: result.user });
-        } catch (error: any) {
-            console.error(error);
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
-        }
-    }
+    //         res.status(code.OK).json({ user: result.user });
+    //     } catch (error: any) {
+    //         console.error(error);
+    //         res.status(code.UNAUTHORIZED).json({ message: error.message });
+    //     }
+    // }
+    
     async logout(req: Request, res: Response) {
         try {
             console.log('at the mentor logout route', req.cookies);

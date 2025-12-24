@@ -72,6 +72,7 @@ const Register: React.FC = () => {
       if (error instanceof Error) {
         toast.error(error.message);
       }
+      toast.error(error)
     }
   };
 
@@ -170,6 +171,11 @@ const Register: React.FC = () => {
                     errors.password && 'border-red-500',
                   )}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
                 <button
                   type="button"
                   className="border rounded-2xl w-17 absolute right-5 top-3"

@@ -139,6 +139,7 @@ export const resendOtpApi = async (
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
+      console.log(error.response.data)
       throw error.response?.data.message;
     } else if (error instanceof Error) {
       throw new Error(error.message);

@@ -42,7 +42,6 @@ export default function MentorOnboardingForm() {
 
     // Append react-hook-form text fields
     Object.entries(data).forEach(([key, value]) => {
-      console.log(key, value);
       formData.append(key, value);
     });
 

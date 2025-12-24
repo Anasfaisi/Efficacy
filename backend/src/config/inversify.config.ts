@@ -37,6 +37,7 @@ import { IKanbanRepository } from '@/repositories/interfaces/IKanban.repository'
 import { KanbanRepository } from '@/repositories/Kanban.repository';
 import { AdminAuthService } from '@/serivces/admin-auth.service';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
+import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';
 
 export const container = new Container();
 
@@ -49,6 +50,7 @@ container
 container.bind<ChatController>(TYPES.ChatController).to(ChatController);
 container.bind<SocketController>(TYPES.SocketController).to(SocketController);
 container.bind<KanbanController>(TYPES.KanbanController).to(KanbanController);
+container.bind<MentorOnboardController>(TYPES.MentorOnboardController).to(MentorOnboardController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);

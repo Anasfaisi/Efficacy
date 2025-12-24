@@ -213,7 +213,7 @@ export class AuthService implements IAuthService {
             dto.email
         );
         if (!unverifiedUser)
-            throw new Error('No pending registration for this email');
+            throw new Error('Re-intiate registration for this email');
 
         if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
         if (unverifiedUser.otpExpiresAt < new Date())
@@ -251,6 +251,7 @@ export class AuthService implements IAuthService {
     }
 
     async resendOtp(dto: resendOtpRequestDto) {
+        console.log(dto.email, 'dto . email');
         const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
             dto.email
         );

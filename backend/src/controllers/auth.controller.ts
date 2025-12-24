@@ -5,15 +5,7 @@ import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
-import {
-    ForgotPasswordRequestDto,
-    LoginRequestDto,
-    OtpVerificationRequestDto,
-    RefreshRequestDto,
-    RegisterRequestDto,
-    resendOtpRequestDto,
-    ResetPasswordrequestDto,
-} from '@/Dto/request.dto';
+import { resendOtpRequestDto } from '@/Dto/request.dto';
 
 export class UserController {
     constructor(
@@ -116,7 +108,6 @@ export class UserController {
     }
 
     async registerInit(req: Request, res: Response) {
-      
         const result = await this._authService.registerInit(req.body);
         res.status(code.OK).json({
             ...result,
@@ -141,8 +132,7 @@ export class UserController {
     }
 
     async resendOtp(req: Request, res: Response) {
-        const dto = new resendOtpRequestDto(req.body.email);
-
+        console.log(req.body.email, 'req.body.emai');
         const { tempEmail, resendAvailableAt } =
             await this._authService.resendOtp(req.body);
 

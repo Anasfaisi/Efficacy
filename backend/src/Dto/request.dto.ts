@@ -44,7 +44,10 @@ export class resendOtpRequestDto {
 
 //forget password
 export class ForgotPasswordRequestDto {
-    constructor(public readonly email: string) {}
+    public email:string;
+    constructor(email:string) {
+        this.email = email;
+    }
 }
 
 //reset password
