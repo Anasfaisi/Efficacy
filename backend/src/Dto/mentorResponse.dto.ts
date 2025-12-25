@@ -5,7 +5,7 @@ export class MentorRegisterInitResponseDto {
         public tempEmail: string,
         public role: string,
         public resendAvailableAt: Date
-    ) {}
+    ) { }
 }
 
 export class MentorOtpVerificationResponseDto {
@@ -19,5 +19,36 @@ export class MentorOtpVerificationResponseDto {
             role: string;
             status?: string;
         }
-    ) {}
+    ) { }
+}
+
+
+//===================   mentor onboarding process  ========================
+
+export interface MentorApplicationResponseDto {
+    email: string,
+    fullName: string,
+    city: string,
+    state: string,
+    country: string,
+    bio: string,
+    publicProfile: string,
+
+    highestQualification: string,
+    university: string,
+    graduationYear: string,
+
+    experienceYears: string,
+    skills: string,
+    experienceSummary: string,
+
+    availableDays: string,
+    preferredTime: string,
+    sessionsPerWeek: string,
+
+    status?: string,
+
+    resume?: string,
+    certificate?: string,
+    idProof?: string
 }

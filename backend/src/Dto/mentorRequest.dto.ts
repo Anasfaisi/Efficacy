@@ -6,13 +6,44 @@ export class MentorRegisterRequestDto {
         public password: string,
         public name: string,
         public role: Role.Mentor
-    ) {}
+    ) { }
 }
 
-export class MentorOtpVerificationRequestDto{
+export class MentorOtpVerificationRequestDto {
     constructor(
-        public readonly email : string,
-        public readonly otp :string,
-    ){}
+        public readonly email: string,
+        public readonly otp: string,
+    ) { }
+}
+
+//===========================     mentor onboarding process    =====================================
+
+// Mentor Onboarding Application DTO
+export interface MentorApplicationRequestDto {
+
+    email: string,
+    fullName: string,
+    phone: string,
+    city: string,
+    state: string,
+    country: string,
+    bio: string,
+    publicProfile: string,
+
+    highestQualification: string,
+    university: string,
+    graduationYear: string,
+
+    experienceYears: string,
+    skills: string,
+    experienceSummary: string,
+
+    availableDays: string,
+    preferredTime: string,
+    sessionsPerWeek: string,
+
+    resume?: string,
+    certificate?: string,
+    idProof?: string
 }
 

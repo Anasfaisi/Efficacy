@@ -3,9 +3,8 @@ import MentorModel, { IMentor } from '@/models/Mentor.model';
 import { IMentorRepository } from './interfaces/IMentor.repository';
 
 export class MentorRepository
-    extends BaseRepository
-    implements IMentorRepository
-{
+    extends BaseRepository<IMentor>
+    implements IMentorRepository {
     constructor() {
         super(MentorModel);
     }
@@ -23,6 +22,10 @@ export class MentorRepository
         return this.create(data);
     }
     async findById(id: string): Promise<IMentor | null> {
-        return this.findById(id);
+        return super.findById(id);
+    }
+
+    async update(id: string, data: Partial<IMentor>): Promise<IMentor | null> {
+        return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
     }
 }

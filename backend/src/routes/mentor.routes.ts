@@ -1,8 +1,13 @@
 import { RequestHandler, Router } from 'express';
 import { MentorController } from '@/controllers/mentor.controller';
 import { asyncWrapper } from '@/utils/asyncWrapper';
+import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';
+import { upload } from '@/utils/multerConfig';
 
-export default function mentorRoutes(mentorController: MentorController) {
+export default function mentorRoutes(
+    mentorController: MentorController,
+    mentorOnboardController: MentorOnboardController
+) {
     const router = Router();
 
     router.post(
@@ -21,16 +26,25 @@ export default function mentorRoutes(mentorController: MentorController) {
             mentorController.menotrRegisterVerify.bind(mentorController)
         )
     );
-    // router.post('/application/init',
-    //     asyncWrapper(
-    //         mentorController.mentorApplicationInit.bind(mentorController)
-    //     )
-    // )
 
     router.post(
-        '/google-login',
-        mentorController.googleAuth.bind(mentorController)
+        '/application/init',
+        upload.fields([
+            { name: 'resume', maxCount: 1 },
+            { name: 'certificate', maxCount: 1 },
+            { name: 'idProof', maxCount: 1 },
+        ]),
+        asyncWrapper(
+            mentorOnboardController.mentorApplicationInit.bind(
+                mentorOnboardController
+            )
+        )
     );
+
+    // router.post(
+    //     '/google-login',
+    //     mentorController.googleAuth.bind(mentorController)
+    // );
 
     return router;
 }

@@ -9,4 +9,6 @@ export interface IMentorRepository {
         name: string;
         role: string;
     }): Promise<IMentor>;
+
+    update(id: string, data: Partial<IMentor>): Promise<IMentor | null>;
 }

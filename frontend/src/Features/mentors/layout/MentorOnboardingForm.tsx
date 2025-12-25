@@ -8,11 +8,11 @@ import {
   mentorFormSchema,
   type mentorFormSchemaType,
 } from '@/types/zodSchemas';
-import api from '@/Services/axiosConfig';
-import { toast } from 'react-toastify';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { mentorApi } from '@/Services/mentor.api';
 import { SelectInput } from '../components/OnboardSelectInput';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function MentorOnboardingForm() {
   const {
@@ -34,34 +34,19 @@ export default function MentorOnboardingForm() {
     const file = e.target.files?.[0] || null;
     setFiles({ ...files, [e.target.name]: file });
   };
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: mentorFormSchemaType) => {
-    console.log(data, '============');
-    const formData = new FormData();
-
-    // Append react-hook-form text fields
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    // Append file fields
-    if (files.certificate) formData.append('certificate', files.certificate);
-    if (files.resume) formData.append('resume', files.resume);
-    if (files.idProof) formData.append('idProof', files.idProof);
-
-    // Append react-hook-form text fields
-    for (const key of formData) {
-      console.log(key);
-    }
     try {
-      console.log(formData, 'the form data from the tsx');
-      const res = await api.post('/mentor/application', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      if (res) {
-        toast.success('Application submitted!');
+      const result = await mentorApi.submitApplication(data, files);
+
+      if (result.status === 'pending') {
+        toast.success('Application submitted successfully!');
+        navigate('/mentor/application-received');
+      } else {
+        toast.success('Application updated!');
       }
+
     } catch (err) {
       if (err instanceof Error) {
         toast.error(err.message || 'Submission failed');
