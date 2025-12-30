@@ -77,51 +77,104 @@ export const resetPasswordSchema = z.object({
     ),
 });
 
-export const mentorFormSchema = z.object({
-  fullName: z.string().min(3, 'Name is too short'),
-  phone: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
+export const mentorFormSchema = z
+  .object({
+    // Step 1: Personal Information
+    name: z.string().min(3, 'Name is too short'),
+    phone: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
+    city: z.string().min(3, 'City is required'),
+    state: z.string().min(3, 'State is required'),
+    country: z.string().min(3, 'Country is required'),
+    bio: z.string().min(20, 'Bio must be at least 20 characters'),
 
-  city: z.string().min(3),
-  state: z.string().min(3),
-  country: z.string().min(3),
-  bio: z.string().min(20, 'Bio must be at least 20 characters'),
+    // Step 2: Public & Social Links
+    linkedin: z.string().url('Must be a valid URL'),
+    github: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+    personalWebsite: z
+      .string()
+      .url('Must be a valid URL')
+      .optional()
+      .or(z.literal('')),
 
-  publicProfile: z.string().url('Must be a valid URL'),
+    // Step 4: Availability & Sessions
+    availableDays: z.array(z.string()).min(1, 'Select at least one day'),
+    preferredTime: z.array(z.string()).min(1, 'Select at least one time slot'),
+    sessionMode: z.enum(['Call', 'Chat', 'Both']),
+    sessionsPerWeek: z.string().regex(/^[0-9]+$/, 'Must be a number'),
 
-  highestQualification: z.string().min(2),
-  university: z
-    .string()
-    .min(3, 'too small')
-    .regex(/^[A-za-z]/, 'only alphabets'),
-  graduationYear: z.string().regex(/^[0-9]{4}$/, 'must be numbers'),
+    // Step 5: Mentor Type Branching
+    mentorType: z.enum(['Academic', 'Industry']),
 
-  experienceYears: z
-    .string()
-    .regex(/^[0-9]+$/, 'Enter years as number')
-    .optional(),
-  skills: z
-    .string()
-    .min(4, 'minimum 4 characters')
-    .regex(/^[A-za-z]/, 'only alphabets'),
-  experienceSummary: z.string().min(20),
+    // Branch A: Academic
+    qualification: z.string().optional(),
+    university: z.string().optional(), // Optional in schema, enforced in refine
+    graduationYear: z.string().optional(),
+    academicDomain: z.string().optional(),
+    subDomain: z.string().optional(),
+    studentLevel: z.array(z.string()).optional(),
+    academicExperience: z.string().optional(),
 
-  availableDays: z.enum(
-    [
-      'Monday to Friday',
-      'Thursday to Saturday',
-      'Saturday & Sunday',
-      'All Days',
-      'Weekdays',
-      'Weekends',
-    ],
-    'choose the prefered days',
-  ),
-  preferredTime: z.enum(
-    ['5 PM - 8 PM ', '10 AM - 1 PM', '2 PM - 5 PM', '9 AM - 5 PM'],
-    'choose prefered time',
-  ),
-  sessionsPerWeek: z.string().regex(/^[0-9]$/, 'must be numbers'),
-});
+    // Branch B: Industry
+    industryCategory: z.string().optional(),
+    experienceYears: z.string().optional(),
+    currentRole: z.string().optional(),
+    skills: z.string().optional(), // Comma separated string or tags
+    guidanceAreas: z.array(z.string()).optional(),
+    experienceSummary: z.string().optional(), // Merged/Renamed logic
+  })
+  .superRefine((data, ctx) => {
+    if (data.mentorType === 'Academic') {
+      if (!data.qualification)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['qualification'],
+          message: 'Qualification is required',
+        });
+      if (!data.university)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['university'],
+          message: 'University is required',
+        });
+      if (!data.academicDomain)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['academicDomain'],
+          message: 'Academic Domain is required',
+        });
+      if (!data.academicExperience)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['academicExperience'],
+          message: 'Academic Experience is required',
+        });
+    } else if (data.mentorType === 'Industry') {
+      if (!data.industryCategory)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['industryCategory'],
+          message: 'Industry Category is required',
+        });
+      if (!data.experienceYears)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['experienceYears'],
+          message: 'Years of experience is required',
+        });
+      if (!data.currentRole)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['currentRole'],
+          message: 'Current Role is required',
+        });
+      if (!data.skills || data.skills.length < 3)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['skills'],
+          message: 'Skills are required',
+        });
+    }
+  });
 
 export type mentorFormSchemaType = z.infer<typeof mentorFormSchema>;
 export type resetPasswordSchema = z.infer<typeof resetPasswordSchema>;

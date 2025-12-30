@@ -1,12 +1,21 @@
 import { useState } from 'react';
+import type { Mentor } from '@/types/auth';
 
-export default function CreateMentorForm({ onSave, onCancel }) {
-  const [form, setForm] = useState({
-    mentorId: '',
+interface CreateMentorFormProps {
+  onSave: (mentor: Mentor) => void;
+  onCancel: () => void;
+}
+
+export default function CreateMentorForm({ onSave, onCancel }: CreateMentorFormProps) {
+  const [form, setForm] = useState<Partial<Mentor>>({
+    id: '',
     name: '',
+    email: '',
     expertise: '',
-    availability: '',
-    currentActive: true,
+    // availability: '', // Mapping to status or using extra field?
+    // Using simple defaults for now to match the user's simple form style
+    status: 'active',
+    role: 'mentor'
   });
 
   return (
@@ -18,16 +27,16 @@ export default function CreateMentorForm({ onSave, onCancel }) {
           type="text"
           className="border p-2 rounded"
           placeholder="Mentor ID"
-          value={form.mentorId}
+          value={form.id || ''}
           required={true}
-          onChange={(e) => setForm({ ...form, mentorId: e.target.value })}
+          onChange={(e) => setForm({ ...form, id: e.target.value })}
         />
 
         <input
           type="text"
           className="border p-2 rounded"
           placeholder="Name"
-          value={form.name}
+          value={form.name || ''}
           required={true}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
@@ -35,8 +44,17 @@ export default function CreateMentorForm({ onSave, onCancel }) {
         <input
           type="text"
           className="border p-2 rounded"
+          placeholder="Email"
+          value={form.email || ''}
+          required={true}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        />
+
+        <input
+          type="text"
+          className="border p-2 rounded"
           placeholder="Expertise"
-          value={form.expertise}
+          value={form.expertise || ''}
           required={true}
           onChange={(e) => setForm({ ...form, expertise: e.target.value })}
         />
@@ -44,17 +62,17 @@ export default function CreateMentorForm({ onSave, onCancel }) {
         <input
           type="text"
           className="border p-2 rounded"
-          placeholder="Availability"
-          value={form.availability}
+          placeholder="Availability Days"
+          value={form.availableDays || ''}
           required={true}
-          onChange={(e) => setForm({ ...form, availability: e.target.value })}
+          onChange={(e) => setForm({ ...form, availableDays: e.target.value })}
         />
       </div>
 
       <div className="flex gap-2 mt-4">
         <button
           className="px-4 py-2 bg-green-600 text-white rounded"
-          onClick={() => onSave(form)}
+          onClick={() => onSave(form as Mentor)}
         >
           Save
         </button>

@@ -17,14 +17,14 @@ export class MentorOnboardService implements IMentorOnboardService {
         dto: MentorApplicationRequestDto
     ): Promise<MentorApplicationResponseDto | null> {
         //didn't mapped to domain entity due to zero value for domain
-        const mentor = await this._mentorRepository.findByEmail(dto.email);
+        const mentor = await this._mentorRepository.findById(dto.id);
         if (!mentor) {
             throw new Error('Mentor not found');
         }
 
 
         const updateData: Partial<IMentor> = {
-            fullName: dto.fullName,
+            name: dto.name,
             phone: dto.phone,
             city: dto.city,
             state: dto.state,
@@ -32,7 +32,7 @@ export class MentorOnboardService implements IMentorOnboardService {
             bio: dto.bio,
             publicProfile: dto.publicProfile,
             status: 'pending',
-            qualification: dto.highestQualification,
+            qualification: dto.qualification,
             university: dto.university,
             graduationYear: dto.graduationYear,
             experienceYears: dto.experienceYears,
@@ -45,23 +45,22 @@ export class MentorOnboardService implements IMentorOnboardService {
             certificate: dto.certificate,
             idProof: dto.idProof
         };
-
+        console.log(updateData, "updated data from mentor onboard service")
 
 
         const updatedMentorDoc = await this._mentorRepository.update(mentor.id, updateData);
         if (!updatedMentorDoc) {
-            throw new Error('Mentor not found');
+            throw new Error('could not able to update mentor doc');
         }
-
         return {
             email: updatedMentorDoc.email,
-            fullName: updatedMentorDoc.fullName,
+            name: updatedMentorDoc.name,
             city: updatedMentorDoc.city || '',
             state: updatedMentorDoc.state || '',
             country: updatedMentorDoc.country || '',
             bio: updatedMentorDoc.bio || '',
             publicProfile: updatedMentorDoc.publicProfile || '',
-            highestQualification: updatedMentorDoc.qualification || '',
+            qualification: updatedMentorDoc.qualification || '',
             university: updatedMentorDoc.university || '',
             graduationYear: updatedMentorDoc.graduationYear || '',
             experienceYears: updatedMentorDoc.experienceYears || '',

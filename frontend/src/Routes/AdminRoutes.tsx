@@ -4,8 +4,9 @@ import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
 import { logoutApi } from '@/Services/auth.api';
 import AdminLayout from '@/Features/admin/layout/AdminLayout';
-import MentorManagement from '@/Features/admin/pages/MentorManagement/pages/MentorManagement';
-import CreateMentorPage from '@/Features/admin/pages/MentorManagement/components/CreateMentorPage';
+import MentorManagement from '@/Features/admin/mentorManagement/pages/MentorManagement';
+import AdminNotificationsPage from '@/Features/admin/pages/AdminNotificationsPage';
+import MentorReviewPage from '@/Features/admin/pages/MentorApplicationReviewPage';
 
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
@@ -22,7 +23,8 @@ const AdminRoutes: React.FC = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="logout" element={<Logout />} />
         <Route path="mentorManagement" element={<MentorManagement />} />
-        <Route path="mentors/create" element={<CreateMentorPage />} />{' '}
+        <Route path="notifications" element={<AdminNotificationsPage />} />
+        <Route path="mentors/review/:id" element={<MentorReviewPage />} />
       </Route>
     </Routes>
   );

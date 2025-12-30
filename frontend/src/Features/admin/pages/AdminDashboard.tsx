@@ -5,8 +5,8 @@ import { useAppSelector } from '@/redux/hooks';
 import type { RootState } from '@/redux/store';
 
 const AdminDashboard: React.FC = () => {
-  const { user } = useAppSelector((state: RootState) => state.auth);
-  console.log(user, 'from admin dashboard');
+  const { currentUser } = useAppSelector((state: RootState) => state.auth);
+  console.log(currentUser, 'from admin dashboard');
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold">Admin Dashboard</h1>

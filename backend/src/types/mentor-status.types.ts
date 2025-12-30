@@ -3,4 +3,5 @@ export const mentorStatus = {
     Approved: 'approved',
     Rejected: 'rejected',
     Pending: 'pending'
+
 };

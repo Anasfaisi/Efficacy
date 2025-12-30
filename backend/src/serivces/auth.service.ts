@@ -38,6 +38,7 @@ import {
     MentorRegisterRequestDto,
 } from '@/Dto/mentorRequest.dto';
 import {
+    MentorLoginResponseDTO,
     MentorOtpVerificationResponseDto,
     MentorRegisterInitResponseDto,
 } from '@/Dto/mentorResponse.dto';
@@ -61,7 +62,7 @@ export class AuthService implements IAuthService {
         private _validationService: IValidationService,
         @inject(TYPES.GoogleVerificationService)
         private _googleVerificationService: IGoogleVerificationService
-    ) {}
+    ) { }
 
     async updateUserProfile(
         data: ProfileRequestDto,
@@ -332,8 +333,8 @@ export class AuthService implements IAuthService {
             payload.role === 'admin'
                 ? this._adminRepository
                 : payload.role === 'mentor'
-                  ? this._mentorRepository
-                  : this._userRepository;
+                    ? this._mentorRepository
+                    : this._userRepository;
 
         const account = await repository.findById(payload.id);
         if (!account) {
@@ -427,6 +428,7 @@ export class AuthService implements IAuthService {
 
     /*=============== mentor Auth =======================*/
     async mentorLogin(dto: LoginRequestDto) {
+        console.log(dto.email, dto, "ddddtooototot")
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 
@@ -444,11 +446,12 @@ export class AuthService implements IAuthService {
             account.role
         );
 
-        return new LoginResponseDTO(accessToken, refreshToken, {
+        return new MentorLoginResponseDTO(accessToken, refreshToken, {
             id: account.id.toString(),
             name: account.name,
             email: account.email,
             role: account.role as Role,
+            status: account.status,
         });
     }
 

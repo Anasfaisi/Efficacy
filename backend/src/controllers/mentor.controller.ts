@@ -13,7 +13,7 @@ import {
 export class MentorController {
     constructor(
         @inject(TYPES.AuthService) private _authService: IAuthService
-    ) {}
+    ) { }
 
     async mentorRegisterInit(req: Request, res: Response) {
         const result = await this._authService.mentorRegisterInit(req.body);
@@ -78,7 +78,7 @@ export class MentorController {
     //         res.status(code.UNAUTHORIZED).json({ message: error.message });
     //     }
     // }
-    
+
     async logout(req: Request, res: Response) {
         try {
             console.log('at the mentor logout route', req.cookies);

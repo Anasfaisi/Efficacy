@@ -15,6 +15,7 @@ import { TYPES } from './config/inversify-key.types';
 import { KanbanController } from './controllers/Kanban.controller';
 import KanbanRoutes from './routes/Kanban.routes';
 import { MentorOnboardController } from './controllers/mentor-onboard.controller';
+import { TokenService } from '@/serivces/token.service';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(

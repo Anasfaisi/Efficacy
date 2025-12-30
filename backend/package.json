@@ -28,7 +28,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
     "socket.io": "^4.8.1",
-    "stripe": "^18.5.0"
+    "stripe": "^18.5.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

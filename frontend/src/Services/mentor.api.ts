@@ -14,11 +14,15 @@ export const mentorApi = {
         const formData = new FormData();
 
         Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, value);
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, v));
+            } else if (value !== undefined && value !== null) {
+                formData.append(key, value as string | Blob);
+            }
         });
 
-        if (files.certificate) formData.append('certificate', files.certificate);
         if (files.resume) formData.append('resume', files.resume);
+        if (files.certificate) formData.append('certificate', files.certificate);
         if (files.idProof) formData.append('idProof', files.idProof);
 
         const res = await api.post('/mentor/application/init', formData, {

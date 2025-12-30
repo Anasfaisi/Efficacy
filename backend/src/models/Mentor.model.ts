@@ -1,10 +1,11 @@
 import { Schema, model, Document, ObjectId } from 'mongoose';
 
 interface IMentor extends Document<ObjectId> {
-    fullName: string;
+    name: string;
     email: string;
     password: string;
     role: string;
+    status: string;
 
     phone?: string;
     city?: string;
@@ -13,7 +14,6 @@ interface IMentor extends Document<ObjectId> {
     bio?: string;
     profilePic?: string;
     publicProfile?: string;
-    status?: string;
 
     qualification?: string;
     university?: string;
@@ -37,7 +37,7 @@ interface IMentor extends Document<ObjectId> {
 
 const mentorSchema = new Schema<IMentor>({
     email: { type: String, required: true, unique: true },
-    fullName: { type: String, required: true },
+    name: { type: String, required: true },
     password: { type: String, required: true },
     role: { type: String, default: 'mentor' },
 
@@ -49,7 +49,7 @@ const mentorSchema = new Schema<IMentor>({
     bio: { type: String },
     profilePic: { type: String },
     publicProfile: { type: String },
-    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    status: { type: String, enum: ['incomplete', 'pending', 'approved', 'rejected'], default: 'incomplete' },
 
     // Education
     qualification: { type: String },

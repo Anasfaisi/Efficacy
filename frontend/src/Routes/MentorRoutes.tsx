@@ -5,6 +5,7 @@ import { useAppDispatch } from '@/redux/hooks';
 import MentorDashboard from '@/Features/mentors/pages/MentorDashboard';
 import { logoutApi } from '@/Services/auth.api';
 import ApplicationReceived from '@/Features/mentors/pages/ApplicationReceived';
+import MentorOnboardingForm from '@/Features/mentors/layout/MentorOnboardingForm';
 
 const Logout: React.FC = async () => {
   const dispatch = useAppDispatch();
@@ -20,6 +21,7 @@ const MentorRoutes: React.FC = () => {
     <Routes>
       <Route path="dashboard" element={<MentorDashboard />} />
       <Route path="application-received" element={<ApplicationReceived />} />
+      <Route path="onboarding" element={<MentorOnboardingForm />} />
       <Route path="logout" element={<Logout />} />
 
     </Routes>

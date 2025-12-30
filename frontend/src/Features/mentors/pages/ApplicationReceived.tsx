@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '@/redux/hooks';
+import { type Mentor } from '@/types/auth';
 
 export default function ApplicationReceived() {
     const navigate = useNavigate();
+    const { currentUser } = useAppSelector((state) => state.auth);
+
+    useEffect(() => {
+        if (currentUser?.role === 'mentor') {
+            const mentor = currentUser as Mentor;
+            const status = mentor.status;
+            console.log(status);
+
+            if (status === 'incomplete' || !status) {
+                navigate('/mentor/onboarding');
+            } else if (status === 'active' || (status && status !== 'incomplete' && status !== 'pending')) {
+                navigate('/mentor/dashboard');
+            }
+        }
+    }, [currentUser, navigate]);
 
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -38,10 +55,10 @@ export default function ApplicationReceived() {
                 </p>
 
                 <button
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/mentor/dashboard')}
                     className="w-full bg-sky-600 text-white font-medium py-3 rounded-lg shadow-lg hover:bg-sky-700 transition-colors"
                 >
-                    Go to Home
+                    Go to Dashboard
                 </button>
             </div>
         </div>

@@ -17,10 +17,43 @@ export interface Admin {
 }
 
 export interface Mentor {
-  id: string;
-  email: string;
-  role: Role;
+  id?: string;
   name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  status: string;
+
+  phone?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  bio?: string;
+  profilePic?: string;
+  publicProfile?: string;
+
+  qualification?: string;
+  university?: string;
+  graduationYear?: string;
+
+  experienceYears?: string;
+  skills?: string;
+  experienceSummary?: string;
+
+  availableDays?: string;
+  preferredTime?: string;
+  sessionsPerWeek?: string;
+
+  resume?: string;
+  certificate?: string;
+  idProof?: string;
+
+  isVerified?: boolean;
+  expertise?: string;
+
+  // Keep timestamp just in case
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface User {

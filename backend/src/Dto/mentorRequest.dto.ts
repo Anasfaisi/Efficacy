@@ -21,8 +21,8 @@ export class MentorOtpVerificationRequestDto {
 // Mentor Onboarding Application DTO
 export interface MentorApplicationRequestDto {
 
-    email: string,
-    fullName: string,
+    id: string,
+    name: string,
     phone: string,
     city: string,
     state: string,
@@ -30,7 +30,7 @@ export interface MentorApplicationRequestDto {
     bio: string,
     publicProfile: string,
 
-    highestQualification: string,
+    qualification: string,
     university: string,
     graduationYear: string,
 

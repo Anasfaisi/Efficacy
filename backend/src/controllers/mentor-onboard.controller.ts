@@ -12,12 +12,13 @@ export class MentorOnboardController {
     ) { }
 
     async mentorApplicationInit(req: Request, res: Response) {
-
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
 
         const result = await this._mentorOnboardService.mentorApplicationInit(
             {
                 ...req.body,
+                id: req.user?.id,
                 resume: files?.resume?.[0]?.filename,
                 certificate: files?.certificate?.[0]?.filename,
                 idProof: files?.idProof?.[0]?.filename,

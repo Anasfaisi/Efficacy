@@ -1,5 +1,29 @@
 import { Role } from '@/types/role.types';
 
+export class MentorLoginResponseDTO {
+    constructor(
+        public readonly accessToken: string,
+        public readonly refreshToken: string,
+        public readonly user: {
+            id: string;
+            name: string;
+            email: string;
+            role: Role;
+            status: string,
+
+
+        }
+    ) { }
+
+    toJSON() {
+        return {
+            accessToken: this.accessToken,
+            refreshToken: this.refreshToken,
+            user: this.user,
+        };
+    }
+}
+
 export class MentorRegisterInitResponseDto {
     constructor(
         public tempEmail: string,
@@ -27,14 +51,14 @@ export class MentorOtpVerificationResponseDto {
 
 export interface MentorApplicationResponseDto {
     email: string,
-    fullName: string,
+    name: string,
     city: string,
     state: string,
     country: string,
     bio: string,
     publicProfile: string,
 
-    highestQualification: string,
+    qualification: string,
     university: string,
     graduationYear: string,
 
