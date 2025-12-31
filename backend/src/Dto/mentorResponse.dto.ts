@@ -50,29 +50,42 @@ export class MentorOtpVerificationResponseDto {
 //===================   mentor onboarding process  ========================
 
 export interface MentorApplicationResponseDto {
-    email: string,
-    name: string,
-    city: string,
-    state: string,
-    country: string,
-    bio: string,
-    publicProfile: string,
+    email: string;
+    name: string;
+    phone?: string;
+    city: string;
+    state: string;
+    country: string;
+    bio: string;
 
-    qualification: string,
-    university: string,
-    graduationYear: string,
+    linkedin?: string;
+    github?: string;
+    personalWebsite?: string;
+    demoVideoLink?: string;
 
-    experienceYears: string,
-    skills: string,
-    experienceSummary: string,
+    availableDays: string[];
+    preferredTime: string[];
 
-    availableDays: string,
-    preferredTime: string,
-    sessionsPerWeek: string,
+    mentorType: 'Academic' | 'Industry';
+    status?: string;
 
-    status?: string,
+    // Branch A: Academic
+    qualification?: string;
+    domain?: string;
+    university?: string;
+    graduationYear?: string;
+    expertise?: string;
+    academicSpan?: string;
 
-    resume?: string,
-    certificate?: string,
-    idProof?: string
+    // Branch B: Industry
+    industryCategory?: string;
+    experienceYears?: string;
+    currentRole?: string;
+    skills?: string;
+    guidanceAreas?: string[];
+    experienceSummary?: string;
+
+    resume?: string;
+    certificate?: string;
+    idProof?: string;
 }

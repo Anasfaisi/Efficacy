@@ -432,7 +432,7 @@ export class AuthService implements IAuthService {
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 
-        if (!(await bcrypt.compare(dto.password, account.password))) {
+        if (!account.password || !(await bcrypt.compare(dto.password, account.password))) {
             throw new Error('Invalid email or password');
         }
 

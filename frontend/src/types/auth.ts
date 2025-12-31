@@ -42,14 +42,34 @@ export interface Mentor {
 
   availableDays?: string;
   preferredTime?: string;
-  sessionsPerWeek?: string;
 
   resume?: string;
   certificate?: string;
   idProof?: string;
 
   isVerified?: boolean;
+
+
+  mentorType?: 'Academic' | 'Industry';
+
+
+  linkedin?: string;
+  github?: string;
+  personalWebsite?: string;
+
+
+  // Academic Branch
+  domain?: string;
   expertise?: string;
+  academicSpan?: string;
+
+  // Industry Branch
+  industryCategory?: string;
+  currentRole?: string;
+  guidanceAreas?: string[];
+
+  // Video
+  demoVideoLink?: string;
 
   // Keep timestamp just in case
   createdAt?: string;

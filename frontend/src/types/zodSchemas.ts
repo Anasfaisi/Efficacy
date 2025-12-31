@@ -79,7 +79,6 @@ export const resetPasswordSchema = z.object({
 
 export const mentorFormSchema = z
   .object({
-    // Step 1: Personal Information
     name: z.string().min(3, 'Name is too short'),
     phone: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
     city: z.string().min(3, 'City is required'),
@@ -87,7 +86,6 @@ export const mentorFormSchema = z
     country: z.string().min(3, 'Country is required'),
     bio: z.string().min(20, 'Bio must be at least 20 characters'),
 
-    // Step 2: Public & Social Links
     linkedin: z.string().url('Must be a valid URL'),
     github: z.string().url('Must be a valid URL').optional().or(z.literal('')),
     personalWebsite: z
@@ -96,80 +94,91 @@ export const mentorFormSchema = z
       .optional()
       .or(z.literal('')),
 
-    // Step 4: Availability & Sessions
-    availableDays: z.array(z.string()).min(1, 'Select at least one day'),
-    preferredTime: z.array(z.string()).min(1, 'Select at least one time slot'),
-    sessionMode: z.enum(['Call', 'Chat', 'Both']),
-    sessionsPerWeek: z.string().regex(/^[0-9]+$/, 'Must be a number'),
+    demoVideoLink: z.string().url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-    // Step 5: Mentor Type Branching
+    availableDays: z.array(z.string()).min(3, 'Select at least 3 days'),
+    preferredTime: z.array(z.string()).min(1, 'Select at least one time slot'),
+
+
     mentorType: z.enum(['Academic', 'Industry']),
 
     // Branch A: Academic
     qualification: z.string().optional(),
-    university: z.string().optional(), // Optional in schema, enforced in refine
+    domain: z.string().optional(),
+    university: z.string().optional(),
     graduationYear: z.string().optional(),
-    academicDomain: z.string().optional(),
-    subDomain: z.string().optional(),
-    studentLevel: z.array(z.string()).optional(),
-    academicExperience: z.string().optional(),
+    expertise: z.string().optional(),
+    academicSpan: z.string().optional(),
 
     // Branch B: Industry
     industryCategory: z.string().optional(),
     experienceYears: z.string().optional(),
     currentRole: z.string().optional(),
-    skills: z.string().optional(), // Comma separated string or tags
+    skills: z.string().optional(),
     guidanceAreas: z.array(z.string()).optional(),
-    experienceSummary: z.string().optional(), // Merged/Renamed logic
+    customGuidance: z.string().optional(),
+    experienceSummary: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.mentorType === 'Academic') {
       if (!data.qualification)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['qualification'],
           message: 'Qualification is required',
         });
+      if (!data.domain)
+        ctx.addIssue({
+          code: "custom",
+          path: ['domain'],
+          message: 'Domain is required',
+        });
       if (!data.university)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['university'],
           message: 'University is required',
         });
-      if (!data.academicDomain)
+      if (!data.graduationYear)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['academicDomain'],
-          message: 'Academic Domain is required',
+          code: "custom",
+          path: ['graduationYear'],
+          message: 'Graduation Year is required',
         });
-      if (!data.academicExperience)
+      if (!data.expertise)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['academicExperience'],
-          message: 'Academic Experience is required',
+          code: "custom",
+          path: ['expertise'],
+          message: 'Area of Expertise is required',
+        });
+      if (!data.academicSpan)
+        ctx.addIssue({
+          code: "custom",
+          path: ['academicSpan'],
+          message: 'Academic Span is required',
         });
     } else if (data.mentorType === 'Industry') {
       if (!data.industryCategory)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['industryCategory'],
           message: 'Industry Category is required',
         });
       if (!data.experienceYears)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['experienceYears'],
           message: 'Years of experience is required',
         });
       if (!data.currentRole)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['currentRole'],
           message: 'Current Role is required',
         });
       if (!data.skills || data.skills.length < 3)
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ['skills'],
           message: 'Skills are required',
         });

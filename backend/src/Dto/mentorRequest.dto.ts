@@ -20,30 +20,42 @@ export class MentorOtpVerificationRequestDto {
 
 // Mentor Onboarding Application DTO
 export interface MentorApplicationRequestDto {
+    id: string;
+    name: string;
+    phone: string;
+    city: string;
+    state: string;
+    country: string;
+    bio: string;
 
-    id: string,
-    name: string,
-    phone: string,
-    city: string,
-    state: string,
-    country: string,
-    bio: string,
-    publicProfile: string,
+    linkedin: string;
+    github?: string;
+    personalWebsite?: string;
+    demoVideoLink: string;
 
-    qualification: string,
-    university: string,
-    graduationYear: string,
+    availableDays: string[];
+    preferredTime: string[];
 
-    experienceYears: string,
-    skills: string,
-    experienceSummary: string,
+    mentorType: 'Academic' | 'Industry';
 
-    availableDays: string,
-    preferredTime: string,
-    sessionsPerWeek: string,
+    // Branch A: Academic
+    qualification?: string;
+    domain?: string;
+    university?: string;
+    graduationYear?: string;
+    expertise?: string;
+    academicSpan?: string;
 
-    resume?: string,
-    certificate?: string,
-    idProof?: string
+    // Branch B: Industry
+    industryCategory?: string;
+    experienceYears?: string;
+    currentRole?: string;
+    skills?: string;
+    guidanceAreas?: string[];
+    experienceSummary?: string;
+
+    // Optional files (if handled via this DTO or separately)
+    resume?: string;
+    certificate?: string;
+    idProof?: string;
 }
-

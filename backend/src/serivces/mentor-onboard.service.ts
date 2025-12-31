@@ -30,20 +30,37 @@ export class MentorOnboardService implements IMentorOnboardService {
             state: dto.state,
             country: dto.country,
             bio: dto.bio,
-            publicProfile: dto.publicProfile,
             status: 'pending',
-            qualification: dto.qualification,
-            university: dto.university,
-            graduationYear: dto.graduationYear,
-            experienceYears: dto.experienceYears,
-            skills: dto.skills,
-            experienceSummary: dto.experienceSummary,
+
+            linkedin: dto.linkedin,
+            github: dto.github,
+            personalWebsite: dto.personalWebsite,
+            demoVideoLink: dto.demoVideoLink,
+
             availableDays: dto.availableDays,
             preferredTime: dto.preferredTime,
-            sessionsPerWeek: dto.sessionsPerWeek,
+
+            mentorType: dto.mentorType,
+
+            // Academic Branch
+            qualification: dto.qualification,
+            domain: dto.domain,
+            university: dto.university,
+            graduationYear: dto.graduationYear,
+            expertise: dto.expertise,
+            academicSpan: dto.academicSpan,
+
+            // Industry Branch
+            industryCategory: dto.industryCategory,
+            experienceYears: dto.experienceYears,
+            currentRole: dto.currentRole,
+            skills: dto.skills,
+            guidanceAreas: dto.guidanceAreas,
+            experienceSummary: dto.experienceSummary,
+
             resume: dto.resume,
             certificate: dto.certificate,
-            idProof: dto.idProof
+            idProof: dto.idProof,
         };
         console.log(updateData, "updated data from mentor onboard service")
 
@@ -55,24 +72,42 @@ export class MentorOnboardService implements IMentorOnboardService {
         return {
             email: updatedMentorDoc.email,
             name: updatedMentorDoc.name,
+            phone: updatedMentorDoc.phone,
             city: updatedMentorDoc.city || '',
             state: updatedMentorDoc.state || '',
             country: updatedMentorDoc.country || '',
             bio: updatedMentorDoc.bio || '',
-            publicProfile: updatedMentorDoc.publicProfile || '',
-            qualification: updatedMentorDoc.qualification || '',
-            university: updatedMentorDoc.university || '',
-            graduationYear: updatedMentorDoc.graduationYear || '',
-            experienceYears: updatedMentorDoc.experienceYears || '',
-            skills: updatedMentorDoc.skills || '',
-            experienceSummary: updatedMentorDoc.experienceSummary || '',
-            availableDays: updatedMentorDoc.availableDays || '',
-            preferredTime: updatedMentorDoc.preferredTime || '',
-            sessionsPerWeek: updatedMentorDoc.sessionsPerWeek || '',
+            status: updatedMentorDoc.status,
+
+            linkedin: updatedMentorDoc.linkedin,
+            github: updatedMentorDoc.github,
+            personalWebsite: updatedMentorDoc.personalWebsite,
+            demoVideoLink: updatedMentorDoc.demoVideoLink,
+
+            availableDays: updatedMentorDoc.availableDays || [],
+            preferredTime: updatedMentorDoc.preferredTime || [],
+
+            mentorType: updatedMentorDoc.mentorType!,
+
+            // Academic Branch
+            qualification: updatedMentorDoc.qualification,
+            domain: updatedMentorDoc.domain,
+            university: updatedMentorDoc.university,
+            graduationYear: updatedMentorDoc.graduationYear,
+            expertise: updatedMentorDoc.expertise,
+            academicSpan: updatedMentorDoc.academicSpan,
+
+            // Industry Branch
+            industryCategory: updatedMentorDoc.industryCategory,
+            experienceYears: updatedMentorDoc.experienceYears,
+            currentRole: updatedMentorDoc.currentRole,
+            skills: updatedMentorDoc.skills,
+            guidanceAreas: updatedMentorDoc.guidanceAreas,
+            experienceSummary: updatedMentorDoc.experienceSummary,
+
             resume: updatedMentorDoc.resume,
             certificate: updatedMentorDoc.certificate,
             idProof: updatedMentorDoc.idProof,
-            status: updatedMentorDoc.status
         };
     }
 }
