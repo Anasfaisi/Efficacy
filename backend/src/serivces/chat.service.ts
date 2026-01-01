@@ -18,8 +18,8 @@ export class ChatService implements IChatService {
     constructor(
         @inject(TYPES.ChatRepository) private _chatRepository: IChatRepository,
         @inject(TYPES.MessageRepository) private _messageRepository: IMessageRepository,
-      
-    ) {}
+
+    ) { }
     async findchatById(chatId: string): Promise<IChat | null> {
         return this._chatRepository.findById(chatId);
     }
@@ -42,8 +42,16 @@ export class ChatService implements IChatService {
         };
     }
 
+    async getRoomHistory(roomId: string): Promise<any> {
+        return this._messageRepository.findByChat(roomId);
+    }
+
+    async saveMessage(message: any): Promise<any> {
+        return this._messageRepository.create(message);
+    }
+
     // async createMessage(dto: CreateMessageDTO): Promise<MessageResponseDto> {
-        // const messageData: Omit<IMessage, '_id' | 'status'> = {
+    // const messageData: Omit<IMessage, '_id' | 'status'> = {
     //   conversationId: new Types.ObjectId(dto.conversationId),
     //   senderId: new Types.ObjectId(dto.senderId),
     //   content: dto.content,
@@ -60,7 +68,7 @@ export class ChatService implements IChatService {
     //     );
 
     //     return new MessageResponseDto(
-            
+
     //         saved.conversationId.toString(),
     //         saved.senderId.toString(),
     //         saved.content,

@@ -7,8 +7,11 @@ import AdminLayout from '@/Features/admin/layout/AdminLayout';
 import MentorManagement from '@/Features/admin/mentorManagement/pages/MentorManagement';
 import AdminNotificationsPage from '@/Features/admin/pages/AdminNotificationsPage';
 import MentorReviewPage from '@/Features/admin/pages/MentorApplicationReviewPage';
+import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsListPage';
 
 const Logout: React.FC = async () => {
+    // ... rest of logout code
+
   const dispatch = useAppDispatch();
   const wait = await logoutApi();
   if (wait) {
@@ -24,8 +27,10 @@ const AdminRoutes: React.FC = () => {
         <Route path="logout" element={<Logout />} />
         <Route path="mentorManagement" element={<MentorManagement />} />
         <Route path="notifications" element={<AdminNotificationsPage />} />
+        <Route path="mentors/applications" element={<MentorApplicationsPage />} />
         <Route path="mentors/review/:id" element={<MentorReviewPage />} />
       </Route>
+
     </Routes>
   );
 };

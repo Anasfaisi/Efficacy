@@ -4,9 +4,10 @@ import { ZodSchema, ZodError } from 'zod';
 export const validateRequest = (schema: ZodSchema<any>) => {
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            await schema.parseAsync(req.body);
+            req.body = await schema.parseAsync(req.body);
             next();
         } catch (error) {
+
             if (error instanceof ZodError) {
                 const errorMessages = error.issues.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,

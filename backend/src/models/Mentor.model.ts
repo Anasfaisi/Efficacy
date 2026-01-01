@@ -111,7 +111,12 @@ const mentorSchema = new Schema<IMentor>({
     currentRole: { type: String },
     guidanceAreas: { type: [String] },
 
-}, { timestamps: true });
+}, { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
 
 export { IMentor };
 export default model<IMentor>('Mentors', mentorSchema);

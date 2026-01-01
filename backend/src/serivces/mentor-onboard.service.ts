@@ -5,12 +5,16 @@ import { IMentor } from '@/models/Mentor.model';
 import { TYPES } from '@/config/inversify-key.types';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
+import { INotificationService } from './Interfaces/INotification.service';
+import { NotificationType } from '@/types/notification.enum';
 
 @injectable()
 export class MentorOnboardService implements IMentorOnboardService {
     constructor(
         @inject(TYPES.MentorRepository)
-        private _mentorRepository: IMentorRepository
+        private _mentorRepository: IMentorRepository,
+        @inject(TYPES.NotificationService)
+        private _notificationService: INotificationService
     ) { }
 
     async mentorApplicationInit(
@@ -67,17 +71,35 @@ export class MentorOnboardService implements IMentorOnboardService {
 
         const updatedMentorDoc = await this._mentorRepository.update(mentor.id, updateData);
         if (!updatedMentorDoc) {
-            throw new Error('could not able to update mentor doc');
+            throw new Error('Could not update mentor documentation');
         }
+
+        // Send notification to admin
+        await this._notificationService.notifyAdmin(
+            NotificationType.MENTOR_APPLICATION_SUBMITTED,
+            'New Mentor Application',
+            `Mentor ${updatedMentorDoc.name} has submitted an application for review.`,
+            { 
+                mentorId: updatedMentorDoc.id,
+                link: `/admin/mentors/review/${updatedMentorDoc.id}`
+            }
+        ).catch(err => console.error('Failed to send admin notification:', err));
+
+
         return {
+            id: updatedMentorDoc.id,
+            _id: updatedMentorDoc.id,
             email: updatedMentorDoc.email,
+
             name: updatedMentorDoc.name,
             phone: updatedMentorDoc.phone,
             city: updatedMentorDoc.city || '',
             state: updatedMentorDoc.state || '',
             country: updatedMentorDoc.country || '',
             bio: updatedMentorDoc.bio || '',
+            createdAt: updatedMentorDoc.createdAt,
             status: updatedMentorDoc.status,
+
 
             linkedin: updatedMentorDoc.linkedin,
             github: updatedMentorDoc.github,

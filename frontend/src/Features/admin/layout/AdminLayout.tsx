@@ -1,10 +1,12 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../mentorManagement/components/Sidebar";
 import { AdminHeader } from "../components/AdminHeader";
+import { NotificationListener } from "../components/NotificationListener";
 
 export default function AdminLayout() {
   return (
     <div className="flex bg-gray-50 min-h-screen">
+      <NotificationListener />
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />
@@ -15,3 +17,4 @@ export default function AdminLayout() {
     </div>
   );
 }
+

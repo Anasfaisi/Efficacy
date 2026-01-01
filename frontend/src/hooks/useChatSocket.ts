@@ -1,33 +1,33 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
-  connectChatSocket,
-  //   disconnectChatSocket,
+  connectSocket,
   joinRoom,
   leaveRoom,
   sendMessage,
   onReceiveMessage,
   onLastMessages,
   offChatEvents,
-} from '@/Services/socket/chatSocketService';
+} from '@/Services/socket/socketService';
+
 
 import { addMessages, setMessages } from '@/redux/slices/chatSlice';
 import type { ChatMessage } from '@/types/chat.types';
 
 export const useChatSocket = (roomId: string) => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
-  const socketRef = useRef<ReturnType<typeof connectChatSocket> | null>(null);
+  const socketRef = useRef<ReturnType<typeof connectSocket> | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!currentUser) return;
 
     if (!socketRef.current) {
-      socketRef.current = connectChatSocket();
+      socketRef.current = connectSocket();
     }
 
-    joinRoom(roomId, user);
+    joinRoom(roomId, currentUser as any);
 
     onReceiveMessage((msg: ChatMessage) => {
       dispatch(addMessages(msg));
@@ -38,14 +38,15 @@ export const useChatSocket = (roomId: string) => {
     });
 
     return () => {
-      leaveRoom(roomId, user.id);
+      leaveRoom(roomId, currentUser.id!);
       offChatEvents();
     };
-  }, [roomId, user, dispatch]);
+  }, [roomId, currentUser, dispatch]);
 
   const send = (text: string) => {
-    if (user) {
-      sendMessage(roomId, text, user.id, user.name);
+    if (currentUser) {
+      const name = (currentUser as any).name || (currentUser as any).email || 'Admin';
+      sendMessage(roomId, text, currentUser.id!, name);
     }
   };
   return send;

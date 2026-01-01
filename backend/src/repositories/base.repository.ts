@@ -28,4 +28,9 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     async deleteOne(id: string): Promise<void> {
         await this.model.deleteOne({ _id: id }).exec();
     }
+
+    async find(query: Partial<T>): Promise<T[]> {
+        return this.model.find(query as any).exec();
+    }
 }
+

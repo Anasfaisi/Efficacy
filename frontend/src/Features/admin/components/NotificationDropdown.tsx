@@ -1,43 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, User, Info } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import type { Notification } from '../types';
 
-const MOCK_NOTIFICATIONS: Notification[] = [
-    {
-        id: '1',
-        type: 'mentor',
-        message: 'New mentor application submitted',
-        timestamp: '10 min ago',
-        isRead: false,
-        link: '/admin/mentors/review/1'
-    },
-    {
-        id: '2',
-        type: 'mentor',
-        message: 'Mentor reapplication received',
-        timestamp: '2 hours ago',
-        isRead: false,
-        link: '/admin/mentors/review/2'
-    },
-    {
-        id: '3',
-        type: 'system',
-        message: 'System maintenance scheduled',
-        timestamp: '1 day ago',
-        isRead: true
-    },
-];
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { markAsRead } from '@/redux/slices/notificationSlice';
+
 
 export const NotificationDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    // Use mock data for now
-    const notifications = MOCK_NOTIFICATIONS;
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    const { notifications, unreadCount } = useAppSelector((state) => state.notification);
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -50,15 +28,16 @@ export const NotificationDropdown = () => {
     }, []);
 
     const handleNotificationClick = (notification: Notification) => {
-        // Mark as read logic would go here
+        dispatch(markAsRead(notification._id));
         setIsOpen(false);
-        if (notification.link) {
-            navigate(notification.link);
+        const link = notification.metadata?.link;
+        if (link) {
+            navigate(link);
         } else {
-            // If no link, maybe go to notification list?
             navigate('/admin/notifications');
         }
     };
+
 
     const handleViewAll = () => {
         setIsOpen(false);
@@ -96,7 +75,7 @@ export const NotificationDropdown = () => {
                         ) : (
                             notifications.map((notification) => (
                                 <div
-                                    key={notification.id}
+                                    key={notification._id}
                                     className={cn(
                                         "p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer flex gap-3",
                                         !notification.isRead ? "bg-blue-50/30" : ""
@@ -105,19 +84,21 @@ export const NotificationDropdown = () => {
                                 >
                                     <div className={cn(
                                         "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
-                                        notification.type === 'mentor' ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"
+                                        notification.type?.includes('mentor_application') ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"
                                     )}>
-                                        {notification.type === 'mentor' ? <User size={16} /> : <Info size={16} />}
+                                        {notification.type?.includes('mentor_application') ? <User size={16} /> : <Bell size={16} />}
                                     </div>
 
                                     <div className="flex-1 min-w-0">
                                         <p className={cn("text-sm text-gray-800 leading-snug", !notification.isRead && "font-medium")}>
                                             {notification.message}
                                         </p>
-                                        <p className="text-xs text-gray-400 mt-1">{notification.timestamp}</p>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            {new Date(notification.createdAt).toLocaleString()}
+                                        </p>
                                     </div>
 
-                                    {notification.link && (
+                                    {notification.metadata?.link && (
                                         <div className="flex items-center">
                                             <button className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50">
                                                 View
@@ -128,6 +109,7 @@ export const NotificationDropdown = () => {
                             ))
                         )}
                     </div>
+
 
                     <div className="p-2 bg-gray-50 border-t border-gray-100 text-center">
                         <button

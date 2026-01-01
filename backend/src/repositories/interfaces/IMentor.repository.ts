@@ -1,6 +1,8 @@
 import { IMentor } from '@/models/Mentor.model';
+import { IBaseRepository } from './IBase.repository';
 
-export interface IMentorRepository {
+export interface IMentorRepository extends IBaseRepository<IMentor> {
+
     findByEmail(email: string): Promise<IMentor | null>;
     findById(id: string): Promise<IMentor | null>;
     createUser(data: {

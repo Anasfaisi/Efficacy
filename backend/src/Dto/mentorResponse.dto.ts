@@ -50,13 +50,18 @@ export class MentorOtpVerificationResponseDto {
 //===================   mentor onboarding process  ========================
 
 export interface MentorApplicationResponseDto {
+    id: string;
+    _id: string;
     email: string;
+
     name: string;
     phone?: string;
     city: string;
     state: string;
     country: string;
     bio: string;
+    createdAt?: string | Date;
+
 
     linkedin?: string;
     github?: string;

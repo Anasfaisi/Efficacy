@@ -1,60 +1,32 @@
 import { useState } from 'react';
 import { User, Info, Filter } from 'lucide-react';
+
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import type { Notification } from '../types';
-
-// Extended mock data
-const MOCK_NOTIFICATIONS: Notification[] = [
-    {
-        id: '1',
-        type: 'mentor',
-        message: 'New mentor application submitted by John Doe',
-        timestamp: '2023-10-27 10:30 AM',
-        isRead: false,
-        link: '/admin/mentors/review/1'
-    },
-    {
-        id: '2',
-        type: 'mentor',
-        message: 'Mentor reapplication received from Jane Smith',
-        timestamp: '2023-10-27 09:15 AM',
-        isRead: false,
-        link: '/admin/mentors/review/2'
-    },
-    {
-        id: '3',
-        type: 'system',
-        message: 'System scheduled maintenance completed successfully',
-        timestamp: '2023-10-26 11:00 PM',
-        isRead: true
-    },
-    {
-        id: '4',
-        type: 'system',
-        message: 'Database backup failed - Retry initiated',
-        timestamp: '2023-10-26 04:00 PM',
-        isRead: true
-    },
-    {
-        id: '5',
-        type: 'mentor',
-        message: 'New mentor application submitted by Alice Johnson',
-        timestamp: '2023-10-25 02:30 PM',
-        isRead: true,
-        link: '/admin/mentors/review/3'
-    },
-];
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { markAsRead } from '@/redux/slices/notificationSlice';
 
 type FilterType = 'all' | 'mentor' | 'system';
 
 export default function AdminNotificationsPage() {
     const [filter, setFilter] = useState<FilterType>('all');
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const filteredNotifications = MOCK_NOTIFICATIONS.filter(n => {
+    const { notifications } = useAppSelector((state) => state.notification);
+
+    const handleNotificationClick = (notification: any) => {
+        dispatch(markAsRead(notification._id));
+        const link = notification.metadata?.link;
+        if (link) {
+            navigate(link);
+        }
+    };
+
+    const filteredNotifications = notifications.filter(n => {
         if (filter === 'all') return true;
-        return n.type === filter;
+        if (filter === 'mentor') return n.type?.includes('mentor_application');
+        return n.type === 'system';
     });
 
     return (
@@ -101,33 +73,38 @@ export default function AdminNotificationsPage() {
                     <ul className="divide-y divide-gray-100">
                         {filteredNotifications.map((notification) => (
                             <li
-                                key={notification.id}
+                                key={notification._id}
                                 className={cn(
                                     "group flex items-start gap-4 p-5 transition-all hover:bg-gray-50 cursor-pointer",
                                     !notification.isRead ? "bg-blue-50/20" : ""
                                 )}
-                                onClick={() => notification.link ? navigate(notification.link) : null}
+                                onClick={() => handleNotificationClick(notification)}
                             >
                                 <div
                                     className={cn(
                                         "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
-                                        notification.type === 'mentor' ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
+                                        notification.type?.includes('mentor_application') ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
                                     )}
                                 >
-                                    {notification.type === 'mentor' ? <User size={20} /> : <Info size={20} />}
+                                    {notification.type?.includes('mentor_application') ? <User size={20} /> : <Info size={20} />}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between gap-4">
-                                        <p className={cn("text-base text-gray-900", !notification.isRead ? "font-semibold" : "font-medium")}>
-                                            {notification.message}
-                                        </p>
+                                        <div className="flex flex-col">
+                                            <p className={cn("text-base text-gray-900", !notification.isRead ? "font-semibold" : "font-medium")}>
+                                                {notification.title}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                {notification.message}
+                                            </p>
+                                        </div>
                                         <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
-                                            {notification.timestamp}
+                                            {new Date(notification.createdAt).toLocaleString()}
                                         </span>
                                     </div>
                                     <p className="max-w-xl text-sm text-gray-500 mt-1 line-clamp-1">
-                                        {notification.type === 'mentor'
+                                        {notification.type?.includes('mentor_application')
                                             ? "Review the application details, documents, and video submission."
                                             : "System details and logs available in the system panel."}
                                     </p>

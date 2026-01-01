@@ -6,6 +6,6 @@ import { IMessage } from '@/models/Message.model';
 export interface IChatService {
     findchatById(chatId: string): Promise<IChat | null>;
     createChat(dto: CreateChatDTO): Promise<ChatResponseDTO>;
-    // createMessage(message: CreateMessageDTO): Promise<MessageResponseDto>;
+    getRoomHistory(roomId: string): Promise<any>;
+    saveMessage(message: any): Promise<any>;
 }
- 

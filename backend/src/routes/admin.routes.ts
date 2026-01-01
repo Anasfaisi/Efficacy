@@ -25,5 +25,46 @@ export default function adminRoutes(adminController: AdminController) {
         '/refresh-token',
         adminController.refreshTokenHandler.bind(adminController)
     );
+
+    router.get(
+        '/notifications',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getNotifications.bind(adminController))
+    );
+
+    // Mentor Applications
+    router.get(
+        '/mentors/applications',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getMentorApplications.bind(adminController))
+    );
+
+    router.get(
+        '/mentors/applications/:id',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getMentorApplicationById.bind(adminController))
+    );
+
+    router.post(
+        '/mentors/applications/:id/approve',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.approveMentorApplication.bind(adminController))
+    );
+
+    router.post(
+        '/mentors/applications/:id/reject',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.rejectMentorApplication.bind(adminController))
+    );
+
+    router.post(
+        '/mentors/applications/:id/request-changes',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.requestChangesMentorApplication.bind(adminController))
+    );
+
+
     return router;
 }
+
+

@@ -1,19 +1,22 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { ChatController } from '@/controllers/chat.controller';
 import { Server, Socket } from 'socket.io';
-import { IChatService } from './Interfaces/IChat-message.service';
+import { IChatService } from './Interfaces/IChat.service';
 import { IChatMessage } from '@/models/Chat-message.model';
 import { SendMessagePayload } from '@/types/response-messages.types';
 import { JoinRoomDto } from '@/Dto/request.dto';
+import { ISocketService } from './Interfaces/ISocket.service';
 
 @injectable()
-export class SocketService {
+export class SocketService implements ISocketService {
+    private _io: Server | null = null;
+
     constructor(
         @inject(TYPES.ChatService) private _chatService: IChatService
-    ) {}
+    ) { }
 
     public register(io: Server) {
+        this._io = io;
         io.on('connection', (socket: Socket) => {
             console.log('User connected:', socket.id);
 
@@ -21,12 +24,24 @@ export class SocketService {
                 const dto = new JoinRoomDto(data.roomId, data.user);
                 this.handleJoinRoom(socket, dto);
             });
+
+            socket.on('joinRoleRoom', (role: string) => {
+                socket.join(role);
+                console.log(`Socket ${socket.id} joined role room: ${role}`);
+            });
+
             socket.on('sendMessage', (payload: SendMessagePayload) =>
                 this.handleSendMessage(io, socket, payload)
             );
 
             socket.on('disconnect', () => this.handleDisconnect(socket));
         });
+    }
+
+    public emitToRoom(roomId: string, event: string, data: any) {
+        if (this._io) {
+            this._io.to(roomId).emit(event, data);
+        }
     }
 
     private async handleJoinRoom(socket: Socket, payload: JoinRoomDto) {

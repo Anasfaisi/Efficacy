@@ -55,62 +55,62 @@ export const mentorApplicationSchema = z
         if (data.mentorType === 'Academic') {
             if (!data.qualification)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['qualification'],
                     message: 'Qualification is required',
                 });
             if (!data.domain)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['domain'],
                     message: 'Domain is required',
                 });
             if (!data.university)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['university'],
                     message: 'University is required',
                 });
             if (!data.graduationYear)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['graduationYear'],
                     message: 'Graduation Year is required',
                 });
             if (!data.expertise)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['expertise'],
                     message: 'Area of Expertise is required',
                 });
             if (!data.academicSpan)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['academicSpan'],
                     message: 'Academic Span is required',
                 });
         } else if (data.mentorType === 'Industry') {
             if (!data.industryCategory)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['industryCategory'],
                     message: 'Industry Category is required',
                 });
             if (!data.experienceYears)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['experienceYears'],
                     message: 'Years of experience is required',
                 });
             if (!data.currentRole)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['currentRole'],
                     message: 'Current Role is required',
                 });
             if (!data.skills || data.skills.length < 3)
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: 'custom',
                     path: ['skills'],
                     message: 'Skills are required',
                 });
