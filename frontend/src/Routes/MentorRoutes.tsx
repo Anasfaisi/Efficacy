@@ -11,6 +11,7 @@ import MentorOnboardingForm from '@/Features/mentors/layout/MentorOnboardingForm
 import MentorGuidelines from '@/Features/mentors/pages/MentorGuidelines';
 import MentorApproved from '@/Features/mentors/pages/MentorApproved';
 import ApplicationRejected from '@/Features/mentors/pages/ApplicationRejected';
+import MentorProfilePage from '@/Features/mentors/pages/MentorProfilePage';
 
 const Logout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ const MentorRoutes: React.FC = () => {
       <Route path="onboarding" element={<MentorOnboardingForm />} />
       <Route path="guidelines" element={<MentorGuidelines />} />
       <Route path="approved" element={<MentorApproved />} />
+      <Route path="profile" element={<MentorProfilePage />} />
       <Route path="logout" element={<Logout />} />
     </Routes>
   );

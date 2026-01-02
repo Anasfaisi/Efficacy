@@ -1,5 +1,6 @@
 import api from './axiosConfig';
 import type { mentorFormSchemaType } from '@/types/zodSchemas';
+import type { Mentor } from '@/types/auth';
 
 export interface MentorApplicationResult {
   status: string;
@@ -44,5 +45,9 @@ export const mentorApi = {
   activateMentor: async (monthlyCharge: number) => {
     const res = await api.post('/mentor/activate', { monthlyCharge });
     return res.data;
+  },
+  getMentorProfile: async (): Promise<Mentor> => {
+    const res = await api.get('/mentor/profile');
+    return res.data.mentor;
   },
 };

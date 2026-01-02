@@ -1,4 +1,5 @@
 import { Role } from '@/types/role.types';
+import { IMentor } from '@/models/Mentor.model';
 import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
@@ -64,4 +65,6 @@ export interface IAuthService {
     ): Promise<MentorOtpVerificationResponseDto>;
 
     mentorLogin(dto: LoginRequestDto): Promise<LoginResponseDTO>;
+    getMentorProfile(id: string): Promise<IMentor>;
+    logout(refreshToken: string): Promise<void>;
 }

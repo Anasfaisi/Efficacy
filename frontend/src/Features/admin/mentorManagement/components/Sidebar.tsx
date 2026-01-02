@@ -1,8 +1,9 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
+  const location = useLocation();
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     {
@@ -29,14 +30,18 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
-            className={({ isActive }) =>
-              cn(
+            className={({ isActive }) => {
+              const isItemActive =
+                isActive ||
+                (item.to === '/admin/mentors/applications' &&
+                  location.pathname.includes('/admin/mentors/review'));
+              return cn(
                 'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group',
-                isActive
+                isItemActive
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 translate-x-1'
                   : 'hover:bg-white/5 hover:text-white',
-              )
-            }
+              );
+            }}
           >
             <item.icon
               size={18}

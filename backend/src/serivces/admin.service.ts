@@ -129,6 +129,12 @@ export class AdminService implements IAdminService {
         return mentors.map((mentor) => this.mapToResponseDto(mentor));
     }
 
+    async getMentorById(
+        id: string
+    ): Promise<MentorApplicationResponseDto | null> {
+        return this.getMentorApplicationById(id);
+    }
+
     async updateMentorStatus(id: string, status: string): Promise<void> {
         await this._mentorRepository.update(id, { status });
     }

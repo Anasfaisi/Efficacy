@@ -1,17 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { type Mentor } from '@/types/auth';
-import { XCircle, ArrowLeft } from 'lucide-react';
+import { logout } from '@/redux/slices/authSlice';
+import { XCircle, LogOut } from 'lucide-react';
+import { mentorApi } from '@/Services/mentor.api';
 
 export default function ApplicationRejected() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.auth);
+  const [feedbackReason, setFeedbackReason] = useState<string | undefined>(
+    (currentUser as Mentor)?.applicationFeedback,
+  );
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const mentor = await mentorApi.getMentorProfile();
+        if (mentor && mentor.applicationFeedback) {
+          setFeedbackReason(mentor.applicationFeedback);
+        }
+      } catch (error) {
+        console.error('Failed to fetch mentor profile', error);
+      }
+    };
+
     if (currentUser?.role === 'mentor') {
       const mentor = currentUser as Mentor;
       const status = mentor.status;
+
+      // Fetch fresh profile data to get the latest feedback
+      fetchProfile();
 
       if (status === 'pending') {
         navigate('/mentor/application-received');
@@ -22,6 +42,11 @@ export default function ApplicationRejected() {
       }
     }
   }, [currentUser, navigate]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/mentor/login');
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
@@ -35,18 +60,31 @@ export default function ApplicationRejected() {
         <h2 className="text-3xl font-bold text-slate-800 mb-2">
           Application Rejected
         </h2>
-        <p className="text-slate-500 mb-8 leading-relaxed">
-          We regret to inform you that your application to join as a mentor has been rejected by our administration team.
-          <br /><br />
-          Unfortunately, at this stage, we cannot proceed with your profile. Thank you for your interest in our platform.
+        <p className="text-slate-500 mb-6 leading-relaxed">
+          We regret to inform you that your application to join as a mentor has been rejected.
         </p>
 
+        {feedbackReason && (
+          <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-8 text-left">
+            <h3 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">
+              Reason for Rejection
+            </h3>
+            <p className="text-red-900 text-sm font-medium">
+              {feedbackReason}
+            </p>
+          </div>
+        )}
+
+        <div className="text-sm text-slate-400 mb-8">
+            Thank you for your interest in Efficacy.
+        </div>
+
         <button
-          onClick={() => navigate('/')}
+          onClick={handleLogout}
           className="w-full bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-900 transition-all flex items-center justify-center gap-2"
         >
-          <ArrowLeft size={18} />
-          Return to Home
+          <LogOut size={18} />
+          Logout
         </button>
       </div>
     </div>

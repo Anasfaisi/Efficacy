@@ -43,6 +43,7 @@ import {
     MentorRegisterInitResponseDto,
 } from '@/Dto/mentorResponse.dto';
 import { mentorStatus } from '@/types/mentor-status.types';
+import { IMentor } from '@/models/Mentor.model';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -528,5 +529,14 @@ export class AuthService implements IAuthService {
             role: Role.Mentor,
             status: mentorStatus.Incomplete,
         });
+    }
+    async getMentorProfile(id: string): Promise<IMentor> {
+        const mentor = await this._mentorRepository.findById(id);
+        if (!mentor) throw new Error('Mentor not found');
+        return mentor;
+    }
+    async logout(refreshToken: string): Promise<void> {
+        // Token removal logic to be implemented if token blacklist/db is used
+        return Promise.resolve();
     }
 }

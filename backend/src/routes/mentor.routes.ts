@@ -61,6 +61,12 @@ export default function mentorRoutes(
         )
     );
 
+    router.get(
+        '/profile',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(mentorController.getProfile.bind(mentorController))
+    );
+
     // router.post(
     //     '/google-login',
     //     mentorController.googleAuth.bind(mentorController)

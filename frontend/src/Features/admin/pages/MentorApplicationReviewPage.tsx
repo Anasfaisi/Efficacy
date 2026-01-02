@@ -18,6 +18,7 @@ import {
   Phone,
   Video,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import type { MentorApplication } from '../types';
 import { adminService } from '@/Services/admin.api';
@@ -97,15 +98,16 @@ export default function MentorReviewPage() {
     markNotification();
   }, [id, searchParams, dispatch, notifications]);
 
+
   const handleApprove = async () => {
     if (!id) return;
     try {
       await adminService.approveMentorApplication(id);
-      alert('Mentor Approved!');
+      toast.success('Mentor application approved successfully!');
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to approve application.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -115,30 +117,33 @@ export default function MentorReviewPage() {
       setShowRejectInput(true);
       return;
     }
-    if (!rejectReason.trim()) return;
+    if (!rejectReason.trim()) {
+      toast.warning('Please provide a reason for rejection.');
+      return;
+    }
 
     try {
       await adminService.rejectMentorApplication(id, rejectReason);
-      alert(`Mentor Rejected. Reason: ${rejectReason}`);
+      toast.info(`Mentor rejected: ${rejectReason}`);
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to reject application.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
   const handleRequestChanges = async () => {
     if (!id) return;
-    const reason = prompt('Enter the changes required:');
+    const reason = prompt('Enter the changes required:'); // Ideally replace this with a modal too, but for "approve/reject all are done with alert" context, fixing alert first.
     if (!reason || !reason.trim()) return;
 
     try {
       await adminService.requestChangesMentorApplication(id, reason);
-      alert('Changes requested successfully.');
+      toast.success('Changes requested successfully.');
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to request changes.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 

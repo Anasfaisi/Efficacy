@@ -104,4 +104,15 @@ export class MentorController {
             );
         }
     }
+    async getProfile(req: Request, res: Response) {
+        try {
+            if (!req.user) throw new Error('User context missing');
+            const userId = req.user.id;
+            const mentor = await this._authService.getMentorProfile(userId);
+            res.status(code.OK).json({ mentor });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            res.status(code.NOT_FOUND).json({ message });
+        }
+    }
 }
