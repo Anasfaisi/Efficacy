@@ -28,7 +28,7 @@ export class KanbanMapper {
             return new kanbanColumnToEntity(col.columnId, col.title, tasks);
         });
 
-        return new KanbanBoardToEntity(board.userId.toString(),columns);
+        return new KanbanBoardToEntity(board.userId.toString(), columns);
     }
 
     static toPersistence(domainBoard: KanbanBoardFromEntity, userId: string) {

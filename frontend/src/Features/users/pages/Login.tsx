@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginFormSchema } from '@/types/zodSchemas';
+import { loginFormSchema, type loginFormSchemaType } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordLink } from '@/Features/users/pages/ForgotPassowrd';
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     register: formRegister,
     handleSubmit,
     formState: { errors },
-  } = useForm<loginFormSchema>({
+  } = useForm<loginFormSchemaType>({
     resolver: zodResolver(loginFormSchema),
     mode: 'onChange',
   });
@@ -38,15 +38,14 @@ const Login: React.FC = () => {
       if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
       if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
       navigate(endPoint);
-        console.log(currentUser,"login tsx")
-
+      console.log(currentUser, 'login tsx');
     }
   }, [navigate, currentUser]);
 
-  const onSubmit = async (data: loginFormSchema) => {
+  const onSubmit = async (data: loginFormSchemaType) => {
     try {
       const result = await loginApi({ ...data, role: 'user' });
-      console.log(result,"from login tsx")
+      console.log(result, 'from login tsx');
       if (result.message) {
         toast.error(result.message);
         return;
@@ -172,19 +171,15 @@ const Login: React.FC = () => {
         </div>
 
         <div className="w-full flex-1 md:w-1/2 bg-gradient-to-tr from-purple-600 via-purple-500 to-purple-400 text-white flex items-center justify-center relative">
-          {/* Glow circles */}
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-purple-900/20 blur-3xl" />
 
           <div className="relative p-8 md:p-10 flex flex-col items-center gap-4">
-            {/* Tagline */}
             <div className="px-4 py-1.5 rounded-full bg-white/15 border border-white/30 text-xs uppercase tracking-wide backdrop-blur-sm">
               Let&apos;s get productive!
             </div>
 
-            {/* Panda image */}
             <div className="mt-2 mb-3">
-              {/* Replace src with your actual panda asset */}
               <img
                 src={image}
                 alt="Cute panda working on a laptop"

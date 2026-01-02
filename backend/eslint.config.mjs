@@ -42,7 +42,7 @@ export default defineConfig([
 
             // TS rules override
             '@typescript-eslint/no-unused-vars': 'off',
-            '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/no-explicit-any': 'error',
         },
         ignores: ['node_modules/', 'dist/', 'build/'],
     },

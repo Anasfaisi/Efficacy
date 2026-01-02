@@ -9,11 +9,11 @@ import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function adminRoutes(adminController: AdminController) {
     const router = express.Router();
-    
+
     const tokenService = new TokenService();
     router.post(
         '/login',
-       asyncWrapper(adminController.login.bind(adminController))
+        asyncWrapper(adminController.login.bind(adminController))
     );
 
     router.post(
@@ -25,5 +25,82 @@ export default function adminRoutes(adminController: AdminController) {
         '/refresh-token',
         adminController.refreshTokenHandler.bind(adminController)
     );
+
+    router.get(
+        '/notifications',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getNotifications.bind(adminController))
+    );
+
+    router.patch(
+        '/notifications/:id/mark-read',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.markNotificationAsRead.bind(adminController)
+        )
+    );
+
+    router.patch(
+        '/notifications/mark-all-read',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.markAllNotificationsAsRead.bind(adminController)
+        )
+    );
+
+    router.get(
+        '/mentors/applications',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.getMentorApplications.bind(adminController)
+        )
+    );
+
+    router.get(
+        '/mentors/applications/:id',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.getMentorApplicationById.bind(adminController)
+        )
+    );
+
+    router.post(
+        '/mentors/applications/:id/approve',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.approveMentorApplication.bind(adminController)
+        )
+    );
+
+    router.post(
+        '/mentors/applications/:id/reject',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.rejectMentorApplication.bind(adminController)
+        )
+    );
+
+    router.post(
+        '/mentors/applications/:id/request-changes',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.requestChangesMentorApplication.bind(
+                adminController
+            )
+        )
+    );
+
+    router.get(
+        '/mentors',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getAllMentors.bind(adminController))
+    );
+
+    router.put(
+        '/mentors/:id/status',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.updateMentorStatus.bind(adminController))
+    );
+
     return router;
 }

@@ -1,6 +1,6 @@
 import { Schema, model, Types, Document } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
-export interface IMessage {
+export interface IMessage extends Document {
     _id: Types.ObjectId;
     conversationId: Types.ObjectId;
     senderId: Types.ObjectId;
@@ -8,8 +8,8 @@ export interface IMessage {
     attachments?: string[];
     status?: MessageStatus;
     seenBy?: Types.ObjectId[];
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const MessageSchema = new Schema<IMessage>(

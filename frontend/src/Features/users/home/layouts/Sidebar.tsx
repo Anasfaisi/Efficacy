@@ -22,7 +22,7 @@ const Sidebar = () => {
         <SidebarButton
           icon={<FaCommentDots />}
           label="Chat Room"
-          to="/chat" 
+          to="/chat"
           colorClass="hover:bg-[#7F00FF]"
         />
         <SidebarButton

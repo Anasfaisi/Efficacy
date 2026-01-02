@@ -46,7 +46,7 @@ export default function authRoutes(userController: UserController) {
     );
     router.post(
         '/register/resend-otp',
-        userController.resendOtp.bind(userController)
+        asyncWrapper(userController.resendOtp.bind(userController))
     );
 
     router.post(

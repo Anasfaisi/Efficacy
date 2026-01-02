@@ -25,6 +25,6 @@ export interface IUserRepository {
     ): Promise<IUser | null>;
     findByStripeCustomerId(customerId: string): Promise<IUser | null>;
 
-    updateUser(id:string,updatedData: UserUpdateData): Promise<IUser | null>;
-    updateProfilePic(id:string,fileUrl:string):Promise<IUser | null>;
+    updateUser(id: string, updatedData: UserUpdateData): Promise<IUser | null>;
+    updateProfilePic(id: string, fileUrl: string): Promise<IUser | null>;
 }

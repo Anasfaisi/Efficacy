@@ -1,9 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { IChatService } from './Interfaces/IChat.service';
-import {
-    CreateChatDTO,
-    CreateMessageDTO,
-} from '@/Dto/request.dto';
+import { CreateChatDTO, CreateMessageDTO } from '@/Dto/request.dto';
 import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
 import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';
@@ -17,8 +14,8 @@ import { IMessage } from '@/models/Message.model';
 export class ChatService implements IChatService {
     constructor(
         @inject(TYPES.ChatRepository) private _chatRepository: IChatRepository,
-        @inject(TYPES.MessageRepository) private _messageRepository: IMessageRepository,
-      
+        @inject(TYPES.MessageRepository)
+        private _messageRepository: IMessageRepository
     ) {}
     async findchatById(chatId: string): Promise<IChat | null> {
         return this._chatRepository.findById(chatId);
@@ -42,13 +39,21 @@ export class ChatService implements IChatService {
         };
     }
 
+    async getRoomHistory(roomId: string): Promise<IMessage[]> {
+        return this._messageRepository.findByChat(roomId);
+    }
+
+    async saveMessage(message: Partial<IMessage>): Promise<IMessage> {
+        return this._messageRepository.create(message);
+    }
+
     // async createMessage(dto: CreateMessageDTO): Promise<MessageResponseDto> {
-        // const messageData: Omit<IMessage, '_id' | 'status'> = {
+    // const messageData: Omit<IMessage, '_id' | 'status'> = {
     //   conversationId: new Types.ObjectId(dto.conversationId),
     //   senderId: new Types.ObjectId(dto.senderId),
     //   content: dto.content,
     //   attachments: dto.attachments,
-    //   seenBy: [], 
+    //   seenBy: [],
     //   createdAt: new Date(),
     //   updatedAt: new Date(),
     // };
@@ -60,7 +65,7 @@ export class ChatService implements IChatService {
     //     );
 
     //     return new MessageResponseDto(
-            
+
     //         saved.conversationId.toString(),
     //         saved.senderId.toString(),
     //         saved.content,

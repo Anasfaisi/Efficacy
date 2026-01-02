@@ -17,7 +17,7 @@ export function OTPPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(resendAvailableAt, 'insdien teh use efect');
+    console.log(resendAvailableAt, 'inside the use effect');
     if (!resendAvailableAt) return;
     const interval = setInterval(() => {
       const now = Date.now();
@@ -44,7 +44,7 @@ export function OTPPage() {
 
   const handleVerify = async () => {
     const result = await verifyOtpApi(tempEmail, otp, role);
-    console.log(result)
+    console.log(result);
     if (result.success) {
       dispatch(setCredentials({ currentUser: result.user }));
       if (!result) return;
@@ -74,10 +74,13 @@ export function OTPPage() {
         toast.success(`Resend otp sent successfully`);
       }
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Unexpected error';
-
-      toast.error(message);
+      if (typeof error === 'string') {
+        toast.error(error);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('Something went wrong');
+      }
     }
   };
 

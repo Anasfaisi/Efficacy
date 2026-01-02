@@ -1,32 +1,50 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { ChatController } from '@/controllers/chat.controller';
 import { Server, Socket } from 'socket.io';
-import { IChatService } from './Interfaces/IChat-message.service';
+import { IChatService } from './Interfaces/IChat.service';
 import { IChatMessage } from '@/models/Chat-message.model';
 import { SendMessagePayload } from '@/types/response-messages.types';
 import { JoinRoomDto } from '@/Dto/request.dto';
+import { ISocketService } from './Interfaces/ISocket.service';
+import { IUser } from '@/models/User.model';
+import { IMessage } from '@/models/Message.model';
+import { Types } from 'mongoose';
 
 @injectable()
-export class SocketService {
+export class SocketService implements ISocketService {
+    private _io: Server | null = null;
+
     constructor(
         @inject(TYPES.ChatService) private _chatService: IChatService
     ) {}
 
     public register(io: Server) {
+        this._io = io;
         io.on('connection', (socket: Socket) => {
             console.log('User connected:', socket.id);
 
-            socket.on('joinRoom', (data: { roomId: string; user: any }) => {
-                const dto = new JoinRoomDto(data.roomId, data.user);
+            socket.on('joinRoom', (data: { roomId: string; user: unknown }) => {
+                const dto = new JoinRoomDto(data.roomId, data.user as IUser);
                 this.handleJoinRoom(socket, dto);
             });
+
+            socket.on('joinRoleRoom', (role: string) => {
+                socket.join(role);
+                console.log(`Socket ${socket.id} joined role room: ${role}`);
+            });
+
             socket.on('sendMessage', (payload: SendMessagePayload) =>
                 this.handleSendMessage(io, socket, payload)
             );
 
             socket.on('disconnect', () => this.handleDisconnect(socket));
         });
+    }
+
+    public emitToRoom(roomId: string, event: string, data: unknown) {
+        if (this._io) {
+            this._io.to(roomId).emit(event, data);
+        }
     }
 
     private async handleJoinRoom(socket: Socket, payload: JoinRoomDto) {
@@ -45,13 +63,14 @@ export class SocketService {
     ) {
         const { roomId, senderId, senderName, message } = payload;
 
+        // Note: Using any here because of a schema mismatch between SocketService (room-based)
+        // and ChatService (conversation-based). This needs to be reconciled in the future.
         const saved = await this._chatService.saveMessage({
-            roomId,
-            senderId,
-            senderName,
-            message,
+            conversationId: roomId as unknown as Types.ObjectId,
+            senderId: senderId as unknown as Types.ObjectId,
+            content: message,
             createdAt: new Date(),
-        } as IChatMessage);
+        } as Partial<IMessage>);
 
         io.to(roomId).emit('receiveMessage', saved);
     }

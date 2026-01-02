@@ -47,9 +47,7 @@ export class PaymentService implements IPaymentService {
         rawBody: Buffer,
         signature: string
     ): Promise<void> {
-        let event: Stripe.Event;
-
-        event = this._stripe.webhooks.constructEvent(
+        const event = this._stripe.webhooks.constructEvent(
             rawBody,
             signature,
             process.env.STRIPE_WEBHOOK_SECRET!

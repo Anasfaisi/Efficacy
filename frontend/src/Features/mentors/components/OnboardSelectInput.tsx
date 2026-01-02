@@ -3,7 +3,12 @@ interface SelectInputProps
   label: string;
 }
 
-export function SelectInput({ label, children, className, ...rest }: SelectInputProps) {
+export function SelectInput({
+  label,
+  children,
+  className,
+  ...rest
+}: SelectInputProps) {
   return (
     <div className="flex flex-col space-y-1">
       <label className="text-gray-700 font-medium">{label}</label>

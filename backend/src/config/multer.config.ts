@@ -7,11 +7,11 @@ const uploadPath = path.join(__dirname, '../../uploads');
 console.log(uploadPath);
 
 if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
+    fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-const storage:StorageEngine = multer.diskStorage({
-    destination: function (req:Request, file, cb) {
+const storage: StorageEngine = multer.diskStorage({
+    destination: function (req: Request, file, cb) {
         cb(null, uploadPath);
     },
     filename: function (req: Request, file, cb) {

@@ -52,7 +52,9 @@ export class KanbanController {
     }
 
     async updateKanbanTask(req: Request, res: Response) {
-        const kanbanBoard =await  this._kanbanService.updateKanbanTask(req.body);
+        const kanbanBoard = await this._kanbanService.updateKanbanTask(
+            req.body
+        );
         if (!kanbanBoard) {
             res.status(HttpStatus.NO_CONTENT).json({
                 message: ErrorMessages.NotAdded,
@@ -79,7 +81,9 @@ export class KanbanController {
     }
 
     async reorderKanbanTask(req: Request, res: Response) {
-        const kanbanBoard = await this._kanbanService.reorderKanbanTask(req.body);
+        const kanbanBoard = await this._kanbanService.reorderKanbanTask(
+            req.body
+        );
         if (!kanbanBoard) {
             res.status(HttpStatus.NO_CONTENT).json({
                 message: ErrorMessages.NotAdded,
@@ -87,11 +91,9 @@ export class KanbanController {
             return;
         }
 
-
         res.status(HttpStatus.OK).json({
             message: SuccessMessages.ResourceDelivered,
             kanbanBoard,
-            
         });
     }
 }

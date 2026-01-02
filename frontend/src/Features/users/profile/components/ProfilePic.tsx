@@ -9,7 +9,8 @@ import { setCredentials } from '@/redux/slices/authSlice';
 const ProfilePic: React.FC = () => {
   const dispatch = useAppDispatch();
   const [proPic, setProPic] = useState<File | null>(null);
-  const user = useAppSelector((state: RootState) => state.auth.user);
+  const user = useAppSelector((state: RootState) => state.auth.currentUser);
+
   const [editState, setEditState] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +21,9 @@ const ProfilePic: React.FC = () => {
   const handleProfilePicUpdate = async () => {
     if (!proPic) return;
     const result = await updateProfilePicture(proPic, 'user', user?.id);
-    console.log(result,"propic")
+    console.log(result, 'propic');
     if (result?.user) {
-      dispatch(setCredentials({ user: result.user }));
+      dispatch(setCredentials({ currentUser: result.user }));
       setEditState(false);
     } else {
       console.error('Unexpected API response:', result);

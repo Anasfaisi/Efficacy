@@ -38,10 +38,10 @@ const AdminLogin = () => {
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setRoleError(null);
-    const  result  = await adminLoginApi({ ...data, role: 'admin' });
-    console.log(result.admin,"from the adminLogin")
+    const result = await adminLoginApi({ ...data, role: 'admin' });
+    console.log(result.admin, 'from the adminLogin');
     if (result.admin) {
-      dispatch(setCredentials({ currentUser:result.admin }));
+      dispatch(setCredentials({ currentUser: result.admin }));
       navigate('/admin/dashboard');
     }
   };

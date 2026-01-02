@@ -45,7 +45,7 @@ export class userGoogleLoginResponseDto {
             email: string;
             name: string;
             role: Role;
-        },
+        }
     ) {}
 }
 export class AdminLoginRespondseDto {

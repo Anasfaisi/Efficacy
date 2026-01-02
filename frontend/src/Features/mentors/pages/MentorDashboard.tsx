@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector } from '@/redux/hooks';
-import { Link } from 'react-router-dom';
-import MentorOnboardingForm from '../layout/MentorOnboardingForm';
+import { Link, useNavigate } from 'react-router-dom';
+import { type Mentor } from '@/types/auth';
+import { toast } from 'sonner';
 
 const MentorDashboard: React.FC = () => {
   const { currentUser } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser?.role === 'mentor') {
+      const mentor = currentUser as Mentor;
+      const status = mentor.status;
+
+      if (status === 'incomplete' || !status) {
+        navigate('/mentor/onboarding');
+      } else if (status === 'pending') {
+        navigate('/mentor/application-received');
+      } else if (status === 'approved') {
+        navigate('/mentor/approved');
+      } else if (status === 'inactive') {
+        toast.error('Your account is currently inactive. Please contact support.');
+        navigate('/mentor/login');
+      }
+    }
+  }, [currentUser, navigate]);
+
+  if (!currentUser) return null; // Or loading spinner
 
   return (
     <div className="h-screen w-full flex bg-white">
@@ -22,7 +44,7 @@ const MentorDashboard: React.FC = () => {
             to="/mentor/students"
             className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
           >
-            Students
+            Mentees
           </Link>
           <Link
             to="/mentor/sessions"
@@ -35,6 +57,12 @@ const MentorDashboard: React.FC = () => {
             className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
           >
             Profile
+          </Link>
+          <Link
+            to="/mentor/guidelines"
+            className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+          >
+            Guidelines
           </Link>
         </nav>
       </aside>
@@ -57,7 +85,6 @@ const MentorDashboard: React.FC = () => {
 
         {/* Content */}
         <main className="flex-1 p-10">
-        <MentorOnboardingForm />
           <div className="max-w-3xl bg-white border border-gray-200 shadow-md rounded-xl p-8">
             {currentUser ? (
               <>

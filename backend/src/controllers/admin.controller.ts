@@ -7,16 +7,88 @@ import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
 import { LoginRequestDto } from '@/Dto/request.dto';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
+import { INotificationService } from '@/serivces/Interfaces/INotification.service';
+import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
 
 @injectable()
 export class AdminController {
     constructor(
         @inject(TYPES.AdminAuthService)
-        private _adminAuthService: IAdminAuthService
+        private _adminAuthService: IAdminAuthService,
+        @inject(TYPES.NotificationService)
+        private _notificationService: INotificationService,
+        @inject(TYPES.AdminService)
+        private _adminService: IAdminService
     ) {}
 
+    async getNotifications(req: Request, res: Response): Promise<void> {
+        const notifications =
+            await this._notificationService.getNotificationsByRecipient(
+                'admin_global'
+            );
+        res.status(code.OK).json(notifications);
+    }
+
+    async markNotificationAsRead(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        await this._notificationService.markAsRead(id);
+        res.status(code.OK).json({ message: 'Notification marked as read' });
+    }
+
+    async markAllNotificationsAsRead(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        await this._notificationService.markAllAsRead('admin_global');
+        res.status(code.OK).json({
+            message: 'All notifications marked as read',
+        });
+    }
+
+    async getMentorApplications(req: Request, res: Response): Promise<void> {
+        const applications = await this._adminService.getMentorApplications();
+        res.status(code.OK).json(applications);
+    }
+
+    async getMentorApplicationById(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const application =
+            await this._adminService.getMentorApplicationById(id);
+        if (!application) {
+            res.status(code.NOT_FOUND).json({
+                message: 'Application not found',
+            });
+            return;
+        }
+        res.status(code.OK).json(application);
+    }
+
+    async approveMentorApplication(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        await this._adminService.approveMentorApplication(id);
+        res.status(code.OK).json({
+            message: 'Application approved successfully',
+        });
+    }
+
+    async rejectMentorApplication(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const { reason } = req.body;
+        await this._adminService.rejectMentorApplication(id, reason);
+        res.status(code.OK).json({ message: 'Application rejected' });
+    }
+
+    async requestChangesMentorApplication(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        const { id } = req.params;
+        const { reason } = req.body;
+        await this._adminService.requestChangesMentorApplication(id, reason);
+        res.status(code.OK).json({ message: 'Changes requested' });
+    }
+
     async login(req: Request, res: Response) {
-     
         const response = await this._adminAuthService.adminLogin(req.body);
         res.cookie('refreshToken', response.refreshToken, {
             httpOnly: true,
@@ -54,8 +126,12 @@ export class AdminController {
             });
 
             res.json({ success: true });
-        } catch (error: any) {
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'An unknown error occurred';
+            res.status(code.UNAUTHORIZED).json({ message });
         }
     }
 
@@ -73,11 +149,23 @@ export class AdminController {
             });
 
             res.status(code.OK).json(AuthMessages.LogoutSuccess);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Logout error:', error);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
             );
         }
+    }
+
+    async getAllMentors(req: Request, res: Response): Promise<void> {
+        const mentors = await this._adminService.getAllMentors();
+        res.status(code.OK).json(mentors);
+    }
+
+    async updateMentorStatus(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const { status } = req.body;
+        await this._adminService.updateMentorStatus(id, status);
+        res.status(code.OK).json({ message: 'Mentor status updated' });
     }
 }

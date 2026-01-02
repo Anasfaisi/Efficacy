@@ -33,14 +33,12 @@ export default function KanbanRoutes(kanbanController: KanbanController) {
         authenticateAndAuthorize(tokenService, Role.User),
         kanbanController.deleteKanbanTask.bind(kanbanController)
     );
-    
+
     router.put(
         '/task/reorder',
         authenticateAndAuthorize(tokenService, Role.User),
         kanbanController.reorderKanbanTask.bind(kanbanController)
     );
-
-
 
     return router;
 }

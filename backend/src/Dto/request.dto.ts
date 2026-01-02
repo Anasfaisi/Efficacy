@@ -12,11 +12,11 @@ export class LoginRequestDto {
     ) {}
 }
 
-export class userGoogleLoginRequestDto{
+export class userGoogleLoginRequestDto {
     constructor(
-        public readonly googleToken:string,
+        public readonly googleToken: string,
         public readonly role: Role
-    ){}
+    ) {}
 }
 
 //Register
@@ -44,7 +44,10 @@ export class resendOtpRequestDto {
 
 //forget password
 export class ForgotPasswordRequestDto {
-    constructor(public readonly email: string) {}
+    public email: string;
+    constructor(email: string) {
+        this.email = email;
+    }
 }
 
 //reset password

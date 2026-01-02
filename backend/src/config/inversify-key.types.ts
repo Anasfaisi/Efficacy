@@ -9,6 +9,9 @@ export const TYPES = {
     SocketService: Symbol('SocketService'),
     KanbanService: Symbol('KanbanService'),
     AdminAuthService: Symbol('AdminAuthService'),
+    MentorOnboardService: Symbol('MentorOnboardService'),
+    NotificationService: Symbol('NotificationService'),
+    AdminService: Symbol('AdminService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -17,6 +20,7 @@ export const TYPES = {
     ChatRepository: Symbol('ChatRepository'),
     MessageRepository: Symbol('MessageRepository'),
     KanbanRepository: Symbol('KanbanRepository'),
+    NotificationRepository: Symbol('NotificationRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -25,4 +29,5 @@ export const TYPES = {
     ChatController: Symbol('chatController'),
     SocketController: Symbol('SocketController'),
     KanbanController: Symbol('KanbanController'),
+    MentorOnboardController: Symbol('MentorOnboardController'),
 };

@@ -28,6 +28,7 @@ export default tseslint.config([
         semi: true,
         singleQuote: true,
       }],
+      '@typescript-eslint/no-explicit-any': 'error',
     },
     languageOptions: {
       ecmaVersion: 2020,

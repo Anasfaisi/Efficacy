@@ -38,6 +38,7 @@ import {
     MentorRegisterRequestDto,
 } from '@/Dto/mentorRequest.dto';
 import {
+    MentorLoginResponseDTO,
     MentorOtpVerificationResponseDto,
     MentorRegisterInitResponseDto,
 } from '@/Dto/mentorResponse.dto';
@@ -213,7 +214,7 @@ export class AuthService implements IAuthService {
             dto.email
         );
         if (!unverifiedUser)
-            throw new Error('No pending registration for this email');
+            throw new Error('Re-intiate registration for this email');
 
         if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
         if (unverifiedUser.otpExpiresAt < new Date())
@@ -251,6 +252,7 @@ export class AuthService implements IAuthService {
     }
 
     async resendOtp(dto: resendOtpRequestDto) {
+        console.log(dto.email, 'dto . email');
         const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
             dto.email
         );
@@ -426,10 +428,14 @@ export class AuthService implements IAuthService {
 
     /*=============== mentor Auth =======================*/
     async mentorLogin(dto: LoginRequestDto) {
+        console.log(dto.email, dto, 'ddddtooototot');
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 
-        if (!(await bcrypt.compare(dto.password, account.password))) {
+        if (
+            !account.password ||
+            !(await bcrypt.compare(dto.password, account.password))
+        ) {
             throw new Error('Invalid email or password');
         }
 
@@ -443,11 +449,12 @@ export class AuthService implements IAuthService {
             account.role
         );
 
-        return new LoginResponseDTO(accessToken, refreshToken, {
+        return new MentorLoginResponseDTO(accessToken, refreshToken, {
             id: account.id.toString(),
             name: account.name,
             email: account.email,
             role: account.role as Role,
+            status: account.status,
         });
     }
 
