@@ -9,22 +9,43 @@ export class MentorOnboardController {
     constructor(
         @inject(TYPES.MentorOnboardService)
         private _mentorOnboardService: IMentorOnboardService
-    ) { }
+    ) {}
 
     async mentorApplicationInit(req: Request, res: Response) {
-        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const files = req.files as {
+            [fieldname: string]: Express.Multer.File[];
+        };
 
+        const result = await this._mentorOnboardService.mentorApplicationInit({
+            ...req.body,
+            id: req.user?.id,
+            resume: files?.resume?.[0]?.filename,
+            certificate: files?.certificate?.[0]?.filename,
+            idProof: files?.idProof?.[0]?.filename,
+        });
 
-        const result = await this._mentorOnboardService.mentorApplicationInit(
-            {
-                ...req.body,
-                id: req.user?.id,
-                resume: files?.resume?.[0]?.filename,
-                certificate: files?.certificate?.[0]?.filename,
-                idProof: files?.idProof?.[0]?.filename,
-            }
+        res.status(code.OK).json({
+            message: 'Application submitted successfully',
+            result,
+        });
+    }
+
+    async activateMentor(req: Request, res: Response) {
+        const { monthlyCharge } = req.body;
+        const mentorId = req.user?.id;
+
+        if (!mentorId) {
+            throw new Error('Mentor ID not found in session');
+        }
+
+        const result = await this._mentorOnboardService.activateMentor(
+            mentorId,
+            monthlyCharge
         );
 
-        res.status(code.OK).json({ message: 'Application submitted successfully', result });
+        res.status(code.OK).json({
+            message: 'Mentor activated successfully',
+            user: result,
+        });
     }
 }

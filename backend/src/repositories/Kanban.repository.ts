@@ -6,7 +6,10 @@ import { IKanbanTask } from '@/models/kanban-task.model';
 import { KanbanMapper } from '@/Mapper/KanbanMapper';
 import { KanbanBoardFromEntity } from '@/entity/fromEntity';
 import { KanbanBoardToEntity } from '@/entity/toEntity';
-export class KanbanRepository extends BaseRepository<IKanbanBoard> implements IKanbanRepository{
+export class KanbanRepository
+    extends BaseRepository<IKanbanBoard>
+    implements IKanbanRepository
+{
     constructor() {
         super(KanbanBoardModel);
     }

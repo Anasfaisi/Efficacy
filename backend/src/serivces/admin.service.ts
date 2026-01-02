@@ -52,27 +52,33 @@ export class AdminService implements IAdminService {
             experienceSummary: mentor.experienceSummary,
             resume: mentor.resume,
             certificate: mentor.certificate,
-            idProof: mentor.idProof
+            idProof: mentor.idProof,
         };
     }
 
     async getMentorApplications(): Promise<MentorApplicationResponseDto[]> {
-        const mentors = await this._mentorRepository.find({ status: 'pending' });
-        return mentors.map(m => this.mapToResponseDto(m));
+        const mentors = await this._mentorRepository.find({
+            status: { $ne: 'incomplete' },
+        });
+        return mentors.map((m) => this.mapToResponseDto(m));
     }
 
-    async getMentorApplicationById(id: string): Promise<MentorApplicationResponseDto | null> {
+    async getMentorApplicationById(
+        id: string
+    ): Promise<MentorApplicationResponseDto | null> {
         const mentor = await this._mentorRepository.findById(id);
         return mentor ? this.mapToResponseDto(mentor) : null;
     }
 
-
     async approveMentorApplication(id: string): Promise<void> {
-        const mentor = await this._mentorRepository.update(id, { status: 'approved', isVerified: true });
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'approved',
+            isVerified: true,
+        });
         if (mentor) {
             await this._notificationService.createNotification(
                 mentor.id,
-                Role.Mentor as any,
+                Role.Mentor,
                 NotificationType.MENTOR_APPLICATION_APPROVED,
                 'Application Approved',
                 'Congratulations! Your mentor application has been approved. You can now access the mentor dashboard.',
@@ -82,11 +88,14 @@ export class AdminService implements IAdminService {
     }
 
     async rejectMentorApplication(id: string, reason: string): Promise<void> {
-        const mentor = await this._mentorRepository.update(id, { status: 'rejected' });
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'rejected',
+            applicationFeedback: reason,
+        });
         if (mentor) {
             await this._notificationService.createNotification(
                 mentor.id,
-                Role.Mentor as any,
+                Role.Mentor,
                 NotificationType.MENTOR_APPLICATION_REJECTED,
                 'Application Rejected',
                 `Your mentor application has been rejected. Reason: ${reason}`,
@@ -95,17 +104,32 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async requestChangesMentorApplication(id: string, reason: string): Promise<void> {
-        const mentor = await this._mentorRepository.update(id, { status: 'incomplete' }); // Or a new status like 'changes_requested'
+    async requestChangesMentorApplication(
+        id: string,
+        reason: string
+    ): Promise<void> {
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'reapply',
+            applicationFeedback: reason,
+        });
         if (mentor) {
             await this._notificationService.createNotification(
                 mentor.id,
-                Role.Mentor as any,
+                Role.Mentor,
                 NotificationType.SYSTEM_ANNOUNCEMENT, // Maybe use a more specific type if available
                 'Changes Requested',
                 `The admin has requested changes to your application. Reason: ${reason}`,
                 { reason, link: '/mentor/onboarding' }
             );
         }
+    }
+
+    async getAllMentors(): Promise<MentorApplicationResponseDto[]> {
+        const mentors = await this._mentorRepository.getAllMentors();
+        return mentors.map((mentor) => this.mapToResponseDto(mentor));
+    }
+
+    async updateMentorStatus(id: string, status: string): Promise<void> {
+        await this._mentorRepository.update(id, { status });
     }
 }

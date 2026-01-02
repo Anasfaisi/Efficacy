@@ -5,4 +5,5 @@ export interface IMentorOnboardService {
     mentorApplicationInit(
         dto: MentorApplicationRequestDto
     ): Promise<MentorApplicationResponseDto | null>;
+    activateMentor(mentorId: string, monthlyCharge: number): Promise<any>;
 }

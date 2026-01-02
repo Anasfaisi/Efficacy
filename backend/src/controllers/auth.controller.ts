@@ -101,8 +101,10 @@ export class UserController {
                 secure: true,
             });
             res.status(code.OK).json({ user });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Login failed';
+            res.status(code.BAD_REQUEST).json({ message });
             console.log(error);
         }
     }
@@ -175,8 +177,10 @@ export class UserController {
             });
 
             res.json({ success: true });
-        } catch (error: any) {
-            res.status(code.UNAUTHORIZED).json({ message: error.message });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Token refresh failed';
+            res.status(code.UNAUTHORIZED).json({ message });
         }
     }
 
@@ -208,7 +212,7 @@ export class UserController {
             });
 
             res.status(code.OK).json(AuthMessages.LogoutSuccess);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Logout error:', error);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed

@@ -53,6 +53,13 @@ export default function mentorRoutes(
             )
         )
     );
+    router.post(
+        '/activate',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(
+            mentorOnboardController.activateMentor.bind(mentorOnboardController)
+        )
+    );
 
     // router.post(
     //     '/google-login',

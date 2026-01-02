@@ -1,4 +1,4 @@
-import React, { type FunctionComponent } from 'react';
+import React from 'react';
 type LoginLogoutButtonProps = {
   colour: string;
   label: string;

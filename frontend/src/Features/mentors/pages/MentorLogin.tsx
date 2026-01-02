@@ -18,7 +18,9 @@ const MentorLogin: React.FC = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, error, currentUser } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector(
+    (state) => state.auth,
+  );
   useEffect(() => {
     if (currentUser?.role) {
       let endPoint = '/home';
@@ -40,7 +42,7 @@ const MentorLogin: React.FC = () => {
   const onSubmit = async (data: loginFormSchema) => {
     const result = await loginApi({ ...data, role: 'mentor' });
     if (result.user) {
-      dispatch(setCredentials({ currentUser:result.user }));
+      dispatch(setCredentials({ currentUser: result.user }));
       navigate('/home');
     }
   };

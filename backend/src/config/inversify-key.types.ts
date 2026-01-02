@@ -13,7 +13,6 @@ export const TYPES = {
     NotificationService: Symbol('NotificationService'),
     AdminService: Symbol('AdminService'),
 
-
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),
@@ -30,5 +29,5 @@ export const TYPES = {
     ChatController: Symbol('chatController'),
     SocketController: Symbol('SocketController'),
     KanbanController: Symbol('KanbanController'),
-    MentorOnboardController: Symbol('MentorOnboardController')
+    MentorOnboardController: Symbol('MentorOnboardController'),
 };

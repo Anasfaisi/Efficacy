@@ -16,10 +16,9 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   updateTask,
   deleteTask,
 }) => {
-
   const { setNodeRef } = useDroppable({
-  id: column.columnId,
-});
+    id: column.columnId,
+  });
   const [form, setForm] = useState({
     title: '',
     description: '',

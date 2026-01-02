@@ -9,14 +9,14 @@ export class LoginRequestDto {
         public readonly password: string,
         public readonly role: Role,
         public readonly name?: string
-    ) { }
+    ) {}
 }
 
 export class userGoogleLoginRequestDto {
     constructor(
         public readonly googleToken: string,
         public readonly role: Role
-    ) { }
+    ) {}
 }
 
 //Register
@@ -26,7 +26,7 @@ export class RegisterRequestDto {
         public readonly email: string,
         public readonly password: string,
         public readonly role: Role
-    ) { }
+    ) {}
 }
 
 //otp verification
@@ -34,12 +34,12 @@ export class OtpVerificationRequestDto {
     constructor(
         public readonly email: string,
         public readonly otp: string
-    ) { }
+    ) {}
 }
 
 //resend otp
 export class resendOtpRequestDto {
-    constructor(public readonly email: string) { }
+    constructor(public readonly email: string) {}
 }
 
 //forget password
@@ -55,11 +55,11 @@ export class ResetPasswordrequestDto {
     constructor(
         public readonly token: string,
         public readonly newPassword: string
-    ) { }
+    ) {}
 }
 
 //refreshing access token
-export class RefreshRequestDto { }
+export class RefreshRequestDto {}
 
 //stripe checkout dto
 export class CreateCheckoutDto {
@@ -80,7 +80,7 @@ export class RequestPaymentDto {
         public readonly priceId: string,
         public readonly successUrl: string,
         public readonly cancelUrl: string
-    ) { }
+    ) {}
 }
 
 // DTO forincoming messages
@@ -91,7 +91,7 @@ export class SendMessageDto {
         public readonly senderName: string,
         public readonly message: string,
         public readonly createdAt: Date = new Date()
-    ) { }
+    ) {}
 }
 
 //DTO for joining Room
@@ -99,11 +99,11 @@ export class JoinRoomDto {
     constructor(
         public readonly roomId: string,
         public readonly user: IUser
-    ) { }
+    ) {}
 }
 
 export class CurrentUserReqDto {
-    constructor(public readonly id: string) { }
+    constructor(public readonly id: string) {}
 }
 
 /*============================  Message  ===================================*/
@@ -113,14 +113,14 @@ export class CreateMessageDTO {
         readonly senderId: string,
         readonly content: string,
         readonly attachments?: string[]
-    ) { }
+    ) {}
 }
 
 export class CreateChatDTO {
     constructor(
         readonly userA: string,
         readonly userB: string
-    ) { }
+    ) {}
 }
 
 //============================  user profile ==========================//
@@ -138,7 +138,7 @@ export class ProfileRequestDto {
         public subscription?: string,
         public xpPoints?: number,
         public badge?: string
-    ) { }
+    ) {}
 }
 
 export class ProfilePicUpdateDto {
@@ -159,7 +159,7 @@ export class KanbanTaskRequestDto {
         public description?: string,
         public dueDate?: string,
         public approxTimeToFinish?: string
-    ) { }
+    ) {}
 }
 
 export class kanbanColumnRequestDto {
@@ -167,15 +167,15 @@ export class kanbanColumnRequestDto {
         public columnId: ColumnId,
         public title: string,
         public tasks: KanbanTaskRequestDto[] = []
-    ) { }
+    ) {}
 }
 
 export class KanbanBoard {
-    constructor(public columns: kanbanColumnRequestDto[]) { }
+    constructor(public columns: kanbanColumnRequestDto[]) {}
 }
 
 export class GetKanbanBoardRequestDto {
-    constructor(public id: string) { }
+    constructor(public id: string) {}
 }
 
 export class AddKanbanTaskRequestDto {
@@ -183,7 +183,7 @@ export class AddKanbanTaskRequestDto {
         public id: string,
         public columnId: string,
         public task: KanbanTaskRequestDto
-    ) { }
+    ) {}
 }
 
 export class updateKanbanTaskRequestDto {
@@ -192,7 +192,7 @@ export class updateKanbanTaskRequestDto {
         public taskId: string,
         public columnId: string,
         public data: Partial<KanbanTaskRequestDto>
-    ) { }
+    ) {}
 }
 
 export class deleteKanbanTaskRequestDto {
@@ -200,7 +200,7 @@ export class deleteKanbanTaskRequestDto {
         public id: string,
         public columnId: string,
         public taskId: string
-    ) { }
+    ) {}
 }
 
 export class reorderKanbanTaskRequestDto {
@@ -211,6 +211,5 @@ export class reorderKanbanTaskRequestDto {
         public destColumnId: string,
         public sourceTaskIndex: number,
         public destTaskIndex: number
-    ) { }
+    ) {}
 }
-

@@ -11,7 +11,7 @@ import Register from '@/Features/users/pages/Register';
 import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/Features/mentors/pages/MentorRegister';
 import { OTPPage } from '@/Features/users/pages/OTPPage';
-import { ForgotResetPassword }from '@/Features/users/pages/ResetPassword';
+import { ForgotResetPassword } from '@/Features/users/pages/ResetPassword';
 import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute: React.FC<{
@@ -27,13 +27,12 @@ const ProtectedRoute: React.FC<{
   ) : (
     <Navigate to={redirectTo} replace />
   );
-}; 
+};
 
 const AppRoutes: React.FC = () => {
   return (
     <>
       <Routes>
-        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin/login" element={<AdminLogin />} />

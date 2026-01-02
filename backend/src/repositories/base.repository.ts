@@ -1,4 +1,4 @@
-import { Model, Document } from 'mongoose';
+import { Model, Document, FilterQuery } from 'mongoose';
 import { IBaseRepository } from './interfaces/IBase.repository';
 
 export class BaseRepository<T extends Document> implements IBaseRepository<T> {
@@ -8,8 +8,8 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         this.model = model;
     }
 
-    async findOne(query: Partial<T>): Promise<T | null> {
-        return this.model.findOne(query as any).exec();
+    async findOne(query: FilterQuery<T>): Promise<T | null> {
+        return this.model.findOne(query).exec();
     }
 
     async create(data: Partial<T>): Promise<T> {
@@ -25,12 +25,19 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         await this.model.updateOne({ _id: id }, data).exec();
     }
 
+    async updateMany(query: FilterQuery<T>, data: Partial<T>): Promise<void> {
+        await this.model.updateMany(query, data).exec();
+    }
+
+    async update(id: string, data: Partial<T>): Promise<T | null> {
+        return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    }
+
     async deleteOne(id: string): Promise<void> {
         await this.model.deleteOne({ _id: id }).exec();
     }
 
-    async find(query: Partial<T>): Promise<T[]> {
-        return this.model.find(query as any).exec();
+    async find(query: FilterQuery<T>): Promise<T[]> {
+        return this.model.find(query).exec();
     }
 }
-

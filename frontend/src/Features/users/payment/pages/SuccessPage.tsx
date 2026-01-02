@@ -1,6 +1,6 @@
 import { CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchCurrentUser } from '@/Services/auth.api';
 import { setCredentials } from '@/redux/slices/authSlice';

@@ -6,7 +6,10 @@ interface CreateMentorFormProps {
   onCancel: () => void;
 }
 
-export default function CreateMentorForm({ onSave, onCancel }: CreateMentorFormProps) {
+export default function CreateMentorForm({
+  onSave,
+  onCancel,
+}: CreateMentorFormProps) {
   const [form, setForm] = useState<Partial<Mentor>>({
     id: '',
     name: '',
@@ -15,7 +18,7 @@ export default function CreateMentorForm({ onSave, onCancel }: CreateMentorFormP
     // availability: '', // Mapping to status or using extra field?
     // Using simple defaults for now to match the user's simple form style
     status: 'active',
-    role: 'mentor'
+    role: 'mentor',
   });
 
   return (

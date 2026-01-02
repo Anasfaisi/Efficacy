@@ -38,15 +38,14 @@ const Login: React.FC = () => {
       if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
       if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
       navigate(endPoint);
-        console.log(currentUser,"login tsx")
-
+      console.log(currentUser, 'login tsx');
     }
   }, [navigate, currentUser]);
 
   const onSubmit = async (data: loginFormSchemaType) => {
     try {
       const result = await loginApi({ ...data, role: 'user' });
-      console.log(result,"from login tsx")
+      console.log(result, 'from login tsx');
       if (result.message) {
         toast.error(result.message);
         return;

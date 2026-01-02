@@ -12,7 +12,9 @@ import { registerInitApi } from '@/Services/auth.api';
 
 const MentorRegister: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error,currentUser } = useAppSelector((state) => state.auth);
+  const { isLoading, error, currentUser } = useAppSelector(
+    (state) => state.auth,
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,7 +40,13 @@ const MentorRegister: React.FC = () => {
       password,
       role: 'mentor',
     });
-    dispatch(setTempUser({ email: result.tempEmail, role: result.role ,resendAvailableAt:result.resendAvailableAt}));
+    dispatch(
+      setTempUser({
+        email: result.tempEmail,
+        role: result.role,
+        resendAvailableAt: result.resendAvailableAt,
+      }),
+    );
     console.log(result, 'from result in mentor login');
     if (result.tempEmail) {
       navigate('/verify-otp');

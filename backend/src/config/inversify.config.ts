@@ -47,7 +47,6 @@ import { NotificationService } from '@/serivces/notification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
 import { AdminService } from '@/serivces/admin.service';
 
-
 export const container = new Container();
 
 container.bind<AdminController>(TYPES.AdminController).to(AdminController);
@@ -59,7 +58,9 @@ container
 container.bind<ChatController>(TYPES.ChatController).to(ChatController);
 container.bind<SocketController>(TYPES.SocketController).to(SocketController);
 container.bind<KanbanController>(TYPES.KanbanController).to(KanbanController);
-container.bind<MentorOnboardController>(TYPES.MentorOnboardController).to(MentorOnboardController);
+container
+    .bind<MentorOnboardController>(TYPES.MentorOnboardController)
+    .to(MentorOnboardController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -75,11 +76,13 @@ container.bind<IChatService>(TYPES.ChatService).to(ChatService);
 container.bind<ISocketService>(TYPES.SocketService).to(SocketService);
 container.bind<IKanbanService>(TYPES.KanbanService).to(KanbanService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
-container.bind<IMentorOnboardService>(TYPES.MentorOnboardService).to(MentorOnboardService);
-container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService);
+container
+    .bind<IMentorOnboardService>(TYPES.MentorOnboardService)
+    .to(MentorOnboardService);
+container
+    .bind<INotificationService>(TYPES.NotificationService)
+    .to(NotificationService);
 container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
-
-
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -94,4 +97,6 @@ container
     .bind<IMessageRepository>(TYPES.MessageRepository)
     .to(MessageRepository);
 container.bind<IKanbanRepository>(TYPES.KanbanRepository).to(KanbanRepository);
-container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository);
+container
+    .bind<INotificationRepository>(TYPES.NotificationRepository)
+    .to(NotificationRepository);

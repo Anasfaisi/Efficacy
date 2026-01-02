@@ -40,7 +40,10 @@ export function applyRoutes(app: Express) {
 
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
-    app.use('/api/mentor', mentorRoutes(mentorController, mentorOnboardController));
+    app.use(
+        '/api/mentor',
+        mentorRoutes(mentorController, mentorOnboardController)
+    );
     app.use('/api/payments', paymentRoutes(paymentController));
     app.use('/api/chat', chatRoutes(chatController));
     app.use('/api/kanban', KanbanRoutes(kanbanController));

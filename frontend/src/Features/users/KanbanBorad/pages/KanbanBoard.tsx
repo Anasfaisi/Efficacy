@@ -21,7 +21,7 @@ const KanbanBoard: React.FC = () => {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-    const activeId = String(active.id)
+    const activeId = String(active.id);
     const overId = String(over.id);
 
     if (activeId === overId) return;
@@ -153,7 +153,12 @@ const KanbanBoard: React.FC = () => {
 
     try {
       if (!currentUser) return;
-      const updatedBoard = await updateTaskAPI(currentUser.id, columnId, taskId, data);
+      const updatedBoard = await updateTaskAPI(
+        currentUser.id,
+        columnId,
+        taskId,
+        data,
+      );
       console.log(updatedBoard.columns, 'from kanban board tsx');
       setColumns(updatedBoard.columns);
     } catch (err) {

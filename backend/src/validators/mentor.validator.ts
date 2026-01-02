@@ -14,24 +14,38 @@ const jsonStringToArray = z.preprocess((val: unknown) => {
 export const mentorApplicationSchema = z
     .object({
         name: z.string().min(3, 'Name is too short'),
-        phone: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
+        phone: z
+            .string()
+            .regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
         city: z.string().min(3, 'City is required'),
         state: z.string().min(3, 'State is required'),
         country: z.string().min(3, 'Country is required'),
         bio: z.string().min(20, 'Bio must be at least 20 characters'),
 
         linkedin: z.string().url('Must be a valid URL'),
-        github: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+        github: z
+            .string()
+            .url('Must be a valid URL')
+            .optional()
+            .or(z.literal('')),
         personalWebsite: z
             .string()
             .url('Must be a valid URL')
             .optional()
             .or(z.literal('')),
 
-        demoVideoLink: z.string().url('Must be a valid video URL (YouTube Unlisted/Drive)'),
+        demoVideoLink: z
+            .string()
+            .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-        availableDays: jsonStringToArray.refine((arr: string[]) => arr.length >= 3, 'Select at least 3 days'),
-        preferredTime: jsonStringToArray.refine((arr: string[]) => arr.length >= 1, 'Select at least one time slot'),
+        availableDays: jsonStringToArray.refine(
+            (arr: string[]) => arr.length >= 3,
+            'Select at least 3 days'
+        ),
+        preferredTime: jsonStringToArray.refine(
+            (arr: string[]) => arr.length >= 1,
+            'Select at least one time slot'
+        ),
 
         mentorType: z.enum(['Academic', 'Industry']),
 
@@ -50,6 +64,10 @@ export const mentorApplicationSchema = z
         skills: z.string().optional(),
         guidanceAreas: jsonStringToArray.optional(),
         experienceSummary: z.string().optional(),
+        monthlyCharge: z.coerce
+            .number()
+            .min(1500, 'Minimum charge is 1500')
+            .max(2500, 'Maximum charge is 2500'),
     })
     .superRefine((data: any, ctx: z.RefinementCtx) => {
         if (data.mentorType === 'Academic') {
@@ -118,4 +136,3 @@ export const mentorApplicationSchema = z
     });
 
 export type MentorApplicationInput = z.infer<typeof mentorApplicationSchema>;
-

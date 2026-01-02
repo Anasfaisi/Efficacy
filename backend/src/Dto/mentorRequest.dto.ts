@@ -6,14 +6,14 @@ export class MentorRegisterRequestDto {
         public password: string,
         public name: string,
         public role: Role.Mentor
-    ) { }
+    ) {}
 }
 
 export class MentorOtpVerificationRequestDto {
     constructor(
         public readonly email: string,
-        public readonly otp: string,
-    ) { }
+        public readonly otp: string
+    ) {}
 }
 
 //===========================     mentor onboarding process    =====================================

@@ -23,11 +23,13 @@ export class PaymentController {
             );
             res.status(code.OK).json(sessionUrl);
             console.log('session url passed');
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Checkout session creation failed';
             console.log(error);
-            res.status(code.INTERNAL_SERVER_ERROR).json({
-                message: error.message,
-            });
+            res.status(code.INTERNAL_SERVER_ERROR).json({ message });
         }
     }
 
@@ -39,8 +41,12 @@ export class PaymentController {
                 await this._paymentService.verifyCheckoutSession(sessionId);
 
             res.status(code.OK).json(result);
-        } catch (error: any) {
-            res.status(400).json({ message: error.message });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Checkout session verification failed';
+            res.status(400).json({ message });
         }
     }
 
@@ -53,10 +59,10 @@ export class PaymentController {
             await this._paymentService.handleWebhookEvent(rawBody, sig);
 
             res.status(code.OK).send({ received: true });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).send(
-                `Webhook Error: ${error.message}`
-            );
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Webhook error';
+            res.status(code.BAD_REQUEST).send(`Webhook Error: ${message}`);
             console.error(error);
         }
     }

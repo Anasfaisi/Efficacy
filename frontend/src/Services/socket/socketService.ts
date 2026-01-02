@@ -1,121 +1,122 @@
 import { io, Socket } from 'socket.io-client';
-import type { User } from '@/types/auth';
+import type { currentUserType } from '@/types/auth';
+
 import type { ChatMessage } from '@/types/chat.types';
+import type { Notification } from '@/Features/admin/types';
 
 let socket: Socket | null = null;
 
-// Extract origin from VITE_API_URL (e.g., http://localhost:5000/api -> http://localhost:5000)
 const getSocketUrl = () => {
-    const apiUrl = import.meta.env.VITE_API_URL_SOCKET || import.meta.env.VITE_API_URL;
-    if (!apiUrl) return 'http://localhost:5000';
-    
-    try {
-        // If it's already a clean origin (no path), use it
-        const url = new URL(apiUrl);
-        return url.origin;
-    } catch (e) {
-        // If it's not a valid URL (like "localhost:5000"), try adding protocol
-        if (apiUrl.includes(':') && !apiUrl.startsWith('http')) {
-            return `http://${apiUrl}`;
-        }
-        return 'http://localhost:5000'; // Final fallback
+  const apiUrl =
+    import.meta.env.VITE_API_URL_SOCKET || import.meta.env.VITE_API_URL;
+  if (!apiUrl) return 'http://localhost:5000';
+
+  try {
+    const url = new URL(apiUrl);
+    return url.origin;
+  } catch {
+    if (apiUrl.includes(':') && !apiUrl.startsWith('http')) {
+      return `http://${apiUrl}`;
     }
+    return 'http://localhost:5000';
+  }
 };
 
 const SOCKET_URL = getSocketUrl();
 console.log('Socket initialized with URL:', SOCKET_URL);
 
-
 export const connectSocket = () => {
-    if (!socket) {
-        console.log('Connecting to socket at:', SOCKET_URL);
-        socket = io(SOCKET_URL, {
-            transports: ['websocket'],
-            withCredentials: true,
-        });
+  if (!socket) {
+    console.log('Connecting to socket at:', SOCKET_URL);
+    socket = io(SOCKET_URL, {
+      transports: ['websocket'],
+      withCredentials: true,
+    });
 
+    socket.on('connect', () => {
+      console.log('Connected to socket server:', socket?.id);
+    });
 
-        socket.on('connect', () => {
-            console.log('Connected to socket server:', socket?.id);
-        });
+    socket.on('disconnect', (reason) => {
+      console.log('Disconnected from socket server:', reason);
+      socket = null;
+    });
 
-        socket.on('disconnect', (reason) => {
-            console.log('Disconnected from socket server:', reason);
-            socket = null;
-        });
-
-        socket.on('connect_error', (error) => {
-            console.error('Socket connection error:', error);
-        });
-    }
-    return socket;
+    socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+    });
+  }
+  return socket;
 };
 
 export const disconnectSocket = () => {
-    if (socket) {
-        socket.disconnect();
-        socket = null;
-    }
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
 };
 
 export const getSocket = () => socket;
 
 // Role rooms
 export const joinRoleRoom = (role: string) => {
-    socket?.emit('joinRoleRoom', role);
+  socket?.emit('joinRoleRoom', role);
 };
 
 // Chat actions
-export const joinRoom = (roomId: string, user: User) => {
-    socket?.emit('joinRoom', { roomId, user });
+export const joinRoom = (roomId: string, user: currentUserType) => {
+  socket?.emit('joinRoom', { roomId, user });
 };
 
 export const leaveRoom = (roomId: string, userId: string) => {
-    socket?.emit('leaveRoom', { roomId, userId });
+  socket?.emit('leaveRoom', { roomId, userId });
 };
 
 export const sendMessage = (
-    roomId: string,
-    message: string,
-    senderId: string,
-    senderName: string,
+  roomId: string,
+  message: string,
+  senderId: string,
+  senderName: string,
 ) => {
-    socket?.emit('sendMessage', {
-        roomId,
-        message,
-        senderId,
-        senderName,
-        createdAt: new Date(),
-    });
+  socket?.emit('sendMessage', {
+    roomId,
+    message,
+    senderId,
+    senderName,
+    createdAt: new Date(),
+  });
 };
 
 // Listeners
+
 export const onReceiveMessage = (callback: (msg: ChatMessage) => void) => {
-    socket?.on('receiveMessage', callback);
+  socket?.on('receiveMessage', callback);
 };
 
 export const onLastMessages = (callback: (messages: ChatMessage[]) => void) => {
-    socket?.on('lastMessages', callback);
+  socket?.on('lastMessages', callback);
 };
 
 export const onUserJoined = (
-    callback: (payload: { user: User; roomId: string }) => void,
+  callback: (payload: { user: currentUserType; roomId: string }) => void,
 ) => {
-    socket?.on('userJoined', callback);
+  socket?.on('userJoined', callback);
 };
 
 // Notifications
-export const onNewNotification = (callback: (notification: any) => void) => {
-    socket?.on('newNotification', callback);
+export const onNewNotification = (
+  callback: (notification: Notification) => void,
+) => {
+  socket?.on('newNotification', callback);
 };
 
 export const offNotificationEvents = () => {
-    socket?.off('newNotification');
+  socket?.off('newNotification');
 };
 
 export const offChatEvents = () => {
-    if (!socket) return;
-    socket.off('receiveMessage');
-    socket.off('lastMessages');
-    socket.off('userJoined');
+  if (!socket) return;
+  socket.off('receiveMessage');
+  socket.off('lastMessages');
+  socket.off('userJoined');
 };

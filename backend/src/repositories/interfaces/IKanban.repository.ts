@@ -4,6 +4,6 @@ import { KanbanBoardToEntity } from '@/entity/toEntity';
 import { IKanbanBoard } from '@/models/Kanban-board.model';
 
 export interface IKanbanRepository {
-    findKanbanBoardByUserId(id: string): Promise<KanbanBoardToEntity >;
+    findKanbanBoardByUserId(id: string): Promise<KanbanBoardToEntity>;
     saveKanbanBoard(board: KanbanBoardFromEntity): Promise<KanbanBoardToEntity>;
 }

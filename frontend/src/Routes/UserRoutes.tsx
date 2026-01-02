@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+
 import Home from '../Features/users/home/pages/Home';
 import { Navigate } from 'react-router-dom';
 import { logout } from '@/redux/slices/authSlice';
@@ -11,13 +13,21 @@ import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
 import ProfileSetupPage from '@/Features/users/profile/pages/ProfileSetupPage';
 import KanbanBoard from '@/Features/users/KanbanBorad/pages/KanbanBoard';
 
-const Logout: React.FC = async () => {
+const Logout: React.FC = () => {
   const dispatch = useAppDispatch();
-  const wait = await logoutApi();
-  console.log(wait, 'wair from the user routes');
-  if (wait) {
-    dispatch(logout());
-  }
+
+  useEffect(() => {
+    const performLogout = async () => {
+      try {
+        await logoutApi();
+        dispatch(logout());
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    };
+    performLogout();
+  }, [dispatch]);
+
   return <Navigate to="/login" replace />;
 };
 
@@ -34,7 +44,7 @@ const UserRoutes: React.FC = () => {
       <Route path="chat" element={<ChatPage />} />
       <Route path="profile" element={<ProfileSetupPage />} />
 
-      <Route path="kanbanBoard" element={<KanbanBoard />}  />
+      <Route path="kanbanBoard" element={<KanbanBoard />} />
     </Routes>
   );
 };

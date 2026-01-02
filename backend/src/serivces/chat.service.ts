@@ -1,9 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { IChatService } from './Interfaces/IChat.service';
-import {
-    CreateChatDTO,
-    CreateMessageDTO,
-} from '@/Dto/request.dto';
+import { CreateChatDTO, CreateMessageDTO } from '@/Dto/request.dto';
 import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
 import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';
@@ -17,9 +14,9 @@ import { IMessage } from '@/models/Message.model';
 export class ChatService implements IChatService {
     constructor(
         @inject(TYPES.ChatRepository) private _chatRepository: IChatRepository,
-        @inject(TYPES.MessageRepository) private _messageRepository: IMessageRepository,
-
-    ) { }
+        @inject(TYPES.MessageRepository)
+        private _messageRepository: IMessageRepository
+    ) {}
     async findchatById(chatId: string): Promise<IChat | null> {
         return this._chatRepository.findById(chatId);
     }
@@ -42,11 +39,11 @@ export class ChatService implements IChatService {
         };
     }
 
-    async getRoomHistory(roomId: string): Promise<any> {
+    async getRoomHistory(roomId: string): Promise<IMessage[]> {
         return this._messageRepository.findByChat(roomId);
     }
 
-    async saveMessage(message: any): Promise<any> {
+    async saveMessage(message: Partial<IMessage>): Promise<IMessage> {
         return this._messageRepository.create(message);
     }
 
@@ -56,7 +53,7 @@ export class ChatService implements IChatService {
     //   senderId: new Types.ObjectId(dto.senderId),
     //   content: dto.content,
     //   attachments: dto.attachments,
-    //   seenBy: [], 
+    //   seenBy: [],
     //   createdAt: new Date(),
     //   updatedAt: new Date(),
     // };

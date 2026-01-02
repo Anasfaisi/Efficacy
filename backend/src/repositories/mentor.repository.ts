@@ -4,7 +4,8 @@ import { IMentorRepository } from './interfaces/IMentor.repository';
 
 export class MentorRepository
     extends BaseRepository<IMentor>
-    implements IMentorRepository {
+    implements IMentorRepository
+{
     constructor() {
         super(MentorModel);
     }
@@ -27,5 +28,10 @@ export class MentorRepository
 
     async update(id: string, data: Partial<IMentor>): Promise<IMentor | null> {
         return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    }
+    async getAllMentors(): Promise<IMentor[]> {
+        return this.model.find({
+            status: { $in: ['active', 'inactive'] }
+        }).exec();
     }
 }

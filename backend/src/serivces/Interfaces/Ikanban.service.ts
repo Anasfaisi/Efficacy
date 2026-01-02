@@ -24,6 +24,6 @@ export interface IKanbanService {
     ): Promise<KanbanBoardResponseDto>;
 
     reorderKanbanTask(
-        dto:reorderKanbanTaskRequestDto
-    ):Promise<KanbanBoardResponseDto>
+        dto: reorderKanbanTaskRequestDto
+    ): Promise<KanbanBoardResponseDto>;
 }

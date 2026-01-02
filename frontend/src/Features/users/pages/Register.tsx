@@ -72,7 +72,7 @@ const Register: React.FC = () => {
       if (error instanceof Error) {
         toast.error(error.message);
       }
-      toast.error(error)
+      toast.error(error);
     }
   };
 

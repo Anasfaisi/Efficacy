@@ -49,14 +49,11 @@ export interface Mentor {
 
   isVerified?: boolean;
 
-
   mentorType?: 'Academic' | 'Industry';
-
 
   linkedin?: string;
   github?: string;
   personalWebsite?: string;
-
 
   // Academic Branch
   domain?: string;
@@ -67,6 +64,15 @@ export interface Mentor {
   industryCategory?: string;
   currentRole?: string;
   guidanceAreas?: string[];
+
+  // New Fields
+  monthlyCharge?: number;
+  achievements?: string[];
+  extraSkills?: string[];
+  rating?: number;
+  reviewCount?: number;
+  sessionsCompleted?: number;
+  applicationFeedback?: string;
 
   // Video
   demoVideoLink?: string;

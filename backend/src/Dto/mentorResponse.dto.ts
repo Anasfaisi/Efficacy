@@ -9,11 +9,9 @@ export class MentorLoginResponseDTO {
             name: string;
             email: string;
             role: Role;
-            status: string,
-
-
+            status: string;
         }
-    ) { }
+    ) {}
 
     toJSON() {
         return {
@@ -29,7 +27,7 @@ export class MentorRegisterInitResponseDto {
         public tempEmail: string,
         public role: string,
         public resendAvailableAt: Date
-    ) { }
+    ) {}
 }
 
 export class MentorOtpVerificationResponseDto {
@@ -43,9 +41,8 @@ export class MentorOtpVerificationResponseDto {
             role: string;
             status?: string;
         }
-    ) { }
+    ) {}
 }
-
 
 //===================   mentor onboarding process  ========================
 
@@ -61,7 +58,6 @@ export interface MentorApplicationResponseDto {
     country: string;
     bio: string;
     createdAt?: string | Date;
-
 
     linkedin?: string;
     github?: string;
@@ -93,4 +89,12 @@ export interface MentorApplicationResponseDto {
     resume?: string;
     certificate?: string;
     idProof?: string;
+
+    // New Fields
+    monthlyCharge?: number;
+    achievements?: string[];
+    extraSkills?: string[];
+    rating?: number;
+    reviewCount?: number;
+    sessionsCompleted?: number;
 }

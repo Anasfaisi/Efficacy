@@ -24,7 +24,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
             className="mr-2 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-               editTask?.();
+              editTask?.();
             }}
           />
           <Trash2
@@ -32,7 +32,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
             className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              deleteTask?.()
+              deleteTask?.();
             }}
           />
         </div>

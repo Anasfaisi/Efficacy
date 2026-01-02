@@ -1,13 +1,16 @@
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Bell, Users, FileText, LogOut } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, Users, FileText, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
   const navItems = [
-    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/admin/notifications", label: "Notifications", icon: Bell },
-    { to: "/admin/mentors/applications", label: "Mentor Applications", icon: FileText },
-    { to: "/admin/mentorManagement", label: "Mentor Management", icon: Users },
+    { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    {
+      to: '/admin/mentors/applications',
+      label: 'Mentor Applications',
+      icon: FileText,
+    },
+    { to: '/admin/mentorManagement', label: 'Mentor Management', icon: Users },
   ];
 
   return (
@@ -16,7 +19,9 @@ export default function Sidebar() {
         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
           E
         </div>
-        <span className="text-xl font-bold text-white tracking-tight">Efficacy Admin</span>
+        <span className="text-xl font-bold text-white tracking-tight">
+          Efficacy Admin
+        </span>
       </div>
 
       <nav className="flex-1 flex flex-col px-3 py-4 gap-1">
@@ -26,17 +31,17 @@ export default function Sidebar() {
             to={item.to}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group",
-                isActive 
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20 translate-x-1" 
-                  : "hover:bg-white/5 hover:text-white"
+                'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group',
+                isActive
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 translate-x-1'
+                  : 'hover:bg-white/5 hover:text-white',
               )
             }
           >
-            <item.icon size={18} className={cn(
-              "transition-colors",
-              "group-hover:text-blue-400"
-            )} />
+            <item.icon
+              size={18}
+              className={cn('transition-colors', 'group-hover:text-blue-400')}
+            />
             {item.label}
           </NavLink>
         ))}
@@ -47,8 +52,8 @@ export default function Sidebar() {
           to="/admin/logout"
           className={({ isActive }) =>
             cn(
-              "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-red-400 hover:bg-red-500/10 hover:text-red-300",
-              isActive && "bg-red-500/10"
+              'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-red-400 hover:bg-red-500/10 hover:text-red-300',
+              isActive && 'bg-red-500/10',
             )
           }
         >

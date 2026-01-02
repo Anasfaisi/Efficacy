@@ -10,7 +10,6 @@ import {
   offChatEvents,
 } from '@/Services/socket/socketService';
 
-
 import { addMessages, setMessages } from '@/redux/slices/chatSlice';
 import type { ChatMessage } from '@/types/chat.types';
 
@@ -27,7 +26,7 @@ export const useChatSocket = (roomId: string) => {
       socketRef.current = connectSocket();
     }
 
-    joinRoom(roomId, currentUser as any);
+    joinRoom(roomId, currentUser);
 
     onReceiveMessage((msg: ChatMessage) => {
       dispatch(addMessages(msg));
@@ -45,9 +44,10 @@ export const useChatSocket = (roomId: string) => {
 
   const send = (text: string) => {
     if (currentUser) {
-      const name = (currentUser as any).name || (currentUser as any).email || 'Admin';
+      const name = currentUser.email || 'Admin';
       sendMessage(roomId, text, currentUser.id!, name);
     }
   };
+
   return send;
 };

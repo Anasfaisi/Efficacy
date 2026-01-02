@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
-import Sidebar from "../mentorManagement/components/Sidebar";
-import { AdminHeader } from "../components/AdminHeader";
-import { NotificationListener } from "../components/NotificationListener";
+import { Outlet } from 'react-router-dom';
+import Sidebar from '../mentorManagement/components/Sidebar';
+import { AdminHeader } from '../components/AdminHeader';
+import { NotificationListener } from '../components/NotificationListener';
 
 export default function AdminLayout() {
   return (
@@ -17,4 +17,3 @@ export default function AdminLayout() {
     </div>
   );
 }
-

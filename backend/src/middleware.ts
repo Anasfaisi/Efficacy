@@ -13,7 +13,7 @@ export function applyMiddlewares(app: Express) {
     const corsOptions = {
         origin: 'http://localhost:5173',
         credentials: true,
-        methods: ['GET', 'POST', 'PUT','OPTIONS'],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     };
     const __filename = fileURLToPath(import.meta.url);

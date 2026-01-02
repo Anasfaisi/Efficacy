@@ -1,4 +1,6 @@
 import axios, { AxiosError } from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
@@ -7,12 +9,12 @@ const api = axios.create({
 });
 interface QueueItem {
   resolve: (token: string | null) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }
 let isRefreshing = false;
 let failedQueue: QueueItem[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -27,7 +29,9 @@ const processQueue = (error: any, token: string | null = null) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest: any = error.config;
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {

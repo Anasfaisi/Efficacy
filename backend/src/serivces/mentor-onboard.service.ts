@@ -15,7 +15,7 @@ export class MentorOnboardService implements IMentorOnboardService {
         private _mentorRepository: IMentorRepository,
         @inject(TYPES.NotificationService)
         private _notificationService: INotificationService
-    ) { }
+    ) {}
 
     async mentorApplicationInit(
         dto: MentorApplicationRequestDto
@@ -25,7 +25,6 @@ export class MentorOnboardService implements IMentorOnboardService {
         if (!mentor) {
             throw new Error('Mentor not found');
         }
-
 
         const updateData: Partial<IMentor> = {
             name: dto.name,
@@ -66,25 +65,30 @@ export class MentorOnboardService implements IMentorOnboardService {
             certificate: dto.certificate,
             idProof: dto.idProof,
         };
-        console.log(updateData, "updated data from mentor onboard service")
+        console.log(updateData, 'updated data from mentor onboard service');
 
-
-        const updatedMentorDoc = await this._mentorRepository.update(mentor.id, updateData);
+        const updatedMentorDoc = await this._mentorRepository.update(
+            mentor.id,
+            updateData
+        );
         if (!updatedMentorDoc) {
             throw new Error('Could not update mentor documentation');
         }
 
         // Send notification to admin
-        await this._notificationService.notifyAdmin(
-            NotificationType.MENTOR_APPLICATION_SUBMITTED,
-            'New Mentor Application',
-            `Mentor ${updatedMentorDoc.name} has submitted an application for review.`,
-            { 
-                mentorId: updatedMentorDoc.id,
-                link: `/admin/mentors/review/${updatedMentorDoc.id}`
-            }
-        ).catch(err => console.error('Failed to send admin notification:', err));
-
+        await this._notificationService
+            .notifyAdmin(
+                NotificationType.MENTOR_APPLICATION_SUBMITTED,
+                'New Mentor Application',
+                `Mentor ${updatedMentorDoc.name} has submitted an application for review.`,
+                {
+                    mentorId: updatedMentorDoc.id,
+                    link: `/admin/mentors/review/${updatedMentorDoc.id}`,
+                }
+            )
+            .catch((err) =>
+                console.error('Failed to send admin notification:', err)
+            );
 
         return {
             id: updatedMentorDoc.id,
@@ -99,7 +103,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             bio: updatedMentorDoc.bio || '',
             createdAt: updatedMentorDoc.createdAt,
             status: updatedMentorDoc.status,
-
 
             linkedin: updatedMentorDoc.linkedin,
             github: updatedMentorDoc.github,
@@ -131,6 +134,25 @@ export class MentorOnboardService implements IMentorOnboardService {
             certificate: updatedMentorDoc.certificate,
             idProof: updatedMentorDoc.idProof,
         };
+    }
+
+    async activateMentor(
+        mentorId: string,
+        monthlyCharge: number
+    ): Promise<IMentor | null> {
+        const mentor = await this._mentorRepository.findById(mentorId);
+        if (!mentor) {
+            throw new Error('Mentor not found');
+        }
+
+        if (mentor.status !== 'approved') {
+            throw new Error('Mentor must be approved before activation');
+        }
+
+        return await this._mentorRepository.update(mentorId, {
+            status: 'active',
+            monthlyCharge,
+        });
     }
 }
 

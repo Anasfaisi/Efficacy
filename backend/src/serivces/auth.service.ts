@@ -62,7 +62,7 @@ export class AuthService implements IAuthService {
         private _validationService: IValidationService,
         @inject(TYPES.GoogleVerificationService)
         private _googleVerificationService: IGoogleVerificationService
-    ) { }
+    ) {}
 
     async updateUserProfile(
         data: ProfileRequestDto,
@@ -333,8 +333,8 @@ export class AuthService implements IAuthService {
             payload.role === 'admin'
                 ? this._adminRepository
                 : payload.role === 'mentor'
-                    ? this._mentorRepository
-                    : this._userRepository;
+                  ? this._mentorRepository
+                  : this._userRepository;
 
         const account = await repository.findById(payload.id);
         if (!account) {
@@ -428,11 +428,14 @@ export class AuthService implements IAuthService {
 
     /*=============== mentor Auth =======================*/
     async mentorLogin(dto: LoginRequestDto) {
-        console.log(dto.email, dto, "ddddtooototot")
+        console.log(dto.email, dto, 'ddddtooototot');
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 
-        if (!account.password || !(await bcrypt.compare(dto.password, account.password))) {
+        if (
+            !account.password ||
+            !(await bcrypt.compare(dto.password, account.password))
+        ) {
             throw new Error('Invalid email or password');
         }
 

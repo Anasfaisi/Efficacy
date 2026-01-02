@@ -68,6 +68,6 @@ export const reorderTaskAPI = async (
     sourceTaskIndex,
     destTaskIndex,
   });
-console.log(res.data,"fxgxfgxfgx")
+  console.log(res.data, 'fxgxfgxfgx');
   return res.data.kanbanBoard;
 };

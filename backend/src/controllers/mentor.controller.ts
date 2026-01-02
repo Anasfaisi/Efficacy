@@ -13,7 +13,7 @@ import {
 export class MentorController {
     constructor(
         @inject(TYPES.AuthService) private _authService: IAuthService
-    ) { }
+    ) {}
 
     async mentorRegisterInit(req: Request, res: Response) {
         const result = await this._authService.mentorRegisterInit(req.body);
@@ -95,8 +95,10 @@ export class MentorController {
             });
 
             res.json(AuthMessages.LogoutSuccess);
-        } catch (error: any) {
-            console.error('Logout error:', error.message);
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Unknown error';
+            console.error('Logout error:', message);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
             );
