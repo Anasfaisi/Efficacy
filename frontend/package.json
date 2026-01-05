@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite && npm run lint",
+    "dev": "vite --port 5000 && npm run lint",
     "build": "tsc -b && vite build",
     "lint": "eslint src/**/*.{js,ts,tsx}",
     "preview": "vite preview",

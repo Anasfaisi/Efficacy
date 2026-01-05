@@ -1,200 +1,207 @@
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setCredentials } from '../../../redux/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { cn } from '../../../lib/utils';
-import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setCredentials } from '@/redux/slices/authSlice';
+import { useNavigate, Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema, type loginFormSchemaType } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordLink } from '@/Features/users/pages/ForgotPassowrd';
-import { googleLoginApi, loginApi } from '@/Services/auth.api';
+import { googleLoginApi, loginApi } from '@/Services/user.api';
 import type { CredentialResponse } from '@/types/auth';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import image from '../../../../public/panda with laptop1.jpg';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Login: React.FC = () => {
-  const [googleError, setGoogleError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [googleError, setGoogleError] = useState<string | null>(null);
 
-  const dispatch = useAppDispatch();
-  const { isLoading, error, currentUser } = useAppSelector(
-    (state) => state.auth,
-  );
-  const navigate = useNavigate();
-  const {
-    register: formRegister,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<loginFormSchemaType>({
-    resolver: zodResolver(loginFormSchema),
-    mode: 'onChange',
-  });
-  useEffect(() => {
-    if (currentUser?.role) {
-      let endPoint = '/home';
-      if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
-      if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
-      navigate(endPoint);
-      console.log(currentUser, 'login tsx');
-    }
-  }, [navigate, currentUser]);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { isLoading, currentUser } = useAppSelector((state) => state.auth);
 
-  const onSubmit = async (data: loginFormSchemaType) => {
-    try {
-      const result = await loginApi({ ...data, role: 'user' });
-      console.log(result, 'from login tsx');
-      if (result.message) {
-        toast.error(result.message);
-        return;
-      }
-      if (result.user) {
-        dispatch(setCredentials({ currentUser: result.user }));
-        navigate('/home');
-        toast.success('Login successful!');
-      }
-    } catch (err) {
-      console.error('Login failed:', err);
+    const {
+        register: formRegister,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<loginFormSchemaType>({
+        resolver: zodResolver(loginFormSchema),
+        mode: 'onChange',
+    });
 
-      toast.error(typeof err === 'string' ? err : 'Login failed');
-    }
-  };
+    useEffect(() => {
+        if (currentUser?.role) {
+            let endPoint = '/home';
+            if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
+            if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
+            navigate(endPoint);
+        }
+    }, [navigate, currentUser]);
 
-  const handleGoogleSuccess = async (
-    credentialResponse: CredentialResponse,
-  ) => {
-    setGoogleError(null);
-    if (credentialResponse.credential) {
-      const result = await googleLoginApi(
-        credentialResponse.credential,
-        'user',
-      );
-      dispatch(setCredentials({ currentUser: result.user }));
-    } else {
-      setGoogleError('No Google credentials received');
-    }
-  };
+    const onSubmit = async (data: loginFormSchemaType) => {
+        try {
+            const result = await loginApi({ ...data, role: 'user' });
+            if (result.message && !result.user) {
+                toast.error(result.message);
+                return;
+            }
+            if (result.user) {
+                dispatch(setCredentials({ currentUser: result.user }));
+                toast.success('Welcome back to Efficacy!');
+            }
+        } catch (err: unknown) {
+            const errorMessage = typeof err === 'string' ? err : 'Login failed. Please check your credentials.';
+            toast.error(errorMessage);
+        }
+    };
 
-  const handleGoogleError = () => {
-    setGoogleError('Google authentication failed. Please try again.');
-  };
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+        setGoogleError(null);
+        if (credentialResponse.credential) {
+            try {
+                const result = await googleLoginApi(credentialResponse.credential, 'user');
+                dispatch(setCredentials({ currentUser: result.user }));
+                toast.success('Successfully logged in with Google');
+            } catch (err: unknown) {
+                setGoogleError('Google login failed');
+            }
+        }
+    };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="w-full max-w-4xl mx-4 bg-white/80 backdrop-blur-sm  shadow-xl rounded-3xl border  border-purple-100 flex flex-col md:flex-row overflow-hidden">
-        <div
-          className={cn('w-full max-w-md p-6 bg-white rounded-xl shadow-lg')}
-        >
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-            Welcome Back
-          </h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {googleError && (
-              <p className="text-red-500 text-sm text-center mt-2">
-                {googleError}
-              </p>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                {...formRegister('email')}
-                placeholder="Enter your email"
-                className={cn(
-                  'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
-                  errors.email && 'border-red-500',
-                )}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                type="password"
-                {...formRegister('password')}
-                placeholder="Enter your password"
-                className={cn(
-                  'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
-                  errors.password && 'border-red-500',
-                )}
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-            <button
-              type="submit"
-              className={cn(
-                'w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 active:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500',
-                { 'opacity-50 cursor-not-allowed': isLoading },
-              )}
-              disabled={isLoading}
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
             >
-              {isLoading ? 'Logging in ...' : 'Log in'}
-            </button>
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+                {/* Right Side (Flipped for Login) - Mascot */}
+                <div className="hidden md:flex md:w-[45%] bg-primary p-12 text-white flex-col items-center justify-center relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
+                    <div className="absolute bottom-0 right-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
 
-            <p>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-              />
-            </p>
-            <p className="text-sm text-gray-500 text-center">
-              Don’t have an account?{' '}
-              <Link
-                to="/register"
-                className="hover:text-gray-700 hover:underline"
-              >
-                Sign up
-              </Link>
-            </p>
-          </form>
-          <div className="flex flex-col items-center justify-center gap-0">
-            <ForgotPasswordLink />
-          </div>
+                    <div className="relative z-10 flex flex-col items-center gap-8">
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-purple-600 backdrop-blur-md border border-white/30 px-6 py-2 rounded-full text-sm font-bold tracking-widest uppercase"
+                        >
+                            Welcome Back!
+                        </motion.div>
+
+                        <motion.img
+                            src="/panda-logo.png"
+                            alt="Efficacy Mascot"
+                            className="w-64 h-64 drop-shadow-2xl animate-float"
+                        />
+
+                        <div className="text-center space-y-4 max-w-sm">
+                            <h3 className="text-2xl text-slate-700 font-bold">Pick up where you left</h3>
+                            <p className="leading-relaxed text-sm text-slate-700">
+                                Consistency is the key to mastery. Log in to access your planner, timer, and mentorship sessions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Left Side - Login Form */}
+                <div className="flex-1 p-8 md:p-16 lg:p-20 bg-white">
+                    <div className="max-w-md mx-auto">
+                        <div className="mb-10 text-center md:text-left">
+                            <h2 className="text-4xl font-black text-slate-800">Login</h2>
+                            <p className="text-slate-500 mt-2">Enter your credentials to access your workspace.</p>
+                        </div>
+
+                        {googleError && (
+                            <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center">
+                                {googleError}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                                <input
+                                    type="email"
+                                    {...formRegister('email')}
+                                    placeholder="admin@gmail.com"
+                                    className={cn(
+                                        "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all",
+                                        errors.email && "border-red-400 bg-red-50 focus:ring-red-100"
+                                    )}
+                                />
+                                {errors.email && <p className="text-red-500 text-xs ml-1">{errors.email.message}</p>}
+                            </div>
+
+                            <div className="space-y-2 group">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        {...formRegister('password')}
+                                        placeholder="••••••••"
+                                        className={cn(
+                                            "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14",
+                                            errors.password && "border-red-400 bg-red-50 focus:ring-red-100"
+                                        )}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200 rounded-xl transition-colors text-slate-400"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                                {errors.password && <p className="text-red-500 text-xs ml-1">{errors.password.message}</p>}
+                            </div>
+
+                            <div className="flex justify-end pr-1">
+                                <ForgotPasswordLink />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-purple-600 py-4 bg-accent text-white rounded-2xl font-bold text-lg shadow-xl shadow-accent/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                            >
+                                {isLoading ? <Loader2 className="animate-spin" /> : <><LogIn size={20} /> Log in</>}
+                            </button>
+
+                            <div className="relative my-8">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-slate-200"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-4 bg-white text-slate-400">Or continue with</span>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-center">
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() => setGoogleError('Google authentication failed')}
+                                    theme="outline"
+                                    shape="circle"
+                                    width="100%"
+                                />
+                            </div>
+
+                            <p className="text-center text-slate-500 text-sm mt-8">
+                                Don't have an account?{' '}
+                                <Link to="/register" className="text-accent font-bold hover:underline">
+                                    Sign Up
+                                </Link>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </motion.div>
         </div>
-
-        <div className="w-full flex-1 md:w-1/2 bg-gradient-to-tr from-purple-600 via-purple-500 to-purple-400 text-white flex items-center justify-center relative">
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-purple-900/20 blur-3xl" />
-
-          <div className="relative p-8 md:p-10 flex flex-col items-center gap-4">
-            <div className="px-4 py-1.5 rounded-full bg-white/15 border border-white/30 text-xs uppercase tracking-wide backdrop-blur-sm">
-              Let&apos;s get productive!
-            </div>
-
-            <div className="mt-2 mb-3">
-              <img
-                src={image}
-                alt="Cute panda working on a laptop"
-                className="max-w-[220px] md:max-w-[260px] drop-shadow-xl"
-              />
-            </div>
-
-            <p className="text-sm text-purple-50/90 text-center max-w-xs">
-              Your study, tasks, and mentor sessions all in one calm, focused
-              workspace. Efficacy keeps your streak – you just show up.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

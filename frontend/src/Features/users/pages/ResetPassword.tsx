@@ -1,173 +1,158 @@
 import React, { useState } from 'react';
-import { forgotPasswordApi, resetPasswordApi } from '@/Services/auth.api';
+import { forgotPasswordApi, resetPasswordApi } from '@/Services/user.api';
 import { AuthMessages } from '@/utils/Constants';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { KeyRound, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export const ForgotResetPassword: React.FC = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const token = new URLSearchParams(location.search).get('token');
 
-  const token = new URLSearchParams(location.search).get('token');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMessage('');
+        setIsLoading(true);
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        try {
+            if (token) {
+                if (!passwordRegex.test(password)) {
+                    setErrorMessage('Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.');
+                    setIsLoading(false);
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    setErrorMessage('Passwords do not match.');
+                    setIsLoading(false);
+                    return;
+                }
 
-  const handlePassword = (data: string) => {
-    if (!passwordRegex.test(data)) {
-      setErrorMessage(
-        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
-      );
-    } else {
-      setErrorMessage('');
-    }
-    setPassword(data);
-  };
-  const handleConfirmPassword = (data: string) => {
-    if (!passwordRegex.test(data)) {
-      setErrorMessage(
-        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
-      );
-    } else {
-      setErrorMessage('');
-    }
-    setConfirmPassword(data);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
-    setIsLoading(true);
-
-    try {
-      if (token) {
-        if (!passwordRegex.test(password)) {
-          setErrorMessage(
-            'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
-          );
-          setIsLoading(false);
-          return;
+                const result = await resetPasswordApi(token, password);
+                if (result) {
+                    toast.success(result.message || 'Password reset successful!');
+                    setTimeout(() => navigate('/login'), 2000);
+                }
+            } else {
+                if (!emailRegex.test(email)) {
+                    setErrorMessage('Please enter a valid email address.');
+                    setIsLoading(false);
+                    return;
+                }
+                const result = await forgotPasswordApi(email);
+                if (result) {
+                    toast.success(result.message || 'Reset link sent to your email.');
+                }
+            }
+        } catch (error: unknown) {
+            const message = typeof error === 'string' ? error : 'An unexpected error occurred';
+            toast.error(message);
+        } finally {
+            setIsLoading(false);
         }
+    };
 
-        if (password !== confirmPassword) {
-          setErrorMessage('Passwords do not match.');
-          setIsLoading(false);
-          return;
-        }
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
+            >
+                <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center text-accent mx-auto mb-8">
+                    <KeyRound size={40} />
+                </div>
 
-        const result = await resetPasswordApi(token, password);
-        if (result) {
-          setTimeout(() => navigate('/login'), 1500);
-          toast.success(result.message);
-        } else {
-          setErrorMessage(AuthMessages.ResetPasswordFailed);
-        }
+                <h2 className="text-3xl font-black text-slate-800 text-center mb-3">
+                    {token ? 'Reset Password' : 'Forgot Password'}
+                </h2>
+                <p className="text-slate-500 text-center mb-10 px-4">
+                    {token 
+                        ? 'Set a new strong password for your account.' 
+                        : 'Enter your email and we\'ll send you a link to reset your password.'}
+                </p>
 
-        return;
-      } else {
-        if (!email) {
-          setErrorMessage('Email is required');
-          setIsLoading(false);
-          return;
-        }
-        if (emailRegex.test(email) == false) {
-          setErrorMessage('please Enter a valid email');
-          return;
-        }
-        const result = await forgotPasswordApi(email);
-        if (result) {
-          setSuccessMessage(result.message);
-        } else {
-          setErrorMessage(AuthMessages.ForgotFailed);
-        }
-      }
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : typeof error === 'string'
-            ? error
-            : 'An unexpected error occurred';
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                    {!token ? (
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    placeholder="your@email.com"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">New Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        placeholder="••••••••"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Confirm New Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        placeholder="••••••••"
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+                    {errorMessage && (
+                        <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-xs rounded-xl text-center">
+                            {errorMessage}
+                        </div>
+                    )}
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-xl p-8 rounded-2xl border border-purple-300">
-        <h2 className="text-3xl font-bold text-purple-900 text-center mb-3">
-          {token ? 'Reset Password' : 'Forgot Password'}
-        </h2>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full py-4 bg-accent text-white rounded-2xl font-bold text-lg shadow-xl shadow-accent/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    >
+                        {isLoading ? <Loader2 className="animate-spin" /> : token ? 'Reset Password' : 'Send Reset Link'}
+                    </button>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* EMAIL FIELD */}
-          {!token && (
-            <div>
-              <input
-                type="email"
-                value={email}
-                placeholder="Enter your email"
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-            </div>
-          )}
-
-          {/* PASSWORD FIELDS */}
-          {token && (
-            <>
-              <input
-                type="password"
-                value={password}
-                placeholder="New Password"
-                onChange={(e) => handlePassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-
-              <input
-                type="password"
-                value={confirmPassword}
-                placeholder="Confirm New Password"
-                onChange={(e) => handleConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-            </>
-          )}
-
-          {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
-          )}
-          {successMessage && (
-            <p className="text-green-500 text-sm">{successMessage}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 disabled:opacity-50"
-          >
-            {isLoading
-              ? token
-                ? 'Resetting...'
-                : 'Sending...'
-              : token
-                ? 'Reset Password'
-                : 'Send Reset Link'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+                    <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        className="w-full py-4 text-slate-500 font-bold flex items-center justify-center gap-2 hover:text-slate-700 transition-colors"
+                    >
+                        <ArrowLeft size={18} />
+                        Back to Login
+                    </button>
+                </form>
+            </motion.div>
+        </div>
+    );
 };

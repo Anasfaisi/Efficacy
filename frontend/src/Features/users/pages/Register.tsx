@@ -1,246 +1,204 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setTempUser } from '@/redux/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/types/zodSchemas';
 import type { RegisterFormData } from '@/types/zodSchemas';
-import { registerInitApi } from '@/Services/auth.api';
-import image from '../../../../public/panda with laptop1.jpg';
+import { registerInitApi } from '@/Services/user.api';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Register: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPassword1, setShowPassword1] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { isLoading, currentUser } = useAppSelector((state) => state.auth);
 
-  const togglePasswordVisibility1 = () => {
-    setShowPassword1(!showPassword1);
-  };
+    const {
+        register: formRegister,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+        mode: 'onChange',
+    });
 
-  const dispatch = useAppDispatch();
-  const { isLoading, error, currentUser } = useAppSelector(
-    (state) => state.auth,
-  );
-  const navigate = useNavigate();
+    useEffect(() => {
+        if (!currentUser) return;
+        navigate(currentUser.role === 'mentor' ? '/mentor/dashboard' : '/home');
+    }, [currentUser, navigate]);
 
-  const {
-    register: formRegister,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    mode: 'onChange',
-  });
-  useEffect(() => {
-    if (!currentUser) return;
+    const onSubmit = async (data: RegisterFormData) => {
+        try {
+            const result = await registerInitApi({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+                role: 'user',
+            });
+            
+            dispatch(setTempUser({
+                email: result.tempEmail,
+                role: result.role,
+                resendAvailableAt: result.resendAvailableAt,
+            }));
+            
+            navigate('/verify-otp');
+            toast.success('Verification code sent to your email!');
+        } catch (error: unknown) {
+            const errorMessage = typeof error === 'string' ? error : 'Registration failed. Please try again.';
+            toast.error(errorMessage);
+        }
+    };
 
-    if (currentUser.role === 'mentor') {
-      navigate('/mentor/dashboard');
-    } else {
-      navigate('/home');
-    }
-  }, [currentUser, navigate]);
-
-  const onSubmit = async (data: RegisterFormData) => {
-    try {
-      const { name, email, password } = data;
-      const result = await registerInitApi({
-        name,
-        email,
-        password,
-        role: 'user',
-      });
-      console.log(result.resendAvailableAt, 'from register');
-      dispatch(
-        setTempUser({
-          email: result.tempEmail,
-          role: result.role,
-          resendAvailableAt: result.resendAvailableAt,
-        }),
-      );
-      if (result) {
-        navigate('/verify-otp');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-      toast.error(error);
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-black-200">
-      <div className="w-full max-w-4xl mx-4 bg-white/80 backdrop-blur-sm  shadow-xl rounded-3xl border  border-purple-100 flex flex-col md:flex-row overflow-hidden">
-        {/*  Panda illustration */}
-        <div className="w-full flex-1 md:w-1/2 bg-gradient-to-tr from-purple-600 via-purple-500 to-purple-400 text-white flex items-center justify-center relative">
-          {/* Glow circles */}
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-purple-900/20 blur-3xl" />
-
-          <div className="relative p-8 md:p-10 flex flex-col items-center gap-4">
-            {/* Tagline */}
-            <div className="px-4 py-1.5 rounded-full bg-white/15 border border-white/30 text-xs uppercase tracking-wide backdrop-blur-sm">
-              Let&apos;s get productive!
-            </div>
-
-            {/* Panda image */}
-            <div className="mt-2 mb-3">
-              {/* Replace src with your actual panda asset */}
-              <img
-                src={image}
-                alt="Cute panda working on a laptop"
-                className="max-w-[220px] md:max-w-[260px] drop-shadow-xl"
-              />
-            </div>
-
-            <p className="text-sm text-purple-50/90 text-center max-w-xs">
-              Your study, tasks, and mentor sessions all in one calm, focused
-              workspace. Efficacy keeps your streak – you just show up.
-            </p>
-          </div>
-        </div>
-        <div
-          className={cn('w-full max-w-md p-6 bg-white rounded-xl shadow-lg')}
-        >
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-            {' '}
-            Create your Account{' '}
-          </h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                {...formRegister('name')}
-                placeholder="Enter your name"
-                className={cn(
-                  'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
-                  errors.name && 'border-red-500',
-                )}
-                required
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                {...formRegister('email')}
-                placeholder="Enter your email"
-                className={cn(
-                  'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
-                  errors.email && 'border-red-500',
-                )}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="relative ">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  {...formRegister('password')}
-                  placeholder="Enter your password"
-                  className={cn(
-                    'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ',
-                    errors.password && 'border-red-500',
-                  )}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  className="border rounded-2xl w-17 absolute right-5 top-3"
-                  onClick={togglePasswordVisibility}
-                >
-                  {' '}
-                  {showPassword ? 'Hide' : 'show'}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-
-              <div className="relative">
-                <input
-                  type={showPassword1 ? 'text' : 'password'}
-                  {...formRegister('confirmPassword')}
-                  placeholder="Confirm your password"
-                  className={cn(
-                    'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent',
-                    errors.confirmPassword && 'border-red-500',
-                  )}
-                />
-                <button
-                  type="button"
-                  className="border rounded-2xl w-17 absolute right-5 top-3"
-                  onClick={togglePasswordVisibility1}
-                >
-                  {' '}
-                  {showPassword1 ? 'Hide' : 'show'}
-                </button>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className={cn(
-                'w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 active:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500',
-                { 'opacity-50 cursor-not-allowed': isLoading },
-              )}
-              disabled={isLoading}
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
             >
-              {isLoading ? 'Registering...' : 'Sign up'}
-            </button>
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
-            <p className="text-sm text-gray-500 text-center">
-              Already have an account?{' '}
-              <Link to="/login" className="hover:text-gray-700 hover:underline">
-                Log In
-              </Link>
-            </p>
-          </form>
+                {/* Left Side - Mascot & Branding */}
+                <div className="md:w-[40%] bg-accent p-12 text-white flex flex-col items-center justify-center relative overflow-hidden">
+                    {/* Background Decorations */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+
+                    <div className="relative z-10 flex flex-col items-center bg- bg-slate-100 gap-8">
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-purple-600 backdrop-blur-md border border-white/30 px-6 py-2 rounded-full text-sm font-bold tracking-widest uppercase"
+                        >
+                            Let's Get Productive!
+                        </motion.div>
+
+                        <motion.img
+                            src="/mascot.png"
+                            alt="Efficacy Mascot"
+                            className="w-64 h-64 animate-float"
+                        />
+
+                        <div className="text-center space-y-4 max-w-sm">
+                            <h3 className="text-2xl font-bold text-slate-800">Your Consistency Partner</h3>
+                            <p className="text-slate-600 leading-relaxed text-sm">
+                                Your study, tasks, and mentor sessions all in one calm, focused workspace. Efficacy keeps your streak – you just show up.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Side - Form */}
+                <div className="flex-1 p-8 md:p-16 lg:p-20 bg-white">
+                    <div className="max-w-md mx-auto">
+                        <div className="mb-10 text-center md:text-left">
+                            <h2 className="text-4xl font-black text-slate-800">Create your Account</h2>
+                            <p className="text-slate-500 mt-2">Join thousands of students building their future.</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
+                                <input
+                                    type="text"
+                                    {...formRegister('name')}
+                                    placeholder="Enter your name"
+                                    className={cn(
+                                        "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all",
+                                        errors.name && "border-red-400 bg-red-50 focus:ring-red-100"
+                                    )}
+                                />
+                                {errors.name && <p className="text-red-500 text-xs ml-1">{errors.name.message}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                                <input
+                                    type="email"
+                                    {...formRegister('email')}
+                                    placeholder="admin@gmail.com"
+                                    className={cn(
+                                        "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all",
+                                        errors.email && "border-red-400 bg-red-50 focus:ring-red-100"
+                                    )}
+                                />
+                                {errors.email && <p className="text-red-500 text-xs ml-1">{errors.email.message}</p>}
+                            </div>
+
+                            <div className="space-y-2 group">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        {...formRegister('password')}
+                                        placeholder="Min. 8 characters"
+                                        className={cn(
+                                            "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14",
+                                            errors.password && "border-red-400 bg-red-50 focus:ring-red-100"
+                                        )}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-primary
+                                         hover:bg-slate-200 rounded-xl transition-colors text-slate-400"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                                {errors.password && <p className="text-red-500 text-xs ml-1">{errors.password.message}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Confirm Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        {...formRegister('confirmPassword')}
+                                        placeholder="••••••••"
+                                        className={cn(
+                                            "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14",
+                                            errors.confirmPassword && "border-red-400 bg-red-50 focus:ring-red-100"
+                                        )}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200 rounded-xl transition-colors text-slate-400"
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                                {errors.confirmPassword && <p className="text-red-500 text-xs ml-1">{errors.confirmPassword.message}</p>}
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-4 bg-purple-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4"
+                            >
+                                {isLoading ? <Loader2 className="animate-spin" /> : 'Sign up'}
+                            </button>
+
+                            <p className="text-center text-slate-500 text-sm mt-8">
+                                Already have an account?{' '}
+                                <Link to="/login" className="font-bold hover:underline">
+                                    Log In
+                                </Link>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </motion.div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
+
 export default Register;

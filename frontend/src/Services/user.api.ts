@@ -215,10 +215,9 @@ export const updateProfilePicture = async (
     }
     const formData = new FormData();
     formData.append('image', file);
-    const response = await api.post(`/profile/proPicUpdate/${id}`, formData, {
+    const response = await api.patch(`/profile/proPicUpdate/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log(response.data, 'from propic api');
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -237,8 +236,7 @@ export const updateProfile = async (form: ProfileForm, id?: string) => {
     if (!id) {
       throw new Error('no user id was given');
     }
-    const response = await api.post(`/update/profile/${id}`, form);
-    console.log(response.data, 'from profle api');
+    const response = await api.patch(`/update/profile/${id}`, form);
     return response;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

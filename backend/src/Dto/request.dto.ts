@@ -126,10 +126,10 @@ export class CreateChatDTO {
 //============================  user profile ==========================//
 export class ProfileRequestDto {
     constructor(
-        public name: string,
-        public userId: string,
-        public email: string,
-        public password: string,
+        public name?: string,
+        public userId?: string,
+        public email?: string,
+        public password?: string,
         public role: Role = Role.User,
         public bio?: string,
         public headline?: string,
@@ -137,7 +137,9 @@ export class ProfileRequestDto {
         public dob?: string,
         public subscription?: string,
         public xpPoints?: number,
-        public badge?: string
+        public badge?: string,
+        public currentPassword?: string,
+        public newPassword?: string
     ) {}
 }
 

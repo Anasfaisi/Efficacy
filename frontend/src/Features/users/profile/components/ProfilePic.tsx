@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import type { RootState } from '@/redux/store';
-import { updateProfilePicture } from '@/Services/auth.api';
+import { updateProfilePicture } from '@/Services/user.api';
 import { setCredentials } from '@/redux/slices/authSlice';
 
 const ProfilePic: React.FC = () => {

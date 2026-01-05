@@ -173,9 +173,29 @@ export const mentorProfileUpdateSchema = z.object({
     .optional(),
 }).partial();
 
+export const userProfileUpdateSchema = z.object({
+  name: z.string().trim().min(3, 'Name is too short').optional(),
+  bio: z.string().trim().max(200, 'Bio too long (max 200 chars)').optional(),
+  headline: z.string().trim().max(100, 'Headline too long (max 100 chars)').optional(),
+  dob: z.string().optional(),
+  xpPoints: z.number().optional(),
+  currentStreak: z.number().optional(),
+  league: z.string().optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character')
+    .optional(),
+}).partial();
+
 export type mentorFormSchemaType = z.infer<typeof mentorFormSchema>;
 export type resetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type forgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type mentorProfileUpdateType = z.infer<typeof mentorProfileUpdateSchema>;
+export type userProfileUpdateType = z.infer<typeof userProfileUpdateSchema>;

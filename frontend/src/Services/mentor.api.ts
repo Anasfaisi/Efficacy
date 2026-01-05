@@ -78,7 +78,7 @@ export const updateMentorProfileMedia = async(files: {
     return res.data;
 }
 
-export const updateMentorProfileArray = async (field: string, elements: any[]) => {
+export const updateMentorProfileArray = async (field: string, elements: unknown[]) => {
     const formData = new FormData();
     formData.append('field', field);
     formData.append('data', JSON.stringify(elements));

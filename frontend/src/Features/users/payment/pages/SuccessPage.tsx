@@ -2,7 +2,7 @@ import { CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchCurrentUser } from '@/Services/auth.api';
+import { fetchCurrentUser } from '@/Services/user.api';
 import { setCredentials } from '@/redux/slices/authSlice';
 
 const SuccessPage = () => {

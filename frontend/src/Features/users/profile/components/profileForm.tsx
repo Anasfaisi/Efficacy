@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ProfileInput from './ProfileInput';
 import ProfilePic from './ProfilePic';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { updateProfile } from '@/Services/auth.api';
+import { updateProfile } from '@/Services/user.api';
 import { setCredentials } from '@/redux/slices/authSlice';
 
 const ProfileForm: React.FC = () => {

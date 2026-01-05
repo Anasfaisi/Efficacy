@@ -173,9 +173,12 @@ const MentorProfilePage = () => {
       toast.success('Section updated successfully');
       setFullMentor((prev) => (prev ? { ...prev, ...fields } : null));
       dispatch(updateCurrentUser(fields));
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         error.issues.forEach((err) => toast.error(err.message));
+      } else if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        toast.error(axiosError.response?.data?.message || 'Update failed');
       } else {
         toast.error('Update failed');
       }
@@ -199,11 +202,14 @@ const MentorProfilePage = () => {
       toast.success('Password updated successfully');
       setCurrentPassword('');
       setNewPassword('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         error.issues.forEach((err) => toast.error(err.message));
+      } else if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        toast.error(axiosError.response?.data?.message || 'Password update failed');
       } else {
-        toast.error(error.response?.data?.message || 'Password update failed');
+        toast.error('Password update failed');
       }
     } finally {
       setIsLoading(null);

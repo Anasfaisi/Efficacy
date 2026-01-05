@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminDashboard from '@/Features/admin/pages/AdminDashboard';
 import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
-import { logoutApi } from '@/Services/auth.api';
+import { logoutApi } from '@/Services/user.api';
 import AdminLayout from '@/Features/admin/layout/AdminLayout';
 import MentorManagement from '@/Features/admin/mentorManagement/pages/MentorManagement';
 import MentorReviewPage from '@/Features/admin/pages/MentorApplicationReviewPage';

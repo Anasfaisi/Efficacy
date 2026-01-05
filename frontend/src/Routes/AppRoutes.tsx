@@ -10,6 +10,7 @@ import MentorLogin from '@/Features/mentors/pages/MentorLogin';
 import Register from '@/Features/users/pages/Register';
 import MentorRoutes from './MentorRoutes';
 import MentorRegister from '@/Features/mentors/pages/MentorRegister';
+import LandingPage from '@/Features/common/pages/LandingPage';
 import { OTPPage } from '@/Features/users/pages/OTPPage';
 import { ForgotResetPassword } from '@/Features/users/pages/ResetPassword';
 import { ToastContainer } from 'react-toastify';
@@ -33,6 +34,7 @@ const AppRoutes: React.FC = () => {
   return (
     <>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin/login" element={<AdminLogin />} />

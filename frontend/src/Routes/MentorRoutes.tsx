@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { logout } from '@/redux/slices/authSlice';
 import { useAppDispatch } from '@/redux/hooks';
 import MentorDashboard from '@/Features/mentors/pages/MentorDashboard';
-import { logoutApi } from '@/Services/auth.api';
+import { logoutApi } from '@/Services/user.api';
 import ApplicationReceived from '@/Features/mentors/pages/ApplicationReceived';
 import MentorOnboardingForm from '@/Features/mentors/layout/MentorOnboardingForm';
 import MentorGuidelines from '@/Features/mentors/pages/MentorGuidelines';
