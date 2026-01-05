@@ -96,6 +96,12 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.getAllMentors.bind(adminController))
     );
 
+    router.get(
+        '/mentors/:id',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getMentorById.bind(adminController))
+    );
+
     router.put(
         '/mentors/:id/status',
         authenticateAndAuthorize(tokenService, [Role.Admin]),

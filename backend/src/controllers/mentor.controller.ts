@@ -9,6 +9,7 @@ import {
     OtpVerificationRequestDto,
     RegisterRequestDto,
 } from '@/Dto/request.dto';
+import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
 
 export class MentorController {
     constructor(
@@ -102,6 +103,60 @@ export class MentorController {
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
             );
+        }
+    }
+    async getProfile(req: Request, res: Response) {
+        try {
+            if (!req.user) throw new Error('User context missing');
+            const userId = req.user.id;
+            const mentor = await this._authService.getMentorProfile(userId);
+            res.status(code.OK).json({ mentor });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            res.status(code.NOT_FOUND).json({ message });
+        }
+    }
+    async updateProfileBasicInfo(req: Request, res: Response) {
+        try {
+            if (!req.user) throw new Error('User context missing');
+            const userId = req.user.id;
+            
+            const updateDto = new UpdateMentorProfileDto();
+            Object.assign(updateDto, req.body);
+
+            const updatedMentor = await this._authService.updateMentorProfileBasicInfo(userId, updateDto);
+            res.status(code.OK).json({ mentor: updatedMentor });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Update failed';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async updateProfileMedia(req: Request, res: Response) {
+        try {
+            if (!req.user) throw new Error('User context missing');
+            const userId = req.user.id;
+            const updatedMentor = await this._authService.updateMentorProfileMedia(userId, req.files);
+            res.status(code.OK).json({ mentor: updatedMentor });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Media update failed';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async updateProfileArray(req: Request, res: Response) {
+        try {
+            if (!req.user) throw new Error('User context missing');
+            const userId = req.user.id;
+            const { field, data } = req.body;
+            
+            const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            const updatedMentor = await this._authService.updateMentorProfileArray(userId, field, parsedData);
+            res.status(code.OK).json({ mentor: updatedMentor });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Array update failed';
+            res.status(code.BAD_REQUEST).json({ message });
         }
     }
 }

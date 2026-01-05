@@ -13,7 +13,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
         <button
           {...dragHandleProps}
           className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
-          onClick={(e) => e.stopPropagation()} // IMPORTANT
+          onClick={(e) => e.stopPropagation()} 
         >
           <GripVertical size={16} className="mr-1" />
         </button>

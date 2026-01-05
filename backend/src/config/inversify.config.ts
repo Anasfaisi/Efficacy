@@ -46,6 +46,8 @@ import { INotificationService } from '@/serivces/Interfaces/INotification.servic
 import { NotificationService } from '@/serivces/notification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
 import { AdminService } from '@/serivces/admin.service';
+import { IPasswordService } from '@/serivces/Interfaces/IPassword.service';
+import { PasswordService } from '@/serivces/password.service';
 
 export const container = new Container();
 
@@ -83,6 +85,7 @@ container
     .bind<INotificationService>(TYPES.NotificationService)
     .to(NotificationService);
 container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
+container.bind<IPasswordService>(TYPES.PasswordService).to(PasswordService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container

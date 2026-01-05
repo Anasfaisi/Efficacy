@@ -11,5 +11,6 @@ export interface IAdminService {
     rejectMentorApplication(id: string, reason: string): Promise<void>;
     requestChangesMentorApplication(id: string, reason: string): Promise<void>;
     getAllMentors(): Promise<MentorApplicationResponseDto[]>;
+    getMentorById(id: string): Promise<MentorApplicationResponseDto | null>;
     updateMentorStatus(id: string, status: string): Promise<void>;
 }

@@ -34,9 +34,7 @@ export class NotificationService implements INotificationService {
             isRead: false,
         } as Partial<INotification>);
 
-        // Emit via socket
-        // If it's for a specific user, we might need a specific room.
-        // For now, let's emit to a room based on recipientId or Role
+     
         this._socketService.emitToRoom(
             recipientId,
             'newNotification',
@@ -76,8 +74,7 @@ export class NotificationService implements INotificationService {
         message: string,
         metadata?: Record<string, unknown>
     ): Promise<void> {
-        // Broadly notify all admins.
-        // Assuming admins join a room called 'admin'
+ 
         await this.createNotification(
             'admin_global',
             Role.Admin,

@@ -12,11 +12,10 @@ const persistConfig = {
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
-// ✅ Optional: Persist config for chat (if you want to keep messages)
 const chatPersistConfig = {
   key: 'chat',
   storage,
-  whitelist: ['messages', 'currentRoomId'], // store messages and last active room
+  whitelist: ['messages', 'currentRoomId'], 
 };
 
 const persistedChatReducer = persistReducer(chatPersistConfig, chatReducer);

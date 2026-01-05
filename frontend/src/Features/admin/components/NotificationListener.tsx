@@ -26,7 +26,6 @@ export const NotificationListener: React.FC = () => {
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'admin') return;
 
-    // Fetch initial notifications from backend
     adminService
       .getNotifications()
       .then((data) => {
@@ -36,31 +35,24 @@ export const NotificationListener: React.FC = () => {
       })
       .catch((err) => console.error('Failed to fetch notifications', err));
 
-    // Connect and join room
     connectSocket();
     joinRoleRoom('admin');
 
-    // Listen for real-time notifications
     onNewNotification((notification: Notification) => {
       console.log('Real-time notification received in Listener:', notification);
 
-      // 1. Ensure the notification has a proper _id
       const processedNotification: Notification = {
         ...notification,
         _id: notification._id || `temp-${Date.now()}`,
       };
 
-      // 2. Update Redux State (This causes the counter to increment)
       dispatch(addNotification(processedNotification));
 
-      // 3. Show Premium Popup (The "Pop")
       const isMentorApp =
         processedNotification.type?.includes('mentor_application');
 
-      // Show standard toast first to verify system is working
-      toast.info(processedNotification.title || 'New Notification');
+        toast.info(processedNotification.title || 'New Notification');
 
-      // Defining a custom toast type if sonner doesn't provide one easily that has 'visible' and 'id'
       toast.custom(
         (id) => (
           <div

@@ -1,4 +1,3 @@
-// src/components/profile/ProfileInput.tsx
 import React from 'react';
 
 interface ProfileInputProps {

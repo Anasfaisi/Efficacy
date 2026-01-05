@@ -15,8 +15,7 @@ export default function CreateMentorForm({
     name: '',
     email: '',
     expertise: '',
-    // availability: '', // Mapping to status or using extra field?
-    // Using simple defaults for now to match the user's simple form style
+    // availability: '', 
     status: 'active',
     role: 'mentor',
   });

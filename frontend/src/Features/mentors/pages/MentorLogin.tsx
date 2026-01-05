@@ -9,7 +9,6 @@ import { loginFormSchema } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 
 import { GoogleLogin } from '@react-oauth/google';
-// import { tr } from 'zod/v4/locales';
 import { googleLoginApi, loginApi } from '@/Services/auth.api';
 import type { CredentialResponse } from '@/types/auth';
 

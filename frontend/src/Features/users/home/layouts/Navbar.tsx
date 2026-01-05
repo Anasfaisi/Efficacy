@@ -1,4 +1,3 @@
-// frontend/src/components/Navbar.tsx
 import React from 'react';
 import BellButton from '../components/BellButton';
 import AvatarMenu from '../components/AvatarMenu';

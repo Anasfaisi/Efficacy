@@ -1,4 +1,3 @@
-// client/src/pages/Login.tsx
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setCredentials } from '../../../redux/slices/authSlice';

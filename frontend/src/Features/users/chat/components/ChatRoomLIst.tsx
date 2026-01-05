@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCurrentRoom } from '@/redux/slices/chatSlice';
-// import type { RootState } from "@/redux/store";
 
 interface ChatRoomListProps {
   rooms: { id: string; name: string }[];

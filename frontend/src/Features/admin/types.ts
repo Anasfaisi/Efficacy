@@ -1,7 +1,7 @@
 export type NotificationType = 'mentor_application' | 'system' | 'mentor';
 
 export interface Notification {
-  _id: string; // MongoDB ID
+  _id: string; 
   recipientId: string;
   recipientRole: string;
   type: NotificationType;
@@ -47,20 +47,16 @@ export interface MentorApplication {
   isVerified?: boolean;
   expertise?: string;
 
-  // New onboarding fields
   mentorType: 'Academic' | 'Industry';
   demoVideoLink?: string;
 
-  // Socials
   linkedin?: string;
   github?: string;
   personalWebsite?: string;
 
-  // Academic Branch
   domain?: string;
   academicSpan?: string;
 
-  // Industry Branch
   industryCategory?: string;
   currentRole?: string;
   guidanceAreas?: string[];

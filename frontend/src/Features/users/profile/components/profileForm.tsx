@@ -22,7 +22,6 @@ const ProfileForm: React.FC = () => {
     currentStreak: 0,
   });
 
-  // Load user data into form on mount or when user changes
   useEffect(() => {
     if (user) {
       setForm({

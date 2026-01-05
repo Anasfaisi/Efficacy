@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 import type { Mentor } from '@/types/auth';
 import { adminService } from '@/Services/admin.api';
+import { useNavigate } from 'react-router-dom';
 
 const MentorMangement = () => {
+  const navigate = useNavigate();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,6 +195,7 @@ const MentorMangement = () => {
               <div className="pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
                 <div className="flex gap-2">
                   <button
+                    onClick={() => navigate(`/admin/mentors/details/${m.id}`)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     title="View Profile"
                   >

@@ -49,7 +49,6 @@ export const mentorApplicationSchema = z
 
         mentorType: z.enum(['Academic', 'Industry']),
 
-        // Branch A: Academic
         qualification: z.string().optional(),
         domain: z.string().optional(),
         university: z.string().optional(),
@@ -57,7 +56,6 @@ export const mentorApplicationSchema = z
         expertise: z.string().optional(),
         academicSpan: z.string().optional(),
 
-        // Branch B: Industry
         industryCategory: z.string().optional(),
         experienceYears: z.string().optional(),
         currentRole: z.string().optional(),
@@ -136,3 +134,30 @@ export const mentorApplicationSchema = z
     });
 
 export type MentorApplicationInput = z.infer<typeof mentorApplicationSchema>;
+
+export const updateMentorProfileSchema = z.object({
+    name: z.string().min(3).optional(),
+    phone: z.string().regex(/^[0-9]{10}$/).optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    bio: z.string().min(20).optional(),
+    linkedin: z.string().url().optional(),
+    github: z.string().url().optional().or(z.literal('')),
+    personalWebsite: z.string().url().optional().or(z.literal('')),
+    demoVideoLink: z.string().url().optional(),
+    mentorType: z.enum(['Academic', 'Industry']).optional(),
+    qualification: z.string().optional(),
+    domain: z.string().optional(),
+    university: z.string().optional(),
+    graduationYear: z.string().optional(),
+    expertise: z.string().optional(),
+    academicSpan: z.string().optional(),
+    industryCategory: z.string().optional(),
+    experienceYears: z.string().optional(),
+    currentRole: z.string().optional(),
+    skills: z.string().optional(),
+    monthlyCharge: z.coerce.number().optional(),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().min(6, 'Password must be at least 6 characters').optional(),
+}).partial().catchall(z.any());

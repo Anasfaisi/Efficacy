@@ -40,6 +40,11 @@ export const adminService = {
     return response.data;
   },
 
+  getMentorById: async (id: string): Promise<Mentor> => {
+    const response = await api.get(`/admin/mentors/${id}`);
+    return response.data;
+  },
+
   updateMentorStatus: async (id: string, status: string): Promise<void> => {
     await api.put(`/admin/mentors/${id}/status`, { status });
   },
@@ -50,7 +55,7 @@ export const adminService = {
   },
 
   markNotificationAsRead: async (id: string): Promise<void> => {
-    const result = await api.patch(`/admin/notification/${id}/mark-read`);
+    const result = await api.patch(`/admin/notifications/${id}/mark-read`);
     console.log(result);
   },
 

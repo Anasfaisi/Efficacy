@@ -1,7 +1,5 @@
-// client/src/pages/admin/AdminDashboard.tsx
 import React from 'react';
 import { useAppSelector } from '@/redux/hooks';
-// import { Link } from 'react-router-dom';
 import type { RootState } from '@/redux/store';
 
 const AdminDashboard: React.FC = () => {

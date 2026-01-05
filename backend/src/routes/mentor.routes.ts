@@ -12,7 +12,10 @@ import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
 
 import { validateRequest } from '@/middleware/validateRequest';
-import { mentorApplicationSchema } from '@/validators/mentor.validator';
+import {
+    mentorApplicationSchema,
+    updateMentorProfileSchema,
+} from '@/validators/mentor.validator';
 
 export default function mentorRoutes(
     mentorController: MentorController,
@@ -61,10 +64,39 @@ export default function mentorRoutes(
         )
     );
 
-    // router.post(
-    //     '/google-login',
-    //     mentorController.googleAuth.bind(mentorController)
-    // );
+    router.get(
+        '/profile',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(mentorController.getProfile.bind(mentorController))
+    );
+
+    router.patch(
+        '/profile/basic-info',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        validateRequest(updateMentorProfileSchema),
+        asyncWrapper(mentorController.updateProfileBasicInfo.bind(mentorController))
+    );
+
+    router.patch(
+        '/profile/media',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        upload.fields([
+            { name: 'profilePic', maxCount: 1 },
+            { name: 'coverPic', maxCount: 1 },
+            { name: 'resume', maxCount: 1 },
+            { name: 'certificate', maxCount: 1 },
+            { name: 'idProof', maxCount: 1 },
+        ]),
+        validateRequest(updateMentorProfileSchema),
+        asyncWrapper(mentorController.updateProfileMedia.bind(mentorController))
+    );
+
+    router.patch(
+        '/profile/array-update',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        validateRequest(updateMentorProfileSchema),
+        asyncWrapper(mentorController.updateProfileArray.bind(mentorController))
+    );
 
     return router;
 }

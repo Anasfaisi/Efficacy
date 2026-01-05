@@ -116,7 +116,7 @@ export class AdminService implements IAdminService {
             await this._notificationService.createNotification(
                 mentor.id,
                 Role.Mentor,
-                NotificationType.SYSTEM_ANNOUNCEMENT, // Maybe use a more specific type if available
+                NotificationType.SYSTEM_ANNOUNCEMENT, 
                 'Changes Requested',
                 `The admin has requested changes to your application. Reason: ${reason}`,
                 { reason, link: '/mentor/onboarding' }
@@ -127,6 +127,12 @@ export class AdminService implements IAdminService {
     async getAllMentors(): Promise<MentorApplicationResponseDto[]> {
         const mentors = await this._mentorRepository.getAllMentors();
         return mentors.map((mentor) => this.mapToResponseDto(mentor));
+    }
+
+    async getMentorById(
+        id: string
+    ): Promise<MentorApplicationResponseDto | null> {
+        return this.getMentorApplicationById(id);
     }
 
     async updateMentorStatus(id: string, status: string): Promise<void> {

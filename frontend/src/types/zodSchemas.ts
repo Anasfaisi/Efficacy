@@ -104,7 +104,6 @@ export const mentorFormSchema = z
 
     mentorType: z.enum(['Academic', 'Industry']),
 
-    // Branch A: Academic
     qualification: z.string().optional(),
     domain: z.string().optional(),
     university: z.string().optional(),
@@ -112,7 +111,6 @@ export const mentorFormSchema = z
     expertise: z.string().optional(),
     academicSpan: z.string().optional(),
 
-    // Branch B: Industry
     industryCategory: z.string().optional(),
     experienceYears: z.string().optional(),
     currentRole: z.string().optional(),
@@ -127,7 +125,6 @@ export const mentorFormSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.mentorType === 'Academic') {
-      // Academic needs Education details
       if (!data.qualification)
         ctx.addIssue({ code: 'custom', path: ['qualification'], message: 'Qualification is required' });
       if (!data.domain)
@@ -141,9 +138,7 @@ export const mentorFormSchema = z
       if (!data.academicSpan)
         ctx.addIssue({ code: 'custom', path: ['academicSpan'], message: 'Academic Span is required' });
       
-      // Experience is optional for Academic, no extra checks needed
     } else if (data.mentorType === 'Industry') {
-      // Industry needs Experience details
       if (!data.industryCategory)
         ctx.addIssue({ code: 'custom', path: ['industryCategory'], message: 'Industry Category is required' });
       if (!data.experienceYears)
@@ -153,12 +148,34 @@ export const mentorFormSchema = z
       if (!data.skills || data.skills.length < 3)
         ctx.addIssue({ code: 'custom', path: ['skills'], message: 'Key skills are required (min 3)' });
 
-      // Education is optional for Industry, no extra checks needed
     }
   });
 
-export type mentorFormSchemaType = z.infer<typeof mentorFormSchema> & import('react-hook-form').FieldValues;
+export const mentorProfileUpdateSchema = z.object({
+  name: z.string().trim().min(3, 'Name is too short').optional(),
+  phone: z.string().trim().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number').optional(),
+  city: z.string().trim().min(3, 'City is required').optional(),
+  state: z.string().trim().min(3, 'State is required').optional(),
+  country: z.string().trim().min(3, 'Country is required').optional(),
+  bio: z.string().trim().min(20, 'Bio must be at least 20 characters').optional(),
+  linkedin: z.string().trim().url('Invalid LinkedIn URL').optional(),
+  github: z.string().trim().url('Invalid GitHub URL').optional().or(z.literal('')),
+  personalWebsite: z.string().trim().url('Invalid Website URL').optional().or(z.literal('')),
+  monthlyCharge: z.coerce.number().min(1500, 'Minimum charge is 1500').max(2000, 'Maximum charge is 2000').optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character')
+    .optional(),
+}).partial();
+
+export type mentorFormSchemaType = z.infer<typeof mentorFormSchema>;
 export type resetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type forgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
+export type mentorProfileUpdateType = z.infer<typeof mentorProfileUpdateSchema>;

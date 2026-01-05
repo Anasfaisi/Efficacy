@@ -162,6 +162,16 @@ export class AdminController {
         res.status(code.OK).json(mentors);
     }
 
+    async getMentorById(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const mentor = await this._adminService.getMentorById(id);
+        if (!mentor) {
+            res.status(code.NOT_FOUND).json({ message: 'Mentor not found' });
+            return;
+        }
+        res.status(code.OK).json(mentor);
+    }
+
     async updateMentorStatus(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const { status } = req.body;

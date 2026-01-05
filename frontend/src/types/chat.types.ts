@@ -9,7 +9,7 @@ export interface ChatMessage {
 
 export interface ChatState {
   currentRoomId: string | null;
-  messages: Record<string, ChatMessage[]>; // keyed by roomId
+  messages: Record<string, ChatMessage[]>; 
   isLoading: boolean;
   error: string | null;
 }

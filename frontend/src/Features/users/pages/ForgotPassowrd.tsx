@@ -4,7 +4,6 @@ export function ForgotPasswordLink() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Navigate to the forgot password page
     navigate('/forgot-password');
   };
 

@@ -58,12 +58,10 @@ export const disconnectSocket = () => {
 
 export const getSocket = () => socket;
 
-// Role rooms
 export const joinRoleRoom = (role: string) => {
   socket?.emit('joinRoleRoom', role);
 };
 
-// Chat actions
 export const joinRoom = (roomId: string, user: currentUserType) => {
   socket?.emit('joinRoom', { roomId, user });
 };
@@ -87,7 +85,6 @@ export const sendMessage = (
   });
 };
 
-// Listeners
 
 export const onReceiveMessage = (callback: (msg: ChatMessage) => void) => {
   socket?.on('receiveMessage', callback);
@@ -103,7 +100,7 @@ export const onUserJoined = (
   socket?.on('userJoined', callback);
 };
 
-// Notifications
+
 export const onNewNotification = (
   callback: (notification: Notification) => void,
 ) => {

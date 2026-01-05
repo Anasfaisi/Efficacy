@@ -45,8 +45,13 @@ const authSlice = createSlice({
       state.resendAvailableAt = action.payload.resendAvailableAt;
       state.role = action.payload.role;
     },
+    updateCurrentUser: (state, action: PayloadAction<Partial<currentUserType>>) => {
+      if (state.currentUser) {
+        state.currentUser = { ...state.currentUser, ...action.payload };
+      }
+    },
   },
 });
 
-export const { setCredentials, logout, setTempUser } = authSlice.actions;
+export const { setCredentials, logout, setTempUser, updateCurrentUser } = authSlice.actions;
 export default authSlice.reducer;

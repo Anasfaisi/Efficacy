@@ -1,4 +1,3 @@
-// import { z } from 'zod';
 
 export type Role = 'admin' | 'mentor' | 'user';
 export type currentUserType = User | Mentor | Admin;
@@ -30,6 +29,7 @@ export interface Mentor {
   country?: string;
   bio?: string;
   profilePic?: string;
+  coverPic?: string;
   publicProfile?: string;
 
   qualification?: string;
@@ -40,12 +40,12 @@ export interface Mentor {
   skills?: string;
   experienceSummary?: string;
 
-  availableDays?: string;
-  preferredTime?: string;
+  availableDays?: string[];
+  preferredTime?: string[];
 
-  resume?: string;
-  certificate?: string;
-  idProof?: string;
+  resume?: File;
+  certificate?: File;
+  idProof?: File;
 
   isVerified?: boolean;
 
@@ -55,17 +55,14 @@ export interface Mentor {
   github?: string;
   personalWebsite?: string;
 
-  // Academic Branch
   domain?: string;
   expertise?: string;
   academicSpan?: string;
 
-  // Industry Branch
   industryCategory?: string;
   currentRole?: string;
   guidanceAreas?: string[];
 
-  // New Fields
   monthlyCharge?: number;
   achievements?: string[];
   extraSkills?: string[];
@@ -74,10 +71,8 @@ export interface Mentor {
   sessionsCompleted?: number;
   applicationFeedback?: string;
 
-  // Video
   demoVideoLink?: string;
 
-  // Keep timestamp just in case
   createdAt?: string;
   updatedAt?: string;
 }
@@ -138,7 +133,6 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
-  // admin?: Admin;
   user?: currentUserType;
   message?: string;
 }
@@ -163,7 +157,6 @@ export interface CredentialResponse {
   credential?: string;
 }
 
-// otp
 export type VerifyOtpSuccess = {
   success: true;
   user: User;
@@ -182,3 +175,5 @@ export interface ResendOtpResponse {
   resendAvailableAt: string;
   role: string;
 }
+
+

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useForm, type SubmitHandler, type FieldPath, type FieldValues } from 'react-hook-form';
+import { useForm, type SubmitHandler, type FieldPath } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -32,7 +32,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCredentials } from '@/redux/slices/authSlice';
 import type { currentUserType, Mentor } from '@/types/auth';
 
-// --- Type Definitions for Steps ---
 const STEPS = [
   {
     id: 1,
@@ -58,7 +57,6 @@ const STEPS = [
   { id: 7, title: 'Review', icon: CheckCircle, fields: [] },
 ] as const;
 
-// --- Helper Components ---
 const SectionTitle = ({
   children,
   icon: Icon,
@@ -89,8 +87,8 @@ const ErrorMsg = ({ message }: { message?: string }) => {
   return <p className="text-red-500 text-xs mt-1 animate-pulse">{message}</p>;
 };
 
-// --- Main Component ---
 export default function MentorOnboardingForm() {
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [files, setFiles] = useState<{
     resume: File | null;
@@ -116,7 +114,6 @@ export default function MentorOnboardingForm() {
     setError,
     formState: { errors, isSubmitting },
   } = useForm<mentorFormSchemaType>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(mentorFormSchema) as any,
     mode: 'onChange',
     defaultValues: {
@@ -132,28 +129,43 @@ export default function MentorOnboardingForm() {
   const watchedDays = watch('availableDays') || [];
   const watchedTimes = watch('preferredTime') || [];
   const watchedGuidanceAreas = watch('guidanceAreas') || [];
+  const [fetchedMentor, setFetchedMentor] = useState<Mentor | null>(null);
+
   useEffect(() => {
+    const fetchMentorProfile = async () => {
+      try {
+        const profile = await mentorApi.getMentorProfile();
+        setFetchedMentor(profile);
+        
+        if (currentUser?.email === profile.email) {
+             dispatch(setCredentials({ currentUser: profile as currentUserType }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch mentor profile", error);
+      }
+    };
+
     if (currentUser?.role === 'mentor') {
-      const mentor = currentUser as Mentor;
+      fetchMentorProfile();
+    }
+  }, [currentUser?.role, dispatch]); 
+
+  useEffect(() => {
+    const mentor = fetchedMentor || (currentUser as Mentor);
+    
+    if (mentor?.role === 'mentor') {
       const status = mentor.status;
+      
       if (status === 'pending') {
         navigate('/mentor/application-received');
       } else if (status === 'rejected') {
         navigate('/mentor/application-rejected');
       } else if (status === 'reapply') {
-        // Stay on onboarding page but show feedback
-      } else if (status && status !== 'incomplete' && status !== 'pending') {
+        } else if (status && status !== 'incomplete' && status !== 'pending') {
         navigate('/mentor/dashboard');
       }
-    }
-  }, [currentUser, navigate]);
 
-  // Pre-fill form from currentUser if status is 'reapply' or 'incomplete'
-  useEffect(() => {
-    if (currentUser?.role === 'mentor') {
-      const mentor = currentUser as Mentor;
-      if (mentor.status === 'reapply' || mentor.status === 'incomplete') {
-        // Explicitly set each field if it exists
+      if (status === 'reapply' || status === 'incomplete') {
         if (mentor.name) setValue('name', mentor.name);
         if (mentor.phone) setValue('phone', mentor.phone);
         if (mentor.city) setValue('city', mentor.city);
@@ -181,7 +193,7 @@ export default function MentorOnboardingForm() {
         if (mentor.experienceSummary) setValue('experienceSummary', mentor.experienceSummary);
       }
     }
-  }, [currentUser, setValue]);
+  }, [currentUser, fetchedMentor, navigate, setValue]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -195,20 +207,17 @@ export default function MentorOnboardingForm() {
     const stepConfig = STEPS.find((s) => s.id === stepId);
     if (!stepConfig) return false;
 
-    // Manual check for files in Step 3
     if (stepId === 3) {
       if (!files.idProof) {
         toast.error('Please upload an Identity Proof document.');
         return false;
       }
-      // Trigger validation for video link
       const isVideoValid = await trigger('demoVideoLink');
       if (!isVideoValid) return false;
 
       return true;
     }
 
-    // Dynamic validation for Step 6
     if (stepId === 6) {
       if (watchedMentorType === 'Academic') {
         const isDetailsValid = await trigger([
@@ -282,8 +291,7 @@ export default function MentorOnboardingForm() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
-    const data = values as mentorFormSchemaType;
+  const onSubmit: SubmitHandler<mentorFormSchemaType> = async (data) => {
     if (currentStep < 7) {
       handleNext();
       return;
@@ -297,21 +305,17 @@ export default function MentorOnboardingForm() {
         return;
       }
 
-      // Prepare data for submission
       const submissionData = { ...data };
 
-      // Handle Custom Guidance Areas for Industry Mentors
       if (
         submissionData.mentorType === 'Industry' &&
         submissionData.guidanceAreas
       ) {
         if (submissionData.guidanceAreas.includes('Others')) {
-          // Remove 'Others'
-          submissionData.guidanceAreas = submissionData.guidanceAreas.filter(
+            submissionData.guidanceAreas = submissionData.guidanceAreas.filter(
             (area) => area !== 'Others',
           );
 
-          // Add custom guidance if present
           if (submissionData.customGuidance) {
             const customAreas = submissionData.customGuidance
               .split(',')
@@ -320,7 +324,6 @@ export default function MentorOnboardingForm() {
             submissionData.guidanceAreas.push(...customAreas);
           }
         }
-        // internal cleanup
         delete submissionData.customGuidance;
       }
 
@@ -345,7 +348,6 @@ export default function MentorOnboardingForm() {
     }
   };
 
-  // --- Render Helpers ---
 
   const renderProgress = () => (
     <div className="w-full bg-gray-100 h-2 rounded-full mb-8 overflow-hidden flex">
@@ -355,6 +357,8 @@ export default function MentorOnboardingForm() {
       />
     </div>
   );
+
+  const activeMentor = fetchedMentor || (currentUser as Mentor);
 
   const renderHeader = () => {
     const currentStepConfig = STEPS.find((s) => s.id === currentStep);
@@ -383,7 +387,7 @@ export default function MentorOnboardingForm() {
         </div>
         {renderHeader()}
 
-        {currentUser?.role === 'mentor' && (currentUser as Mentor).status === 'reapply' && (
+        {activeMentor?.role === 'mentor' && activeMentor.status === 'reapply' && (
           <div className="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 p-8 rounded-2xl shadow-lg">
             <div className="flex items-start gap-4 mb-4">
               <div className="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center animate-pulse">
@@ -393,11 +397,11 @@ export default function MentorOnboardingForm() {
                 <h3 className="text-xl font-bold text-amber-900 mb-2">
                   ⚠️ Action Required: Changes Needed for Your Application
                 </h3>
-                <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg border border-amber-200 mb-3">
-                  <p className="text-amber-900 font-medium leading-relaxed whitespace-pre-wrap">
-                    {(currentUser as Mentor).applicationFeedback || "Please review your application and update the necessary details as per the administrator's feedback."}
-                  </p>
-                </div>
+                 <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg border border-amber-200 mb-3">
+                   <p className="text-amber-900 font-medium leading-relaxed whitespace-pre-wrap">
+                     {activeMentor.applicationFeedback || "Please review your application and update the necessary details as per the administrator's feedback."}
+                   </p>
+                 </div>
                 <div className="flex items-center gap-2 text-sm font-semibold text-amber-700">
                   <CheckCircle size={16} />
                   <span>Your previous data has been pre-filled for your convenience</span>
@@ -408,8 +412,7 @@ export default function MentorOnboardingForm() {
         )}
 
         <form
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSubmit={handleSubmit(onSubmit as any)}
+          onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100/50"
         >
           <AnimatePresence mode="wait">
@@ -1257,6 +1260,11 @@ export default function MentorOnboardingForm() {
                       process.
                     </p>
                   </div>
+
+                  <div className="class flex items-center gap-2 mt-4 mb-4">
+                    <input type="checkbox" onChange={(e) => setCheckboxChecked(e.target.checked)} className='w-4 h-4 cursor-pointer' />
+                    <label className='text-sm font-medium text-gray-700 cursor-pointer '>I have read the guidelines and agree</label>
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -1282,7 +1290,7 @@ export default function MentorOnboardingForm() {
               >
                 Next <ChevronRight className="w-4 h-4" />
               </button>
-            ) : (
+            ) : checkboxChecked && (
               <button
                 type="submit"
                 disabled={isSubmitting}

@@ -3,13 +3,16 @@ import { Bell, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import type { Notification } from '../types';
+import { adminService } from '@/Services/admin.api';
 
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { markAsRead } from '@/redux/slices/notificationSlice';
 
 export const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { notifications, unreadCount } = useAppSelector(
     (state) => state.notification,
@@ -29,6 +32,15 @@ export const NotificationDropdown = () => {
   }, []);
 
   const handleNotificationClick = async (notification: Notification) => {
+    if (!notification.isRead && notification._id) {
+      dispatch(markAsRead(notification._id));
+      try {
+        await adminService.markNotificationAsRead(notification._id);
+      } catch (error) {
+        console.error('Failed to update notification status', error);
+      }
+    }
+
     const link = notification.metadata?.link;
     if (typeof link === 'string') {
       const separator = link.includes('?') ? '&' : '?';
@@ -72,8 +84,8 @@ export const NotificationDropdown = () => {
                 <div
                   key={notification._id}
                   className={cn(
-                    'p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer flex gap-3',
-                    !notification.isRead ? 'bg-blue-50/30' : '',
+                    'p-3 border-b border-gray-100 transition-colors shadow-md cursor-pointer flex gap-3',
+                    !notification.isRead ? 'bg-blue-50 hover:bg-blue-50 shadow-md': 'bg-white hover:bg-gray-200 shadow-md border border-gray-50',
                   )}
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -108,7 +120,13 @@ export const NotificationDropdown = () => {
 
                   {typeof notification.metadata?.link === 'string' && (
                     <div className="flex items-center">
-                      <button className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNotificationClick(notification);
+                        }}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50"
+                      >
                         View
                       </button>
                     </div>

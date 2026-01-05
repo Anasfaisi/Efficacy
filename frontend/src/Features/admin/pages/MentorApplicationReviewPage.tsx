@@ -18,6 +18,7 @@ import {
   Phone,
   Video,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import type { MentorApplication } from '../types';
 import { adminService } from '@/Services/admin.api';
@@ -40,7 +41,6 @@ export default function MentorReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const hasMarkedNotification = useRef(false);
 
-  // Fetch application data
   useEffect(() => {
     const fetchApplication = async () => {
       if (!id) return;
@@ -61,7 +61,6 @@ export default function MentorReviewPage() {
     fetchApplication();
   }, [id]);
 
-  // Mark notification as read (separate effect to avoid re-running on notifications change)
   useEffect(() => {
     if (hasMarkedNotification.current) return;
     
@@ -97,15 +96,16 @@ export default function MentorReviewPage() {
     markNotification();
   }, [id, searchParams, dispatch, notifications]);
 
+
   const handleApprove = async () => {
     if (!id) return;
     try {
       await adminService.approveMentorApplication(id);
-      alert('Mentor Approved!');
+      toast.success('Mentor application approved successfully!');
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to approve application.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -115,30 +115,33 @@ export default function MentorReviewPage() {
       setShowRejectInput(true);
       return;
     }
-    if (!rejectReason.trim()) return;
+    if (!rejectReason.trim()) {
+      toast.warning('Please provide a reason for rejection.');
+      return;
+    }
 
     try {
       await adminService.rejectMentorApplication(id, rejectReason);
-      alert(`Mentor Rejected. Reason: ${rejectReason}`);
+      toast.info(`Mentor rejected: ${rejectReason}`);
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to reject application.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
   const handleRequestChanges = async () => {
     if (!id) return;
-    const reason = prompt('Enter the changes required:');
+    const reason = prompt('Enter the changes required:'); 
     if (!reason || !reason.trim()) return;
 
     try {
       await adminService.requestChangesMentorApplication(id, reason);
-      alert('Changes requested successfully.');
+      toast.success('Changes requested successfully.');
       navigate('/admin/mentors/applications');
     } catch (err: unknown) {
       const errorMessage = (err as any).response?.data?.message || 'Failed to request changes.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
