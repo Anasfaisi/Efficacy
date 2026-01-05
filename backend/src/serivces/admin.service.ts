@@ -116,7 +116,7 @@ export class AdminService implements IAdminService {
             await this._notificationService.createNotification(
                 mentor.id,
                 Role.Mentor,
-                NotificationType.SYSTEM_ANNOUNCEMENT, // Maybe use a more specific type if available
+                NotificationType.SYSTEM_ANNOUNCEMENT, 
                 'Changes Requested',
                 `The admin has requested changes to your application. Reason: ${reason}`,
                 { reason, link: '/mentor/onboarding' }

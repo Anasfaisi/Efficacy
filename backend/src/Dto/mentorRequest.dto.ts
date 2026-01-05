@@ -38,7 +38,6 @@ export interface MentorApplicationRequestDto {
 
     mentorType: 'Academic' | 'Industry';
 
-    // Branch A: Academic
     qualification?: string;
     domain?: string;
     university?: string;
@@ -46,7 +45,6 @@ export interface MentorApplicationRequestDto {
     expertise?: string;
     academicSpan?: string;
 
-    // Branch B: Industry
     industryCategory?: string;
     experienceYears?: string;
     currentRole?: string;
@@ -54,8 +52,36 @@ export interface MentorApplicationRequestDto {
     guidanceAreas?: string[];
     experienceSummary?: string;
 
-    // Optional files (if handled via this DTO or separately)
     resume?: string;
     certificate?: string;
     idProof?: string;
+}
+
+export class UpdateMentorProfileDto {
+    constructor(
+        public name?: string,
+        public phone?: string,
+        public city?: string,
+        public state?: string,
+        public country?: string,
+        public bio?: string,
+        public linkedin?: string,
+        public github?: string,
+        public personalWebsite?: string,
+        public demoVideoLink?: string,
+        public mentorType?: 'Academic' | 'Industry',
+        public qualification?: string,
+        public domain?: string,
+        public university?: string,
+        public graduationYear?: string,
+        public expertise?: string,
+        public academicSpan?: string,
+        public industryCategory?: string,
+        public experienceYears?: string,
+        public currentRole?: string,
+        public skills?: string,
+        public monthlyCharge?: number,
+        public currentPassword?: string,
+        public newPassword?: string
+    ) {}
 }

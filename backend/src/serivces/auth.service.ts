@@ -10,6 +10,7 @@ import { ITokenService } from './Interfaces/IToken.service';
 import { IOtpService } from './Interfaces/IOtp.service';
 import { IValidationService } from './Interfaces/IValidation.service';
 import { IGoogleVerificationService } from './Interfaces/IGoogle-verifcation.service';
+import { IPasswordService } from './Interfaces/IPassword.service';
 import { Role } from '@/types/role.types';
 import {
     CurrentUserResDto,
@@ -36,6 +37,7 @@ import { ErrorMessages } from '@/types/response-messages.types';
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
+    UpdateMentorProfileDto,
 } from '@/Dto/mentorRequest.dto';
 import {
     MentorLoginResponseDTO,
@@ -62,7 +64,8 @@ export class AuthService implements IAuthService {
         @inject(TYPES.ValidationService)
         private _validationService: IValidationService,
         @inject(TYPES.GoogleVerificationService)
-        private _googleVerificationService: IGoogleVerificationService
+        private _googleVerificationService: IGoogleVerificationService,
+        @inject(TYPES.PasswordService) private _passwordService: IPasswordService
     ) {}
 
     async updateUserProfile(
@@ -173,13 +176,6 @@ export class AuthService implements IAuthService {
             password: dto.password,
             name: dto.name,
         });
-
-        // let repository: IUserRepository;
-        // if (role === 'user') {
-        //     repository = this._userRepository;
-        // } else {
-        //     throw new Error('invalid role');
-        // }
 
         const account = await this._userRepository.findByEmail(dto.email);
         if (account) throw new Error('Email already registered');
@@ -535,8 +531,62 @@ export class AuthService implements IAuthService {
         if (!mentor) throw new Error('Mentor not found');
         return mentor;
     }
+    async updateMentorProfileBasicInfo(id: string, data: UpdateMentorProfileDto): Promise<IMentor> {
+        const updateData: Partial<IMentor> & { currentPassword?: string; newPassword?: string } = { ...data };
+
+        if (updateData.newPassword && updateData.currentPassword) {
+            const mentor = await this._mentorRepository.findById(id);
+            if (!mentor || !mentor.password) throw new Error('Mentor details not found');
+
+            const isMatch = await this._passwordService.verifyPassword(updateData.currentPassword, mentor.password);
+            if (!isMatch) throw new Error('Current password is incorrect');
+
+            updateData.password = await this._passwordService.hashPassword(updateData.newPassword);
+        }
+
+        // Clean up temporary fields
+        delete updateData.currentPassword;
+        delete updateData.newPassword;
+
+        const updatedMentor = await this._mentorRepository.update(id, updateData);
+        if (!updatedMentor) throw new Error(ErrorMessages.UpdateFailed);
+        return updatedMentor;
+    }
+
+    async updateMentorProfileMedia(id: string, files: any): Promise<IMentor> {
+        const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+        const updateData: Partial<IMentor> = {};
+
+        if (files.profilePic) {
+            updateData.profilePic = `${baseUrl}/uploads/${files.profilePic[0].filename}`;
+        }
+        if (files.coverPic) {
+            updateData.coverPic = `${baseUrl}/uploads/${files.coverPic[0].filename}`;
+        }
+        if (files.resume) {
+            updateData.resume = `${baseUrl}/uploads/${files.resume[0].filename}`;
+        }
+        if (files.certificate) {
+            updateData.certificate = `${baseUrl}/uploads/${files.certificate[0].filename}`;
+        }
+        if (files.idProof) {
+            updateData.idProof = `${baseUrl}/uploads/${files.idProof[0].filename}`;
+        }
+
+        const updated = await this._mentorRepository.update(id, updateData);
+        if (!updated) throw new Error(ErrorMessages.UpdateFailed);
+        return updated;
+    }
+
+    async updateMentorProfileArray(id: string, field: string, data: any[]): Promise<IMentor> {
+        const updateData: any = {};
+        updateData[field] = data;
+        const updated = await this._mentorRepository.update(id, updateData);
+        if (!updated) throw new Error(ErrorMessages.UpdateFailed);
+        return updated;
+    }
+
     async logout(refreshToken: string): Promise<void> {
-        // Token removal logic to be implemented if token blacklist/db is used
         return Promise.resolve();
     }
 }

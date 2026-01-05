@@ -51,3 +51,40 @@ export const mentorApi = {
     return res.data.mentor;
   },
 };
+
+export const updateMentorProfileBasicInfo = async (data: Partial<Mentor>) => {
+    const res = await api.patch('/mentor/profile/basic-info', data);
+    return res.data;
+};
+
+
+
+export const updateMentorProfileMedia = async(files: {
+    profilePic: File | null;
+    coverPic: File | null;
+    resume: File | null;
+    certificate: File | null;
+    idProof: File | null;
+} ) =>{
+    const formData = new FormData();
+    if(files.profilePic) formData.append('profilePic', files.profilePic);
+    if(files.coverPic) formData.append('coverPic', files.coverPic);
+    if(files.resume) formData.append('resume', files.resume);
+    if(files.certificate) formData.append('certificate', files.certificate);
+    if(files.idProof) formData.append('idProof', files.idProof);
+    const res = await api.patch('/mentor/profile/media', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+}
+
+export const updateMentorProfileArray = async (field: string, elements: any[]) => {
+    const formData = new FormData();
+    formData.append('field', field);
+    formData.append('data', JSON.stringify(elements));
+    
+    const res = await api.patch('/mentor/profile/array-update', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+}

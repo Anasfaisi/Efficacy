@@ -30,7 +30,6 @@ export default function ApplicationRejected() {
       const mentor = currentUser as Mentor;
       const status = mentor.status;
 
-      // Fetch fresh profile data to get the latest feedback
       fetchProfile();
 
       if (status === 'pending') {

@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCredentials, setTempUser } from '@/redux/slices/authSlice';
 import { resendOtpApi, verifyOtpApi } from '@/Services/auth.api';
 import { toast } from 'react-toastify';
-// import { verifyOtp, resendOtp } from "@/redux/slices/authSlice";
 
 export function OTPPage() {
   const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =

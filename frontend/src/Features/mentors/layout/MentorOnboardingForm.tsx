@@ -32,7 +32,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCredentials } from '@/redux/slices/authSlice';
 import type { currentUserType, Mentor } from '@/types/auth';
 
-// --- Type Definitions for Steps ---
 const STEPS = [
   {
     id: 1,
@@ -58,7 +57,6 @@ const STEPS = [
   { id: 7, title: 'Review', icon: CheckCircle, fields: [] },
 ] as const;
 
-// --- Helper Components ---
 const SectionTitle = ({
   children,
   icon: Icon,
@@ -89,7 +87,6 @@ const ErrorMsg = ({ message }: { message?: string }) => {
   return <p className="text-red-500 text-xs mt-1 animate-pulse">{message}</p>;
 };
 
-// --- Main Component ---
 export default function MentorOnboardingForm() {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -140,7 +137,6 @@ export default function MentorOnboardingForm() {
         const profile = await mentorApi.getMentorProfile();
         setFetchedMentor(profile);
         
-        // Update Redux if needed or just use local state for this form
         if (currentUser?.email === profile.email) {
              dispatch(setCredentials({ currentUser: profile as currentUserType }));
         }
@@ -154,10 +150,8 @@ export default function MentorOnboardingForm() {
     }
   }, [currentUser?.role, dispatch]); 
 
-  // Combined effect to handle navigation and pre-filling based on the most recent data (fetched or current)
   useEffect(() => {
     const mentor = fetchedMentor || (currentUser as Mentor);
-    console.log(mentor,"===========")
     
     if (mentor?.role === 'mentor') {
       const status = mentor.status;
@@ -167,13 +161,11 @@ export default function MentorOnboardingForm() {
       } else if (status === 'rejected') {
         navigate('/mentor/application-rejected');
       } else if (status === 'reapply') {
-        // Stay on onboarding page but show feedback
-      } else if (status && status !== 'incomplete' && status !== 'pending') {
+        } else if (status && status !== 'incomplete' && status !== 'pending') {
         navigate('/mentor/dashboard');
       }
 
       if (status === 'reapply' || status === 'incomplete') {
-        // Explicitly set each field if it exists
         if (mentor.name) setValue('name', mentor.name);
         if (mentor.phone) setValue('phone', mentor.phone);
         if (mentor.city) setValue('city', mentor.city);
@@ -215,20 +207,17 @@ export default function MentorOnboardingForm() {
     const stepConfig = STEPS.find((s) => s.id === stepId);
     if (!stepConfig) return false;
 
-    // Manual check for files in Step 3
     if (stepId === 3) {
       if (!files.idProof) {
         toast.error('Please upload an Identity Proof document.');
         return false;
       }
-      // Trigger validation for video link
       const isVideoValid = await trigger('demoVideoLink');
       if (!isVideoValid) return false;
 
       return true;
     }
 
-    // Dynamic validation for Step 6
     if (stepId === 6) {
       if (watchedMentorType === 'Academic') {
         const isDetailsValid = await trigger([
@@ -316,21 +305,17 @@ export default function MentorOnboardingForm() {
         return;
       }
 
-      // Prepare data for submission
       const submissionData = { ...data };
 
-      // Handle Custom Guidance Areas for Industry Mentors
       if (
         submissionData.mentorType === 'Industry' &&
         submissionData.guidanceAreas
       ) {
         if (submissionData.guidanceAreas.includes('Others')) {
-          // Remove 'Others'
-          submissionData.guidanceAreas = submissionData.guidanceAreas.filter(
+            submissionData.guidanceAreas = submissionData.guidanceAreas.filter(
             (area) => area !== 'Others',
           );
 
-          // Add custom guidance if present
           if (submissionData.customGuidance) {
             const customAreas = submissionData.customGuidance
               .split(',')
@@ -339,7 +324,6 @@ export default function MentorOnboardingForm() {
             submissionData.guidanceAreas.push(...customAreas);
           }
         }
-        // internal cleanup
         delete submissionData.customGuidance;
       }
 

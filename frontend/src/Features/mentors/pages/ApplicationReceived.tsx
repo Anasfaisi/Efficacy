@@ -29,7 +29,6 @@ export default function ApplicationReceived() {
   }, [currentUser, navigate]);
 
   const handleLogout = async () => {
-    // Dispatch logout action and navigate to login/home
     await dispatch(logout());
     navigate('/mentor/login');
   };

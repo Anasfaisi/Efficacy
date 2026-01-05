@@ -63,8 +63,7 @@ export class SocketService implements ISocketService {
     ) {
         const { roomId, senderId, senderName, message } = payload;
 
-        // Note: Using any here because of a schema mismatch between SocketService (room-based)
-        // and ChatService (conversation-based). This needs to be reconciled in the future.
+     
         const saved = await this._chatService.saveMessage({
             conversationId: roomId as unknown as Types.ObjectId,
             senderId: senderId as unknown as Types.ObjectId,

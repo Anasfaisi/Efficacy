@@ -3,7 +3,7 @@ export interface Subscription {
   plan: 'Basic' | 'Starter' | 'Pro';
   sessionsLeft: number;
   totalSessions: number;
-  startDate: string; // ISO string
-  endDate: string; // ISO string
+  startDate: string; 
+  endDate: string; 
   status: 'active' | 'expired' | 'cancelled';
 }

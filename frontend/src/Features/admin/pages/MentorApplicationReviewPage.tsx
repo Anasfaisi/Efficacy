@@ -41,7 +41,6 @@ export default function MentorReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const hasMarkedNotification = useRef(false);
 
-  // Fetch application data
   useEffect(() => {
     const fetchApplication = async () => {
       if (!id) return;
@@ -62,7 +61,6 @@ export default function MentorReviewPage() {
     fetchApplication();
   }, [id]);
 
-  // Mark notification as read (separate effect to avoid re-running on notifications change)
   useEffect(() => {
     if (hasMarkedNotification.current) return;
     
@@ -134,7 +132,7 @@ export default function MentorReviewPage() {
 
   const handleRequestChanges = async () => {
     if (!id) return;
-    const reason = prompt('Enter the changes required:'); // Ideally replace this with a modal too, but for "approve/reject all are done with alert" context, fixing alert first.
+    const reason = prompt('Enter the changes required:'); 
     if (!reason || !reason.trim()) return;
 
     try {

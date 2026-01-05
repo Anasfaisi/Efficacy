@@ -12,6 +12,7 @@ export const TYPES = {
     MentorOnboardService: Symbol('MentorOnboardService'),
     NotificationService: Symbol('NotificationService'),
     AdminService: Symbol('AdminService'),
+    PasswordService: Symbol('PasswordService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),

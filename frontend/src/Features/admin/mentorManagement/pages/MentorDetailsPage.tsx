@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 import { adminService } from '@/Services/admin.api';
-import type { Mentor } from '@/types/auth'; // Using Mentor type from auth
+import type { Mentor } from '@/types/auth'; 
 import { toast } from 'sonner';
 
 export default function MentorDetailsPage() {

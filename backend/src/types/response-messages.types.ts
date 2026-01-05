@@ -18,14 +18,12 @@ export const ErrorMessages = {
     NoBody: 'The requested body is empty',
     NotAdded: 'could not able to the new task',
 
-    //admin
     NoAdmin: 'No admin is found on this email',
 };
 
 export const SuccessMessages = {
     ResourceDelivered: 'content delivered successfully',
 };
-// types for chat controller
 export interface joinRoomPayload {
     roomId: string;
     user: string;

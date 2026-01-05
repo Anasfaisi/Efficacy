@@ -23,11 +23,13 @@ export default tseslint.config([
 },
     rules: {
       'prettier/prettier': ['warn', {
-        tabWidth: 2,
+        tabWidth: 4,
+        bracketSpacing: true,
         trailingComma: 'all',
         semi: true,
         singleQuote: true,
       }],
+      '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
     },
     languageOptions: {

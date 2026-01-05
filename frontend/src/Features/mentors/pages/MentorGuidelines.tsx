@@ -38,7 +38,6 @@ const MentorGuidelines: React.FC = () => {
       setIsActivating(true);
       await mentorApi.activateMentor(monthlyCharge);
       
-      // Update local state and redux
       if (currentUser) {
         dispatch(setCredentials({ 
           currentUser: { ...currentUser, status: 'active', monthlyCharge } as Mentor 
@@ -89,7 +88,7 @@ const MentorGuidelines: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">

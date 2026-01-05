@@ -1,4 +1,3 @@
-// frontend/src/components/SidebarButton.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,7 +6,7 @@ interface SidebarButtonProps {
   label: string;
   colorClass?: string;
   onClick?: () => void;
-  to?: string; // for navigation
+  to?: string; 
 }
 
 const SidebarButton: React.FC<SidebarButtonProps> = ({

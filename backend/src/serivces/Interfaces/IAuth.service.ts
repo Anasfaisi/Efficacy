@@ -22,6 +22,7 @@ import {
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
+    UpdateMentorProfileDto,
 } from '@/Dto/mentorRequest.dto';
 import {
     MentorOtpVerificationResponseDto,
@@ -66,5 +67,8 @@ export interface IAuthService {
 
     mentorLogin(dto: LoginRequestDto): Promise<LoginResponseDTO>;
     getMentorProfile(id: string): Promise<IMentor>;
+    updateMentorProfileBasicInfo(id: string, data: UpdateMentorProfileDto): Promise<IMentor>;
+    updateMentorProfileMedia(id: string, files: any): Promise<IMentor>;
+    updateMentorProfileArray(id: string, field: string, data: any[]): Promise<IMentor>;
     logout(refreshToken: string): Promise<void>;
 }

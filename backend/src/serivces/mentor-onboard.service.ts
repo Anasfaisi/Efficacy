@@ -20,7 +20,6 @@ export class MentorOnboardService implements IMentorOnboardService {
     async mentorApplicationInit(
         dto: MentorApplicationRequestDto
     ): Promise<MentorApplicationResponseDto | null> {
-        //didn't mapped to domain entity due to zero value for domain
         const mentor = await this._mentorRepository.findById(dto.id);
         if (!mentor) {
             throw new Error('Mentor not found');
@@ -45,7 +44,6 @@ export class MentorOnboardService implements IMentorOnboardService {
 
             mentorType: dto.mentorType,
 
-            // Academic Branch
             qualification: dto.qualification,
             domain: dto.domain,
             university: dto.university,
@@ -53,7 +51,7 @@ export class MentorOnboardService implements IMentorOnboardService {
             expertise: dto.expertise,
             academicSpan: dto.academicSpan,
 
-            // Industry Branch
+    
             industryCategory: dto.industryCategory,
             experienceYears: dto.experienceYears,
             currentRole: dto.currentRole,
@@ -75,7 +73,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             throw new Error('Could not update mentor documentation');
         }
 
-        // Send notification to admin
         await this._notificationService
             .notifyAdmin(
                 NotificationType.MENTOR_APPLICATION_SUBMITTED,
@@ -114,7 +111,6 @@ export class MentorOnboardService implements IMentorOnboardService {
 
             mentorType: updatedMentorDoc.mentorType!,
 
-            // Academic Branch
             qualification: updatedMentorDoc.qualification,
             domain: updatedMentorDoc.domain,
             university: updatedMentorDoc.university,
@@ -122,7 +118,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             expertise: updatedMentorDoc.expertise,
             academicSpan: updatedMentorDoc.academicSpan,
 
-            // Industry Branch
             industryCategory: updatedMentorDoc.industryCategory,
             experienceYears: updatedMentorDoc.experienceYears,
             currentRole: updatedMentorDoc.currentRole,
@@ -156,4 +151,3 @@ export class MentorOnboardService implements IMentorOnboardService {
     }
 }
 
-// have mapped to an object similar type of MentorResponseDto

@@ -13,6 +13,7 @@ interface IMentor extends Document<ObjectId> {
     country?: string;
     bio?: string;
     profilePic?: string;
+    coverPic?: string;
     publicProfile?: string;
 
     qualification?: string;
@@ -33,25 +34,20 @@ interface IMentor extends Document<ObjectId> {
     isVerified?: boolean;
     expertise?: string;
 
-    // New onboarding fields
     mentorType?: 'Academic' | 'Industry';
     demoVideoLink?: string;
 
-    // Socials
     linkedin?: string;
     github?: string;
     personalWebsite?: string;
 
-    // Academic Branch
     domain?: string;
     academicSpan?: string;
 
-    // Industry Branch
     industryCategory?: string;
     currentRole?: string;
     guidanceAreas?: string[];
 
-    // New Fields
     monthlyCharge?: number;
     achievements?: string[];
     extraSkills?: string[];
@@ -71,13 +67,13 @@ const mentorSchema = new Schema<IMentor>(
         password: { type: String, required: false },
         role: { type: String, default: 'mentor' },
 
-        // Basic Details
         phone: { type: String },
         city: { type: String },
         state: { type: String },
         country: { type: String },
         bio: { type: String },
         profilePic: { type: String },
+        coverPic: { type: String },
         publicProfile: { type: String },
         status: {
             type: String,
@@ -85,21 +81,17 @@ const mentorSchema = new Schema<IMentor>(
             default: 'incomplete',
         },
 
-        // Education
         qualification: { type: String },
         university: { type: String },
         graduationYear: { type: String },
 
-        // Experience (General)
         experienceYears: { type: String },
         skills: { type: String },
         experienceSummary: { type: String },
 
-        // Availability
         availableDays: { type: [String] },
         preferredTime: { type: [String] },
 
-        // Documents
         resume: { type: String },
         certificate: { type: String },
         idProof: { type: String },
@@ -107,25 +99,20 @@ const mentorSchema = new Schema<IMentor>(
         isVerified: { type: Boolean, default: false },
         expertise: { type: String },
 
-        // New Onboarding Fields
         mentorType: { type: String, enum: ['Academic', 'Industry'] },
         demoVideoLink: { type: String },
 
-        // Socials
         linkedin: { type: String },
         github: { type: String },
         personalWebsite: { type: String },
 
-        // Academic Branch
         domain: { type: String },
         academicSpan: { type: String },
 
-        // Industry Branch
         industryCategory: { type: String },
         currentRole: { type: String },
         guidanceAreas: { type: [String] },
 
-        // New Fields
         monthlyCharge: { type: Number, default: 0, min: 0, max: 2000 },
         achievements: { type: [String] },
         extraSkills: { type: [String] },

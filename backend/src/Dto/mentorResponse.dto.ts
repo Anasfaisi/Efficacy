@@ -70,7 +70,6 @@ export interface MentorApplicationResponseDto {
     mentorType: 'Academic' | 'Industry';
     status?: string;
 
-    // Branch A: Academic
     qualification?: string;
     domain?: string;
     university?: string;
@@ -78,7 +77,6 @@ export interface MentorApplicationResponseDto {
     expertise?: string;
     academicSpan?: string;
 
-    // Branch B: Industry
     industryCategory?: string;
     experienceYears?: string;
     currentRole?: string;
@@ -90,7 +88,6 @@ export interface MentorApplicationResponseDto {
     certificate?: string;
     idProof?: string;
 
-    // New Fields
     monthlyCharge?: number;
     achievements?: string[];
     extraSkills?: string[];

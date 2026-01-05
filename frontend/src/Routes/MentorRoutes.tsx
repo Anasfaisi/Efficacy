@@ -12,6 +12,7 @@ import MentorGuidelines from '@/Features/mentors/pages/MentorGuidelines';
 import MentorApproved from '@/Features/mentors/pages/MentorApproved';
 import ApplicationRejected from '@/Features/mentors/pages/ApplicationRejected';
 import MentorProfilePage from '@/Features/mentors/pages/MentorProfilePage';
+import MentorLayout from '@/Features/mentors/layout/MentorLayout';
 
 const Logout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -34,13 +35,18 @@ const Logout: React.FC = () => {
 const MentorRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="dashboard" element={<MentorDashboard />} />
+      <Route element={<MentorLayout />}>
+        <Route path="dashboard" element={<MentorDashboard />} />
+        <Route path="students" element={<div>Students Page (Placeholder)</div>} />
+        <Route path="sessions" element={<div>Sessions Page (Placeholder)</div>} />
+        <Route path="profile" element={<MentorProfilePage />} />
+        <Route path="guidelines" element={<MentorGuidelines />} />
+      </Route>
+      
       <Route path="application-received" element={<ApplicationReceived />} />
       <Route path="application-rejected" element={<ApplicationRejected />} />
       <Route path="onboarding" element={<MentorOnboardingForm />} />
-      <Route path="guidelines" element={<MentorGuidelines />} />
       <Route path="approved" element={<MentorApproved />} />
-      <Route path="profile" element={<MentorProfilePage />} />
       <Route path="logout" element={<Logout />} />
     </Routes>
   );

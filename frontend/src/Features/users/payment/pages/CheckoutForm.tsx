@@ -3,6 +3,7 @@ import { useStripe } from '@stripe/react-stripe-js';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import SubscriptionInfo from './SubscriptionInfo';
+import type { User } from '@/types/auth';
 
 const plans = [
   {
@@ -26,7 +27,7 @@ const plans = [
       'Mentorship included',
       'Progress tracking',
     ],
-    popular: true, // highlight this plan
+    popular: true, 
   },
   {
     id: 'price_1SAOAqB0Ekw2NoJysDIkJTrs',
@@ -48,7 +49,8 @@ const SubscriptionForm = () => {
   const stripe = useStripe();
   const [loading, setLoading] = useState<string | boolean>(false);
   const [message, setMessage] = useState('');
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { currentUser } = useSelector((state: RootState) => state.auth);
+  const user = currentUser as User
 
   async function handleSubscribe(planId: string) {
     console.log('it is in checkout form');
@@ -63,7 +65,7 @@ const SubscriptionForm = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: user?.id,
+            userId: currentUser?.id,
             priceId: planId,
             successUrl: window.location.origin + '/success',
             cancelUrl: window.location.origin + '/cancel',
