@@ -24,7 +24,7 @@ const unverifiedUserSchema = new Schema<IUnverifiedUser>(
         otpExpiresAt: { type: Date, required: true },
         lastOtpSent: { type: Date },
         resendAvailableAt: { type: Date },
-        expiresAt: { type: Date, default: Date.now(), expires: 300 },
+        expiresAt: { type: Date, default: Date.now(), expires: 300},
     },
     { timestamps: true }
 );

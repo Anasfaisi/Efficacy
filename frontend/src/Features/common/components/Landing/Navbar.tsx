@@ -30,8 +30,14 @@ const Navbar: React.FC = () => {
         >
             <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-2">
-                    <img src="/mascot.png" alt="Efficacy Logo" className="w-10 h-10 rounded-full object-cover" />
-                    <span className="text-2xl font-bold gradient-text">Efficacy</span>
+                    <img
+                        src="/mascot.png"
+                        alt="Efficacy Logo"
+                        className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <span className="text-2xl font-bold gradient-text">
+                        Efficacy
+                    </span>
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8 text-slate-600 font-medium">
@@ -48,17 +54,17 @@ const Navbar: React.FC = () => {
 
                 <div className="flex items-center gap-3">
                     <div className="hidden lg:flex items-center gap-4 border-r border-slate-200 pr-4">
-                        <Link 
-                            to="/login" 
+                        <Link
+                            to="/login"
                             className="text-slate-600 font-semibold hover:text-primary transition-colors text-sm"
                         >
-                        Log in
+                            Log in
                         </Link>
                         <Link
                             to="/register"
-                        className="btn-gradient px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                            className="btn-gradient px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                         >
-                        Get Started
+                            Get Started
                         </Link>
                     </div>
                 </div>

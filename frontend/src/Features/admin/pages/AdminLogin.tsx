@@ -17,7 +17,9 @@ const AdminLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const { currentUser, isLoading } = useSelector((state: RootState) => state.auth);
+    const { currentUser, isLoading } = useSelector(
+        (state: RootState) => state.auth,
+    );
 
     const {
         register,
@@ -52,7 +54,7 @@ const AdminLogin = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
@@ -61,34 +63,48 @@ const AdminLogin = () => {
                     <ShieldCheck size={40} />
                 </div>
 
-                <h2 className="text-3xl font-black text-slate-800 text-center mb-3">Admin Panel</h2>
-                <p className="text-slate-500 text-center mb-10">Restricted Access Area</p>
+                <h2 className="text-3xl font-black text-slate-800 text-center mb-3">
+                    Admin Panel
+                </h2>
+                <p className="text-slate-500 text-center mb-10">
+                    Restricted Access Area
+                </p>
 
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1">Admin Email</label>
+                        <label className="text-sm font-bold text-slate-700 ml-1">
+                            Admin Email
+                        </label>
                         <input
                             type="email"
                             {...register('email')}
                             placeholder="admin@efficacy.com"
                             className={cn(
-                                "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all",
-                                errors.email && "border-red-400 bg-red-50 focus:ring-red-100"
+                                'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all',
+                                errors.email &&
+                                    'border-red-400 bg-red-50 focus:ring-red-100',
                             )}
                         />
-                        {errors.email && <p className="text-red-500 text-xs ml-1">{errors.email.message}</p>}
+                        {errors.email && (
+                            <p className="text-red-500 text-xs ml-1">
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                        <label className="text-sm font-bold text-slate-700 ml-1">
+                            Password
+                        </label>
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 {...register('password')}
                                 placeholder="••••••••"
                                 className={cn(
-                                    "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all pr-14",
-                                    errors.password && "border-red-400 bg-red-50 focus:ring-red-100"
+                                    'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all pr-14',
+                                    errors.password &&
+                                        'border-red-400 bg-red-50 focus:ring-red-100',
                                 )}
                             />
                             <button
@@ -96,10 +112,18 @@ const AdminLogin = () => {
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200 rounded-xl transition-colors text-slate-400"
                             >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showPassword ? (
+                                    <EyeOff size={20} />
+                                ) : (
+                                    <Eye size={20} />
+                                )}
                             </button>
                         </div>
-                        {errors.password && <p className="text-red-500 text-xs ml-1">{errors.password.message}</p>}
+                        {errors.password && (
+                            <p className="text-red-500 text-xs ml-1">
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
 
                     <button
@@ -107,9 +131,15 @@ const AdminLogin = () => {
                         disabled={isLoading}
                         className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-900/10 hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
-                        {isLoading ? <Loader2 className="animate-spin" /> : <><LogIn size={20} /> Authorize</>}
+                        {isLoading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            <>
+                                <LogIn size={20} /> Authorize
+                            </>
+                        )}
                     </button>
-                    
+
                     <button
                         type="button"
                         onClick={() => navigate('/')}

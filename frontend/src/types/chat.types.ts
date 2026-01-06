@@ -1,15 +1,15 @@
 export interface ChatMessage {
-  id: string;
-  roomId: string;
-  senderId: string;
-  senderName: string;
-  message: string;
-  createdAt: string;
+    id: string;
+    roomId: string;
+    senderId: string;
+    senderName: string;
+    message: string;
+    createdAt: string;
 }
 
 export interface ChatState {
-  currentRoomId: string | null;
-  messages: Record<string, ChatMessage[]>; 
-  isLoading: boolean;
-  error: string | null;
+    currentRoomId: string | null;
+    messages: Record<string, ChatMessage[]>;
+    isLoading: boolean;
+    error: string | null;
 }

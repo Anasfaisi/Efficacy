@@ -70,5 +70,21 @@ export interface IAuthService {
     updateMentorProfileBasicInfo(id: string, data: UpdateMentorProfileDto): Promise<IMentor>;
     updateMentorProfileMedia(id: string, files: any): Promise<IMentor>;
     updateMentorProfileArray(id: string, field: string, data: any[]): Promise<IMentor>;
+    getApprovedMentors(
+        page: number,
+        limit: number,
+        search: string,
+        sort: string,
+        filter: any
+    ): Promise<{ mentors: IMentor[]; total: number; pages: number }>;
     logout(refreshToken: string): Promise<void>;
+
+    mentorLoginWithGoogle(
+        dto: userGoogleLoginRequestDto
+    ): Promise<userGoogleLoginResponseDto>;
+
+    mentorResendOtp(dto: resendOtpRequestDto): Promise<MentorRegisterInitResponseDto>;
+    mentorForgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }>;
+    mentorResetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }>;
+
 }

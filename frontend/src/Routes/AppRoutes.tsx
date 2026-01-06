@@ -13,78 +13,98 @@ import MentorRegister from '@/Features/mentors/pages/MentorRegister';
 import LandingPage from '@/Features/common/pages/LandingPage';
 import { OTPPage } from '@/Features/users/pages/OTPPage';
 import { ForgotResetPassword } from '@/Features/users/pages/ResetPassword';
+import { MentorOtpPage } from '@/Features/mentors/pages/auth/MentorOtpPage';
+import { MentorForgotResetPassword } from '@/Features/mentors/pages/auth/MentorForgotResetPassword';
 import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute: React.FC<{
-  role: 'admin' | 'user' | 'mentor';
-  children: React.ReactNode;
+    role: 'admin' | 'user' | 'mentor';
+    children: React.ReactNode;
 }> = ({ role, children }) => {
-  const { currentUser } = useSelector((state: RootState) => state.auth);
-  let redirectTo = '/login';
-  if (role === 'admin') redirectTo = '/admin/login';
-  if (role === 'mentor') redirectTo = '/mentor/login';
-  return currentUser?.role === role ? (
-    <>{children}</>
-  ) : (
-    <Navigate to={redirectTo} replace />
-  );
+    const { currentUser } = useSelector((state: RootState) => state.auth);
+    let redirectTo = '/login';
+    if (role === 'admin') redirectTo = '/admin/login';
+    if (role === 'mentor') redirectTo = '/mentor/login';
+    return currentUser?.role === role ? (
+        <>{children}</>
+    ) : (
+        <Navigate to={redirectTo} replace />
+    );
 };
 
 const AppRoutes: React.FC = () => {
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/mentor/login" element={<MentorLogin />} />
-        <Route path="/mentor/register" element={<MentorRegister />} />
+    return (
+        <>
+            <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/mentor/login" element={<MentorLogin />} />
+                <Route path="/mentor/register" element={<MentorRegister />} />
+                <Route path="/mentor/verify-otp" element={<MentorOtpPage />} />
+                <Route
+                    path="/mentor/forgot-password"
+                    element={<MentorForgotResetPassword />}
+                />
+                <Route
+                    path="/mentor/reset-password"
+                    element={<MentorForgotResetPassword />}
+                />
 
-        <Route path="/verify-otp" element={<OTPPage />} />
-        <Route path="/forgot-password" element={<ForgotResetPassword />} />
-        <Route path="/reset-password" element={<ForgotResetPassword />} />
+                <Route path="/verify-otp" element={<OTPPage />} />
+                <Route
+                    path="/forgot-password"
+                    element={<ForgotResetPassword />}
+                />
+                <Route
+                    path="/reset-password"
+                    element={<ForgotResetPassword />}
+                />
 
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute role="user">
-              <UserRoutes />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute role="admin">
-              <AdminRoutes />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/mentor/*"
-          element={
-            <ProtectedRoute role="mentor">
-              {' '}
-              <MentorRoutes />{' '}
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/users/login" replace />} />
-      </Routes>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </>
-  );
+                <Route
+                    path="/*"
+                    element={
+                        <ProtectedRoute role="user">
+                            <UserRoutes />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/*"
+                    element={
+                        <ProtectedRoute role="admin">
+                            <AdminRoutes />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/mentor/*"
+                    element={
+                        <ProtectedRoute role="mentor">
+                            {' '}
+                            <MentorRoutes />{' '}
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="*"
+                    element={<Navigate to="/users/login" replace />}
+                />
+            </Routes>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+        </>
+    );
 };
 
 export default AppRoutes;

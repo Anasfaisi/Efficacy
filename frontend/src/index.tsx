@@ -9,11 +9,11 @@ import { Providers } from './redux/Provider';
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById('root')!).render(
-  <GoogleOAuthProvider clientId={clientId}>
-    <StrictMode>
-      <Providers>
-        <App />
-      </Providers>
-    </StrictMode>
-  </GoogleOAuthProvider>,
+    <GoogleOAuthProvider clientId={clientId}>
+        <StrictMode>
+            <Providers>
+                <App />
+            </Providers>
+        </StrictMode>
+    </GoogleOAuthProvider>,
 );

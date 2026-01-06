@@ -12,42 +12,45 @@ import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsLis
 import MentorDetailsPage from '@/Features/admin/mentorManagement/pages/MentorDetailsPage';
 
 const Logout: React.FC = () => {
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const performLogout = async () => {
-      try {
-        await logoutApi();
-        dispatch(logout());
-      } catch (error) {
-        console.error('Logout failed:', error);
-      }
-    };
-    performLogout();
-  }, [dispatch]);
+    useEffect(() => {
+        const performLogout = async () => {
+            try {
+                await logoutApi();
+                dispatch(logout());
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        };
+        performLogout();
+    }, [dispatch]);
 
-  return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />;
 };
 
 const AdminRoutes: React.FC = () => {
-  return (
-    <Routes>
-      <Route element={<AdminLayout />}>
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="logout" element={<Logout />} />
-        <Route path="mentorManagement" element={<MentorManagement />} />
-        <Route
-          path="mentors/applications"
-          element={<MentorApplicationsPage />}
-        />
-        <Route
-          path="mentors/details/:id"
-          element={<MentorDetailsPage />}
-        />
-        <Route path="mentors/review/:id" element={<MentorReviewPage />} />
-      </Route>
-    </Routes>
-  );
+    return (
+        <Routes>
+            <Route element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="logout" element={<Logout />} />
+                <Route path="mentorManagement" element={<MentorManagement />} />
+                <Route
+                    path="mentors/applications"
+                    element={<MentorApplicationsPage />}
+                />
+                <Route
+                    path="mentors/details/:id"
+                    element={<MentorDetailsPage />}
+                />
+                <Route
+                    path="mentors/review/:id"
+                    element={<MentorReviewPage />}
+                />
+            </Route>
+        </Routes>
+    );
 };
 
 export default AdminRoutes;

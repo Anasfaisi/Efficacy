@@ -18,7 +18,8 @@ export const ForgotResetPassword: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +30,9 @@ export const ForgotResetPassword: React.FC = () => {
         try {
             if (token) {
                 if (!passwordRegex.test(password)) {
-                    setErrorMessage('Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.');
+                    setErrorMessage(
+                        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
+                    );
                     setIsLoading(false);
                     return;
                 }
@@ -41,7 +44,9 @@ export const ForgotResetPassword: React.FC = () => {
 
                 const result = await resetPasswordApi(token, password);
                 if (result) {
-                    toast.success(result.message || 'Password reset successful!');
+                    toast.success(
+                        result.message || 'Password reset successful!',
+                    );
                     setTimeout(() => navigate('/login'), 2000);
                 }
             } else {
@@ -52,11 +57,16 @@ export const ForgotResetPassword: React.FC = () => {
                 }
                 const result = await forgotPasswordApi(email);
                 if (result) {
-                    toast.success(result.message || 'Reset link sent to your email.');
+                    toast.success(
+                        result.message || 'Reset link sent to your email.',
+                    );
                 }
             }
         } catch (error: unknown) {
-            const message = typeof error === 'string' ? error : 'An unexpected error occurred';
+            const message =
+                typeof error === 'string'
+                    ? error
+                    : 'An unexpected error occurred';
             toast.error(message);
         } finally {
             setIsLoading(false);
@@ -65,7 +75,7 @@ export const ForgotResetPassword: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
@@ -78,17 +88,22 @@ export const ForgotResetPassword: React.FC = () => {
                     {token ? 'Reset Password' : 'Forgot Password'}
                 </h2>
                 <p className="text-slate-500 text-center mb-10 px-4">
-                    {token 
-                        ? 'Set a new strong password for your account.' 
-                        : 'Enter your email and we\'ll send you a link to reset your password.'}
+                    {token
+                        ? 'Set a new strong password for your account.'
+                        : "Enter your email and we'll send you a link to reset your password."}
                 </p>
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     {!token ? (
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">
+                                Email Address
+                            </label>
                             <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                <Mail
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                    size={20}
+                                />
                                 <input
                                     type="email"
                                     value={email}
@@ -101,27 +116,41 @@ export const ForgotResetPassword: React.FC = () => {
                     ) : (
                         <div className="space-y-5">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-700 ml-1">New Password</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">
+                                    New Password
+                                </label>
                                 <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <Lock
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                        size={20}
+                                    />
                                     <input
                                         type="password"
                                         value={password}
                                         placeholder="••••••••"
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
                                         className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all"
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-700 ml-1">Confirm New Password</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">
+                                    Confirm New Password
+                                </label>
                                 <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <Lock
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                        size={20}
+                                    />
                                     <input
                                         type="password"
                                         value={confirmPassword}
                                         placeholder="••••••••"
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            setConfirmPassword(e.target.value)
+                                        }
                                         className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all"
                                     />
                                 </div>
@@ -140,7 +169,13 @@ export const ForgotResetPassword: React.FC = () => {
                         disabled={isLoading}
                         className="w-full py-4 bg-accent text-white rounded-2xl font-bold text-lg shadow-xl shadow-accent/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
-                        {isLoading ? <Loader2 className="animate-spin" /> : token ? 'Reset Password' : 'Send Reset Link'}
+                        {isLoading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : token ? (
+                            'Reset Password'
+                        ) : (
+                            'Send Reset Link'
+                        )}
                     </button>
 
                     <button

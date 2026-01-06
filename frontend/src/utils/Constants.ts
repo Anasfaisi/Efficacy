@@ -1,13 +1,13 @@
 export const AuthMessages = {
-  LogoutSuccess: 'Logged out successfully',
-  LogoutFailed: 'Logout failed',
-  InvalidRefreshToken: 'Invalid refresh token or no refresh token',
-  ResenOtpFail: 'Resend OTP failed',
-  OtpFailed: 'OTP verification failed',
-  OtpSuccess: 'OTP sent to email',
-  LoginSuccess: 'you have succesffully logged in',
-  LoginFailure: 'invalid email or password',
+    LogoutSuccess: 'Logged out successfully',
+    LogoutFailed: 'Logout failed',
+    InvalidRefreshToken: 'Invalid refresh token or no refresh token',
+    ResenOtpFail: 'Resend OTP failed',
+    OtpFailed: 'OTP verification failed',
+    OtpSuccess: 'OTP sent to email',
+    LoginSuccess: 'you have succesffully logged in',
+    LoginFailure: 'invalid email or password',
 
-  ForgotFailed: 'Failed to send reset link',
-  ResetPasswordFailed: 'Password reset failed',
+    ForgotFailed: 'Failed to send reset link',
+    ResetPasswordFailed: 'Password reset failed',
 };

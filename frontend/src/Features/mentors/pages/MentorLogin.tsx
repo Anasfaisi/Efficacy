@@ -53,11 +53,16 @@ const MentorLogin: React.FC = () => {
         }
     };
 
-    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    const handleGoogleSuccess = async (
+        credentialResponse: CredentialResponse,
+    ) => {
         setGoogleError(null);
         if (credentialResponse.credential) {
             try {
-                const result = await googleLoginApi(credentialResponse.credential, 'mentor');
+                const result = await googleLoginApi(
+                    credentialResponse.credential,
+                    'mentor',
+                );
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
@@ -68,7 +73,7 @@ const MentorLogin: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
@@ -79,7 +84,7 @@ const MentorLogin: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
 
                     <div className="relative z-10 flex flex-col items-center gap-8 text-center">
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: 0.2 }}
@@ -95,9 +100,12 @@ const MentorLogin: React.FC = () => {
                         />
 
                         <div className="space-y-4 max-w-sm">
-                            <h3 className="text-2xl font-bold text-slate-700">Guide the Next Generation</h3>
+                            <h3 className="text-2xl font-bold text-slate-700">
+                                Guide the Next Generation
+                            </h3>
                             <p className="leading-relaxed text-sm text-slate-700">
-                                Access your dashboard to manage sessions, chats, and student progress. Your impact starts here.
+                                Access your dashboard to manage sessions, chats,
+                                and student progress. Your impact starts here.
                             </p>
                         </div>
                     </div>
@@ -107,8 +115,12 @@ const MentorLogin: React.FC = () => {
                 <div className="flex-1 p-8 md:p-16 lg:p-20 bg-white">
                     <div className="max-w-md mx-auto">
                         <div className="mb-10 text-center md:text-left">
-                            <h2 className="text-4xl font-black text-slate-800">Welcome Back</h2>
-                            <p className="text-slate-500 mt-2">Mentor Access Portal</p>
+                            <h2 className="text-4xl font-black text-slate-800">
+                                Welcome Back
+                            </h2>
+                            <p className="text-slate-500 mt-2">
+                                Mentor Access Portal
+                            </p>
                         </div>
 
                         {googleError && (
@@ -117,42 +129,76 @@ const MentorLogin: React.FC = () => {
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="space-y-6"
+                        >
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-700 ml-1">Work Email</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">
+                                    Work Email
+                                </label>
                                 <input
                                     type="email"
                                     {...formRegister('email')}
                                     placeholder="mentor@efficacy.com"
                                     className={cn(
-                                        "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all",
-                                        errors.email && "border-red-400 bg-red-50 focus:ring-red-100"
+                                        'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all',
+                                        errors.email &&
+                                            'border-red-400 bg-red-50 focus:ring-red-100',
                                     )}
                                 />
-                                {errors.email && <p className="text-red-500 text-xs ml-1">{errors.email.message}</p>}
+                                {errors.email && (
+                                    <p className="text-red-500 text-xs ml-1">
+                                        {errors.email.message}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-2 group">
-                                <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">
+                                    Password
+                                </label>
                                 <div className="relative">
                                     <input
-                                        type={showPassword ? 'text' : 'password'}
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
                                         {...formRegister('password')}
                                         placeholder="••••••••"
                                         className={cn(
-                                            "w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all pr-14",
-                                            errors.password && "border-red-400 bg-red-50 focus:ring-red-100"
+                                            'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all pr-14',
+                                            errors.password &&
+                                                'border-red-400 bg-red-50 focus:ring-red-100',
                                         )}
                                     />
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
                                         className="absolute right-4 top-1/2 -translate-y-1/2 p-2  hover:bg-slate-200 rounded-xl transition-colors text-slate-400"
                                     >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        {showPassword ? (
+                                            <EyeOff size={20} />
+                                        ) : (
+                                            <Eye size={20} />
+                                        )}
                                     </button>
                                 </div>
-                                {errors.password && <p className="text-red-500 text-xs ml-1">{errors.password.message}</p>}
+                                {errors.password && (
+                                    <p className="text-red-500 text-xs ml-1">
+                                        {errors.password.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="flex justify-end pr-1">
+                                <Link
+                                    to="/mentor/forgot-password"
+                                    className="text-sm font-bold text-accent hover:underline decoration-2 underline-offset-4 transition-all"
+                                >
+                                    Forgot Password?
+                                </Link>
                             </div>
 
                             <button
@@ -160,7 +206,13 @@ const MentorLogin: React.FC = () => {
                                 disabled={isLoading}
                                 className="w-full py-4 bg-sky-600 text-white rounded-2xl font-bold text-lg shadow-sm shadow-sky-600 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                             >
-                                {isLoading ? <Loader2 className="animate-spin" /> : <><LogIn size={20} /> Log in</>}
+                                {isLoading ? (
+                                    <Loader2 className="animate-spin" />
+                                ) : (
+                                    <>
+                                        <LogIn size={20} /> Log in
+                                    </>
+                                )}
                             </button>
 
                             <div className="relative my-8">
@@ -168,14 +220,20 @@ const MentorLogin: React.FC = () => {
                                     <div className="w-full border-t border-slate-200"></div>
                                 </div>
                                 <div className="relative flex justify-center text-sm">
-                                    <span className="px-4 bg-white text-slate-400">Or use Google</span>
+                                    <span className="px-4 bg-white text-slate-400">
+                                        Or use Google
+                                    </span>
                                 </div>
                             </div>
 
                             <div className="flex justify-center">
                                 <GoogleLogin
                                     onSuccess={handleGoogleSuccess}
-                                    onError={() => setGoogleError('Google authentication failed')}
+                                    onError={() =>
+                                        setGoogleError(
+                                            'Google authentication failed',
+                                        )
+                                    }
                                     theme="outline"
                                     shape="circle"
                                     width="100%"
@@ -184,7 +242,10 @@ const MentorLogin: React.FC = () => {
 
                             <p className="text-center text-slate-500 text-sm mt-8">
                                 New here?{' '}
-                                <Link to="/mentor/register" className="text-primary font-bold hover:underline">
+                                <Link
+                                    to="/mentor/register"
+                                    className="text-primary font-bold hover:underline"
+                                >
                                     Apply as a Mentor
                                 </Link>
                             </p>
