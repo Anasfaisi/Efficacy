@@ -3,151 +3,138 @@ import { useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCredentials, setTempUser } from '@/redux/slices/authSlice';
-import { resendOtpApi, verifyOtpApi } from '@/Services/auth.api';
+import { resendOtpApi, verifyOtpApi } from '@/Services/user.api';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { ShieldCheck, Mail, Loader2, RefreshCw } from 'lucide-react';
 
 export function OTPPage() {
-  const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =
-    useAppSelector((state) => state.auth);
+    const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =
+        useAppSelector((state) => state.auth);
+    const [otp, setOtp] = useState('');
+    const [timer, setTimer] = useState<number>(0);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
-  const [otp, setOtp] = useState('');
-  const [timer, setTimer] = useState<number>(0);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+    useEffect(() => {
+        if (!resendAvailableAt) return;
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const available = new Date(resendAvailableAt).getTime();
+            const diffInSeconds = Math.max(
+                0,
+                Math.floor((available - now) / 1000),
+            );
+            setTimer(diffInSeconds);
+            if (diffInSeconds === 0) clearInterval(interval);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [resendAvailableAt]);
 
-  useEffect(() => {
-    console.log(resendAvailableAt, 'inside the use effect');
-    if (!resendAvailableAt) return;
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const available = new Date(resendAvailableAt).getTime();
-      const diffInSeconds = Math.max(0, Math.floor((available - now) / 1000));
-      console.log(diffInSeconds);
-      setTimer(diffInSeconds);
-      if (diffInSeconds === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [resendAvailableAt]);
+    useEffect(() => {
+        if (!currentUser) return;
+        navigate(currentUser.role === 'mentor' ? '/mentor/dashboard' : '/home');
+    }, [currentUser, navigate]);
 
-  useEffect(() => {
-    if (!currentUser) return;
+    const handleVerify = async () => {
+        const result = await verifyOtpApi(tempEmail, otp, role);
+        if (result.success && result.user) {
+            dispatch(setCredentials({ currentUser: result.user }));
+            toast.success('Email verified successfully!');
+        } else {
+            toast.error(result.message || 'Verification failed');
+        }
+    };
 
-    if (currentUser.role === 'mentor') {
-      navigate('/mentor/dashboard');
-    } else {
-      navigate('/home');
-    }
-  }, [currentUser, tempEmail]);
+    const handleResend = async () => {
+        try {
+            const result = await resendOtpApi(tempEmail);
+            setOtp('');
+            dispatch(
+                setTempUser({
+                    email: result.tempEmail,
+                    role: result.role,
+                    resendAvailableAt: result.resendAvailableAt,
+                }),
+            );
+            toast.success(`A new verification code has been sent.`);
+        } catch (error: unknown) {
+            const message =
+                typeof error === 'string' ? error : 'Failed to resend OTP';
+            toast.error(message);
+        }
+    };
 
-  const handleVerify = async () => {
-    const result = await verifyOtpApi(tempEmail, otp, role);
-    console.log(result);
-    if (result.success) {
-      dispatch(setCredentials({ currentUser: result.user }));
-      if (!result) return;
-
-      if (result.user.role === 'mentor') {
-        navigate('/mentor/dashboard');
-      } else {
-        navigate('/home');
-      }
-    } else {
-      toast.error(result.message);
-    }
-  };
-
-  const handleResend = async () => {
-    try {
-      const result = await resendOtpApi(tempEmail);
-      if (result) {
-        setOtp('');
-        dispatch(
-          setTempUser({
-            email: result.tempEmail,
-            role: result.role,
-            resendAvailableAt: result.resendAvailableAt,
-          }),
-        );
-        toast.success(`Resend otp sent successfully`);
-      }
-    } catch (error: unknown) {
-      if (typeof error === 'string') {
-        toast.error(error);
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error('Something went wrong');
-      }
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4">
-      <div className="w-full max-w-2xl text-center bg-white shadow-2xl p-8 rounded-3xl border border-purple-300">
-        <h2 className="text-2xl font-semibold text-purple-900 mb-2">
-          Verify OTP
-        </h2>
-        <p className="text-gray-500 text-sm mb-6">
-          We sent an OTP to{' '}
-          <span className="font-medium text-purple-600">{tempEmail}</span>
-        </p>
-
-        {/* OTP boxes */}
-        <OtpInput
-          value={otp}
-          onChange={setOtp}
-          shouldAutoFocus={true}
-          numInputs={6}
-          containerStyle={{ justifyContent: 'center', gap: '15px' }}
-          renderInput={(props) => (
-            <input
-              {...props}
-              className="
-                w-14 font-semibold rounded-t
-                border border-gray-400
-                focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                bg-white shadow-sm 
-              "
-            />
-          )}
-        />
-
-        {/* Verify Button */}
-        <button
-          onClick={handleVerify}
-          disabled={isLoading || otp.length < 6}
-          className="
-            w-full mt-6 py-3 text-sm font-medium rounded-xl
-            bg-gradient-to-r from-purple-500 to-purple-700 
-            text-white shadow-md
-            hover:brightness-110 transition
-            disabled:opacity-40 disabled:cursor-not-allowed
-          "
-        >
-          {isLoading ? 'Verifying...' : 'Verify'}
-        </button>
-
-        {/* Resend */}
-        <div className="mt-5 text-sm">
-          {timer > 0 ? (
-            <span className="text-gray-500">
-              Resend OTP in{' '}
-              <span className="font-medium text-purple-700">
-                00:{timer.toString().padStart(2, '0')}
-              </span>
-            </span>
-          ) : (
-            <button
-              onClick={handleResend}
-              className="bg-purple-500 font-medium  hover:bg-purple-700 border py-2 rounded-lg px-5 text-white"
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100 text-center"
             >
-              Resend OTP
-            </button>
-          )}
+                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mx-auto mb-8">
+                    <ShieldCheck size={40} />
+                </div>
+
+                <h2 className="text-3xl font-black text-slate-800 mb-3">
+                    Verify Your Email
+                </h2>
+                <div className="flex items-center justify-center gap-2 text-slate-500 mb-10">
+                    <Mail size={16} />
+                    <p className="text-sm">
+                        Sent to{' '}
+                        <span className="font-bold text-slate-700">
+                            {tempEmail}
+                        </span>
+                    </p>
+                </div>
+
+                <div className="mb-10">
+                    <OtpInput
+                        value={otp}
+                        onChange={setOtp}
+                        numInputs={6}
+                        renderInput={(props) => (
+                            <input
+                                {...props}
+                                className="w-12 h-14 md:w-14 md:h-16 text-2xl font-bold rounded-2xl border border-slate-200 bg-slate-50 focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white outline-none transition-all mx-1 md:mx-2"
+                            />
+                        )}
+                        containerStyle="justify-center"
+                    />
+                </div>
+
+                <button
+                    onClick={handleVerify}
+                    disabled={isLoading || otp.length < 6}
+                    className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mb-8"
+                >
+                    {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        'Verify Code'
+                    )}
+                </button>
+
+                <div className="pt-6 border-t border-slate-100">
+                    {timer > 0 ? (
+                        <p className="text-slate-500 text-sm">
+                            Resend available in{' '}
+                            <span className="font-bold text-primary">
+                                {timer}s
+                            </span>
+                        </p>
+                    ) : (
+                        <button
+                            onClick={handleResend}
+                            className="text-primary font-bold hover:underline flex items-center gap-2 mx-auto"
+                        >
+                            <RefreshCw size={16} />
+                            Resend Verification Code
+                        </button>
+                    )}
+                </div>
+            </motion.div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

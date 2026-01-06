@@ -35,6 +35,23 @@ export default function mentorRoutes(
         asyncWrapper(mentorController.mentorRegisterInit.bind(mentorController))
     );
     router.post(
+        '/resend-otp',
+        asyncWrapper(mentorController.resendOtp.bind(mentorController))
+    );
+    router.post(
+        '/forgot-password',
+        asyncWrapper(mentorController.forgotPassword.bind(mentorController))
+    );
+    router.post(
+        '/reset-password',
+        asyncWrapper(mentorController.resetPassword.bind(mentorController))
+    );
+    router.post(
+        '/google-login',
+        asyncWrapper(mentorController.googleLogin.bind(mentorController))
+    );
+
+    router.post(
         '/register/verify',
         asyncWrapper(
             mentorController.menotrRegisterVerify.bind(mentorController)
@@ -96,6 +113,11 @@ export default function mentorRoutes(
         authenticateAndAuthorize(tokenService, [Role.Mentor]),
         validateRequest(updateMentorProfileSchema),
         asyncWrapper(mentorController.updateProfileArray.bind(mentorController))
+    );
+    router.get(
+        '/list/approved',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(mentorController.getApprovedMentors.bind(mentorController))
     );
 
     return router;

@@ -58,12 +58,12 @@ export default function authRoutes(userController: UserController) {
         asyncWrapper(userController.resetPassword.bind(userController))
     );
 
-    router.post(
+    router.patch(
         '/update/profile/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         userController.updateUserProfile.bind(userController)
     );
-    router.post(
+    router.patch(
         '/profile/proPicUpdate/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         upload.single('image'),

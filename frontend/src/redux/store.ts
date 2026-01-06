@@ -6,30 +6,30 @@ import chatReducer from '@/redux/slices/chatSlice';
 import notificationReducer from './slices/notificationSlice';
 
 const persistConfig = {
-  key: 'auth',
-  storage,
-  whitelist: ['currentUser', 'role', 'resendAvailableAt', 'tempEmail'],
+    key: 'auth',
+    storage,
+    whitelist: ['currentUser', 'role', 'resendAvailableAt', 'tempEmail'],
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const chatPersistConfig = {
-  key: 'chat',
-  storage,
-  whitelist: ['messages', 'currentRoomId'], 
+    key: 'chat',
+    storage,
+    whitelist: ['messages', 'currentRoomId'],
 };
 
 const persistedChatReducer = persistReducer(chatPersistConfig, chatReducer);
 export const store = configureStore({
-  reducer: {
-    auth: persistedAuthReducer,
-    chat: persistedChatReducer,
-    notification: notificationReducer,
-  },
+    reducer: {
+        auth: persistedAuthReducer,
+        chat: persistedChatReducer,
+        notification: notificationReducer,
+    },
 
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });
 
 export const persistor = persistStore(store);

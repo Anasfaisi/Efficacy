@@ -1,177 +1,286 @@
 import z from 'zod';
 
 export const registerSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(2, 'Name must be at least 2 characters')
-      .max(50, 'Name must be at most 50 characters')
-      .regex(
-        /^[A-Za-z\s]+$/,
-        'Name must contain only letters and spaces (no numbers)',
-      ),
-    email: z
-      .string()
-      .trim()
-      .email('Invalid email address')
-      .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
+    .object({
+        name: z
+            .string()
+            .trim()
+            .min(2, 'Name must be at least 2 characters')
+            .max(50, 'Name must be at most 50 characters')
+            .regex(
+                /^[A-Za-z\s]+$/,
+                'Name must contain only letters and spaces (no numbers)',
+            ),
+        email: z
+            .string()
+            .trim()
+            .email('Invalid email address')
+            .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
 
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-      .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Password must contain at least one special character',
-      ),
+        password: z
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .regex(
+                /[A-Z]/,
+                'Password must contain at least one uppercase letter',
+            )
+            .regex(
+                /[a-z]/,
+                'Password must contain at least one lowercase letter',
+            )
+            .regex(/[0-9]/, 'Password must contain at least one number')
+            .regex(
+                /[^A-Za-z0-9]/,
+                'Password must contain at least one special character',
+            ),
 
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+        confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+    });
 
 export const loginFormSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email('Invalid email address')
-    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
+    email: z
+        .string()
+        .trim()
+        .email('Invalid email address')
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
 
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(
-      /[^A-Za-z0-9]/,
-      'Password must contain at least one special character',
-    ),
+    password: z
+        .string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .regex(/[0-9]/, 'Password must contain at least one number')
+        .regex(
+            /[^A-Za-z0-9]/,
+            'Password must contain at least one special character',
+        ),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email('Invalid email address')
-    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
+    email: z
+        .string()
+        .trim()
+        .email('Invalid email address')
+        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
 });
 
 export const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(64, 'Password must be less than 64 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(
-      /[^A-Za-z0-9]/,
-      'Password must contain at least one special character',
-    ),
+    password: z
+        .string()
+        .min(8, 'Password must be at least 8 characters')
+        .max(64, 'Password must be less than 64 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .regex(/[0-9]/, 'Password must contain at least one number')
+        .regex(
+            /[^A-Za-z0-9]/,
+            'Password must contain at least one special character',
+        ),
 });
 
 export const mentorFormSchema = z
-  .object({
-    name: z.string().min(3, 'Name is too short'),
-    phone: z
-      .string()
-      .regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
-    city: z.string().min(3, 'City is required'),
-    state: z.string().min(3, 'State is required'),
-    country: z.string().min(3, 'Country is required'),
-    bio: z.string().min(20, 'Bio must be at least 20 characters'),
+    .object({
+        name: z.string().min(3, 'Name is too short'),
+        phone: z
+            .string()
+            .regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number'),
+        city: z.string().min(3, 'City is required'),
+        state: z.string().min(3, 'State is required'),
+        country: z.string().min(3, 'Country is required'),
+        bio: z.string().min(20, 'Bio must be at least 20 characters'),
 
-    linkedin: z.string().url('Must be a valid URL'),
-    github: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-    personalWebsite: z
-      .string()
-      .url('Must be a valid URL')
-      .optional()
-      .or(z.literal('')),
+        linkedin: z.string().url('Must be a valid URL'),
+        github: z
+            .string()
+            .url('Must be a valid URL')
+            .optional()
+            .or(z.literal('')),
+        personalWebsite: z
+            .string()
+            .url('Must be a valid URL')
+            .optional()
+            .or(z.literal('')),
 
-    demoVideoLink: z
-      .string()
-      .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
+        demoVideoLink: z
+            .string()
+            .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-    availableDays: z.array(z.string()).min(3, 'Select at least 3 days'),
-    preferredTime: z.array(z.string()).min(1, 'Select at least one time slot'),
+        availableDays: z.array(z.string()).min(3, 'Select at least 3 days'),
+        preferredTime: z
+            .array(z.string())
+            .min(1, 'Select at least one time slot'),
 
-    mentorType: z.enum(['Academic', 'Industry']),
+        mentorType: z.enum(['Academic', 'Industry']),
 
-    qualification: z.string().optional(),
-    domain: z.string().optional(),
-    university: z.string().optional(),
-    graduationYear: z.coerce.string().optional(),
-    expertise: z.string().optional(),
-    academicSpan: z.string().optional(),
+        qualification: z.string().optional(),
+        domain: z.string().optional(),
+        university: z.string().optional(),
+        graduationYear: z.coerce.string().optional(),
+        expertise: z.string().optional(),
+        academicSpan: z.string().optional(),
 
-    industryCategory: z.string().optional(),
-    experienceYears: z.string().optional(),
-    currentRole: z.string().optional(),
-    skills: z.string().optional(),
-    guidanceAreas: z.array(z.string()).optional(),
-    customGuidance: z.string().optional(),
-    experienceSummary: z.string().optional(),
-    monthlyCharge: z.coerce
-      .number()
-      .min(1500, 'Minimum charge is 1500')
-      .max(2000, 'Maximum charge is 2000 during initial phase'),
-  })
-  .superRefine((data, ctx) => {
-    if (data.mentorType === 'Academic') {
-      if (!data.qualification)
-        ctx.addIssue({ code: 'custom', path: ['qualification'], message: 'Qualification is required' });
-      if (!data.domain)
-        ctx.addIssue({ code: 'custom', path: ['domain'], message: 'Domain is required' });
-      if (!data.university)
-        ctx.addIssue({ code: 'custom', path: ['university'], message: 'University is required' });
-      if (!data.graduationYear)
-        ctx.addIssue({ code: 'custom', path: ['graduationYear'], message: 'Graduation Year is required' });
-      if (!data.expertise)
-        ctx.addIssue({ code: 'custom', path: ['expertise'], message: 'Area of Expertise is required' });
-      if (!data.academicSpan)
-        ctx.addIssue({ code: 'custom', path: ['academicSpan'], message: 'Academic Span is required' });
-      
-    } else if (data.mentorType === 'Industry') {
-      if (!data.industryCategory)
-        ctx.addIssue({ code: 'custom', path: ['industryCategory'], message: 'Industry Category is required' });
-      if (!data.experienceYears)
-        ctx.addIssue({ code: 'custom', path: ['experienceYears'], message: 'Years of experience is required' });
-      if (!data.currentRole)
-        ctx.addIssue({ code: 'custom', path: ['currentRole'], message: 'Current Role is required' });
-      if (!data.skills || data.skills.length < 3)
-        ctx.addIssue({ code: 'custom', path: ['skills'], message: 'Key skills are required (min 3)' });
+        industryCategory: z.string().optional(),
+        experienceYears: z.string().optional(),
+        currentRole: z.string().optional(),
+        skills: z.string().optional(),
+        guidanceAreas: z.array(z.string()).optional(),
+        customGuidance: z.string().optional(),
+        experienceSummary: z.string().optional(),
+        monthlyCharge: z.coerce
+            .number()
+            .min(1500, 'Minimum charge is 1500')
+            .max(2000, 'Maximum charge is 2000 during initial phase'),
+    })
+    .superRefine((data, ctx) => {
+        if (data.mentorType === 'Academic') {
+            if (!data.qualification)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['qualification'],
+                    message: 'Qualification is required',
+                });
+            if (!data.domain)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['domain'],
+                    message: 'Domain is required',
+                });
+            if (!data.university)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['university'],
+                    message: 'University is required',
+                });
+            if (!data.graduationYear)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['graduationYear'],
+                    message: 'Graduation Year is required',
+                });
+            if (!data.expertise)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['expertise'],
+                    message: 'Area of Expertise is required',
+                });
+            if (!data.academicSpan)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['academicSpan'],
+                    message: 'Academic Span is required',
+                });
+        } else if (data.mentorType === 'Industry') {
+            if (!data.industryCategory)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['industryCategory'],
+                    message: 'Industry Category is required',
+                });
+            if (!data.experienceYears)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['experienceYears'],
+                    message: 'Years of experience is required',
+                });
+            if (!data.currentRole)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['currentRole'],
+                    message: 'Current Role is required',
+                });
+            if (!data.skills || data.skills.length < 3)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['skills'],
+                    message: 'Key skills are required (min 3)',
+                });
+        }
+    });
 
-    }
-  });
+export const mentorProfileUpdateSchema = z
+    .object({
+        name: z.string().trim().min(3, 'Name is too short').optional(),
+        phone: z
+            .string()
+            .trim()
+            .regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number')
+            .optional(),
+        city: z.string().trim().min(3, 'City is required').optional(),
+        state: z.string().trim().min(3, 'State is required').optional(),
+        country: z.string().trim().min(3, 'Country is required').optional(),
+        bio: z
+            .string()
+            .trim()
+            .min(20, 'Bio must be at least 20 characters')
+            .optional(),
+        linkedin: z.string().trim().url('Invalid LinkedIn URL').optional(),
+        github: z
+            .string()
+            .trim()
+            .url('Invalid GitHub URL')
+            .optional()
+            .or(z.literal('')),
+        personalWebsite: z
+            .string()
+            .trim()
+            .url('Invalid Website URL')
+            .optional()
+            .or(z.literal('')),
+        monthlyCharge: z.coerce
+            .number()
+            .min(1500, 'Minimum charge is 1500')
+            .max(2000, 'Maximum charge is 2000')
+            .optional(),
+        currentPassword: z.string().optional(),
+        newPassword: z
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+            .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+            .regex(/[0-9]/, 'Must contain at least one number')
+            .regex(
+                /[^A-Za-z0-9]/,
+                'Must contain at least one special character',
+            )
+            .optional(),
+    })
+    .partial();
 
-export const mentorProfileUpdateSchema = z.object({
-  name: z.string().trim().min(3, 'Name is too short').optional(),
-  phone: z.string().trim().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit phone number').optional(),
-  city: z.string().trim().min(3, 'City is required').optional(),
-  state: z.string().trim().min(3, 'State is required').optional(),
-  country: z.string().trim().min(3, 'Country is required').optional(),
-  bio: z.string().trim().min(20, 'Bio must be at least 20 characters').optional(),
-  linkedin: z.string().trim().url('Invalid LinkedIn URL').optional(),
-  github: z.string().trim().url('Invalid GitHub URL').optional().or(z.literal('')),
-  personalWebsite: z.string().trim().url('Invalid Website URL').optional().or(z.literal('')),
-  monthlyCharge: z.coerce.number().min(1500, 'Minimum charge is 1500').max(2000, 'Maximum charge is 2000').optional(),
-  currentPassword: z.string().optional(),
-  newPassword: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Must contain at least one number')
-    .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character')
-    .optional(),
-}).partial();
+export const userProfileUpdateSchema = z
+    .object({
+        name: z.string().trim().min(3, 'Name is too short').optional(),
+        bio: z
+            .string()
+            .trim()
+            .max(200, 'Bio too long (max 200 chars)')
+            .optional(),
+        headline: z
+            .string()
+            .trim()
+            .max(100, 'Headline too long (max 100 chars)')
+            .optional(),
+        dob: z.string().optional(),
+        xpPoints: z.number().optional(),
+        currentStreak: z.number().optional(),
+        league: z.string().optional(),
+        currentPassword: z.string().optional(),
+        newPassword: z
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+            .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+            .regex(/[0-9]/, 'Must contain at least one number')
+            .regex(
+                /[^A-Za-z0-9]/,
+                'Must contain at least one special character',
+            )
+            .optional(),
+    })
+    .partial();
 
 export type mentorFormSchemaType = z.infer<typeof mentorFormSchema>;
 export type resetPasswordSchema = z.infer<typeof resetPasswordSchema>;
@@ -179,3 +288,4 @@ export type forgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type mentorProfileUpdateType = z.infer<typeof mentorProfileUpdateSchema>;
+export type userProfileUpdateType = z.infer<typeof userProfileUpdateSchema>;

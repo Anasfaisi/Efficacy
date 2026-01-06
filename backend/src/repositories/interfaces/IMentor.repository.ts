@@ -13,4 +13,11 @@ export interface IMentorRepository extends IBaseRepository<IMentor> {
 
     update(id: string, data: Partial<IMentor>): Promise<IMentor | null>;
     getAllMentors(): Promise<IMentor[]>;
+    findAllApprovedMentors(
+        page: number,
+        limit: number,
+        search: string,
+        sort: string,
+        filter: object
+    ): Promise<{ mentors: IMentor[]; total: number; pages: number }>;
 }

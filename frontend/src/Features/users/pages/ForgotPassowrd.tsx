@@ -1,28 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 
 export function ForgotPasswordLink() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate('/forgot-password');
-  };
-
-  return (
-    <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-      <button
-        onClick={handleClick}
-        style={{
-          background: 'none',
-          border: 'none',
-          color: '#007bff',
-          cursor: 'pointer',
-          textDecoration: 'underline',
-          padding: 0,
-          fontSize: '0.9rem',
-        }}
-      >
-        Forgot Password?
-      </button>
-    </div>
-  );
+    return (
+        <button
+            onClick={() => navigate('/forgot-password')}
+            className="text-sm font-bold text-accent hover:underline decoration-2 underline-offset-4 transition-all"
+        >
+            Forgot Password?
+        </button>
+    );
 }

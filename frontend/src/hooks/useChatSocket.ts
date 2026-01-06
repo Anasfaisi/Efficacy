@@ -1,53 +1,53 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
-  connectSocket,
-  joinRoom,
-  leaveRoom,
-  sendMessage,
-  onReceiveMessage,
-  onLastMessages,
-  offChatEvents,
+    connectSocket,
+    joinRoom,
+    leaveRoom,
+    sendMessage,
+    onReceiveMessage,
+    onLastMessages,
+    offChatEvents,
 } from '@/Services/socket/socketService';
 
 import { addMessages, setMessages } from '@/redux/slices/chatSlice';
 import type { ChatMessage } from '@/types/chat.types';
 
 export const useChatSocket = (roomId: string) => {
-  const dispatch = useAppDispatch();
-  const { currentUser } = useAppSelector((state) => state.auth);
+    const dispatch = useAppDispatch();
+    const { currentUser } = useAppSelector((state) => state.auth);
 
-  const socketRef = useRef<ReturnType<typeof connectSocket> | null>(null);
+    const socketRef = useRef<ReturnType<typeof connectSocket> | null>(null);
 
-  useEffect(() => {
-    if (!currentUser) return;
+    useEffect(() => {
+        if (!currentUser) return;
 
-    if (!socketRef.current) {
-      socketRef.current = connectSocket();
-    }
+        if (!socketRef.current) {
+            socketRef.current = connectSocket();
+        }
 
-    joinRoom(roomId, currentUser);
+        joinRoom(roomId, currentUser);
 
-    onReceiveMessage((msg: ChatMessage) => {
-      dispatch(addMessages(msg));
-    });
+        onReceiveMessage((msg: ChatMessage) => {
+            dispatch(addMessages(msg));
+        });
 
-    onLastMessages((messages: ChatMessage[]) => {
-      dispatch(setMessages({ roomId, messages }));
-    });
+        onLastMessages((messages: ChatMessage[]) => {
+            dispatch(setMessages({ roomId, messages }));
+        });
 
-    return () => {
-      leaveRoom(roomId, currentUser.id!);
-      offChatEvents();
+        return () => {
+            leaveRoom(roomId, currentUser.id!);
+            offChatEvents();
+        };
+    }, [roomId, currentUser, dispatch]);
+
+    const send = (text: string) => {
+        if (currentUser) {
+            const name = currentUser.email || 'Admin';
+            sendMessage(roomId, text, currentUser.id!, name);
+        }
     };
-  }, [roomId, currentUser, dispatch]);
 
-  const send = (text: string) => {
-    if (currentUser) {
-      const name = currentUser.email || 'Admin';
-      sendMessage(roomId, text, currentUser.id!, name);
-    }
-  };
-
-  return send;
+    return send;
 };

@@ -195,7 +195,7 @@ export class AuthService implements IAuthService {
             role: dto.role,
             otp,
             otpExpiresAt: new Date(Date.now() + 2 * 60 * 1000),
-            resendAvailableAt: new Date(Date.now() + 60 * 1000),
+            resendAvailableAt: new Date(Date.now() + 30 * 1000),
         });
 
         await this._otpService.sendOtp(dto.email, otp);
@@ -480,7 +480,7 @@ export class AuthService implements IAuthService {
             role: dto.role,
             otp,
             otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
-            resendAvailableAt: new Date(Date.now() + 60 * 1000),
+            resendAvailableAt: new Date(Date.now() + 30 * 1000),
         });
 
         await this._otpService.sendOtp(dto.email, otp);
@@ -586,7 +586,126 @@ export class AuthService implements IAuthService {
         return updated;
     }
 
+    async getApprovedMentors(
+        page: number,
+        limit: number,
+        search: string,
+        sort: string,
+        filter: any
+    ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
+        return await this._mentorRepository.findAllApprovedMentors(
+            page,
+            limit,
+            search,
+            sort,
+            filter
+        );
+    }
+
     async logout(refreshToken: string): Promise<void> {
         return Promise.resolve();
+    }
+
+    async mentorLoginWithGoogle(dto: userGoogleLoginRequestDto) {
+        const ticket = await this._googleVerificationService.verify(
+            dto.googleToken
+        );
+        const payload = ticket.getPayload();
+
+        if (!payload?.email) {
+            throw new Error('Google login failed: No email found');
+        }
+
+        let account = await this._mentorRepository.findByEmail(payload.email);
+        if (!account) {
+         
+            account = await this._mentorRepository.createUser({
+                email: payload.email,
+                name: payload.name || 'Google Mentor',
+                password: await bcrypt.hash(Math.random().toString(36), 10), // Random password
+                role: Role.Mentor
+            });
+            
+        }
+
+        const accessToken = this._tokenService.generateAccessToken(
+            account.id,
+            account.role
+        );
+        const refreshToken = this._tokenService.generateRefreshToken(
+            account.id,
+            account.role
+        );
+
+        return new userGoogleLoginResponseDto(accessToken, refreshToken, {
+            id: account.id.toString(), // account.id is string from repository usually? 
+             // in userLoginWithGoogle it used account._id.toString() but _mentorRepository likely returns IModel which has id/ _id
+             // Checking mentorLogin response: id: account.id.toString()
+            email: account.email,
+            name: account.name,
+            role: account.role as Role,
+        });
+    }
+
+    /*Args: email */
+    async mentorResendOtp(dto: resendOtpRequestDto) {
+        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(dto.email);
+        if (!unverifiedUser) {
+            throw new Error('Session expired, please register again');
+        }
+
+        const now = Date.now();
+        const OTP_EXPIRY_MS = 5 * 60 * 1000;
+        const RESEND_DELAY_MS = 30 * 1000;
+
+        let otp = unverifiedUser.otp;
+        let otpExpiresAt = new Date(unverifiedUser.otpExpiresAt).getTime();
+
+        if (now >= otpExpiresAt) {
+            otp = await this._otpService.generateOtp();
+            otpExpiresAt = now + OTP_EXPIRY_MS;
+        }
+
+        const updatedUser = await this._unverifiedUserRepository.updateByEmail(dto.email, {
+            otp,
+            otpExpiresAt: new Date(otpExpiresAt),
+            lastOtpSent: new Date(now),
+            resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
+        });
+
+        if (!updatedUser) {
+            throw new Error('error happened in updating user otp');
+        }
+        await this._otpService.sendOtp(dto.email, otp);
+
+        return new MentorRegisterInitResponseDto(
+            updatedUser.email,
+            updatedUser.role,
+            updatedUser.resendAvailableAt
+        );
+    }
+
+    async mentorForgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }> {
+        const mentor = await this._mentorRepository.findByEmail(dto.email);
+        if (!mentor) throw new Error('Mentor not found with this email');
+
+        const resetToken = this._tokenService.generatePasswordResetToken(mentor.id);
+        // Pointing to mentor specific reset page
+        const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
+        await this._otpService.sendEmail(
+            mentor.email,
+            'Reset Your Password',
+            `Click here to reset your mentor account password: ${resetLink}`
+        );
+        return { message: 'Reset link sent to email' };
+    }
+
+    async mentorResetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }> {
+        const payload = this._tokenService.verifyPasswordResetToken(dto.token);
+        const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+        await this._mentorRepository.update(payload.id, { password: hashedPassword });
+
+        return { message: 'Password reset successful' };
     }
 }

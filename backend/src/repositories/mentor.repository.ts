@@ -34,4 +34,51 @@ export class MentorRepository
             status: { $in: ['active', 'inactive'] }
         }).exec();
     }
+    async findAllApprovedMentors(
+        page: number,
+        limit: number,
+        search: string,
+        sort: string,
+        filter: any
+    ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
+        const query: any = { status:'active'};
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { domain: { $regex: search, $options: 'i' } },
+                { expertise: { $regex: search, $options: 'i' } },
+                { skills: { $regex: search, $options: 'i' } },
+                { currentRole: { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        if (filter) {
+            Object.assign(query, filter);
+        }
+
+        const sortOptions: any = {};
+        if (sort) {
+            const [field, order] = sort.split('_'); 
+            // Handle specific sort fields if necessary, or pass directly
+            const sortField = field === 'price' ? 'monthlyCharge' : field;
+            sortOptions[sortField] = order === 'asc' ? 1 : -1;
+        } else {
+            sortOptions.createdAt = -1;
+        }
+
+        const skip = (page - 1) * limit;
+
+        const total = await this.model.countDocuments(query);
+        const mentors = await this.model
+            .find(query)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        const pages = Math.ceil(total / limit);
+
+        return { mentors, total, pages };
+    }
 }

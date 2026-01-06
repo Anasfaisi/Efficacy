@@ -10,14 +10,14 @@ import { Toaster } from 'sonner';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const App: React.FC = () => {
-  return (
-    <Elements stripe={stripePromise}>
-      <Toaster position="top-right" richColors closeButton />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </Elements>
-  );
+    return (
+        <Elements stripe={stripePromise}>
+            <Toaster position="top-right" richColors closeButton />
+            <BrowserRouter>
+                <AppRoutes />
+            </BrowserRouter>
+        </Elements>
+    );
 };
 
 export default App;

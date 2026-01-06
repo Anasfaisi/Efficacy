@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { AuthService } from '../serivces/auth.service';
 import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
@@ -25,6 +24,7 @@ export class MentorController {
     }
 
     async menotrRegisterVerify(req: Request, res: Response) {
+        console.log("it is reaching in mentor controller")
         const { accessToken, refreshToken, user } =
             await this._authService.mentorRegisterVerify(req.body);
 
@@ -156,6 +156,93 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Array update failed';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async getApprovedMentors(req: Request, res: Response) {
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = (req.query.search as string) || '';
+            const sort = (req.query.sort as string) || '';
+            
+            const filters: any = {};
+            if (req.query.expertise) {
+                filters.expertise = { $regex: req.query.expertise as string, $options: 'i' };
+            }
+            if (req.query.minPrice || req.query.maxPrice) {
+                filters.monthlyCharge = {};
+                if (req.query.minPrice) filters.monthlyCharge.$gte = parseInt(req.query.minPrice as string);
+                if (req.query.maxPrice) filters.monthlyCharge.$lte = parseInt(req.query.maxPrice as string);
+            }
+            if (req.query.rating) {
+                filters.rating = { $gte: parseFloat(req.query.rating as string) };
+            }
+
+            const result = await this._authService.getApprovedMentors(
+                page,
+                limit,
+                search,
+                sort,
+                filters
+            );
+            res.status(code.OK).json(result);
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Failed to fetch mentors';
+            res.status(code.INTERNAL_SERVER_ERROR).json({ message });
+        }
+    }
+
+    async resendOtp(req: Request, res: Response) {
+        try {
+            const result = await this._authService.mentorResendOtp(req.body);
+            res.status(code.OK).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to resend OTP';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async forgotPassword(req: Request, res: Response) {
+        console.log('Mentor forgot password request received:', req.body);
+        try {
+            const result = await this._authService.mentorForgotPassword(req.body);
+            res.status(code.OK).json(result);
+        } catch (error: unknown) {
+            console.error('Mentor forgot password error:', error);
+            const message = error instanceof Error ? error.message : 'Failed to send reset link';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async resetPassword(req: Request, res: Response) {
+        try {
+            const result = await this._authService.mentorResetPassword(req.body);
+            res.status(code.OK).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to reset password';
+            res.status(code.BAD_REQUEST).json({ message });
+        }
+    }
+
+    async googleLogin(req: Request, res: Response) {
+        try {
+            const result = await this._authService.mentorLoginWithGoogle(req.body);
+
+            res.cookie('refreshToken', result.refreshToken, {
+                httpOnly: true,
+                secure: true,
+            });
+            res.cookie('accessToken', result.accessToken, {
+                httpOnly: true,
+                secure: true,
+            });
+
+            res.status(code.OK).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Google login failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
