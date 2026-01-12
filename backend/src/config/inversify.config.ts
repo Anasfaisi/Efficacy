@@ -48,6 +48,11 @@ import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
 import { AdminService } from '@/serivces/admin.service';
 import { IPasswordService } from '@/serivces/Interfaces/IPassword.service';
 import { PasswordService } from '@/serivces/password.service';
+import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
+import { MentorAuthService } from '@/serivces/mentor-auth.service';
+import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
+import { MentorService } from '@/serivces/mentor.service';
+
 
 export const container = new Container();
 
@@ -86,6 +91,9 @@ container
     .to(NotificationService);
 container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
 container.bind<IPasswordService>(TYPES.PasswordService).to(PasswordService);
+container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
+container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
+
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container

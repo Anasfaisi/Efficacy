@@ -13,14 +13,14 @@ const authenticateAndAuthorize = (
             return;
         }
 
-        const user = _tokenService.verifyAccessToken(token);
+        const currentUser = _tokenService.verifyAccessToken(token);
 
-        req.user = user;
+        req.currentUser = currentUser;
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
 
         if (
             allowedRoles.length > 0 &&
-            (!req.user || !allowedRoles.includes(req.user.role))
+            (!req.currentUser || !allowedRoles.includes(req.currentUser.role))
         ) {
             res.status(403).json({ message: 'Permission denied' });
             return;

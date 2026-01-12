@@ -73,6 +73,7 @@ export const mentorApi = {
     },
     forgotPassword: async (email: string) => {
         const res = await api.post('/mentor/forgot-password', { email });
+        console.log(res.data, 'forgot password');
         return res.data;
     },
     resetPassword: async (token: string, newPassword: string) => {
@@ -83,6 +84,9 @@ export const mentorApi = {
         return res.data;
     },
 };
+
+
+
 
 export const updateMentorProfileBasicInfo = async (data: Partial<Mentor>) => {
     const res = await api.patch('/mentor/profile/basic-info', data);

@@ -176,6 +176,21 @@ export class ProfileResponseDto {
     ) {}
 }
 
+export type UserResponseDto = {
+    id: string;
+    name: string;
+    email: string;
+    role: Role;
+    subscription?: subscription;
+    bio?: string;
+    headline?: string;
+    profilePic?: string;
+    dob?: string;
+    xpPoints?: number;
+    badge?: string;
+    //user nte wallet okke evde add aakand..vere db collection ll adhoke vara adh pole habit tracker kondu varano
+}
+
 //========================= kanbana board ============================//
 
 export class KanbanColumnResponseDto {
@@ -197,5 +212,26 @@ export class KanbanTaskResponseDto {
         public description?: string,
         public dueDate?: string,
         public approxTimeToFinish?: string
+    ) {}
+}
+
+export class UserManagementResponseDto {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public role: Role,
+        public isActive: boolean,
+        public profilePic?: string,
+        public createdAt?: Date
+    ) {}
+}
+
+export class PaginatedUserResponseDto {
+    constructor(
+        public users: UserManagementResponseDto[],
+        public totalCount: number,
+        public totalPages: number,
+        public currentPage: number
     ) {}
 }

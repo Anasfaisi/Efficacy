@@ -5,7 +5,7 @@ import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages } from '@/types/response-messages.types';
-import { LoginRequestDto } from '@/Dto/request.dto';
+import { LoginRequestDto, UpdateUserStatusRequestDto } from '@/Dto/request.dto';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
@@ -18,7 +18,9 @@ export class AdminController {
         @inject(TYPES.NotificationService)
         private _notificationService: INotificationService,
         @inject(TYPES.AdminService)
-        private _adminService: IAdminService
+        private _adminService: IAdminService,
+        @inject(TYPES.AuthService)
+        private _authService: IAuthService
     ) {}
 
     async getNotifications(req: Request, res: Response): Promise<void> {
@@ -88,7 +90,7 @@ export class AdminController {
         res.status(code.OK).json({ message: 'Changes requested' });
     }
 
-    async login(req: Request, res: Response) {
+    async adminLogin(req: Request, res: Response) {
         const response = await this._adminAuthService.adminLogin(req.body);
         res.cookie('refreshToken', response.refreshToken, {
             httpOnly: true,
@@ -157,13 +159,19 @@ export class AdminController {
         }
     }
 
+
     async getAllMentors(req: Request, res: Response): Promise<void> {
         const mentors = await this._adminService.getAllMentors();
         res.status(code.OK).json(mentors);
+        
     }
 
     async getMentorById(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const id = req.currentUser?.id;
+        if (!id) {
+            res.status(code.UNAUTHORIZED).json({ message: 'User not found' });
+            return;
+        }
         const mentor = await this._adminService.getMentorById(id);
         if (!mentor) {
             res.status(code.NOT_FOUND).json({ message: 'Mentor not found' });
@@ -173,9 +181,26 @@ export class AdminController {
     }
 
     async updateMentorStatus(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const {id }= req.params;
         const { status } = req.body;
         await this._adminService.updateMentorStatus(id, status);
         res.status(code.OK).json({ message: 'Mentor status updated' });
+    }
+
+    //user management
+    async getAllUsers(req: Request, res: Response): Promise<void> {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const search = req.query.search as string || '';
+        const result = await this._adminService.getAllUsers(page, limit, search);
+        res.status(code.OK).json(result);
+    }
+
+    async updateUserStatus(req: Request, res: Response): Promise<void> {
+        const id = req.params.id;
+        const { isActive } = req.body;
+        const dto = new UpdateUserStatusRequestDto(id, isActive);
+        await this._adminService.updateUserStatus(dto);
+        res.status(code.OK).json({ message: 'User status updated successfully' });
     }
 }

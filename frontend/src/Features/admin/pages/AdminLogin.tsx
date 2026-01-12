@@ -8,10 +8,11 @@ import { setCredentials } from '@/redux/slices/authSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { cn } from '@/lib/utils';
 import { loginFormSchema } from '@/types/zodSchemas';
-import { adminLoginApi } from '@/Services/user.api';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
+import { adminService } from '@/Services/admin.api';
 
 const AdminLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -41,14 +42,18 @@ const AdminLogin = () => {
 
     const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
         try {
-            const result = await adminLoginApi({ ...data, role: 'admin' });
+            const result = await adminService.adminLoginApi({ ...data, role: 'admin' });
             if (result.admin) {
                 dispatch(setCredentials({ currentUser: result.admin }));
-                toast.success('Admin authorized successfully');
+                toast.success('Admin logged in successfully');
                 navigate('/admin/dashboard');
             }
         } catch (err: unknown) {
-            toast.error('Admin authentication failed');
+              if(err instanceof AxiosError){
+                    toast.error(err.response?.data.message);
+            }else{   
+                toast.error('Admin Login failed');
+            }
         }
     };
 
@@ -59,11 +64,11 @@ const AdminLogin = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
             >
-                <div className="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl">
+                <div className="w-20 h-20 bg-blue-900 rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl">
                     <ShieldCheck size={40} />
                 </div>
 
-                <h2 className="text-3xl font-black text-slate-800 text-center mb-3">
+                <h2 className="text-3xl font-black text-blue-900 text-center mb-3">
                     Admin Panel
                 </h2>
                 <p className="text-slate-500 text-center mb-10">
@@ -129,7 +134,7 @@ const AdminLogin = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-900/10 hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                        className="w-full py-4 bg-blue-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-900/10 hover:bg-blue-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
                         {isLoading ? (
                             <Loader2 className="animate-spin" />

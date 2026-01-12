@@ -1,8 +1,13 @@
 import api from './axiosConfig';
 import type { MentorApplication, Notification } from '../Features/admin/types';
-import type { Mentor } from '../types/auth';
+import type { LoginCredentials, Mentor, User } from '../types/auth';
 
 export const adminService = {
+
+    adminLoginApi: async (credentials: LoginCredentials) => {
+        const res = await api.post('/admin/login', credentials);
+        return res.data;
+    },
     // Mentor Application Review
     getMentorApplications: async (): Promise<MentorApplication[]> => {
         const response = await api.get('/admin/mentors/applications');
@@ -36,6 +41,9 @@ export const adminService = {
         });
     },
 
+
+
+
     // Mentor Management
     getAllMentors: async (): Promise<Mentor[]> => {
         const response = await api.get('/admin/mentors');
@@ -51,6 +59,17 @@ export const adminService = {
         await api.put(`/admin/mentors/${id}/status`, { status });
     },
 
+    //User Management
+    getAllUsers: async (page: number = 1, limit: number = 10, search: string = ''): Promise<{ users: User[], totalCount: number, totalPages: number, currentPage: number }> => {
+        const response = await api.get(`/admin/users?page=${page}&limit=${limit}&search=${search}`);
+        return response.data;
+    },
+
+    updateUserStatus: async (id: string, isActive: boolean): Promise<void> => {
+        await api.patch(`/admin/users/${id}/status`, { isActive });
+    },
+
+    //Notification 
     getNotifications: async (): Promise<Notification[]> => {
         const response = await api.get('/admin/notifications');
         return response.data;

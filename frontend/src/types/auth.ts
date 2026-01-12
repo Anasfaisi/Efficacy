@@ -106,6 +106,7 @@ export interface User {
     timezone?: string;
 
     profileCompletion?: number;
+    isActive: boolean;
 
     createdAt?: string;
     updatedAt?: string;

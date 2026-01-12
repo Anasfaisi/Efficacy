@@ -7,6 +7,8 @@ export const AuthMessages = {
 };
 
 export const ErrorMessages = {
+    InvalidCredentials: 'Invalid email or password',
+
     OtpExpired: 'OTP expired Try to resend the otp',
     UpdateFailed: 'can"t able to find the user with this id',
     UpdateUserFailed: 'Invalid user data provided',

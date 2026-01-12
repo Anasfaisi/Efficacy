@@ -79,7 +79,7 @@ const MentorLogin: React.FC = () => {
                 className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
             >
                 {/* Left Side - Mascot & Branding */}
-                <div className="md:w-[45%] bg-accent p-12 text-white flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="md:w-[45%] p-12 bg-sky-600 text-white flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
                     <div className="absolute bottom-0 right-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
 
@@ -100,10 +100,10 @@ const MentorLogin: React.FC = () => {
                         />
 
                         <div className="space-y-4 max-w-sm">
-                            <h3 className="text-2xl font-bold text-slate-700">
+                            <h3 className="text-2xl font-bold ">
                                 Guide the Next Generation
                             </h3>
-                            <p className="leading-relaxed text-sm text-slate-700">
+                            <p className="leading-relaxed text-sm ">
                                 Access your dashboard to manage sessions, chats,
                                 and student progress. Your impact starts here.
                             </p>

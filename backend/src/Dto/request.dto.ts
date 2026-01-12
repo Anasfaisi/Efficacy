@@ -215,3 +215,10 @@ export class reorderKanbanTaskRequestDto {
         public destTaskIndex: number
     ) {}
 }
+
+export class UpdateUserStatusRequestDto {
+    constructor(
+        public userId: string,
+        public isActive: boolean
+    ) {}
+}

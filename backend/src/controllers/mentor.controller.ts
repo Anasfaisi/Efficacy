@@ -2,21 +2,19 @@ import { Request, Response } from 'express';
 import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
-import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
+import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
+import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
 import { AuthMessages } from '@/types/response-messages.types';
-import {
-    OtpVerificationRequestDto,
-    RegisterRequestDto,
-} from '@/Dto/request.dto';
 import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
 
 export class MentorController {
     constructor(
-        @inject(TYPES.AuthService) private _authService: IAuthService
+        @inject(TYPES.MentorAuthService) private _mentorAuthService: IMentorAuthService,
+        @inject(TYPES.MentorService) private _mentorService: IMentorService
     ) {}
 
     async mentorRegisterInit(req: Request, res: Response) {
-        const result = await this._authService.mentorRegisterInit(req.body);
+        const result = await this._mentorAuthService.mentorRegisterInit(req.body);
         res.status(code.OK).json({
             ...result,
             message: AuthMessages.OtpSuccess,
@@ -26,7 +24,7 @@ export class MentorController {
     async menotrRegisterVerify(req: Request, res: Response) {
         console.log("it is reaching in mentor controller")
         const { accessToken, refreshToken, user } =
-            await this._authService.mentorRegisterVerify(req.body);
+            await this._mentorAuthService.mentorRegisterVerify(req.body);
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -41,7 +39,7 @@ export class MentorController {
     }
 
     async login(req: Request, res: Response) {
-        const result = await this._authService.mentorLogin(req.body);
+        const result = await this._mentorAuthService.mentorLogin(req.body);
         console.log(result);
         res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
@@ -55,31 +53,7 @@ export class MentorController {
 
         res.json({ user: result.user });
     }
-    // async googleAuth(req: Request, res: Response) {
-    //     try {
-    //         const { googleToken, role } = req.body;
-
-    //         const result = await this._authService.loginWithGoogle(
-    //             googleToken,
-    //             role
-    //         );
-    //         console.log('Google login result:', result);
-    //         res.cookie('refreshToken', result.refreshToken, {
-    //             httpOnly: true,
-    //             secure: true,
-    //         });
-    //         res.cookie('accessToken', result.accessToken, {
-    //             httpOnly: true,
-    //             secure: true,
-    //         });
-
-    //         res.status(code.OK).json({ user: result.user });
-    //     } catch (error: any) {
-    //         console.error(error);
-    //         res.status(code.UNAUTHORIZED).json({ message: error.message });
-    //     }
-    // }
-
+ 
     async logout(req: Request, res: Response) {
         try {
             console.log('at the mentor logout route', req.cookies);
@@ -87,7 +61,7 @@ export class MentorController {
             if (!refreshToken) {
                 throw new Error('Invalid refresh token or no refresh token');
             }
-            await this._authService.logout(refreshToken);
+            await this._mentorAuthService.logout(refreshToken);
 
             res.clearCookie('refreshToken', {
                 httpOnly: true,
@@ -107,9 +81,9 @@ export class MentorController {
     }
     async getProfile(req: Request, res: Response) {
         try {
-            if (!req.user) throw new Error('User context missing');
-            const userId = req.user.id;
-            const mentor = await this._authService.getMentorProfile(userId);
+            if (!req.currentUser) throw new Error('User context missing');
+            const userId = req.currentUser.id;
+            const mentor = await this._mentorService.getMentorProfile(userId);
             res.status(code.OK).json({ mentor });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Unknown error';
@@ -118,13 +92,13 @@ export class MentorController {
     }
     async updateProfileBasicInfo(req: Request, res: Response) {
         try {
-            if (!req.user) throw new Error('User context missing');
-            const userId = req.user.id;
+            if (!req.currentUser) throw new Error('User context missing');
+            const userId = req.currentUser.id;
             
             const updateDto = new UpdateMentorProfileDto();
             Object.assign(updateDto, req.body);
 
-            const updatedMentor = await this._authService.updateMentorProfileBasicInfo(userId, updateDto);
+            const updatedMentor = await this._mentorService.updateMentorProfileBasicInfo(userId, updateDto);
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Update failed';
@@ -134,9 +108,9 @@ export class MentorController {
 
     async updateProfileMedia(req: Request, res: Response) {
         try {
-            if (!req.user) throw new Error('User context missing');
-            const userId = req.user.id;
-            const updatedMentor = await this._authService.updateMentorProfileMedia(userId, req.files);
+            if (!req.currentUser) throw new Error('User context missing');
+            const userId = req.currentUser.id;
+            const updatedMentor = await this._mentorService.updateMentorProfileMedia(userId, req.files);
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Media update failed';
@@ -146,13 +120,13 @@ export class MentorController {
 
     async updateProfileArray(req: Request, res: Response) {
         try {
-            if (!req.user) throw new Error('User context missing');
-            const userId = req.user.id;
+            if (!req.currentUser) throw new Error('User context missing');
+            const userId = req.currentUser.id;
             const { field, data } = req.body;
             
             const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
             
-            const updatedMentor = await this._authService.updateMentorProfileArray(userId, field, parsedData);
+            const updatedMentor = await this._mentorService.updateMentorProfileArray(userId, field, parsedData);
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Array update failed';
@@ -180,7 +154,7 @@ export class MentorController {
                 filters.rating = { $gte: parseFloat(req.query.rating as string) };
             }
 
-            const result = await this._authService.getApprovedMentors(
+            const result = await this._mentorService.getApprovedMentors(
                 page,
                 limit,
                 search,
@@ -197,7 +171,7 @@ export class MentorController {
 
     async resendOtp(req: Request, res: Response) {
         try {
-            const result = await this._authService.mentorResendOtp(req.body);
+            const result = await this._mentorAuthService.mentorResendOtp(req.body);
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Failed to resend OTP';
@@ -208,7 +182,7 @@ export class MentorController {
     async forgotPassword(req: Request, res: Response) {
         console.log('Mentor forgot password request received:', req.body);
         try {
-            const result = await this._authService.mentorForgotPassword(req.body);
+            const result = await this._mentorAuthService.mentorForgotPassword(req.body);
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             console.error('Mentor forgot password error:', error);
@@ -219,7 +193,7 @@ export class MentorController {
 
     async resetPassword(req: Request, res: Response) {
         try {
-            const result = await this._authService.mentorResetPassword(req.body);
+            const result = await this._mentorAuthService.mentorResetPassword(req.body);
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Failed to reset password';
@@ -229,7 +203,7 @@ export class MentorController {
 
     async googleLogin(req: Request, res: Response) {
         try {
-            const result = await this._authService.mentorLoginWithGoogle(req.body);
+            const result = await this._mentorAuthService.mentorLoginWithGoogle(req.body);
 
             res.cookie('refreshToken', result.refreshToken, {
                 httpOnly: true,

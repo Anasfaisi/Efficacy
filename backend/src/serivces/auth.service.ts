@@ -140,6 +140,7 @@ export class AuthService implements IAuthService {
 
         const account = await this._userRepository.findByEmail(loginDto.email);
         if (!account) throw new Error('User not found');
+        if (account.isActive === false) throw new Error('Account is blocked. Please contact support.');
 
         if (!(await bcrypt.compare(loginDto.password, account.password))) {
             throw new Error('Invalid email or password');
@@ -301,7 +302,7 @@ export class AuthService implements IAuthService {
         const resetToken = this._tokenService.generatePasswordResetToken(
             user.id
         );
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
         await this._otpService.sendEmail(
             user.email,
             'Reset Your Password',
@@ -337,6 +338,12 @@ export class AuthService implements IAuthService {
         if (!account) {
             throw new Error('User not found');
         }
+        if ('isActive' in account && account.isActive === false) {
+            throw new Error('Account is blocked');
+        }
+        if ('status' in account && account.status === 'inactive') {
+            throw new Error('Account is inactive');
+        }
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,
@@ -371,6 +378,7 @@ export class AuthService implements IAuthService {
                     '$2a$10$BvNq8r.X.3zVWQs2Q7wJmeyGYqLMV/P6cyVUFyoLsEL1rXEmWMiiW' /*string = Abcd@1234*/,
             });
         }
+        if (account.isActive === false) throw new Error('Account is blocked. Please contact support.');
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,
@@ -423,289 +431,7 @@ export class AuthService implements IAuthService {
         });
     }
 
-    /*=============== mentor Auth =======================*/
-    async mentorLogin(dto: LoginRequestDto) {
-        console.log(dto.email, dto, 'ddddtooototot');
-        const account = await this._mentorRepository.findByEmail(dto.email);
-        if (!account) throw new Error('User not found');
-
-        if (
-            !account.password ||
-            !(await bcrypt.compare(dto.password, account.password))
-        ) {
-            throw new Error('Invalid email or password');
-        }
-
-        const accessToken = this._tokenService.generateAccessToken(
-            account.id,
-            account.role
-        );
-
-        const refreshToken = this._tokenService.generateRefreshToken(
-            account.id,
-            account.role
-        );
-
-        return new MentorLoginResponseDTO(accessToken, refreshToken, {
-            id: account.id.toString(),
-            name: account.name,
-            email: account.email,
-            role: account.role as Role,
-            status: account.status,
-        });
-    }
-
-    async mentorRegisterInit(dto: MentorRegisterRequestDto) {
-        this._validationService.validateRegisterInput({
-            email: dto.email,
-            password: dto.password,
-            name: dto.name,
-        });
-
-        const account = await this._mentorRepository.findByEmail(dto.email);
-        if (account) throw new Error('Email already registered');
-
-        const existingUnverified =
-            await this._unverifiedUserRepository.findByEmail(dto.email);
-        if (existingUnverified)
-            throw new Error(`OTP already sent to ${dto.email}`);
-
-        const hashedPassword = await bcrypt.hash(dto.password, 10);
-        const otp = await this._otpService.generateOtp();
-        console.log(otp, 'in register');
-        const unverifiedUser = await this._unverifiedUserRepository.create({
-            email: dto.email,
-            password: hashedPassword,
-            name: dto.name,
-            role: dto.role,
-            otp,
-            otpExpiresAt: new Date(Date.now() + 1 * 60 * 1000),
-            resendAvailableAt: new Date(Date.now() + 30 * 1000),
-        });
-
-        await this._otpService.sendOtp(dto.email, otp);
-        return new MentorRegisterInitResponseDto(
-            unverifiedUser.email,
-            unverifiedUser.role,
-            unverifiedUser.resendAvailableAt
-        );
-    }
-
-    async mentorRegisterVerify(dto: MentorOtpVerificationRequestDto) {
-        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
-            dto.email
-        );
-        if (!unverifiedUser)
-            throw new Error('No pending registration for this email');
-
-        if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
-        if (unverifiedUser.otpExpiresAt < new Date())
-            throw new Error(ErrorMessages.OtpExpired);
-
-        const user = await this._mentorRepository.createUser({
-            email: unverifiedUser.email,
-            password: unverifiedUser.password,
-            name: unverifiedUser.name,
-            role: unverifiedUser.role,
-        });
-
-        await this._unverifiedUserRepository.deleteByEmail(dto.email);
-        const accessToken = this._tokenService.generateAccessToken(
-            user.id,
-            user.role
-        );
-        const refreshToken = this._tokenService.generateRefreshToken(
-            user.id,
-            user.role
-        );
-        return new MentorOtpVerificationResponseDto(accessToken, refreshToken, {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.name,
-            role: Role.Mentor,
-            status: mentorStatus.Incomplete,
-        });
-    }
-    async getMentorProfile(id: string): Promise<IMentor> {
-        const mentor = await this._mentorRepository.findById(id);
-        if (!mentor) throw new Error('Mentor not found');
-        return mentor;
-    }
-    async updateMentorProfileBasicInfo(id: string, data: UpdateMentorProfileDto): Promise<IMentor> {
-        const updateData: Partial<IMentor> & { currentPassword?: string; newPassword?: string } = { ...data };
-
-        if (updateData.newPassword && updateData.currentPassword) {
-            const mentor = await this._mentorRepository.findById(id);
-            if (!mentor || !mentor.password) throw new Error('Mentor details not found');
-
-            const isMatch = await this._passwordService.verifyPassword(updateData.currentPassword, mentor.password);
-            if (!isMatch) throw new Error('Current password is incorrect');
-
-            updateData.password = await this._passwordService.hashPassword(updateData.newPassword);
-        }
-
-        // Clean up temporary fields
-        delete updateData.currentPassword;
-        delete updateData.newPassword;
-
-        const updatedMentor = await this._mentorRepository.update(id, updateData);
-        if (!updatedMentor) throw new Error(ErrorMessages.UpdateFailed);
-        return updatedMentor;
-    }
-
-    async updateMentorProfileMedia(id: string, files: any): Promise<IMentor> {
-        const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-        const updateData: Partial<IMentor> = {};
-
-        if (files.profilePic) {
-            updateData.profilePic = `${baseUrl}/uploads/${files.profilePic[0].filename}`;
-        }
-        if (files.coverPic) {
-            updateData.coverPic = `${baseUrl}/uploads/${files.coverPic[0].filename}`;
-        }
-        if (files.resume) {
-            updateData.resume = `${baseUrl}/uploads/${files.resume[0].filename}`;
-        }
-        if (files.certificate) {
-            updateData.certificate = `${baseUrl}/uploads/${files.certificate[0].filename}`;
-        }
-        if (files.idProof) {
-            updateData.idProof = `${baseUrl}/uploads/${files.idProof[0].filename}`;
-        }
-
-        const updated = await this._mentorRepository.update(id, updateData);
-        if (!updated) throw new Error(ErrorMessages.UpdateFailed);
-        return updated;
-    }
-
-    async updateMentorProfileArray(id: string, field: string, data: any[]): Promise<IMentor> {
-        const updateData: any = {};
-        updateData[field] = data;
-        const updated = await this._mentorRepository.update(id, updateData);
-        if (!updated) throw new Error(ErrorMessages.UpdateFailed);
-        return updated;
-    }
-
-    async getApprovedMentors(
-        page: number,
-        limit: number,
-        search: string,
-        sort: string,
-        filter: any
-    ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
-        return await this._mentorRepository.findAllApprovedMentors(
-            page,
-            limit,
-            search,
-            sort,
-            filter
-        );
-    }
-
     async logout(refreshToken: string): Promise<void> {
         return Promise.resolve();
-    }
-
-    async mentorLoginWithGoogle(dto: userGoogleLoginRequestDto) {
-        const ticket = await this._googleVerificationService.verify(
-            dto.googleToken
-        );
-        const payload = ticket.getPayload();
-
-        if (!payload?.email) {
-            throw new Error('Google login failed: No email found');
-        }
-
-        let account = await this._mentorRepository.findByEmail(payload.email);
-        if (!account) {
-         
-            account = await this._mentorRepository.createUser({
-                email: payload.email,
-                name: payload.name || 'Google Mentor',
-                password: await bcrypt.hash(Math.random().toString(36), 10), // Random password
-                role: Role.Mentor
-            });
-            
-        }
-
-        const accessToken = this._tokenService.generateAccessToken(
-            account.id,
-            account.role
-        );
-        const refreshToken = this._tokenService.generateRefreshToken(
-            account.id,
-            account.role
-        );
-
-        return new userGoogleLoginResponseDto(accessToken, refreshToken, {
-            id: account.id.toString(), // account.id is string from repository usually? 
-             // in userLoginWithGoogle it used account._id.toString() but _mentorRepository likely returns IModel which has id/ _id
-             // Checking mentorLogin response: id: account.id.toString()
-            email: account.email,
-            name: account.name,
-            role: account.role as Role,
-        });
-    }
-
-    /*Args: email */
-    async mentorResendOtp(dto: resendOtpRequestDto) {
-        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(dto.email);
-        if (!unverifiedUser) {
-            throw new Error('Session expired, please register again');
-        }
-
-        const now = Date.now();
-        const OTP_EXPIRY_MS = 5 * 60 * 1000;
-        const RESEND_DELAY_MS = 30 * 1000;
-
-        let otp = unverifiedUser.otp;
-        let otpExpiresAt = new Date(unverifiedUser.otpExpiresAt).getTime();
-
-        if (now >= otpExpiresAt) {
-            otp = await this._otpService.generateOtp();
-            otpExpiresAt = now + OTP_EXPIRY_MS;
-        }
-
-        const updatedUser = await this._unverifiedUserRepository.updateByEmail(dto.email, {
-            otp,
-            otpExpiresAt: new Date(otpExpiresAt),
-            lastOtpSent: new Date(now),
-            resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
-        });
-
-        if (!updatedUser) {
-            throw new Error('error happened in updating user otp');
-        }
-        await this._otpService.sendOtp(dto.email, otp);
-
-        return new MentorRegisterInitResponseDto(
-            updatedUser.email,
-            updatedUser.role,
-            updatedUser.resendAvailableAt
-        );
-    }
-
-    async mentorForgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }> {
-        const mentor = await this._mentorRepository.findByEmail(dto.email);
-        if (!mentor) throw new Error('Mentor not found with this email');
-
-        const resetToken = this._tokenService.generatePasswordResetToken(mentor.id);
-        // Pointing to mentor specific reset page
-        const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
-        await this._otpService.sendEmail(
-            mentor.email,
-            'Reset Your Password',
-            `Click here to reset your mentor account password: ${resetLink}`
-        );
-        return { message: 'Reset link sent to email' };
-    }
-
-    async mentorResetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }> {
-        const payload = this._tokenService.verifyPasswordResetToken(dto.token);
-        const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
-
-        await this._mentorRepository.update(payload.id, { password: hashedPassword });
-
-        return { message: 'Password reset successful' };
     }
 }

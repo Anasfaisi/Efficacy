@@ -2,8 +2,9 @@ import { ISubscription } from '@/models/subscription.model';
 import { IUser } from '@/models/User.model';
 import { UserUpdateData } from '@/types/repository.types';
 import { Role } from '@/types/role.types';
+import { IBaseRepository } from './IBase.repository';
 
-export interface IUserRepository {
+export interface IUserRepository extends IBaseRepository<IUser> {
     findByEmail(email: string): Promise<IUser | null>;
     findById(id: string): Promise<IUser | null>;
     createUser(data: {
@@ -27,4 +28,5 @@ export interface IUserRepository {
 
     updateUser(id: string, updatedData: UserUpdateData): Promise<IUser | null>;
     updateProfilePic(id: string, fileUrl: string): Promise<IUser | null>;
+    getAllUsers(page: number, limit: number, search?: string): Promise<{ users: IUser[]; totalCount: number }>;
 }

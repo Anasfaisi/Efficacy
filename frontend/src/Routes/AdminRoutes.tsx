@@ -10,6 +10,7 @@ import MentorManagement from '@/Features/admin/mentorManagement/pages/MentorMana
 import MentorReviewPage from '@/Features/admin/pages/MentorApplicationReviewPage';
 import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsListPage';
 import MentorDetailsPage from '@/Features/admin/mentorManagement/pages/MentorDetailsPage';
+import UserManagement from '@/Features/admin/userManagement/pages/UserManagement';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -48,6 +49,7 @@ const AdminRoutes: React.FC = () => {
                     path="mentors/review/:id"
                     element={<MentorReviewPage />}
                 />
+                <Route path="userManagement" element={<UserManagement />} />
             </Route>
         </Routes>
     );

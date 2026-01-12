@@ -12,4 +12,5 @@ export type UserUpdateData = Partial<{
     joinedAt?: string;
     dob?: string;
     subscription?: string;
+    isActive?: boolean;
 }>;

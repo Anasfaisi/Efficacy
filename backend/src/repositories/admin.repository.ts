@@ -1,6 +1,7 @@
 import { BaseRepository } from './base.repository';
 import AdminModel, { IAdmin } from '../models/Admin.model';
 import { IAdminRepository } from './interfaces/IAdmin.repository';
+import { Role } from '@/types/role.types';
 
 export class AdminRepository
     extends BaseRepository<IAdmin>
@@ -21,7 +22,7 @@ export class AdminRepository
         email: string;
         password: string;
         name: string;
-        role: string;
+        role: Role.Admin;
     }): Promise<IAdmin> {
         return this.create(data);
     }

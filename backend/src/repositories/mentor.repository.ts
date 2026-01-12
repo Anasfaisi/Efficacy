@@ -60,7 +60,6 @@ export class MentorRepository
         const sortOptions: any = {};
         if (sort) {
             const [field, order] = sort.split('_'); 
-            // Handle specific sort fields if necessary, or pass directly
             const sortField = field === 'price' ? 'monthlyCharge' : field;
             sortOptions[sortField] = order === 'asc' ? 1 : -1;
         } else {

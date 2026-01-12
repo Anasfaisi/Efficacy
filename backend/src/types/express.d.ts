@@ -8,7 +8,7 @@ import { Multer } from 'multer';
 declare global {
     namespace Express {
         interface Request {
-            user?: {
+            currentUser?: {
                 id: string;
                 email: string;
                 role: Role;

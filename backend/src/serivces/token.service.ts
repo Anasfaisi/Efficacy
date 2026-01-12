@@ -19,7 +19,7 @@ export class TokenService implements ITokenService {
 
     generateRefreshToken(userId: string, role: Role): string {
         return jwt.sign({ id: userId, role }, this._refreshTokenSecret, {
-            expiresIn: '1d',
+            expiresIn: '7d',
         });
     }
 

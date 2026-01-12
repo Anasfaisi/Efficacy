@@ -14,9 +14,15 @@ export class UserController {
 
     async updateUserProfile(req: Request, res: Response) {
         try {
+            if (!req.currentUser?.id) {
+                res.status(code.BAD_REQUEST).json({
+                    message: ErrorMessages.NoParams,
+                });
+                return;
+            }
             const updatedUser = await this._authService.updateUserProfile(
                 req.body,
-                req.params.id
+                req.currentUser?.id
             );
             if (!updatedUser) {
                 res.status(code.BAD_REQUEST).json({
@@ -50,7 +56,7 @@ export class UserController {
                 return;
             }
 
-            if (!req.params.id) {
+            if (!req.currentUser?.id) {
                 res.status(code.BAD_REQUEST).json({
                     message: ErrorMessages.NoParams,
                 });
@@ -60,7 +66,7 @@ export class UserController {
             const updatedProfilePic =
                 await this._authService.updateUserProfilePic({
                     file: req.file,
-                    id: req.params.id,
+                    id: req.currentUser?.id,
                 });
             if (!updatedProfilePic) {
                 res.status(code.BAD_REQUEST).json({
@@ -221,18 +227,3 @@ export class UserController {
     }
 }
 
-// async getCurrentUser(req: Request, res: Response) {
-//     try {
-//         const id = req.params.id;
-//         const { user } = await this._authService.getCurrentUser(id);
-//         if (!user) {
-//             return res
-//                 .status(code.UNAUTHORIZED)
-//                 .json({ message: 'User not authenticated' });
-//         }
-
-//         res.status(code.OK).json({ user });
-//     } catch (error: any) {
-//         res.status(code.BAD_REQUEST).json({ message: error.message });
-//     }
-// }

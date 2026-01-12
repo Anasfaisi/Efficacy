@@ -13,7 +13,7 @@ export default function adminRoutes(adminController: AdminController) {
     const tokenService = new TokenService();
     router.post(
         '/login',
-        asyncWrapper(adminController.login.bind(adminController))
+        asyncWrapper(adminController.adminLogin.bind(adminController))
     );
 
     router.post(
@@ -48,6 +48,7 @@ export default function adminRoutes(adminController: AdminController) {
         )
     );
 
+    //mentor application
     router.get(
         '/mentors/applications',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
@@ -90,6 +91,7 @@ export default function adminRoutes(adminController: AdminController) {
         )
     );
 
+    //mentor management
     router.get(
         '/mentors',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
@@ -106,6 +108,20 @@ export default function adminRoutes(adminController: AdminController) {
         '/mentors/:id/status',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
         asyncWrapper(adminController.updateMentorStatus.bind(adminController))
+    );
+
+
+    //user Management
+    router.get(
+        '/users',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getAllUsers.bind(adminController))
+    );
+
+    router.patch(
+        '/users/:id/status',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.updateUserStatus.bind(adminController))
     );
 
     return router;

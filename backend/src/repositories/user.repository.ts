@@ -5,10 +5,7 @@ import { Role } from '@/types/role.types';
 import { UserUpdateData } from '@/types/repository.types';
 import { ISubscription } from '@/models/subscription.model';
 
-export class UserRepository
-    extends BaseRepository<IUser>
-    implements IUserRepository
-{
+export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
     constructor() {
         super(User);
     }
@@ -86,6 +83,28 @@ export class UserRepository
         ).exec();
 
         return updatedUser;
+    }
+
+    async getAllUsers(page: number, limit: number, search?: string): Promise<{ users: IUser[]; totalCount: number }> {
+        const skip = (page - 1) * limit;
+        const query: any = { role: Role.User };
+        
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        const [users, totalCount] = await Promise.all([
+            User.find(query)
+                .skip(skip)
+                .limit(limit)
+                .sort({ createdAt: -1 })
+                .exec(),
+            User.countDocuments(query)
+        ]);
+        return { users, totalCount };
     }
 }
 

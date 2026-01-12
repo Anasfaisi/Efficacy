@@ -30,6 +30,9 @@ interface IUser extends Document<ObjectId> {
 
     timezone?: string;
     profileCompletion?: number;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema = new Schema<IUser>(
@@ -63,6 +66,7 @@ const userSchema = new Schema<IUser>(
 
         timezone: { type: String, default: 'UTC' },
         profileCompletion: { type: Number, default: 0 },
+        isActive: { type: Boolean, default: true },
     },
     { timestamps: true }
 );

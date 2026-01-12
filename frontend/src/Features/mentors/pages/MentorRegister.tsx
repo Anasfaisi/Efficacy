@@ -85,7 +85,7 @@ const MentorRegister: React.FC = () => {
                 className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
             >
                 {/* Left Side - Mascot & Branding */}
-                <div className="md:w-[45%] bg-primary p-12 text-white flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="md:w-[45%] bg-sky-600 p-12 text-white flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
 
@@ -106,10 +106,10 @@ const MentorRegister: React.FC = () => {
                         />
 
                         <div className="space-y-4 max-w-sm">
-                            <h3 className="text-2xl font-bold bg-primary text-white">
+                            <h3 className="text-2xl font-bold  text-white">
                                 Empower Global Talent
                             </h3>
-                            <p className="leading-relaxed text-sm bg-primary text-white">
+                            <p className="leading-relaxed text-sm  text-white">
                                 Create your professional profile, set your
                                 rates, and start mentoring. We handle the
                                 platform, you handle the impact.
@@ -233,6 +233,7 @@ const MentorRegister: React.FC = () => {
                                         {errors.confirmPassword.message}
                                     </p>
                                 )}
+                                
                             </div>
 
                             <button
