@@ -11,8 +11,10 @@ import CancelPage from '@/Features/users/payment/pages/CancelPage';
 import ChatPage from '@/Features/users/chat/pages/ChatPage';
 import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
 import UserProfilePage from '@/Features/users/profile/pages/UserProfilePage';
-import KanbanBoard from '@/Features/users/KanbanBorad/pages/KanbanBoard';
+import TasksPage from '@/Features/users/KanbanBorad/pages/TasksPage';
 import MentorListingPage from '@/Features/users/mentors/pages/MentorListingPage';
+import PlannerPage from '@/Features/users/planner/pages/PlannerPage';
+
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -45,8 +47,9 @@ const UserRoutes: React.FC = () => {
             <Route path="chat" element={<ChatPage />} />
             <Route path="profile" element={<UserProfilePage />} />
 
-            <Route path="kanbanBoard" element={<KanbanBoard />} />
+            <Route path="tasks" element={<TasksPage />} />
             <Route path="mentors" element={<MentorListingPage />} />
+            <Route path="planner" element={<PlannerPage />} />
         </Routes>
     );
 };

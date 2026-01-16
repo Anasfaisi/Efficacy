@@ -58,7 +58,7 @@ const UserDashboard: React.FC = () => {
                                 Your Active Tasks
                             </h2>
                             <Link
-                                to="/kanbanBoard"
+                                to="/tasks"
                                 className="text-sm font-bold text-[#7F00FF] hover:text-[#6c00db] transition-colors"
                             >
                                 View All Tasks
@@ -118,7 +118,7 @@ const UserDashboard: React.FC = () => {
                                 label="Add Task"
                                 btnLabel="Add"
                                 color="bg-orange-500"
-                                to="/kanbanBoard"
+                                to="/tasks"
                             />
                             <QuickActionCard
                                 icon={<Timer size={26} strokeWidth={3} />}

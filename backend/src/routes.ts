@@ -12,9 +12,9 @@ import mentorRoutes from './routes/mentor.routes';
 import paymentRoutes from './routes/payment.routes';
 import userRoutes from './routes/user.routes';
 import { TYPES } from './config/inversify-key.types';
-import { KanbanController } from './controllers/Kanban.controller';
-import KanbanRoutes from './routes/Kanban.routes';
+import PlannerTaskRoutes from './routes/planner-task.routes';
 import { MentorOnboardController } from './controllers/mentor-onboard.controller';
+import { PlannerTaskController } from './controllers/planner-task.controller';
 import { TokenService } from '@/serivces/token.service';
 
 export function applyRoutes(app: Express) {
@@ -30,12 +30,12 @@ export function applyRoutes(app: Express) {
     const paymentController = container.get<PaymentController>(
         TYPES.PaymentController
     );
-    const kanbanController = container.get<KanbanController>(
-        TYPES.KanbanController
-    );
 
     const mentorOnboardController = container.get<MentorOnboardController>(
         TYPES.MentorOnboardController
+    );
+    const plannerTaskController = container.get<PlannerTaskController>(
+        TYPES.PlannerTaskController
     );
 
     app.use('/api', userRoutes(userController));
@@ -46,5 +46,5 @@ export function applyRoutes(app: Express) {
     );
     app.use('/api/payments', paymentRoutes(paymentController));
     app.use('/api/chat', chatRoutes(chatController));
-    app.use('/api/kanban', KanbanRoutes(kanbanController));
+    app.use('/api/planner', PlannerTaskRoutes(plannerTaskController));
 }

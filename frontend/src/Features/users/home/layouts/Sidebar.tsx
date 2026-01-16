@@ -27,7 +27,7 @@ const Sidebar = () => {
         {
             icon: <CheckSquare size={20} />,
             label: 'Tasks',
-            to: '/kanbanBoard',
+            to: '/tasks',
             color: '#FF5722',
         },
         {
@@ -39,7 +39,7 @@ const Sidebar = () => {
         {
             icon: <Calendar size={20} />,
             label: 'Planner',
-            to: '#',
+            to: '/planner',
             color: '#7F00FF',
         },
         {
