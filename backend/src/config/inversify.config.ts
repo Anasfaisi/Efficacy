@@ -30,11 +30,6 @@ import { ChatService } from '@/serivces/chat.service';
 import { IChatService } from '@/serivces/Interfaces/IChat.service';
 import { ChatRepository } from '@/repositories/chat.repository';
 import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
-import { KanbanController } from '@/controllers/Kanban.controller';
-import { IKanbanService } from '@/serivces/Interfaces/Ikanban.service';
-import { KanbanService } from '@/serivces/kanban.service';
-import { IKanbanRepository } from '@/repositories/interfaces/IKanban.repository';
-import { KanbanRepository } from '@/repositories/Kanban.repository';
 import { AdminAuthService } from '@/serivces/admin-auth.service';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';
@@ -52,6 +47,11 @@ import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
 import { MentorAuthService } from '@/serivces/mentor-auth.service';
 import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
 import { MentorService } from '@/serivces/mentor.service';
+import { PlannerTaskController } from '@/controllers/planner-task.controller';
+import { IPlannerTaskService } from '@/serivces/Interfaces/IPlannerTask.service';
+import { PlannerTaskService } from '@/serivces/planner-task.service';
+import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
+import { PlannerTaskRepository } from '@/repositories/planner-task.repository';
 
 
 export const container = new Container();
@@ -64,10 +64,14 @@ container
     .to(PaymentController);
 container.bind<ChatController>(TYPES.ChatController).to(ChatController);
 container.bind<SocketController>(TYPES.SocketController).to(SocketController);
-container.bind<KanbanController>(TYPES.KanbanController).to(KanbanController);
 container
     .bind<MentorOnboardController>(TYPES.MentorOnboardController)
     .to(MentorOnboardController);
+container
+    .bind<PlannerTaskController>(TYPES.PlannerTaskController)
+    .to(PlannerTaskController);
+
+
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -81,7 +85,6 @@ container
 container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
 container.bind<ISocketService>(TYPES.SocketService).to(SocketService);
-container.bind<IKanbanService>(TYPES.KanbanService).to(KanbanService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
 container
     .bind<IMentorOnboardService>(TYPES.MentorOnboardService)
@@ -93,6 +96,9 @@ container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
 container.bind<IPasswordService>(TYPES.PasswordService).to(PasswordService);
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
+container.bind<IPlannerTaskService>(TYPES.PlannerTaskService).to(PlannerTaskService);
+
+
 
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
@@ -107,7 +113,9 @@ container.bind<IChatRepository>(TYPES.ChatRepository).to(ChatRepository);
 container
     .bind<IMessageRepository>(TYPES.MessageRepository)
     .to(MessageRepository);
-container.bind<IKanbanRepository>(TYPES.KanbanRepository).to(KanbanRepository);
 container
     .bind<INotificationRepository>(TYPES.NotificationRepository)
     .to(NotificationRepository);
+container
+    .bind<IPlannerTaskRepository>(TYPES.PlannerTaskRepository)
+    .to(PlannerTaskRepository);

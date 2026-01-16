@@ -1,10 +1,18 @@
 import type { ReactNode } from 'react';
 
+export enum Priority {
+    HIGH = 'High',
+    MEDIUM = 'Medium',
+    LOW = 'Low',
+}
+
 export interface Task {
     taskId: string;
     title: string;
     description?: string;
     dueDate?: string;
+    priority: Priority;
+    completed: boolean;
     approxTimeToFinish?: string;
 }
 export interface ColumnType {
