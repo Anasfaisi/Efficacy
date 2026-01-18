@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { mentorApi } from '@/Services/mentor.api';
+import { toast } from 'sonner';
 import type { Mentor } from '@/types/auth';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
@@ -14,7 +15,15 @@ import {
     Filter,
     ChevronLeft,
     ChevronRight,
+    X,
+    ExternalLink,
+    Award,
+    Check,
+    Globe,
+    Linkedin,
+    Github,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MentorListingPage: React.FC = () => {
     const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -27,6 +36,7 @@ const MentorListingPage: React.FC = () => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+    const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
     const resetFilters = () => {
         setSearchTerm('');
@@ -239,7 +249,8 @@ const MentorListingPage: React.FC = () => {
                                 {mentors.map((mentor) => (
                                     <div
                                         key={mentor.id || mentor._id}
-                                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group"
+                                        onClick={() => setSelectedMentor(mentor)}
+                                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group cursor-pointer"
                                     >
                                         <div className="h-32 bg-gradient-to-r from-[#7F00FF] to-[#E100FF] opacity-10 group-hover:opacity-20 transition-opacity" />
                                         <div className="px-6 pb-6 -mt-16 relative">
@@ -312,8 +323,11 @@ const MentorListingPage: React.FC = () => {
                                                             size={18}
                                                         />
                                                     </button>
-                                                    <button className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25">
-                                                        Connect
+                                                    <button 
+                                                        onClick={() => setSelectedMentor(mentor)}
+                                                        className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25"
+                                                    >
+                                                        View
                                                     </button>
                                                 </div>
                                             </div>
@@ -371,6 +385,164 @@ const MentorListingPage: React.FC = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Mentor Details Modal */}
+            <AnimatePresence>
+                {selectedMentor && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+                        >
+                            {/* Modal Header/Cover */}
+                            <div className="relative h-48 bg-gradient-to-r from-[#7F00FF] to-[#E100FF]">
+                                <button
+                                    onClick={() => setSelectedMentor(null)}
+                                    className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white transition-colors z-10"
+                                >
+                                    <X size={20} />
+                                </button>
+                                <div className="absolute -bottom-16 left-8">
+                                    <img
+                                        src={selectedMentor.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedMentor.name)}&background=7F00FF&color=fff`}
+                                        alt={selectedMentor.name}
+                                        className="w-32 h-32 rounded-2xl border-4 border-white object-cover bg-white shadow-lg"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Modal Content */}
+                            <div className="flex-1 overflow-y-auto pt-20 px-8 pb-8">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {/* Left Column: Info */}
+                                    <div className="lg:col-span-2">
+                                        <div className="mb-6">
+                                            <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                                                {selectedMentor.name}
+                                            </h2>
+                                            <p className="text-xl text-[#7F00FF] font-medium mb-4">
+                                                {selectedMentor.currentRole || selectedMentor.domain || 'Expert Mentor'}
+                                            </p>
+                                            
+                                            <div className="flex flex-wrap gap-4 mb-6">
+                                                <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                    <Star className="text-yellow-400 fill-yellow-400" size={18} />
+                                                    <span className="font-bold">{selectedMentor.rating || '5.0'}</span>
+                                                    <span className="text-gray-400">({selectedMentor.reviewCount || 0} reviews)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                    <Award className="text-blue-500" size={18} />
+                                                    <span className="font-medium text-sm">{selectedMentor.experienceYears || '0'}+ years exp</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                    <ShieldCheck className="text-green-500" size={18} />
+                                                    <span className="font-medium text-sm">Verified Mentor</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-6">
+                                                <section>
+                                                    <h3 className="text-lg font-bold text-gray-900 mb-2">About Me</h3>
+                                                    <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+                                                        {selectedMentor.bio || 'No biography available.'}
+                                                    </p>
+                                                </section>
+
+                                                <section>
+                                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Expertise & Skills</h3>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {selectedMentor.skills?.split(',').map((skill, idx) => (
+                                                            <span key={idx} className="px-3 py-1.5 bg-[#7F00FF]/5 text-[#7F00FF] text-sm font-medium rounded-lg border border-[#7F00FF]/10">
+                                                                {skill.trim()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </section>
+
+                                                {selectedMentor.achievements && selectedMentor.achievements.length > 0 && (
+                                                    <section>
+                                                        <h3 className="text-lg font-bold text-gray-900 mb-3">Achievements</h3>
+                                                        <ul className="space-y-2">
+                                                            {selectedMentor.achievements.map((item, idx) => (
+                                                                <li key={idx} className="flex items-start gap-3 text-gray-600">
+                                                                    <Check className="text-green-500 mt-1 shrink-0" size={16} />
+                                                                    <span>{item}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </section>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column: CTA & Links */}
+                                    <div className="space-y-6">
+                                        <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                            <div className="mb-6">
+                                                <span className="text-sm text-gray-500 block mb-1">Monthly Mentorship</span>
+                                                <div className="flex items-baseline gap-1">
+                                                    <IndianRupee size={24} className="text-gray-900" />
+                                                    <span className="text-3xl font-bold text-gray-900">{selectedMentor.monthlyCharge || 0}</span>
+                                                    <span className="text-gray-500">/mo</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <button 
+                                                    onClick={() => toast.info('Booking functionality coming soon!')}
+                                                    className="w-full py-4 bg-[#7F00FF] text-white font-bold rounded-xl hover:bg-[#6c00db] transition-all shadow-lg shadow-[#7F00FF]/25 hover:shadow-xl hover:-translate-y-0.5"
+                                                >
+                                                    Book Session
+                                                </button>
+                                                <button 
+                                                    onClick={() => toast.info('Rating functionality coming soon!')}
+                                                    className="w-full py-3 bg-white text-[#7F00FF] font-bold rounded-xl border-2 border-[#7F00FF] hover:bg-[#7F00FF]/5 transition-all"
+                                                >
+                                                    Rate Mentor
+                                                </button>
+                                                <button className="w-full py-3 text-gray-600 font-medium hover:text-[#7F00FF] transition-colors flex items-center justify-center gap-2">
+                                                    <MessageSquare size={18} />
+                                                    Chat with Mentor
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
+                                            <h4 className="font-bold text-gray-900">Connect with me</h4>
+                                            <div className="flex flex-col gap-3">
+                                                {selectedMentor.linkedin && (
+                                                    <a href={selectedMentor.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-[#0077B5] transition-colors">
+                                                        <Linkedin size={20} />
+                                                        <span className="text-sm font-medium">LinkedIn Profile</span>
+                                                        <ExternalLink size={14} className="ml-auto" />
+                                                    </a>
+                                                )}
+                                                {selectedMentor.github && (
+                                                    <a href={selectedMentor.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-black transition-colors">
+                                                        <Github size={20} />
+                                                        <span className="text-sm font-medium">GitHub Repository</span>
+                                                        <ExternalLink size={14} className="ml-auto" />
+                                                    </a>
+                                                )}
+                                                {selectedMentor.personalWebsite && (
+                                                    <a href={selectedMentor.personalWebsite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-[#7F00FF] transition-colors">
+                                                        <Globe size={20} />
+                                                        <span className="text-sm font-medium">Personal Website</span>
+                                                        <ExternalLink size={14} className="ml-auto" />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
