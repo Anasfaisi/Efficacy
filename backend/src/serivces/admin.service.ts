@@ -9,7 +9,10 @@ import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { IUser } from '@/models/User.model';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
-import { UserManagementResponseDto, PaginatedUserResponseDto } from '@/Dto/response.dto';
+import {
+    UserManagementResponseDto,
+    PaginatedUserResponseDto,
+} from '@/Dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
 
 @injectable()
@@ -62,7 +65,9 @@ export class AdminService implements IAdminService {
         };
     }
 
-    private mapToUserManagementResponseDto(user: IUser): UserManagementResponseDto {
+    private mapToUserManagementResponseDto(
+        user: IUser
+    ): UserManagementResponseDto {
         return new UserManagementResponseDto(
             user.id.toString(),
             user.name,
@@ -134,7 +139,7 @@ export class AdminService implements IAdminService {
             await this._notificationService.createNotification(
                 mentor.id,
                 Role.Mentor,
-                NotificationType.SYSTEM_ANNOUNCEMENT, 
+                NotificationType.SYSTEM_ANNOUNCEMENT,
                 'Changes Requested',
                 `The admin has requested changes to your application. Reason: ${reason}`,
                 { reason, link: '/mentor/onboarding' }
@@ -156,10 +161,20 @@ export class AdminService implements IAdminService {
     async updateMentorStatus(id: string, status: string): Promise<void> {
         await this._mentorRepository.update(id, { status });
     }
-    
-    async getAllUsers(page: number, limit: number, search?: string): Promise<PaginatedUserResponseDto> {
-        const { users, totalCount } = await this._userRepository.getAllUsers(page, limit, search);
-        const mappedUsers =  users.map(user => this.mapToUserManagementResponseDto(user));
+
+    async getAllUsers(
+        page: number,
+        limit: number,
+        search?: string
+    ): Promise<PaginatedUserResponseDto> {
+        const { users, totalCount } = await this._userRepository.getAllUsers(
+            page,
+            limit,
+            search
+        );
+        const mappedUsers = users.map((user) =>
+            this.mapToUserManagementResponseDto(user)
+        );
         return new PaginatedUserResponseDto(
             mappedUsers,
             totalCount,
@@ -169,6 +184,8 @@ export class AdminService implements IAdminService {
     }
 
     async updateUserStatus(dto: UpdateUserStatusRequestDto): Promise<void> {
-        await this._userRepository.updateUser(dto.userId, { isActive: dto.isActive });
+        await this._userRepository.updateUser(dto.userId, {
+            isActive: dto.isActive,
+        });
     }
 }

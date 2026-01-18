@@ -15,7 +15,8 @@ export class AdminAuthService implements IAdminAuthService {
     constructor(
         @inject(TYPES.AdminRepository)
         private _adminRepository: IAdminRepository<IAdmin>,
-        @inject(TYPES.PasswordService) private _passwordService: IPasswordService,
+        @inject(TYPES.PasswordService)
+        private _passwordService: IPasswordService,
         @inject(TYPES.TokenService) private _tokenService: ITokenService
     ) {}
 
@@ -25,7 +26,10 @@ export class AdminAuthService implements IAdminAuthService {
         console.log(admin, 'form service');
         if (!admin) throw new Error(ErrorMessages.NoAdmin);
 
-        const isMatch = await this._passwordService.verifyPassword(login.password,admin.password);
+        const isMatch = await this._passwordService.verifyPassword(
+            login.password,
+            admin.password
+        );
         if (!isMatch) throw new Error(ErrorMessages.InvalidCredentials);
         const accessToken = this._tokenService.generateAccessToken(
             admin.id,

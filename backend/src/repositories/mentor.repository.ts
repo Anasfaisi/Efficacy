@@ -30,9 +30,11 @@ export class MentorRepository
         return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
     }
     async getAllMentors(): Promise<IMentor[]> {
-        return this.model.find({
-            status: { $in: ['active', 'inactive'] }
-        }).exec();
+        return this.model
+            .find({
+                status: { $in: ['active', 'inactive'] },
+            })
+            .exec();
     }
     async findAllApprovedMentors(
         page: number,
@@ -41,7 +43,7 @@ export class MentorRepository
         sort: string,
         filter: any
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
-        const query: any = { status:'active'};
+        const query: any = { status: 'active' };
 
         if (search) {
             query.$or = [
@@ -59,7 +61,7 @@ export class MentorRepository
 
         const sortOptions: any = {};
         if (sort) {
-            const [field, order] = sort.split('_'); 
+            const [field, order] = sort.split('_');
             const sortField = field === 'price' ? 'monthlyCharge' : field;
             sortOptions[sortField] = order === 'asc' ? 1 : -1;
         } else {

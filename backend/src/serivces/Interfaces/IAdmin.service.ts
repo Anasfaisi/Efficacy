@@ -17,6 +17,10 @@ export interface IAdminService {
     getAllMentors(): Promise<MentorApplicationResponseDto[]>;
     getMentorById(id: string): Promise<MentorApplicationResponseDto | null>;
     updateMentorStatus(id: string, status: string): Promise<void>;
-    getAllUsers(page: number, limit: number, search?: string): Promise<PaginatedUserResponseDto>;
+    getAllUsers(
+        page: number,
+        limit: number,
+        search?: string
+    ): Promise<PaginatedUserResponseDto>;
     updateUserStatus(dto: UpdateUserStatusRequestDto): Promise<void>;
 }

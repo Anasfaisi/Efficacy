@@ -110,7 +110,6 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.updateMentorStatus.bind(adminController))
     );
 
-
     //user Management
     router.get(
         '/users',

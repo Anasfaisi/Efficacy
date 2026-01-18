@@ -11,12 +11,27 @@ export default function PlannerTaskRoutes(controller: PlannerTaskController) {
     const router = Router();
     const tokenService = container.get<TokenService>(TYPES.TokenService);
 
-    const auth = authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]);
+    const auth = authenticateAndAuthorize(tokenService, [
+        Role.User,
+        Role.Mentor,
+    ]);
 
-    router.post('/', auth, asyncWrapper(controller.createTask.bind(controller)));
+    router.post(
+        '/',
+        auth,
+        asyncWrapper(controller.createTask.bind(controller))
+    );
     router.get('/', auth, asyncWrapper(controller.getTasks.bind(controller)));
-    router.put('/:taskId', auth, asyncWrapper(controller.updateTask.bind(controller)));
-    router.delete('/:taskId', auth, asyncWrapper(controller.deleteTask.bind(controller)));
+    router.put(
+        '/:taskId',
+        auth,
+        asyncWrapper(controller.updateTask.bind(controller))
+    );
+    router.delete(
+        '/:taskId',
+        auth,
+        asyncWrapper(controller.deleteTask.bind(controller))
+    );
 
     return router;
 }

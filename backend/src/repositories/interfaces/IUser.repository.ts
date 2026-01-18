@@ -28,5 +28,9 @@ export interface IUserRepository extends IBaseRepository<IUser> {
 
     updateUser(id: string, updatedData: UserUpdateData): Promise<IUser | null>;
     updateProfilePic(id: string, fileUrl: string): Promise<IUser | null>;
-    getAllUsers(page: number, limit: number, search?: string): Promise<{ users: IUser[]; totalCount: number }>;
+    getAllUsers(
+        page: number,
+        limit: number,
+        search?: string
+    ): Promise<{ users: IUser[]; totalCount: number }>;
 }

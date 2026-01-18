@@ -33,6 +33,11 @@ export class SocketService implements ISocketService {
                 console.log(`Socket ${socket.id} joined role room: ${role}`);
             });
 
+            socket.on('joinUserRoom', (userId: string) => {
+                socket.join(userId);
+                console.log(`Socket ${socket.id} joined private user room: ${userId}`);
+            });
+
             socket.on('sendMessage', (payload: SendMessagePayload) =>
                 this.handleSendMessage(io, socket, payload)
             );
@@ -63,7 +68,6 @@ export class SocketService implements ISocketService {
     ) {
         const { roomId, senderId, senderName, message } = payload;
 
-     
         const saved = await this._chatService.saveMessage({
             conversationId: roomId as unknown as Types.ObjectId,
             senderId: senderId as unknown as Types.ObjectId,

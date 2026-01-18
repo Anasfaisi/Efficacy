@@ -9,12 +9,15 @@ import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
 
 export class MentorController {
     constructor(
-        @inject(TYPES.MentorAuthService) private _mentorAuthService: IMentorAuthService,
+        @inject(TYPES.MentorAuthService)
+        private _mentorAuthService: IMentorAuthService,
         @inject(TYPES.MentorService) private _mentorService: IMentorService
     ) {}
 
     async mentorRegisterInit(req: Request, res: Response) {
-        const result = await this._mentorAuthService.mentorRegisterInit(req.body);
+        const result = await this._mentorAuthService.mentorRegisterInit(
+            req.body
+        );
         res.status(code.OK).json({
             ...result,
             message: AuthMessages.OtpSuccess,
@@ -22,7 +25,7 @@ export class MentorController {
     }
 
     async menotrRegisterVerify(req: Request, res: Response) {
-        console.log("it is reaching in mentor controller")
+        console.log('it is reaching in mentor controller');
         const { accessToken, refreshToken, user } =
             await this._mentorAuthService.mentorRegisterVerify(req.body);
 
@@ -53,7 +56,7 @@ export class MentorController {
 
         res.json({ user: result.user });
     }
- 
+
     async logout(req: Request, res: Response) {
         try {
             console.log('at the mentor logout route', req.cookies);
@@ -86,7 +89,8 @@ export class MentorController {
             const mentor = await this._mentorService.getMentorProfile(userId);
             res.status(code.OK).json({ mentor });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Unknown error';
+            const message =
+                error instanceof Error ? error.message : 'Unknown error';
             res.status(code.NOT_FOUND).json({ message });
         }
     }
@@ -94,14 +98,19 @@ export class MentorController {
         try {
             if (!req.currentUser) throw new Error('User context missing');
             const userId = req.currentUser.id;
-            
+
             const updateDto = new UpdateMentorProfileDto();
             Object.assign(updateDto, req.body);
 
-            const updatedMentor = await this._mentorService.updateMentorProfileBasicInfo(userId, updateDto);
+            const updatedMentor =
+                await this._mentorService.updateMentorProfileBasicInfo(
+                    userId,
+                    updateDto
+                );
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Update failed';
+            const message =
+                error instanceof Error ? error.message : 'Update failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -110,10 +119,15 @@ export class MentorController {
         try {
             if (!req.currentUser) throw new Error('User context missing');
             const userId = req.currentUser.id;
-            const updatedMentor = await this._mentorService.updateMentorProfileMedia(userId, req.files);
+            const updatedMentor =
+                await this._mentorService.updateMentorProfileMedia(
+                    userId,
+                    req.files
+                );
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Media update failed';
+            const message =
+                error instanceof Error ? error.message : 'Media update failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -123,13 +137,20 @@ export class MentorController {
             if (!req.currentUser) throw new Error('User context missing');
             const userId = req.currentUser.id;
             const { field, data } = req.body;
-            
-            const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-            
-            const updatedMentor = await this._mentorService.updateMentorProfileArray(userId, field, parsedData);
+
+            const parsedData =
+                typeof data === 'string' ? JSON.parse(data) : data;
+
+            const updatedMentor =
+                await this._mentorService.updateMentorProfileArray(
+                    userId,
+                    field,
+                    parsedData
+                );
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Array update failed';
+            const message =
+                error instanceof Error ? error.message : 'Array update failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -140,18 +161,29 @@ export class MentorController {
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || '';
             const sort = (req.query.sort as string) || '';
-            
+
             const filters: any = {};
             if (req.query.expertise) {
-                filters.expertise = { $regex: req.query.expertise as string, $options: 'i' };
+                filters.expertise = {
+                    $regex: req.query.expertise as string,
+                    $options: 'i',
+                };
             }
             if (req.query.minPrice || req.query.maxPrice) {
                 filters.monthlyCharge = {};
-                if (req.query.minPrice) filters.monthlyCharge.$gte = parseInt(req.query.minPrice as string);
-                if (req.query.maxPrice) filters.monthlyCharge.$lte = parseInt(req.query.maxPrice as string);
+                if (req.query.minPrice)
+                    filters.monthlyCharge.$gte = parseInt(
+                        req.query.minPrice as string
+                    );
+                if (req.query.maxPrice)
+                    filters.monthlyCharge.$lte = parseInt(
+                        req.query.maxPrice as string
+                    );
             }
             if (req.query.rating) {
-                filters.rating = { $gte: parseFloat(req.query.rating as string) };
+                filters.rating = {
+                    $gte: parseFloat(req.query.rating as string),
+                };
             }
 
             const result = await this._mentorService.getApprovedMentors(
@@ -164,17 +196,22 @@ export class MentorController {
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Failed to fetch mentors';
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to fetch mentors';
             res.status(code.INTERNAL_SERVER_ERROR).json({ message });
         }
     }
 
     async resendOtp(req: Request, res: Response) {
         try {
-            const result = await this._mentorAuthService.mentorResendOtp(req.body);
+            const result = await this._mentorAuthService.mentorResendOtp(
+                req.body
+            );
             res.status(code.OK).json(result);
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Failed to resend OTP';
+            const message =
+                error instanceof Error ? error.message : 'Failed to resend OTP';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -182,28 +219,40 @@ export class MentorController {
     async forgotPassword(req: Request, res: Response) {
         console.log('Mentor forgot password request received:', req.body);
         try {
-            const result = await this._mentorAuthService.mentorForgotPassword(req.body);
+            const result = await this._mentorAuthService.mentorForgotPassword(
+                req.body
+            );
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             console.error('Mentor forgot password error:', error);
-            const message = error instanceof Error ? error.message : 'Failed to send reset link';
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to send reset link';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async resetPassword(req: Request, res: Response) {
         try {
-            const result = await this._mentorAuthService.mentorResetPassword(req.body);
+            const result = await this._mentorAuthService.mentorResetPassword(
+                req.body
+            );
             res.status(code.OK).json(result);
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Failed to reset password';
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to reset password';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async googleLogin(req: Request, res: Response) {
         try {
-            const result = await this._mentorAuthService.mentorLoginWithGoogle(req.body);
+            const result = await this._mentorAuthService.mentorLoginWithGoogle(
+                req.body
+            );
 
             res.cookie('refreshToken', result.refreshToken, {
                 httpOnly: true,
@@ -216,7 +265,8 @@ export class MentorController {
 
             res.status(code.OK).json(result);
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Google login failed';
+            const message =
+                error instanceof Error ? error.message : 'Google login failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
     }

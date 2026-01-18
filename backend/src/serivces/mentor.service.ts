@@ -12,7 +12,8 @@ export class MentorService implements IMentorService {
     constructor(
         @inject(TYPES.MentorRepository)
         private _mentorRepository: IMentorRepository,
-        @inject(TYPES.PasswordService) private _passwordService: IPasswordService
+        @inject(TYPES.PasswordService)
+        private _passwordService: IPasswordService
     ) {}
 
     async getMentorProfile(id: string): Promise<IMentor> {
@@ -21,24 +22,39 @@ export class MentorService implements IMentorService {
         return mentor;
     }
 
-    async updateMentorProfileBasicInfo(id: string, data: UpdateMentorProfileDto): Promise<IMentor> {
-        const updateData: Partial<IMentor> & { currentPassword?: string; newPassword?: string } = { ...data };
+    async updateMentorProfileBasicInfo(
+        id: string,
+        data: UpdateMentorProfileDto
+    ): Promise<IMentor> {
+        const updateData: Partial<IMentor> & {
+            currentPassword?: string;
+            newPassword?: string;
+        } = { ...data };
 
         if (updateData.newPassword && updateData.currentPassword) {
             const mentor = await this._mentorRepository.findById(id);
-            if (!mentor || !mentor.password) throw new Error('Mentor details not found');
+            if (!mentor || !mentor.password)
+                throw new Error('Mentor details not found');
 
-            const isMatch = await this._passwordService.verifyPassword(updateData.currentPassword, mentor.password);
+            const isMatch = await this._passwordService.verifyPassword(
+                updateData.currentPassword,
+                mentor.password
+            );
             if (!isMatch) throw new Error('Current password is incorrect');
 
-            updateData.password = await this._passwordService.hashPassword(updateData.newPassword);
+            updateData.password = await this._passwordService.hashPassword(
+                updateData.newPassword
+            );
         }
 
         // Clean up temporary fields
         delete updateData.currentPassword;
         delete updateData.newPassword;
 
-        const updatedMentor = await this._mentorRepository.update(id, updateData);
+        const updatedMentor = await this._mentorRepository.update(
+            id,
+            updateData
+        );
         if (!updatedMentor) throw new Error(ErrorMessages.UpdateFailed);
         return updatedMentor;
     }
@@ -68,7 +84,11 @@ export class MentorService implements IMentorService {
         return updated;
     }
 
-    async updateMentorProfileArray(id: string, field: string, data: any[]): Promise<IMentor> {
+    async updateMentorProfileArray(
+        id: string,
+        field: string,
+        data: any[]
+    ): Promise<IMentor> {
         const updateData: any = {};
         updateData[field] = data;
         const updated = await this._mentorRepository.update(id, updateData);
@@ -90,7 +110,6 @@ export class MentorService implements IMentorService {
             sort,
             filter
         );
-        console.log(mentorsList,"mentorsList")
-        return mentorsList
+        return mentorsList;
     }
 }

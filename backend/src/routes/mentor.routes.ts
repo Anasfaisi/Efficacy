@@ -91,7 +91,9 @@ export default function mentorRoutes(
         '/profile/basic-info',
         authenticateAndAuthorize(tokenService, [Role.Mentor]),
         validateRequest(updateMentorProfileSchema),
-        asyncWrapper(mentorController.updateProfileBasicInfo.bind(mentorController))
+        asyncWrapper(
+            mentorController.updateProfileBasicInfo.bind(mentorController)
+        )
     );
 
     router.patch(

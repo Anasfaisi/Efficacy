@@ -189,7 +189,7 @@ export type UserResponseDto = {
     xpPoints?: number;
     badge?: string;
     //user nte wallet okke evde add aakand..vere db collection ll adhoke vara adh pole habit tracker kondu varano
-}
+};
 
 //========================= kanbana board ============================//
 

@@ -51,7 +51,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             expertise: dto.expertise,
             academicSpan: dto.academicSpan,
 
-    
             industryCategory: dto.industryCategory,
             experienceYears: dto.experienceYears,
             currentRole: dto.currentRole,
@@ -150,4 +149,3 @@ export class MentorOnboardService implements IMentorOnboardService {
         });
     }
 }
-
