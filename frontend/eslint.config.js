@@ -30,10 +30,10 @@ export default tseslint.config(
                 {
                     tabWidth: 4,
                     bracketSpacing: true,
-                    trailingComma: 'all',
+                    trailingComma: 'es5',
                     semi: true,
                     singleQuote: true,
-                    endOfLine: 'auto',
+                    endOfLine: 'lf',
                 },
             ],
             '@typescript-eslint/no-unused-vars': 'warn',

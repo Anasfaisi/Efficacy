@@ -1,7 +1,9 @@
 import api from './axiosConfig';
 import type { IPlannerTask } from '@/Features/users/planner/types';
 
-export const createPlannerTask = async (taskData: Partial<IPlannerTask>): Promise<IPlannerTask> => {
+export const createPlannerTask = async (
+    taskData: Partial<IPlannerTask>,
+): Promise<IPlannerTask> => {
     const response = await api.post('/planner', taskData);
     return response.data;
 };
@@ -11,7 +13,10 @@ export const getPlannerTasks = async (): Promise<IPlannerTask[]> => {
     return response.data;
 };
 
-export const updatePlannerTask = async (taskId: string, taskData: Partial<IPlannerTask>): Promise<IPlannerTask> => {
+export const updatePlannerTask = async (
+    taskId: string,
+    taskData: Partial<IPlannerTask>,
+): Promise<IPlannerTask> => {
     const response = await api.put(`/planner/${taskId}`, taskData);
     return response.data;
 };

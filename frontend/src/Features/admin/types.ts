@@ -1,4 +1,11 @@
-export type NotificationType = 'mentor_application' | 'system' | 'mentor';
+export type NotificationType = 
+    | 'mentor_application' 
+    | 'system' 
+    | 'mentor'
+    | 'mentorship_request'
+    | 'mentorship_response'
+    | 'mentorship_active'
+    | 'mentorship_completed';
 
 export interface Notification {
     _id: string;

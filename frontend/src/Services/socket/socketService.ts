@@ -27,24 +27,33 @@ console.log('Socket initialized with URL:', SOCKET_URL);
 
 export const connectSocket = () => {
     if (!socket) {
-        console.log('Connecting to socket at:', SOCKET_URL);
+        console.log('socketService: Initializing connection to:', SOCKET_URL);
         socket = io(SOCKET_URL, {
             transports: ['websocket'],
             withCredentials: true,
         });
 
         socket.on('connect', () => {
-            console.log('Connected to socket server:', socket?.id);
+            console.log('socketService: Connected successfully! ID:', socket?.id);
         });
 
         socket.on('disconnect', (reason) => {
-            console.log('Disconnected from socket server:', reason);
-            socket = null;
+            console.warn('socketService: Disconnected. Reason:', reason);
+            if (reason === 'io server disconnect') {
+                // the disconnection was initiated by the server, you need to reconnect manually
+                socket?.connect();
+            }
         });
 
         socket.on('connect_error', (error) => {
-            console.error('Socket connection error:', error);
+            console.error('socketService: Connection error:', error.message);
         });
+    } else {
+        console.log('socketService: Existing socket found. State:', socket.connected ? 'Connected' : 'Disconnected');
+        if (!socket.connected) {
+            console.log('socketService: Attempting to reconnect existing socket...');
+            socket.connect();
+        }
     }
     return socket;
 };
@@ -62,7 +71,14 @@ export const joinRoleRoom = (role: string) => {
     socket?.emit('joinRoleRoom', role);
 };
 
+export const joinUserRoom = (userId: string) => {
+    console.log('socketService: Joining private user room:', userId);
+    socket?.emit('joinUserRoom', userId);
+};
+
 export const joinRoom = (roomId: string, user: currentUserType) => {
+    let count = 1
+    console.log(count++)
     socket?.emit('joinRoom', { roomId, user });
 };
 

@@ -233,7 +233,6 @@ const MentorRegister: React.FC = () => {
                                         {errors.confirmPassword.message}
                                     </p>
                                 )}
-                                
                             </div>
 
                             <button

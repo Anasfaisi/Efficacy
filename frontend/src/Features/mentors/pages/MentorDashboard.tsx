@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { mentorApi } from '@/Services/mentor.api';
 import { Users, Calendar, UserCircle, Upload, AlertCircle } from 'lucide-react';
 import Breadcrumbs from '@/Components/common/Breadcrumbs';
+import MentorshipRequestsList from '../components/MentorshipRequestsList';
 
 const MentorDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -18,6 +19,7 @@ const MentorDashboard: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const data = await mentorApi.getMentorProfile();
+                console.log(data);
                 setFetchedMentor(data);
             } catch (error) {
                 console.error('Failed to fetch mentor profile:', error);
@@ -50,6 +52,7 @@ const MentorDashboard: React.FC = () => {
     return (
         <div className="space-y-8">
             <Breadcrumbs />
+            <MentorshipRequestsList />
             {/* Profile Picture Reminder */}
             {!mentor.profilePic && (
                 <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-1 shadow-lg shadow-indigo-200 animate-in slide-in-from-top-4 duration-500">

@@ -10,8 +10,12 @@ import { Plus } from 'lucide-react';
 const PlannerPage: React.FC = () => {
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(undefined);
-    const [initialData, setInitialData] = useState<{ date: string; startTime: string } | undefined>(undefined);
+    const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(
+        undefined,
+    );
+    const [initialData, setInitialData] = useState<
+        { date: string; startTime: string } | undefined
+    >(undefined);
 
     const fetchTasks = async () => {
         try {
@@ -52,7 +56,7 @@ const PlannerPage: React.FC = () => {
         setSelectedTask(undefined);
         setInitialData({
             date: date.toISOString().split('T')[0],
-            startTime: `${hour.toString().padStart(2, '0')}:00`
+            startTime: `${hour.toString().padStart(2, '0')}:00`,
         });
         setIsModalOpen(true);
     };
@@ -67,7 +71,9 @@ const PlannerPage: React.FC = () => {
                 <div className="flex-1 overflow-hidden flex flex-col">
                     {/* Header */}
                     <div className="px-8 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
-                        <h1 className="text-2xl font-bold text-gray-900">Planner</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            Planner
+                        </h1>
                         <button
                             onClick={handleAddTask}
                             className="btn-gradient px-4 py-2 rounded-xl flex items-center gap-2 font-semibold shadow-lg shadow-primary/20 group relative"
@@ -82,9 +88,9 @@ const PlannerPage: React.FC = () => {
 
                     {/* Main Content */}
                     <div className="flex-1 overflow-hidden relative">
-                        <CalendarView 
-                            tasks={tasks} 
-                            onTaskClick={handleEditTask} 
+                        <CalendarView
+                            tasks={tasks}
+                            onTaskClick={handleEditTask}
                             onSlotClick={handleSlotClick}
                         />
                     </div>

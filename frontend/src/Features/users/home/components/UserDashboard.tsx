@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { User } from '@/types/auth';
+import UserMentorshipStatus from '../../mentors/components/UserMentorshipStatus';
 
 const UserDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -20,6 +21,7 @@ const UserDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
+            <UserMentorshipStatus />
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-[#7F00FF]/25 border border-white/10">
                 <div className="relative z-10 flex justify-between items-center">
@@ -319,7 +321,7 @@ const CollabCard: React.FC<{
     <div className="bg-white rounded-4xl border border-gray-100 shadow-2xl shadow-gray-200/60 overflow-hidden flex flex-col group">
         <div className="bg-[#009688] p-5 text-white flex justify-between items-center">
             <span className="text-lg font-black tracking-tight">{title}</span>
-            <div className="opacity-40 group-hover:opacity-100 transition-opacity translate-x-1 group-hover:translate-x-0 transition-transform">
+            <div className="opacity-40 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                 {icon}
             </div>
         </div>

@@ -85,9 +85,6 @@ export const mentorApi = {
     },
 };
 
-
-
-
 export const updateMentorProfileBasicInfo = async (data: Partial<Mentor>) => {
     const res = await api.patch('/mentor/profile/basic-info', data);
     return res.data;

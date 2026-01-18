@@ -13,6 +13,8 @@ import MentorApproved from '@/Features/mentors/pages/MentorApproved';
 import ApplicationRejected from '@/Features/mentors/pages/ApplicationRejected';
 import MentorProfilePage from '@/Features/mentors/pages/MentorProfilePage';
 import MentorLayout from '@/Features/mentors/layout/MentorLayout';
+import MentorMentorshipList from '@/Features/mentors/pages/MentorMentorshipList';
+import MentorWalletPage from '@/Features/mentors/pages/MentorWalletPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -41,10 +43,8 @@ const MentorRoutes: React.FC = () => {
                     path="students"
                     element={<div>Students Page (Placeholder)</div>}
                 />
-                <Route
-                    path="sessions"
-                    element={<div>Sessions Page (Placeholder)</div>}
-                />
+                <Route path="sessions" element={<MentorMentorshipList />} />
+                <Route path="wallet" element={<MentorWalletPage />} />
                 <Route path="profile" element={<MentorProfilePage />} />
                 <Route path="guidelines" element={<MentorGuidelines />} />
             </Route>

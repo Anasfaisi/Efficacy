@@ -42,16 +42,19 @@ const AdminLogin = () => {
 
     const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
         try {
-            const result = await adminService.adminLoginApi({ ...data, role: 'admin' });
+            const result = await adminService.adminLoginApi({
+                ...data,
+                role: 'admin',
+            });
             if (result.admin) {
                 dispatch(setCredentials({ currentUser: result.admin }));
                 toast.success('Admin logged in successfully');
                 navigate('/admin/dashboard');
             }
         } catch (err: unknown) {
-              if(err instanceof AxiosError){
-                    toast.error(err.response?.data.message);
-            }else{   
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            } else {
                 toast.error('Admin Login failed');
             }
         }

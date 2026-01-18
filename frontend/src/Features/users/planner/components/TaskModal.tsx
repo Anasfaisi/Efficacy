@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import type { IPlannerTask, ISubtask } from '../types';
 import { Priority } from '../types';
-import { X, Plus, Trash2, CheckCircle2, Circle, Calendar, Clock, BarChart } from 'lucide-react';
-import { createPlannerTask, updatePlannerTask, deletePlannerTask } from '@/Services/planner.api';
+import {
+    X,
+    Plus,
+    Trash2,
+    CheckCircle2,
+    Circle,
+    Calendar,
+    Clock,
+    BarChart,
+} from 'lucide-react';
+import {
+    createPlannerTask,
+    updatePlannerTask,
+    deletePlannerTask,
+} from '@/Services/planner.api';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
@@ -18,13 +31,21 @@ interface TaskModalProps {
     };
 }
 
-const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, initialData }) => {
+const TaskModal: React.FC<TaskModalProps> = ({
+    isOpen,
+    onClose,
+    task,
+    onSave,
+    initialData,
+}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState<Priority>(Priority.LOW);
     const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [startTime, setStartTime] = useState(format(new Date(), 'HH:mm'));
-    const [endTime, setEndTime] = useState(format(new Date(Date.now() + 60 * 60 * 1000), 'HH:mm'));
+    const [endTime, setEndTime] = useState(
+        format(new Date(Date.now() + 60 * 60 * 1000), 'HH:mm'),
+    );
     const [subtasks, setSubtasks] = useState<Partial<ISubtask>[]>([]);
     const [isCompleted, setIsCompleted] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -47,7 +68,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
             setStartTime(initialData.startTime);
             const [h, m] = initialData.startTime.split(':').map(Number);
             const endH = (h + 1) % 24;
-            setEndTime(`${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+            setEndTime(
+                `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
+            );
             setSubtasks([]);
             setIsCompleted(false);
         } else {
@@ -135,8 +158,13 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
             <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0">
-                    <h2 className="text-xl font-bold text-gray-900">{task ? 'Edit Task' : 'New Task'}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <h2 className="text-xl font-bold text-gray-900">
+                        {task ? 'Edit Task' : 'New Task'}
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
                         <X size={20} className="text-gray-500" />
                     </button>
                 </div>
@@ -145,7 +173,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
                 <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
                     {/* Title */}
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Task Title</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                            Task Title
+                        </label>
                         <input
                             type="text"
                             value={title}
@@ -157,7 +187,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
 
                     {/* Description */}
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Description (Optional)</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                            Description (Optional)
+                        </label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -182,16 +214,23 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                                <Clock size={12} /> Time Range <span className="text-[8px] font-bold text-primary/50 normal-case">(1h default)</span>
+                                <Clock size={12} /> Time Range{' '}
+                                <span className="text-[8px] font-bold text-primary/50 normal-case">
+                                    (1h default)
+                                </span>
                             </label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="time"
                                     value={startTime}
-                                    onChange={(e) => setStartTime(e.target.value)}
+                                    onChange={(e) =>
+                                        setStartTime(e.target.value)
+                                    }
                                     className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                                 />
-                                <span className="text-gray-400 text-xs font-bold">to</span>
+                                <span className="text-gray-400 text-xs font-bold">
+                                    to
+                                </span>
                                 <input
                                     type="time"
                                     value={endTime}
@@ -208,32 +247,42 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
                             <BarChart size={12} /> Priority
                         </label>
                         <div className="flex gap-2">
-                            {[Priority.LOW, Priority.MEDIUM, Priority.HIGH].map((p) => {
-                                const colors = {
-                                    [Priority.LOW]: 'bg-green-50 text-green-600 border-green-100 active:bg-green-100',
-                                    [Priority.MEDIUM]: 'bg-yellow-50 text-yellow-600 border-yellow-100 active:bg-yellow-100',
-                                    [Priority.HIGH]: 'bg-pink-50 text-pink-600 border-pink-100 active:bg-pink-100',
-                                };
-                                return (
-                                    <button
-                                        key={p}
-                                        onClick={() => setPriority(p)}
-                                        className={cn(
-                                            "flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all transform active:scale-95",
-                                            priority === p ? colors[p] + " border-current shadow-sm" : "bg-gray-50 text-gray-400 border-gray-100 hover:bg-gray-100"
-                                        )}
-                                    >
-                                        {p}
-                                    </button>
-                                );
-                            })}
+                            {[Priority.LOW, Priority.MEDIUM, Priority.HIGH].map(
+                                (p) => {
+                                    const colors = {
+                                        [Priority.LOW]:
+                                            'bg-green-50 text-green-600 border-green-100 active:bg-green-100',
+                                        [Priority.MEDIUM]:
+                                            'bg-yellow-50 text-yellow-600 border-yellow-100 active:bg-yellow-100',
+                                        [Priority.HIGH]:
+                                            'bg-pink-50 text-pink-600 border-pink-100 active:bg-pink-100',
+                                    };
+                                    return (
+                                        <button
+                                            key={p}
+                                            onClick={() => setPriority(p)}
+                                            className={cn(
+                                                'flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all transform active:scale-95',
+                                                priority === p
+                                                    ? colors[p] +
+                                                          ' border-current shadow-sm'
+                                                    : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-gray-100',
+                                            )}
+                                        >
+                                            {p}
+                                        </button>
+                                    );
+                                },
+                            )}
                         </div>
                     </div>
 
                     {/* Subtasks */}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between px-1">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Subtasks</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                Subtasks
+                            </label>
                             <button
                                 onClick={addSubtask}
                                 className="text-xs font-bold text-primary hover:text-accent transition-colors flex items-center gap-1"
@@ -243,30 +292,54 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
                         </div>
                         <div className="space-y-2">
                             {subtasks.map((st, index) => (
-                                <div key={index} className="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-100"
+                                >
                                     <button
-                                        onClick={() => updateSubtask(index, { completed: !st.completed })}
+                                        onClick={() =>
+                                            updateSubtask(index, {
+                                                completed: !st.completed,
+                                            })
+                                        }
                                         className="text-gray-400 hover:text-primary transition-colors"
                                     >
-                                        {st.completed ? <CheckCircle2 size={18} className="text-green-500" /> : <Circle size={18} />}
+                                        {st.completed ? (
+                                            <CheckCircle2
+                                                size={18}
+                                                className="text-green-500"
+                                            />
+                                        ) : (
+                                            <Circle size={18} />
+                                        )}
                                     </button>
                                     <input
                                         type="text"
                                         value={st.title}
-                                        onChange={(e) => updateSubtask(index, { title: e.target.value })}
+                                        onChange={(e) =>
+                                            updateSubtask(index, {
+                                                title: e.target.value,
+                                            })
+                                        }
                                         placeholder="Subtask description..."
                                         className={cn(
-                                            "flex-1 bg-transparent outline-none text-sm transition-all",
-                                            st.completed && "line-through text-gray-400"
+                                            'flex-1 bg-transparent outline-none text-sm transition-all',
+                                            st.completed &&
+                                                'line-through text-gray-400',
                                         )}
                                     />
-                                    <button onClick={() => removeSubtask(index)} className="text-gray-300 hover:text-red-500 transition-colors">
+                                    <button
+                                        onClick={() => removeSubtask(index)}
+                                        className="text-gray-300 hover:text-red-500 transition-colors"
+                                    >
                                         <Trash2 size={16} />
                                     </button>
                                 </div>
                             ))}
                             {subtasks.length === 0 && (
-                                <p className="text-xs text-gray-400 italic text-center py-2">No subtasks yet</p>
+                                <p className="text-xs text-gray-400 italic text-center py-2">
+                                    No subtasks yet
+                                </p>
                             )}
                         </div>
                     </div>
@@ -296,7 +369,11 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, task, onSave, in
                             disabled={isSaving}
                             className="btn-gradient px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 disabled:opacity-50"
                         >
-                            {isSaving ? 'Saving...' : task ? 'Update Task' : 'Create Task'}
+                            {isSaving
+                                ? 'Saving...'
+                                : task
+                                  ? 'Update Task'
+                                  : 'Create Task'}
                         </button>
                     </div>
                 </div>

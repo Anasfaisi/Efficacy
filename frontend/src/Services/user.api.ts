@@ -51,15 +51,8 @@ export const loginApi = async (
         return { message: 'Login failed' };
     }
 };
-   
 
-
-
-
-
-
-
-export const logoutApi = async (): Promise<{ message: string}> => {
+export const logoutApi = async (): Promise<{ message: string }> => {
     try {
         const response = await api.post('/logout');
         return response.data;

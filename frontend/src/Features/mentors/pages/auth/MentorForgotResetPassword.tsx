@@ -45,7 +45,7 @@ export const MentorForgotResetPassword: React.FC = () => {
                     toast.success(
                         result.message || 'Password reset successful!',
                     );
-                    setTimeout(() => navigate('/mentor/login'), 2000); 
+                    setTimeout(() => navigate('/mentor/login'), 2000);
                 }
             } else {
                 if (!emailRegex.test(email)) {
@@ -61,12 +61,11 @@ export const MentorForgotResetPassword: React.FC = () => {
                 }
             }
         } catch (error: unknown) {
-            console.log(error,"error")
+            console.log(error, 'error');
             const message =
                 error instanceof Error
-                  ? (error as any)?.response?.data?.message 
-                  : error?.message ||
-                'Verification failed';
+                    ? (error as any)?.response?.data?.message
+                    : error?.message || 'Verification failed';
             toast.error(message);
         } finally {
             setIsLoading(false);

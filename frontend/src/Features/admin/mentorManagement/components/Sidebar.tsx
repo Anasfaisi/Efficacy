@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, FileText, LogOut, } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
@@ -17,10 +17,10 @@ export default function Sidebar() {
             icon: Users,
         },
         {
-            to:'/admin/userManagement',
-            label:'User Management',
-            icon:Users
-        }
+            to: '/admin/userManagement',
+            label: 'User Management',
+            icon: Users,
+        },
     ];
 
     return (
