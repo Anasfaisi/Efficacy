@@ -80,6 +80,12 @@ export class MentorshipController {
         res.status(code.OK).json(mentorship);
     }
 
+    async getMentorshipById(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const mentorship = await this._mentorshipService.getMentorshipById(id);
+        res.status(code.OK).json(mentorship);
+    }
+
     async bookSession(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const { id } = req.params;
@@ -121,6 +127,16 @@ export class MentorshipController {
             role,
             rating,
             comment
+        );
+        res.status(code.OK).json(mentorship);
+    }
+
+    async cancelMentorship(req: Request, res: Response): Promise<void> {
+        const userId = req.currentUser!.id;
+        const { id } = req.params;
+        const mentorship = await this._mentorshipService.cancelMentorship(
+            id,
+            userId
         );
         res.status(code.OK).json(mentorship);
     }

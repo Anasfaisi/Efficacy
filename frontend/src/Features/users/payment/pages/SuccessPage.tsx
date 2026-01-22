@@ -4,16 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchCurrentUser } from '@/Services/user.api';
 import { setCredentials } from '@/redux/slices/authSlice';
+import { mentorshipApi } from '@/Services/mentorship.api';
 
 const SuccessPage = () => {
     const dispatch = useAppDispatch();
-    const userId = useAppSelector((state) => state.auth.user);
+    const currentUser = useAppSelector((state) => state.auth.currentUser);
 
     const refreshUser = async () => {
         try {
-            if (!userId?.id) return;
-            const user = await fetchCurrentUser(userId?.id);
-            dispatch(setCredentials({ user }));
+            if (!currentUser?.id) return;
+            const user = await fetchCurrentUser(currentUser?.id);
+            dispatch(setCredentials({ currentUser: user }));
         } catch (err) {
             console.error('Failed to refresh user after payment', err);
         }
@@ -21,9 +22,19 @@ const SuccessPage = () => {
 
     const navigate = useNavigate();
 
-    const goToSubscription = async () => {
+    const handleContinue = async () => {
         await refreshUser();
-        navigate('/subscription', { replace: true });
+        try {
+            const activeMentorship = await mentorshipApi.getActiveMentorship();
+            if (activeMentorship?._id) {
+                navigate(`/mentorship/${activeMentorship._id}`, { replace: true });
+            } else {
+                navigate('/mentors', { replace: true });
+            }
+        } catch (error) {
+            console.error("Failed to fetch active mentorship", error);
+            navigate('/mentors', { replace: true });
+        }
     };
 
     return (
@@ -39,16 +50,15 @@ const SuccessPage = () => {
                     Payment Successful 🎉
                 </h1>
                 <p className="text-gray-600 text-lg mb-8">
-                    Thank you for subscribing! Your account has been upgraded
-                    successfully. 🚀
+                    Thank you for subscribing! Your mentorship session has been confirmed. 🚀
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         className="px-6 py-3 bg-green-500 text-white rounded-xl shadow hover:bg-green-600 transition"
-                        onClick={goToSubscription}
+                        onClick={handleContinue}
                     >
-                        subscription details
+                        Go to Mentorship
                     </button>
                 </div>
             </motion.div>

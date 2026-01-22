@@ -36,7 +36,7 @@ export function applyMiddlewares(app: Express) {
     app.post(
         '/api/payments/webhook',
         bodyParser.raw({ type: 'application/json' }),
-        paymentController.handleWebhook
+        paymentController.handleWebhook.bind(paymentController)
     );
     app.use(express.json());
     app.use(cookieParser());

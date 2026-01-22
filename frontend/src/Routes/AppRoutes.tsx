@@ -16,6 +16,7 @@ import { ForgotResetPassword } from '@/Features/users/pages/ResetPassword';
 import { MentorOtpPage } from '@/Features/mentors/pages/auth/MentorOtpPage';
 import { MentorForgotResetPassword } from '@/Features/mentors/pages/auth/MentorForgotResetPassword';
 import { ToastContainer } from 'react-toastify';
+import NotFound from '@/Features/common/pages/NotFound';
 
 const ProtectedRoute: React.FC<{
     role: 'admin' | 'user' | 'mentor';
@@ -87,10 +88,7 @@ const AppRoutes: React.FC = () => {
                         </ProtectedRoute>
                     }
                 />
-                <Route
-                    path="*"
-                    element={<Navigate to="/users/login" replace />}
-                />
+                <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer
                 position="top-right"

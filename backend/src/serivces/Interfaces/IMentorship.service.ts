@@ -48,4 +48,12 @@ export interface IMentorshipService {
         rating: number,
         comment: string
     ): Promise<IMentorship>;
+    findByUserIdAndMentorId(
+        mentorId: string | ObjectId,
+        userId: string | ObjectId
+    ): Promise<IMentorship | null>;
+    cancelMentorship(
+        mentorshipId: string,
+        userId: string
+    ): Promise<IMentorship>;
 }

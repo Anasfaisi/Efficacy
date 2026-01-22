@@ -17,14 +17,14 @@ export class MentorshipRepository
     }
 
     async findByUserId(userId: string | ObjectId): Promise<IMentorship[]> {
-        return await Mentorship.find({ userId }).populate(
+        return await this.model.find({ userId }).populate(
             'mentorId',
             'name profilePic expertise'
         );
     }
 
     async findByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]> {
-        return await Mentorship.find({ mentorId }).populate(
+        return await this.model.find({ mentorId }).populate(
             'userId',
             'name profilePic email'
         );
@@ -33,18 +33,45 @@ export class MentorshipRepository
     async findActiveByUserId(
         userId: string | ObjectId
     ): Promise<IMentorship | null> {
-        return await Mentorship.findOne({
+        return await this.model.findOne({
             userId,
-            status: MentorshipStatus.ACTIVE,
-        }).populate('mentorId', 'name profilePic expertise');
+            status: {
+                $in: [
+                    MentorshipStatus.PENDING,
+                    MentorshipStatus.MENTOR_ACCEPTED,
+                    MentorshipStatus.USER_CONFIRMED,
+                    MentorshipStatus.PAYMENT_PENDING,
+                    MentorshipStatus.ACTIVE,
+                ],
+            },
+        })
+            .sort({ createdAt: -1 })
+            .populate('mentorId', 'name profilePic expertise');
     }
 
     async findActiveByMentorId(
         mentorId: string | ObjectId
     ): Promise<IMentorship[]> {
-        return await Mentorship.find({
+        return await this.model.find({
             mentorId,
             status: MentorshipStatus.ACTIVE,
         }).populate('userId', 'name profilePic email');
+    }
+
+    async findByUserIdAndMentorId(
+        mentorId: string | ObjectId,
+        userId: string | ObjectId
+    ): Promise<IMentorship | null> {
+        return await this.model.findOne({
+            userId,
+            mentorId,
+            status: {
+                $nin: [
+                    MentorshipStatus.COMPLETED,
+                    MentorshipStatus.REJECTED,
+                    MentorshipStatus.CANCELLED,
+                ],
+            },
+        });
     }
 }

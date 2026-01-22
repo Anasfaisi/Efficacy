@@ -21,21 +21,21 @@ export class SocketService implements ISocketService {
     public register(io: Server) {
         this._io = io;
         io.on('connection', (socket: Socket) => {
-            console.log('User connected:', socket.id);
+            console.log('User connected: in the backend', socket.id);
 
             socket.on('joinRoom', (data: { roomId: string; user: unknown }) => {
                 const dto = new JoinRoomDto(data.roomId, data.user as IUser);
                 this.handleJoinRoom(socket, dto);
             });
 
-            socket.on('joinRoleRoom', (role: string) => {
-                socket.join(role);
-                console.log(`Socket ${socket.id} joined role room: ${role}`);
-            });
+            // socket.on('joinRoleRoom', (role: string) => {
+            //     socket.join(role);
+            //     console.log(`Socket ${socket.id} joined role room: ${role}`);
+            // });
 
             socket.on('joinUserRoom', (userId: string) => {
                 socket.join(userId);
-                console.log(`Socket ${socket.id} joined private user room: ${userId}`);
+                console.log(`Socket ${socket.id} joined private user room there: ${userId}`);
             });
 
             socket.on('sendMessage', (payload: SendMessagePayload) =>
@@ -49,6 +49,15 @@ export class SocketService implements ISocketService {
     public emitToRoom(roomId: string, event: string, data: unknown) {
         if (this._io) {
             this._io.to(roomId).emit(event, data);
+        }
+    }
+
+    public async emitNotification(roomId: string, notification: unknown) {
+        if (this._io) {
+            const sockets = await this._io.in(roomId).fetchSockets();
+            for (const socket of sockets) {
+                socket.emit('newNotification', notification);
+            }
         }
     }
 

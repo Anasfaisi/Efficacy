@@ -62,7 +62,7 @@ import { MentorshipRepository } from '@/repositories/mentorship.repository';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
-import { NotificationController } from '@/controllers/notification.controller';
+import { WalletController } from '@/controllers/Wallet.controller';
 
 export const container = new Container();
 
@@ -83,9 +83,7 @@ container
 container
     .bind<MentorshipController>(TYPES.MentorshipController)
     .to(MentorshipController);
-container
-    .bind<NotificationController>(TYPES.NotificationController)
-    .to(NotificationController);
+container.bind<WalletController>(TYPES.WalletController).to(WalletController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -98,7 +96,7 @@ container
     .to(GoogleVerificationService);
 container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
-container.bind<ISocketService>(TYPES.SocketService).to(SocketService)
+container.bind<ISocketService>(TYPES.SocketService).to(SocketService).inSingletonScope();
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
 container
     .bind<IMentorOnboardService>(TYPES.MentorOnboardService)

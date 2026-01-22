@@ -39,5 +39,5 @@ export const TYPES = {
     MentorshipRepository: Symbol('MentorshipRepository'),
     WalletRepository: Symbol('WalletRepository'),
     MentorshipController: Symbol('MentorshipController'),
-    NotificationController: Symbol('NotificationController'),
+    WalletController: Symbol('WalletController'),
 };

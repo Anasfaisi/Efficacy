@@ -4,6 +4,7 @@ import {
     PaginatedUserResponseDto,
 } from '@/Dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+import { ITransaction } from '@/models/Wallet.model';
 
 export interface IAdminService {
     getMentorApplications(): Promise<MentorApplicationResponseDto[]>;
@@ -23,4 +24,10 @@ export interface IAdminService {
         search?: string
     ): Promise<PaginatedUserResponseDto>;
     updateUserStatus(dto: UpdateUserStatusRequestDto): Promise<void>;
+    getRevenueDetails(adminId: string): Promise<{ totalRevenue: number }>;
+    getAllTransactions(
+        page: number,
+        limit: number,
+        filter: 'all' | 'mentor' | 'user'
+    ): Promise<{ transactions: ITransaction[]; total: number }>;
 }

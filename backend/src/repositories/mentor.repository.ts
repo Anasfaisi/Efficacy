@@ -1,7 +1,9 @@
+import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import MentorModel, { IMentor } from '@/models/Mentor.model';
 import { IMentorRepository } from './interfaces/IMentor.repository';
 
+@injectable()
 export class MentorRepository
     extends BaseRepository<IMentor>
     implements IMentorRepository
@@ -22,13 +24,7 @@ export class MentorRepository
     }): Promise<IMentor> {
         return this.create(data);
     }
-    async findById(id: string): Promise<IMentor | null> {
-        return super.findById(id);
-    }
 
-    async update(id: string, data: Partial<IMentor>): Promise<IMentor | null> {
-        return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
-    }
     async getAllMentors(): Promise<IMentor[]> {
         return this.model
             .find({

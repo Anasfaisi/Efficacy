@@ -90,4 +90,20 @@ export const adminService = {
     markAllNotificationsAsRead: async (): Promise<void> => {
         await api.patch('/admin/notifications/mark-all-read');
     },
+
+    getRevenueDetails: async (): Promise<{ totalRevenue: number }> => {
+        const response = await api.get('/admin/revenue');
+        return response.data;
+    },
+
+    getTransactions: async (
+        page: number = 1,
+        limit: number = 10,
+        filter: string = 'all'
+    ): Promise<{ transactions: any[]; total: number }> => {
+        const response = await api.get(
+            `/admin/transactions?page=${page}&limit=${limit}&filter=${filter}`
+        );
+        return response.data;
+    },
 };

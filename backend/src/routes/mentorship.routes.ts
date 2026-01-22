@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { MentorshipController } from '@/controllers/mentorship.controller';
+import { WalletController } from '@/controllers/Wallet.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
@@ -61,11 +62,48 @@ export default function mentorshipRoutes(
         )
     );
 
+    // Wallet Routes
+    const walletController = container.get<WalletController>(
+        TYPES.WalletController
+    );
+
+    router.get(
+        '/wallet',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(walletController.getWallet.bind(walletController))
+    );
+
+    router.post(
+        '/wallet/withdraw',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(walletController.requestWithdrawal.bind(walletController))
+    );
+
+    router.patch(
+        '/wallet/bank-details',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(walletController.updateBankDetails.bind(walletController))
+    );
+
+    router.get(
+        '/wallet/transactions',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(walletController.getTransactions.bind(walletController))
+    );
+
     router.get(
         '/active',
         authenticateAndAuthorize(tokenService, Role.User),
         asyncWrapper(
             mentorshipController.getActiveMentorship.bind(mentorshipController)
+        )
+    );
+
+    router.get(
+        '/:id',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(
+            mentorshipController.getMentorshipById.bind(mentorshipController)
         )
     );
 
@@ -98,6 +136,14 @@ export default function mentorshipRoutes(
         authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
         asyncWrapper(
             mentorshipController.submitFeedback.bind(mentorshipController)
+        )
+    );
+
+    router.post(
+        '/:id/cancel',
+        authenticateAndAuthorize(tokenService, Role.User),
+        asyncWrapper(
+            mentorshipController.cancelMentorship.bind(mentorshipController)
         )
     );
 

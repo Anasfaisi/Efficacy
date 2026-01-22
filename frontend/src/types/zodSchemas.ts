@@ -289,3 +289,26 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type mentorProfileUpdateType = z.infer<typeof mentorProfileUpdateSchema>;
 export type userProfileUpdateType = z.infer<typeof userProfileUpdateSchema>;
+
+export const bankDetailsSchema = z.object({
+    accountHolderName: z
+        .string()
+        .trim()
+        .min(3, 'Account Holder Name is required')
+        .regex(
+            /^[A-Za-z\s]+$/,
+            'Account Holder Name must contain only letters',
+        ),
+    accountNumber: z
+        .string()
+        .trim()
+        .regex(/^\d{9,18}$/, 'Account Number must be 9-18 digits'),
+    bankName: z.string().trim().min(2, 'Bank Name is required'),
+    ifscCode: z
+        .string()
+        .trim()
+        .uppercase()
+        .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
+});
+
+export type bankDetailsSchemaType = z.infer<typeof bankDetailsSchema>;

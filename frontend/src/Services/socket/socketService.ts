@@ -23,11 +23,11 @@ const getSocketUrl = () => {
 };
 
 const SOCKET_URL = getSocketUrl();
-console.log('Socket initialized with URL:', SOCKET_URL);
+// console.log('Socket initialized with URL:', SOCKET_URL);
 
 export const connectSocket = () => {
     if (!socket) {
-        console.log('socketService: Initializing connection to:', SOCKET_URL);
+        // console.log('socketService: Initializing connection to:', SOCKET_URL);
         socket = io(SOCKET_URL, {
             transports: ['websocket'],
             withCredentials: true,

@@ -26,4 +26,11 @@ export class AdminRepository
     }): Promise<IAdmin> {
         return this.create(data);
     }
+
+    async addRevenue(amount: number): Promise<void> {
+        await this.model.findOneAndUpdate(
+            { role: Role.Admin },
+            { $inc: { totalRevenue: amount } }
+        );
+    }
 }

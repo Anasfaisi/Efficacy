@@ -24,16 +24,13 @@ const MentorshipManagementPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [bookingDate, setBookingDate] = useState('');
     const [isBooking, setIsBooking] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const fetchData = async () => {
         if (!id) return;
         try {
             // Reusing getActiveMentorship for now or ideally a getById
-            const data = await mentorshipApi.getActiveMentorship();
-            if (data._id !== id) {
-                // Fetch by ID if not active
-                // For now assuming active
-            }
+            const data = await mentorshipApi.getMentorshipById(id);
             setMentorship(data);
         } catch (error) {
             console.error('Failed to fetch mentorship:', error);
@@ -46,6 +43,38 @@ const MentorshipManagementPage: React.FC = () => {
     useEffect(() => {
         fetchData();
     }, [id]);
+
+    const handleConfirm = async (confirm: boolean) => {
+        if (!id) return;
+        setIsProcessing(true);
+        try {
+            await mentorshipApi.confirmSuggestion(id, confirm);
+            toast.success(confirm ? 'Mentorship confirmed! Proceed to payment.' : 'Mentorship request rejected.');
+            fetchData();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to process request');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handlePayment = async () => {
+        if (!id) return;
+        setIsProcessing(true);
+        try {
+             // Redirect to Stripe checkout
+             const {sessionUrl} = await mentorshipApi.createMentorshipCheckoutSession(
+                 id,
+                 `${window.location.origin}/success`,
+                 `${window.location.origin}/failed`
+             );
+             
+             if (sessionUrl) window.location.href = sessionUrl;
+        } catch (error) {
+            toast.error('Failed to initiate payment');
+            setIsProcessing(false);
+        }
+    };
 
     const handleBookSession = async () => {
         if (!id || !bookingDate) return;
@@ -99,6 +128,69 @@ const MentorshipManagementPage: React.FC = () => {
                 </button>
             </div>
         );
+
+    if (mentorship.status === MentorshipStatus.REJECTED) {
+        return (
+            <div className="min-h-screen flex bg-gray-50">
+                <Sidebar />
+                <div className="flex-1 flex flex-col">
+                    <Navbar />
+                    <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
+                        <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl shadow-red-100 border border-red-50 text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <AlertCircle
+                                    className="text-red-500"
+                                    size={32}
+                                />
+                            </div>
+                            <h2 className="text-2xl font-black text-gray-900 mb-2">
+                                Request Rejected
+                            </h2>
+                            <p className="text-gray-500 mb-6 font-medium">
+                                The mentor has reviewed your request but decided
+                                not to proceed at this time.
+                            </p>
+
+                            <div className="bg-gray-50 rounded-2xl p-6 text-left mb-6">
+                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+                                    Reason provided
+                                </h3>
+                                <p className="text-gray-800 font-medium">
+                                    {mentorship.rejectionReason ||
+                                        'No specific reason provided.'}
+                                </p>
+
+                                {mentorship.mentorSuggestedStartDate && (
+                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
+                                            You can re-apply after
+                                        </h3>
+                                        <p className="text-[#7F00FF] font-bold">
+                                            {new Date(
+                                                mentorship.mentorSuggestedStartDate,
+                                            ).toLocaleDateString(undefined, {
+                                                weekday: 'long',
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                            })}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={() => navigate('/home')}
+                                className="w-full py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors"
+                            >
+                                Back to Home
+                            </button>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        );
+    }
 
     const remainingSessions =
         mentorship.totalSessions - mentorship.usedSessions;
@@ -298,6 +390,78 @@ const MentorshipManagementPage: React.FC = () => {
 
                             {/* Right Column: Book & Info */}
                             <div className="space-y-8">
+                                {/* Action Cards based on Status */}
+                                {mentorship.status ===
+                                    MentorshipStatus.MENTOR_ACCEPTED && (
+                                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                            Application Accepted!
+                                        </h3>
+                                        <p className="text-gray-600 text-sm mb-4">
+                                            The mentor has accepted your
+                                            request.
+                                            {mentorship.mentorSuggestedStartDate && (
+                                                <span className="block mt-2 font-medium text-[#7F00FF]">
+                                                    Note: Suggested Start Date:{' '}
+                                                    {new Date(
+                                                        mentorship.mentorSuggestedStartDate,
+                                                    ).toLocaleDateString()}
+                                                </span>
+                                            )}
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() =>
+                                                    handleConfirm(true)
+                                                }
+                                                disabled={isProcessing}
+                                                className="flex-1 py-3 bg-[#7F00FF] text-white font-black rounded-xl hover:bg-[#6c00db] transition-colors disabled:opacity-50"
+                                            >
+                                                Confirm & Pay
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    handleConfirm(false)
+                                                }
+                                                disabled={isProcessing}
+                                                className="flex-1 py-3 bg-red-50 text-red-600 font-black rounded-xl hover:bg-red-100 transition-colors disabled:opacity-50"
+                                            >
+                                                Reject
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {mentorship.status ===
+                                    MentorshipStatus.PAYMENT_PENDING && (
+                                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                            Payment Required
+                                        </h3>
+                                        <p className="text-gray-600 text-sm mb-4">
+                                            Please complete the payment to
+                                            activate your mentorship.
+                                        </p>
+                                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
+                                            <span className="text-sm font-medium text-gray-600">
+                                                Total Amount
+                                            </span>
+                                            <span className="text-xl font-black text-gray-900">
+                                                ₹{mentorship.amount}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={handlePayment}
+                                            disabled={isProcessing}
+                                            className="w-full py-3 bg-[#7F00FF] text-white font-black rounded-xl hover:bg-[#6c00db] transition-colors disabled:opacity-50"
+                                        >
+                                            {isProcessing
+                                                ? 'Processing...'
+                                                : 'Pay Now'}
+                                        </button>
+                                    </div>
+                                )}
+
                                 {/* Book New Session */}
                                 {remainingSessions > 0 &&
                                     mentorship.status ===

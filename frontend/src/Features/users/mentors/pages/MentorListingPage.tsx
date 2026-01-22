@@ -56,7 +56,7 @@ const MentorListingPage: React.FC = () => {
 
                 const data = await mentorApi.getApprovedMentors(
                     page,
-                    2,
+                    3,
                     debouncedSearch,
                     sort,
                     filters,
@@ -321,7 +321,7 @@ const MentorListingPage: React.FC = () => {
                                                         }
                                                         className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25"
                                                     >
-                                                        Connect
+                                                        View
                                                     </button>
                                                 </div>
                                             </div>

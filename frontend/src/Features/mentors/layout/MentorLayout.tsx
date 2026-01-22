@@ -6,13 +6,14 @@ import MentorSidebar from './MentorSidebar';
 import { MentorNotificationListener } from '../components/MentorNotificationListener';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
+import { mentorApi } from '@/Services/mentor.api';
 
 const MentorLayout: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     const { notifications, unreadCount } = useAppSelector((state) => state.notification);
     const dispatch = useAppDispatch();
-    
-    console.log('MentorLayout: Rendering, currentUser:', currentUser ? { id: currentUser.id, role: currentUser.role } : 'NULL');
+    console.log(notifications,"checking the notifications on the mentor side")
+    // console.log('MentorLayout: Rendering, currentUser:', currentUser ? { id: currentUser.id, role: currentUser.role } : 'NULL');
 
     const mentor = currentUser as Mentor;
     const navigate = useNavigate();
@@ -70,7 +71,14 @@ const MentorLayout: React.FC = () => {
                                     <h4 className="font-bold text-gray-900 text-sm">Notifications</h4>
                                     {unreadCount > 0 && (
                                         <button 
-                                            onClick={() => dispatch(markAllAsRead())}
+                                            onClick={async () => {
+                                                try {
+                                                    await mentorApi.markAllNotificationsAsRead();
+                                                    dispatch(markAllAsRead());
+                                                } catch (err) {
+                                                    console.error("Failed to mark all as read", err);
+                                                }
+                                            }}
                                             className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
                                         >
                                             Mark all read

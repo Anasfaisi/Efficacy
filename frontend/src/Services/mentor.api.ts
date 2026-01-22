@@ -1,6 +1,7 @@
 import api from './axiosConfig';
 import type { mentorFormSchemaType } from '@/types/zodSchemas';
 import type { Mentor } from '@/types/auth';
+import type { Notification } from '@/Features/admin/types';
 
 export interface MentorApplicationResult {
     status: string;
@@ -82,6 +83,16 @@ export const mentorApi = {
             newPassword,
         });
         return res.data;
+    },
+    getNotifications: async (): Promise<Notification[]> => {
+        const res = await api.get('/mentor/notifications');
+        return res.data;
+    },
+    markNotificationAsRead: async (id: string): Promise<void> => {
+        await api.patch(`/mentor/notifications/${id}/mark-read`);
+    },
+    markAllNotificationsAsRead: async (): Promise<void> => {
+        await api.patch('/mentor/notifications/mark-all-read');
     },
 };
 

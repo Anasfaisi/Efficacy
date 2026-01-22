@@ -51,14 +51,19 @@ const UserMentorshipStatus: React.FC = () => {
     const handlePayment = async () => {
         if (!mentorship?._id) return;
         try {
-            const paymentId = 'pi_' + Math.random().toString(36).substr(2, 9);
-            await mentorshipApi.verifyPayment(mentorship._id, paymentId);
-            toast.success(
-                'Payment verified successfully! Mentorship is now ACTIVE.',
-            );
-            fetchStatus();
+            const { sessionUrl } =
+                await mentorshipApi.createMentorshipCheckoutSession(
+                    mentorship._id,
+                    window.location.origin + '/success',
+                    window.location.origin + '/failed'
+                );
+            if (sessionUrl) {
+                window.location.href = sessionUrl;
+            } else {
+                toast.error('Failed to initiate payment session');
+            }
         } catch (error: any) {
-            toast.error(error.message || 'Payment verification failed');
+            toast.error(error.message || 'Payment initiation failed');
         }
     };
 
@@ -113,40 +118,40 @@ const UserMentorshipStatus: React.FC = () => {
                                 <span className="px-4 py-2 bg-green-50 text-green-700 text-xs font-black rounded-xl border border-green-100 flex items-center gap-2">
                                     <CheckCircle2 size={14} /> Mentor Accepted!
                                 </span>
-                                {mentorship.mentorSuggestedStartDate && (
-                                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                                        <p className="text-[10px] font-black text-indigo-400 uppercase mb-2">
-                                            Mentor suggested start date:
-                                        </p>
-                                        <p className="text-sm font-bold text-indigo-900 mb-3">
-                                            {new Date(
-                                                mentorship.mentorSuggestedStartDate,
-                                            ).toLocaleDateString()}
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() =>
-                                                    handleConfirmSuggestion(
-                                                        true,
-                                                    )
-                                                }
-                                                className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-black rounded-lg hover:bg-indigo-700 transition-all"
-                                            >
-                                                Confirm
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleConfirmSuggestion(
-                                                        false,
-                                                    )
-                                                }
-                                                className="px-3 py-1.5 bg-white border border-indigo-200 text-indigo-600 text-[10px] font-black rounded-lg hover:bg-indigo-50 transition-all"
-                                            >
-                                                Decline
-                                            </button>
-                                        </div>
+                                <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                                    <p className="text-[10px] font-black text-indigo-400 uppercase mb-2">
+                                        {mentorship.mentorSuggestedStartDate
+                                            ? 'Mentor suggested start date:'
+                                            : 'Start Date:'}
+                                    </p>
+                                    <p className="text-sm font-bold text-indigo-900 mb-3">
+                                        {new Date(
+                                            mentorship.mentorSuggestedStartDate ||
+                                                mentorship.proposedStartDate ||
+                                                new Date(),
+                                        ).toLocaleDateString()}
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() =>
+                                                handleConfirmSuggestion(true)
+                                            }
+                                            className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-black rounded-lg hover:bg-indigo-700 transition-all"
+                                        >
+                                            {mentorship.mentorSuggestedStartDate
+                                                ? 'Confirm'
+                                                : 'Proceed'}
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                handleConfirmSuggestion(false)
+                                            }
+                                            className="px-3 py-1.5 bg-white border border-indigo-200 text-indigo-600 text-[10px] font-black rounded-lg hover:bg-indigo-50 transition-all"
+                                        >
+                                            Decline
+                                        </button>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         )}
                         {mentorship.status ===

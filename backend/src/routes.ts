@@ -18,8 +18,6 @@ import { PlannerTaskController } from './controllers/planner-task.controller';
 import { TokenService } from '@/serivces/token.service';
 import { MentorshipController } from './controllers/mentorship.controller';
 import mentorshipRoutes from './routes/mentorship.routes';
-import { NotificationController } from './controllers/notification.controller';
-import notificationRoutes from './routes/notification.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -44,9 +42,6 @@ export function applyRoutes(app: Express) {
     const mentorshipController = container.get<MentorshipController>(
         TYPES.MentorshipController
     );
-    const notificationController = container.get<NotificationController>(
-        TYPES.NotificationController
-    );
 
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
@@ -58,5 +53,4 @@ export function applyRoutes(app: Express) {
     app.use('/api/chat', chatRoutes(chatController));
     app.use('/api/planner', PlannerTaskRoutes(plannerTaskController));
     app.use('/api/mentorship', mentorshipRoutes(mentorshipController));
-    app.use('/api/notifications', notificationRoutes(notificationController));
 }

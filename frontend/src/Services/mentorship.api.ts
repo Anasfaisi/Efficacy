@@ -51,8 +51,31 @@ export const mentorshipApi = {
         return response.data;
     },
 
+    createMentorshipCheckoutSession: async (
+        mentorshipId: string,
+        successUrl: string,
+        cancelUrl: string,
+    ) => {
+        const response = await axiosInstance.post(
+            `/payments/checkout-mentorship`,
+            {
+                mentorshipId,
+                successUrl,
+                cancelUrl,
+            },
+        );
+        console.log(response.data ,"response data mentorship api");
+        return response.data;
+    },
+
     getActiveMentorship: async () => {
         const response = await axiosInstance.get('/mentorship/active');
+        
+        return response.data;
+    },
+
+    getMentorshipById: async (id: string) => {
+        const response = await axiosInstance.get(`/mentorship/${id}`);
         return response.data;
     },
 
@@ -91,6 +114,11 @@ export const mentorshipApi = {
             `/mentorship/${id}/feedback`,
             data,
         );
+        return response.data;
+    },
+
+    cancelMentorship: async (id: string) => {
+        const response = await axiosInstance.post(`/mentorship/${id}/cancel`);
         return response.data;
     },
 };

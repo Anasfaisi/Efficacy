@@ -14,19 +14,20 @@ import {
     setNotifications,
     markAsRead,
 } from '@/redux/slices/notificationSlice';
-import { notificationApi } from '@/Services/notification.api';
+import { mentorApi } from '@/Services/mentor.api';
 import { useNavigate } from 'react-router-dom';
 import type { Notification } from '@/Features/admin/types';
+import type { Mentor } from '@/types/auth';
 
 export const MentorNotificationListener: React.FC = () => {
-    const { currentUser } = useAppSelector((state) => state.auth);
-    console.log("it is woriing=============================")
+    let { currentUser } = useAppSelector((state) => state.auth);
+    currentUser = currentUser as Mentor
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     // Memoize the notification handler to prevent unnecessary re-registrations
     const handleNotification = useCallback((notification: Notification) => {
-        console.log('Mentor notification received:', notification);
+        console.log('Mentor notification received in mentor NotificatoinListener.tsx======================:', notification);
 
         const processedNotification: Notification = {
             ...notification,
@@ -40,64 +41,71 @@ export const MentorNotificationListener: React.FC = () => {
         toast.custom(
             (id) => (
                 <div
-                    className="animate-in fade-in slide-in-from-top-4 max-w-md w-full bg-white shadow-2xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 overflow-hidden border border-indigo-50"
+                    className="w-full max-w-sm bg-white shadow-xl rounded-xl pointer-events-auto ring-1 ring-black/5 overflow-hidden p-4 border border-indigo-100"
                     style={{ zIndex: 9999 }}
                 >
-                    <div className="flex-1 w-0 p-4">
-                        <div className="flex items-start">
-                            <div className="flex-shrink-0 pt-0.5">
-                                <div
-                                    className={`h-12 w-12 rounded-xl flex items-center justify-center ${
-                                        isMentorshipRequest
-                                            ? 'bg-indigo-50 text-indigo-600'
-                                            : 'bg-blue-50 text-blue-600'
-                                    } shadow-sm`}
-                                >
-                                    {isMentorshipRequest ? (
-                                        <Users size={24} />
-                                    ) : (
-                                        <Bell size={24} />
-                                    )}
-                                </div>
-                            </div>
-                            <div className="ml-4 flex-1">
-                                <p className="text-sm font-bold text-gray-900 leading-tight">
-                                    {processedNotification.title || 'New Notification'}
-                                </p>
-                                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                                    {processedNotification.message}
-                                </p>
+                    <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0">
+                            <div
+                                className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                                    isMentorshipRequest
+                                        ? 'bg-indigo-100 text-indigo-600'
+                                        : 'bg-blue-100 text-blue-600'
+                                }`}
+                            >
+                                {isMentorshipRequest ? (
+                                    <Users size={20} />
+                                ) : (
+                                    <Bell size={20} />
+                                )}
                             </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col border-l border-gray-100 bg-gray-50/50 w-24">
-                        {!!processedNotification.metadata?.link && (
-                            <button
-                                onClick={async () => {
-                                    const link = processedNotification.metadata?.link as string;
-                                    if (processedNotification._id) {
-                                        try {
-                                            // Mark as read (you'll need to add this API method)
-                                            dispatch(markAsRead(processedNotification._id));
-                                        } catch (err) {
-                                            console.error('Auto-marking as read failed', err);
-                                        }
-                                    }
-                                    if (link) {
-                                        navigate(link);
-                                    }
-                                    toast.dismiss(id);
-                                }}
-                                className="flex-1 px-4 py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-100/50 transition-colors border-b border-gray-100"
-                            >
-                                VIEW
-                            </button>
-                        )}
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900">
+                                {processedNotification.title || 'New Notification'}
+                            </p>
+                            <p className="mt-1 text-sm text-gray-500 line-clamp-3">
+                                {processedNotification.message}
+                            </p>
+                            <div className="mt-3 flex items-center gap-3">
+                                {!!processedNotification.metadata?.link && (
+                                    <button
+                                        onClick={async () => {
+                                            const link = processedNotification.metadata?.link as string;
+                                            if (processedNotification._id) {
+                                                try {
+                                                    await mentorApi.markNotificationAsRead(processedNotification._id);
+                                                    dispatch(markAsRead(processedNotification._id));
+                                                } catch (err) {
+                                                    console.error('Auto-marking as read failed', err);
+                                                }
+                                            }
+                                            if (link) {
+                                                navigate(link);
+                                            }
+                                            toast.dismiss(id);
+                                        }}
+                                        className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                                    >
+                                        View
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => toast.dismiss(id)}
+                                    className="text-sm font-medium text-gray-400 hover:text-gray-500 transition-colors"
+                                >
+                                    Dismiss
+                                </button>
+                            </div>
+                        </div>
                         <button
                             onClick={() => toast.dismiss(id)}
-                            className="flex-1 px-4 py-2 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors"
+                            className="flex-shrink-0 text-gray-400 hover:text-gray-500 transition-colors"
                         >
-                            CLOSE
+                            <span className="sr-only">Close</span>
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -121,18 +129,19 @@ export const MentorNotificationListener: React.FC = () => {
             return;
         }
 
-        // Fetch existing notifications
-        notificationApi.getNotifications()
-            .then((notifications) => {
-                dispatch(setNotifications(notifications));
+        // Fetch initial notifications
+        mentorApi.getNotifications()
+            .then((data) => {
+                if(Array.isArray(data)){
+                dispatch(setNotifications(data));
+                }
             })
-            .catch((err) => {
-                console.error('Failed to fetch notifications:', err);
+            .catch(err => {
+                console.error("Failed to fetch mentor notifications", err);
             });
 
-        console.log('%c🔔 MentorNotificationListener: Initializing socket for mentor:', 'color: #7F00FF; font-weight: bold', currentUserId);
+        // console.log('%c🔔 MentorNotificationListener: Initializing socket for mentor:', 'color: #7F00FF; font-weight: bold', currentUserId);
 
-        // Connect to socket and join mentor room
         const socket = connectSocket();
         
         if (socket) {
@@ -151,7 +160,7 @@ export const MentorNotificationListener: React.FC = () => {
             // Log when connected
             socket.on('connect', () => {
                 console.log('🚀 MentorNotificationListener: Socket connected! Socket ID:', socket.id);
-                joinRoleRoom('mentor');
+                // joinRoleRoom('mentor');
                 if (currentUserId) joinUserRoom(currentUserId);
             });
         } else {
@@ -176,3 +185,4 @@ export const MentorNotificationListener: React.FC = () => {
         ></div>
     );
 };
+

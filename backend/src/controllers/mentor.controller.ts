@@ -4,6 +4,7 @@ import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
 import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
+import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { AuthMessages } from '@/types/response-messages.types';
 import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
 
@@ -11,7 +12,9 @@ export class MentorController {
     constructor(
         @inject(TYPES.MentorAuthService)
         private _mentorAuthService: IMentorAuthService,
-        @inject(TYPES.MentorService) private _mentorService: IMentorService
+        @inject(TYPES.MentorService) private _mentorService: IMentorService,
+        @inject(TYPES.NotificationService)
+        private _notificationService: INotificationService
     ) {}
 
     async mentorRegisterInit(req: Request, res: Response) {
@@ -43,7 +46,6 @@ export class MentorController {
 
     async login(req: Request, res: Response) {
         const result = await this._mentorAuthService.mentorLogin(req.body);
-        console.log(result);
         res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
             secure: true,
@@ -162,7 +164,11 @@ export class MentorController {
             const search = (req.query.search as string) || '';
             const sort = (req.query.sort as string) || '';
 
-            const filters: any = {};
+            const filters: {
+                expertise?: { $regex: string; $options: string };
+                monthlyCharge?: { $gte?: number; $lte?: number };
+                rating?: { $gte: number };
+            } = {};
             if (req.query.expertise) {
                 filters.expertise = {
                     $regex: req.query.expertise as string,
@@ -269,5 +275,37 @@ export class MentorController {
                 error instanceof Error ? error.message : 'Google login failed';
             res.status(code.BAD_REQUEST).json({ message });
         }
+    }
+
+    async getNotifications(req: Request, res: Response): Promise<void> {
+        if (!req.currentUser) {
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            return;
+        }
+        const notifications =
+            await this._notificationService.getNotificationsByRecipient(
+                req.currentUser.id
+            );
+        res.status(code.OK).json(notifications);
+    }
+
+    async markNotificationAsRead(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        await this._notificationService.markAsRead(id);
+        res.status(code.OK).json({ message: 'Notification marked as read' });
+    }
+
+    async markAllNotificationsAsRead(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        if (!req.currentUser) {
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            return;
+        }
+        await this._notificationService.markAllAsRead(req.currentUser.id);
+        res.status(code.OK).json({
+            message: 'All notifications marked as read',
+        });
     }
 }

@@ -20,7 +20,7 @@ export enum SessionStatus {
 }
 
 interface ISession {
-    _id?: any;
+    _id?: string | ObjectId;
     date: Date;
     status: SessionStatus;
     mentorNotes?: string;

@@ -33,17 +33,7 @@ export class NotificationService implements INotificationService {
             metadata,
             isRead: false,
         } as Partial<INotification>);
-
-        this._socketService.emitToRoom(
-            recipientId,
-            'newNotification',
-            notification
-        );
-        this._socketService.emitToRoom(
-            recipientRole,
-            'newNotification',
-            notification
-        );
+        this._socketService.emitNotification(recipientId, notification);
 
         return notification;
     }

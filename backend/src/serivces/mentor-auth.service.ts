@@ -45,7 +45,6 @@ export class MentorAuthService implements IMentorAuthService {
     ) {}
 
     async mentorLogin(dto: LoginRequestDto) {
-        console.log(dto.email, dto, 'ddddtooototot');
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 

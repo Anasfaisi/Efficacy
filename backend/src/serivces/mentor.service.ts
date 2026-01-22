@@ -59,7 +59,10 @@ export class MentorService implements IMentorService {
         return updatedMentor;
     }
 
-    async updateMentorProfileMedia(id: string, files: any): Promise<IMentor> {
+    async updateMentorProfileMedia(
+        id: string,
+        files: Record<string, { filename: string }[]>
+    ): Promise<IMentor> {
         const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
         const updateData: Partial<IMentor> = {};
 
@@ -87,11 +90,14 @@ export class MentorService implements IMentorService {
     async updateMentorProfileArray(
         id: string,
         field: string,
-        data: any[]
+        data: unknown[]
     ): Promise<IMentor> {
-        const updateData: any = {};
+        const updateData: Record<string, unknown[]> = {};
         updateData[field] = data;
-        const updated = await this._mentorRepository.update(id, updateData);
+        const updated = await this._mentorRepository.update(
+            id,
+            updateData as unknown as Partial<IMentor>
+        );
         if (!updated) throw new Error(ErrorMessages.UpdateFailed);
         return updated;
     }
@@ -101,7 +107,11 @@ export class MentorService implements IMentorService {
         limit: number,
         search: string,
         sort: string,
-        filter: any
+        filter: {
+            expertise?: { $regex: string; $options: string };
+            monthlyCharge?: { $gte?: number; $lte?: number };
+            rating?: { $gte: number };
+        }
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
         const mentorsList = await this._mentorRepository.findAllApprovedMentors(
             page,

@@ -9,6 +9,10 @@ import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { IUser } from '@/models/User.model';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
+import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
+import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
+import { IAdmin } from '@/models/Admin.model';
+import { ITransaction } from '@/models/Wallet.model';
 import {
     UserManagementResponseDto,
     PaginatedUserResponseDto,
@@ -23,7 +27,11 @@ export class AdminService implements IAdminService {
         @inject(TYPES.NotificationService)
         private _notificationService: INotificationService,
         @inject(TYPES.UserRepository)
-        private _userRepository: IUserRepository
+        private _userRepository: IUserRepository,
+        @inject(TYPES.WalletRepository)
+        private _walletRepository: IWalletRepository,
+        @inject(TYPES.AdminRepository)
+        private _adminRepository: IAdminRepository<IAdmin>
     ) {}
 
     private mapToResponseDto(mentor: IMentor): MentorApplicationResponseDto {
@@ -187,5 +195,24 @@ export class AdminService implements IAdminService {
         await this._userRepository.updateUser(dto.userId, {
             isActive: dto.isActive,
         });
+    }
+
+    async getRevenueDetails(
+        adminId: string
+    ): Promise<{ totalRevenue: number }> {
+        const admin = await this._adminRepository.findById(adminId);
+        return { totalRevenue: admin?.totalRevenue || 0 };
+    }
+
+    async getAllTransactions(
+        page: number,
+        limit: number,
+        filter: 'all' | 'mentor' | 'user'
+    ): Promise<{ transactions: ITransaction[]; total: number }> {
+        return await this._walletRepository.getGlobalTransactions(
+            page,
+            limit,
+            filter
+        );
     }
 }

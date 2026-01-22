@@ -22,7 +22,8 @@ interface ITransaction {
 }
 
 interface IWallet extends Document {
-    mentorId: ObjectId;
+    mentorId?: ObjectId;
+    userId?: ObjectId;
     balance: number;
     pendingBalance: number;
     transactions: ITransaction[];
@@ -56,8 +57,10 @@ const walletSchema = new Schema<IWallet>(
         mentorId: {
             type: Schema.Types.ObjectId,
             ref: 'Mentors',
-            required: true,
-            unique: true,
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Users',
         },
         balance: { type: Number, default: 0 },
         pendingBalance: { type: Number, default: 0 },

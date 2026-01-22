@@ -10,8 +10,10 @@ import {
     Search,
     ArrowRight,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MentorMentorshipList: React.FC = () => {
+    const navigate = useNavigate();
     const [mentorships, setMentorships] = useState<Mentorship[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>(
@@ -144,9 +146,13 @@ const MentorMentorshipList: React.FC = () => {
                                                 {m.status}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-500 font-medium mb-4">
+                                        <p className="text-sm text-gray-500 font-medium mb-1">
                                             {m.userId?.email}
                                         </p>
+                                        
+                                        <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
+                                            ID: {m._id?.substring(0, 6)}...
+                                        </div>
 
                                         <div className="flex flex-wrap gap-4">
                                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
@@ -194,7 +200,10 @@ const MentorMentorshipList: React.FC = () => {
                                         <button className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2">
                                             <MessageSquare size={16} /> Chat
                                         </button>
-                                        <button className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
+                                        <button 
+                                            onClick={() => navigate(`/mentor/mentorship/${m._id}`)}
+                                            className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
+                                        >
                                             Manage <ArrowRight size={16} />
                                         </button>
                                     </div>

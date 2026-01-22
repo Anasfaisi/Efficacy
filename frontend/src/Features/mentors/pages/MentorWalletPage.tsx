@@ -6,8 +6,6 @@ import {
     ArrowDownCircle,
     IndianRupee,
     Clock,
-    Plus,
-    Building2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -32,6 +30,8 @@ const MentorWalletPage: React.FC = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+
 
     const handleWithdraw = async () => {
         if (!withdrawAmount || isNaN(Number(withdrawAmount))) return;
@@ -183,59 +183,8 @@ const MentorWalletPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Bank Details */}
-                <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-gray-900">
-                            Bank Account
-                        </h3>
-                        <button className="text-indigo-600 p-2 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
-                            <Plus size={18} />
-                        </button>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                    {wallet?.bankAccountDetails?.accountNumber ? (
-                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 bg-white rounded-xl shadow-sm">
-                                    <Building2
-                                        className="text-gray-400"
-                                        size={24}
-                                    />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-900">
-                                        {wallet.bankAccountDetails.bankName}
-                                    </p>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                        {wallet.bankAccountDetails
-                                            .accountType || 'Savings'}
-                                    </p>
-                                </div>
-                            </div>
-                            <p className="text-lg font-black text-gray-700 tracking-widest">
-                                **** ****{' '}
-                                {wallet.bankAccountDetails.accountNumber.slice(
-                                    -4,
-                                )}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="p-8 text-center border-2 border-dashed border-gray-100 rounded-3xl">
-                            <Building2
-                                className="mx-auto text-gray-200 mb-4"
-                                size={40}
-                            />
-                            <p className="text-sm text-gray-500 font-medium mb-4">
-                                No bank account linked
-                            </p>
-                            <button className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:underline">
-                                Add Bank Details
-                            </button>
-                        </div>
-                    )}
-                </div>
 
                 {/* Recent Transactions */}
                 <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
@@ -304,6 +253,8 @@ const MentorWalletPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 };

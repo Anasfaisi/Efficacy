@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
-import { notificationApi } from '@/Services/notification.api';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +8,7 @@ const BellButton: React.FC = () => {
     const { notifications, unreadCount } = useAppSelector((state) => state.notification);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-
+    
     return (
         <div className="relative group">
             <button className="relative p-2 text-gray-600 hover:text-[#7F00FF] hover:bg-purple-50 rounded-xl transition-all">
@@ -27,10 +26,7 @@ const BellButton: React.FC = () => {
                     <h4 className="font-bold text-gray-900 text-sm">Notifications</h4>
                     {unreadCount > 0 && (
                         <button 
-                            onClick={() => {
-                                dispatch(markAllAsRead());
-                                notificationApi.markAllAsRead().catch(console.error);
-                            }}
+                            onClick={() => dispatch(markAllAsRead())}
                             className="text-[10px] font-bold text-[#7F00FF] hover:underline uppercase tracking-wider"
                         >
                             Clear all
@@ -44,10 +40,7 @@ const BellButton: React.FC = () => {
                             <div 
                                 key={notif._id}
                                 onClick={() => {
-                                    if (!notif.isRead) {
-                                        dispatch(markAsRead(notif._id));
-                                        notificationApi.markAsRead(notif._id).catch(console.error);
-                                    }
+                                    if (!notif.isRead) dispatch(markAsRead(notif._id));
                                     if (notif.metadata?.link) navigate(notif.metadata.link as string);
                                 }}
                                 className={`p-4 border-b border-gray-50 cursor-pointer transition-colors hover:bg-purple-50/30 ${!notif.isRead ? "bg-purple-50/10" : ""}`}

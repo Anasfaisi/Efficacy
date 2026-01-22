@@ -12,8 +12,6 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { User } from '@/types/auth';
-import UserMentorshipStatus from '../../mentors/components/UserMentorshipStatus';
-
 const UserDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     const user = currentUser as User;
@@ -21,7 +19,6 @@ const UserDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <UserMentorshipStatus />
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-[#7F00FF]/25 border border-white/10">
                 <div className="relative z-10 flex justify-between items-center">

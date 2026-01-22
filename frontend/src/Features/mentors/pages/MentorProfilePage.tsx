@@ -1,12 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import {  useAppDispatch } from '@/redux/hooks';
 import { updateCurrentUser } from '@/redux/slices/authSlice';
 import type { Mentor } from '@/types/auth';
 import {
     Camera,
-    Mail,
-    User,
-    Phone,
     Globe,
     Linkedin,
     Github,
@@ -16,10 +13,8 @@ import {
     Loader2,
     Trash2,
     Plus,
-    MapPin,
     ExternalLink,
     Target,
-    DollarSign,
     GraduationCap,
     Building2,
     Lock,
@@ -35,6 +30,8 @@ import {
     updateMentorProfileMedia,
     updateMentorProfileArray,
 } from '@/Services/mentor.api';
+import { walletApi } from '@/Services/wallet.api';
+import { bankDetailsSchema } from '@/types/zodSchemas';
 
 interface ConfigSectionProps {
     title: string;
@@ -82,7 +79,7 @@ const ConfigSection = ({
 );
 
 const MentorProfilePage = () => {
-    const { currentUser } = useAppSelector((state) => state.auth);
+    // const { currentUser } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const [fullMentor, setFullMentor] = useState<Mentor | null>(null);
     const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -112,6 +109,14 @@ const MentorProfilePage = () => {
     const [expertise, setExpertise] = useState('');
     const [monthlyCharge, setMonthlyCharge] = useState<number | string>('');
     const [achievements, setAchievements] = useState<string[]>([]);
+    
+    // Bank Details State
+    const [bankDetails, setBankDetails] = useState({
+        accountNumber: '',
+        bankName: '',
+        ifscCode: '',
+        accountHolderName: '',
+    });
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -148,6 +153,17 @@ const MentorProfilePage = () => {
                 setExpertise(data.expertise || '');
                 setMonthlyCharge(data.monthlyCharge || '');
                 setAchievements(data.achievements || []);
+
+                // Fetch Bank Details
+                const walletData = await walletApi.getWallet();
+                if (walletData?.bankAccountDetails) {
+                    setBankDetails({
+                        accountNumber: walletData.bankAccountDetails.accountNumber || '',
+                        bankName: walletData.bankAccountDetails.bankName || '',
+                        ifscCode: walletData.bankAccountDetails.ifscCode || '',
+                        accountHolderName: walletData.bankAccountDetails.accountHolderName || '',
+                    });
+                }
             } catch (error) {
                 toast.error('Failed to fetch profile details');
             } finally {
@@ -282,6 +298,23 @@ const MentorProfilePage = () => {
             }
         } catch (error) {
             toast.error('Upload failed');
+        } finally {
+            setIsLoading(null);
+        }
+    };
+
+    const handleSaveBankDetails = async () => {
+        setIsLoading('bank');
+        try {
+            bankDetailsSchema.parse(bankDetails);
+            await walletApi.updateBankDetails(bankDetails);
+            toast.success('Bank details updated successfully');
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                error.issues.forEach((err) => toast.error(err.message));
+            } else {
+                toast.error('Failed to update bank details');
+            }
         } finally {
             setIsLoading(null);
         }
@@ -780,6 +813,87 @@ const MentorProfilePage = () => {
                                 <Plus className="w-4 h-4" />
                                 Add New Milestone
                             </button>
+                        </div>
+                    </ConfigSection>
+
+                    <ConfigSection
+                        title="Bank Accounts"
+                        description="Your payouts will be sent to this account."
+                        footer="Ensure details match your bank records exactly."
+                        onSave={handleSaveBankDetails}
+                        isLoading={isLoading === 'bank'}
+                    >
+                         <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                    Account Holder Name
+                                </label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                    value={bankDetails.accountHolderName}
+                                    onChange={(e) =>
+                                        setBankDetails({
+                                            ...bankDetails,
+                                            accountHolderName: e.target.value,
+                                        })
+                                    }
+                                    placeholder="Name as per bank records"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                    Account Number
+                                </label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                    value={bankDetails.accountNumber}
+                                    onChange={(e) =>
+                                        setBankDetails({
+                                            ...bankDetails,
+                                            accountNumber: e.target.value,
+                                        })
+                                    }
+                                    placeholder="000000000000"
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                        Bank Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                        value={bankDetails.bankName}
+                                        onChange={(e) =>
+                                            setBankDetails({
+                                                ...bankDetails,
+                                                bankName: e.target.value,
+                                            })
+                                        }
+                                        placeholder="State Bank of India"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                        IFSC Code
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all uppercase"
+                                        value={bankDetails.ifscCode}
+                                        onChange={(e) =>
+                                            setBankDetails({
+                                                ...bankDetails,
+                                                ifscCode: e.target.value,
+                                            })
+                                        }
+                                        placeholder="SBIN0001234"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </ConfigSection>
 

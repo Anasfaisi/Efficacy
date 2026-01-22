@@ -7,6 +7,7 @@ import {
     UserCircle,
     BookOpen,
     LogOut,
+    Wallet,
 } from 'lucide-react';
 
 const MentorSidebar: React.FC = () => {
@@ -35,16 +36,22 @@ const MentorSidebar: React.FC = () => {
                         active={isActive('/mentor/dashboard')}
                     />
                     <NavItem
-                        to="/mentor/students"
+                        to="/mentor/requests"
                         icon={<Users size={20} />}
-                        label="My Mentees"
-                        active={isActive('/mentor/students')}
+                        label="Requests"
+                        active={isActive('/mentor/requests')}
                     />
                     <NavItem
                         to="/mentor/sessions"
                         icon={<Calendar size={20} />}
-                        label="Sessions"
+                        label="Subscribed Mentorship"
                         active={isActive('/mentor/sessions')}
+                    />
+                    <NavItem
+                        to="/mentor/wallet"
+                        icon={<Wallet size={20} />}
+                        label="Wallet"
+                        active={isActive('/mentor/wallet')}
                     />
                     <NavItem
                         to="/mentor/profile"

@@ -18,7 +18,7 @@ export class MentorOnboardController {
 
         const result = await this._mentorOnboardService.mentorApplicationInit({
             ...req.body,
-            id: req.user?.id,
+            id: req.currentUser?.id,
             resume: files?.resume?.[0]?.filename,
             certificate: files?.certificate?.[0]?.filename,
             idProof: files?.idProof?.[0]?.filename,
@@ -32,7 +32,7 @@ export class MentorOnboardController {
 
     async activateMentor(req: Request, res: Response) {
         const { monthlyCharge } = req.body;
-        const mentorId = req.user?.id;
+        const mentorId = req.currentUser?.id;
 
         if (!mentorId) {
             throw new Error('Mentor ID not found in session');

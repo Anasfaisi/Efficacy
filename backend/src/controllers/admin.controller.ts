@@ -207,4 +207,22 @@ export class AdminController {
             message: 'User status updated successfully',
         });
     }
+
+    async getRevenueData(req: Request, res: Response): Promise<void> {
+        const id = req.currentUser?.id;
+        const revenue = await this._adminService.getRevenueDetails(id!);
+        res.status(code.OK).json(revenue);
+    }
+
+    async getTransactions(req: Request, res: Response): Promise<void> {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const filter = (req.query.filter as 'all' | 'mentor' | 'user') || 'all';
+        const transactions = await this._adminService.getAllTransactions(
+            page,
+            limit,
+            filter
+        );
+        res.status(code.OK).json(transactions);
+    }
 }

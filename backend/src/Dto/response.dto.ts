@@ -117,7 +117,7 @@ export class RefreshResponseDto {
 export class ResponsePaymentDto {
     constructor(
         public readonly sessionId: string,
-        public readonly url: string
+        public readonly sessionUrl: string
     ) {}
 }
 

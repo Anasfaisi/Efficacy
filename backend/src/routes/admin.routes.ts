@@ -123,5 +123,17 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.updateUserStatus.bind(adminController))
     );
 
+    router.get(
+        '/revenue',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getRevenueData.bind(adminController))
+    );
+
+    router.get(
+        '/transactions',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getTransactions.bind(adminController))
+    );
+
     return router;
 }
