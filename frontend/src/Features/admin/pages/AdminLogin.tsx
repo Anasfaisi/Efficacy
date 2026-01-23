@@ -19,7 +19,7 @@ const AdminLogin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { currentUser, isLoading } = useSelector(
-        (state: RootState) => state.auth,
+        (state: RootState) => state.auth
     );
 
     const {
@@ -90,7 +90,7 @@ const AdminLogin = () => {
                             className={cn(
                                 'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all',
                                 errors.email &&
-                                    'border-red-400 bg-red-50 focus:ring-red-100',
+                                    'border-red-400 bg-red-50 focus:ring-red-100'
                             )}
                         />
                         {errors.email && (
@@ -112,7 +112,7 @@ const AdminLogin = () => {
                                 className={cn(
                                     'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all pr-14',
                                     errors.password &&
-                                        'border-red-400 bg-red-50 focus:ring-red-100',
+                                        'border-red-400 bg-red-50 focus:ring-red-100'
                                 )}
                             />
                             <button

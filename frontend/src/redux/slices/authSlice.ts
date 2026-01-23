@@ -18,7 +18,7 @@ const authSlice = createSlice({
     reducers: {
         setCredentials: (
             state,
-            action: PayloadAction<{ currentUser: currentUserType }>,
+            action: PayloadAction<{ currentUser: currentUserType }>
         ) => {
             state.currentUser = action.payload.currentUser;
             state.isLoading = false;
@@ -39,7 +39,7 @@ const authSlice = createSlice({
                 email: string;
                 role: string;
                 resendAvailableAt: string;
-            }>,
+            }>
         ) => {
             state.tempEmail = action.payload.email;
             state.resendAvailableAt = action.payload.resendAvailableAt;
@@ -47,7 +47,7 @@ const authSlice = createSlice({
         },
         updateCurrentUser: (
             state,
-            action: PayloadAction<Partial<currentUserType>>,
+            action: PayloadAction<Partial<currentUserType>>
         ) => {
             if (state.currentUser) {
                 state.currentUser = { ...state.currentUser, ...action.payload };

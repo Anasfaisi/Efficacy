@@ -17,34 +17,33 @@ export class MentorshipRepository
     }
 
     async findByUserId(userId: string | ObjectId): Promise<IMentorship[]> {
-        return await this.model.find({ userId }).populate(
-            'mentorId',
-            'name profilePic expertise'
-        );
+        return await this.model
+            .find({ userId })
+            .populate('mentorId', 'name profilePic expertise');
     }
 
     async findByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]> {
-        return await this.model.find({ mentorId }).populate(
-            'userId',
-            'name profilePic email'
-        );
+        return await this.model
+            .find({ mentorId })
+            .populate('userId', 'name profilePic email');
     }
 
     async findActiveByUserId(
         userId: string | ObjectId
     ): Promise<IMentorship | null> {
-        return await this.model.findOne({
-            userId,
-            status: {
-                $in: [
-                    MentorshipStatus.PENDING,
-                    MentorshipStatus.MENTOR_ACCEPTED,
-                    MentorshipStatus.USER_CONFIRMED,
-                    MentorshipStatus.PAYMENT_PENDING,
-                    MentorshipStatus.ACTIVE,
-                ],
-            },
-        })
+        return await this.model
+            .findOne({
+                userId,
+                status: {
+                    $in: [
+                        MentorshipStatus.PENDING,
+                        MentorshipStatus.MENTOR_ACCEPTED,
+                        MentorshipStatus.USER_CONFIRMED,
+                        MentorshipStatus.PAYMENT_PENDING,
+                        MentorshipStatus.ACTIVE,
+                    ],
+                },
+            })
             .sort({ createdAt: -1 })
             .populate('mentorId', 'name profilePic expertise');
     }
@@ -52,10 +51,12 @@ export class MentorshipRepository
     async findActiveByMentorId(
         mentorId: string | ObjectId
     ): Promise<IMentorship[]> {
-        return await this.model.find({
-            mentorId,
-            status: MentorshipStatus.ACTIVE,
-        }).populate('userId', 'name profilePic email');
+        return await this.model
+            .find({
+                mentorId,
+                status: MentorshipStatus.ACTIVE,
+            })
+            .populate('userId', 'name profilePic email');
     }
 
     async findByUserIdAndMentorId(

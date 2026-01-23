@@ -29,7 +29,7 @@ export const MentorForgotResetPassword: React.FC = () => {
             if (token) {
                 if (!passwordRegex.test(password)) {
                     setErrorMessage(
-                        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
+                        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.'
                     );
                     setIsLoading(false);
                     return;
@@ -43,7 +43,7 @@ export const MentorForgotResetPassword: React.FC = () => {
                 const result = await mentorApi.resetPassword(token, password);
                 if (result) {
                     toast.success(
-                        result.message || 'Password reset successful!',
+                        result.message || 'Password reset successful!'
                     );
                     setTimeout(() => navigate('/mentor/login'), 2000);
                 }
@@ -56,7 +56,7 @@ export const MentorForgotResetPassword: React.FC = () => {
                 const result = await mentorApi.forgotPassword(email);
                 if (result) {
                     toast.success(
-                        result.message || 'Reset link sent to your email.',
+                        result.message || 'Reset link sent to your email.'
                     );
                 }
             }

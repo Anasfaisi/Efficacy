@@ -115,7 +115,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 'px-5 py-1.5 rounded-lg text-sm font-semibold capitalize transition-all',
                                 view === v
                                     ? 'bg-white text-primary shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700',
+                                    : 'text-gray-500 hover:text-gray-700'
                             )}
                         >
                             {v}
@@ -148,7 +148,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                             'text-[10px] font-bold uppercase tracking-[0.2em] transition-colors',
                                             isToday
                                                 ? 'text-primary'
-                                                : 'text-gray-400 group-hover:text-gray-600',
+                                                : 'text-gray-400 group-hover:text-gray-600'
                                         )}
                                     >
                                         {format(day, 'EEE')}
@@ -158,7 +158,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                             'text-2xl font-black mt-1.5 w-12 h-12 flex items-center justify-center rounded-full transition-all',
                                             isToday
                                                 ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                                : 'text-gray-900 group-hover:bg-gray-50',
+                                                : 'text-gray-900 group-hover:bg-gray-50'
                                         )}
                                     >
                                         {day.getDate()}
@@ -210,10 +210,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 {/* Task Blocks */}
                                 {tasks
                                     .filter((task) =>
-                                        isSameDay(
-                                            new Date(task.startDate),
-                                            day,
-                                        ),
+                                        isSameDay(new Date(task.startDate), day)
                                     )
                                     .map((task) => {
                                         const style = getTaskStyle(task);
@@ -226,7 +223,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                                 }}
                                                 className={cn(
                                                     'absolute left-1 right-1 rounded-lg border p-2.5 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer z-10 group/task hover:z-20',
-                                                    style.colorClasses,
+                                                    style.colorClasses
                                                 )}
                                                 style={{
                                                     top: style.top,
@@ -241,9 +238,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                                     <p className="text-[10px] font-medium opacity-80">
                                                         {format(
                                                             new Date(
-                                                                task.startDate,
+                                                                task.startDate
                                                             ),
-                                                            'h:mm a',
+                                                            'h:mm a'
                                                         )}
                                                         {task.endDate &&
                                                             ` - ${format(new Date(task.endDate), 'h:mm a')}`}

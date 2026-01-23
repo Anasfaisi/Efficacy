@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
                                     >
                                         <Icon size={20} />
                                     </a>
-                                ),
+                                )
                             )}
                         </div>
                     </div>

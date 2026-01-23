@@ -26,11 +26,11 @@ export const mentorshipApi = {
             status: 'mentor_accepted' | 'rejected';
             suggestedStartDate?: Date;
             reason?: string;
-        },
+        }
     ) => {
         const response = await axiosInstance.patch(
             `/mentorship/request/${id}/respond`,
-            data,
+            data
         );
         return response.data;
     },
@@ -38,7 +38,7 @@ export const mentorshipApi = {
     confirmSuggestion: async (id: string, confirm: boolean) => {
         const response = await axiosInstance.patch(
             `/mentorship/request/${id}/confirm`,
-            { confirm },
+            { confirm }
         );
         return response.data;
     },
@@ -46,7 +46,7 @@ export const mentorshipApi = {
     verifyPayment: async (id: string, paymentId: string) => {
         const response = await axiosInstance.post(
             `/mentorship/request/${id}/verify-payment`,
-            { paymentId },
+            { paymentId }
         );
         return response.data;
     },
@@ -54,7 +54,7 @@ export const mentorshipApi = {
     createMentorshipCheckoutSession: async (
         mentorshipId: string,
         successUrl: string,
-        cancelUrl: string,
+        cancelUrl: string
     ) => {
         const response = await axiosInstance.post(
             `/payments/checkout-mentorship`,
@@ -62,15 +62,15 @@ export const mentorshipApi = {
                 mentorshipId,
                 successUrl,
                 cancelUrl,
-            },
+            }
         );
-        console.log(response.data ,"response data mentorship api");
+        console.log(response.data, 'response data mentorship api');
         return response.data;
     },
 
     getActiveMentorship: async () => {
         const response = await axiosInstance.get('/mentorship/active');
-        
+
         return response.data;
     },
 
@@ -82,18 +82,18 @@ export const mentorshipApi = {
     bookSession: async (id: string, date: Date) => {
         const response = await axiosInstance.post(
             `/mentorship/${id}/book-session`,
-            { date },
+            { date }
         );
         return response.data;
     },
 
     rescheduleSession: async (
         id: string,
-        data: { sessionId: string; newDate: Date },
+        data: { sessionId: string; newDate: Date }
     ) => {
         const response = await axiosInstance.post(
             `/mentorship/${id}/reschedule-session`,
-            data,
+            data
         );
         return response.data;
     },
@@ -101,18 +101,18 @@ export const mentorshipApi = {
     completeMentorship: async (id: string, role: 'user' | 'mentor') => {
         const response = await axiosInstance.post(
             `/mentorship/${id}/complete`,
-            { role },
+            { role }
         );
         return response.data;
     },
 
     submitFeedback: async (
         id: string,
-        data: { role: 'user' | 'mentor'; rating: number; comment: string },
+        data: { role: 'user' | 'mentor'; rating: number; comment: string }
     ) => {
         const response = await axiosInstance.post(
             `/mentorship/${id}/feedback`,
-            data,
+            data
         );
         return response.data;
     },

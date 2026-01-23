@@ -11,13 +11,17 @@ import {
     ArrowRight,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '@/redux/hooks';
+import { setCurrentConversation } from '@/redux/slices/chatSlice';
+import { chatApi } from '@/Services/chat.api';
 
 const MentorMentorshipList: React.FC = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const [mentorships, setMentorships] = useState<Mentorship[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>(
-        'active',
+        'active'
     );
 
     const fetchData = async () => {
@@ -35,6 +39,16 @@ const MentorMentorshipList: React.FC = () => {
         fetchData();
     }, []);
 
+    const handleChat = async (userId: string) => {
+        try {
+            const conversation = await chatApi.initiateChat(userId);
+            dispatch(setCurrentConversation(conversation));
+            navigate('/mentor/chat');
+        } catch (error) {
+            console.error('Failed to initiate chat', error);
+        }
+    };
+
     const filteredMentorships = mentorships.filter((m) => {
         if (activeTab === 'active') return m.status === MentorshipStatus.ACTIVE;
         if (activeTab === 'completed')
@@ -42,11 +56,7 @@ const MentorMentorshipList: React.FC = () => {
         return true;
     });
 
-    // const handleConfirmSession = async (mentorshipId: string, sessionId: string) => {
-    //     // This would call a service to mark session as completed
-    //     // For now, let's assume we update the mentorship status if needed
-    //     toast.info('Session completion feature coming soon!');
-    // };
+   
 
     if (loading)
         return (
@@ -66,7 +76,7 @@ const MentorMentorshipList: React.FC = () => {
                         Active (
                         {
                             mentorships.filter(
-                                (m) => m.status === MentorshipStatus.ACTIVE,
+                                (m) => m.status === MentorshipStatus.ACTIVE
                             ).length
                         }
                         )
@@ -78,7 +88,7 @@ const MentorMentorshipList: React.FC = () => {
                         Completed (
                         {
                             mentorships.filter(
-                                (m) => m.status === MentorshipStatus.COMPLETED,
+                                (m) => m.status === MentorshipStatus.COMPLETED
                             ).length
                         }
                         )
@@ -149,7 +159,7 @@ const MentorMentorshipList: React.FC = () => {
                                         <p className="text-sm text-gray-500 font-medium mb-1">
                                             {m.userId?.email}
                                         </p>
-                                        
+
                                         <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
                                             ID: {m._id?.substring(0, 6)}...
                                         </div>
@@ -163,7 +173,7 @@ const MentorMentorshipList: React.FC = () => {
                                                 <span>
                                                     Starts:{' '}
                                                     {new Date(
-                                                        m.startDate!,
+                                                        m.startDate!
                                                     ).toLocaleDateString()}
                                                 </span>
                                             </div>
@@ -197,11 +207,18 @@ const MentorMentorshipList: React.FC = () => {
                                     </div>
 
                                     <div className="flex gap-2 w-full sm:w-auto">
-                                        <button className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2">
+                                        <button 
+                                            onClick={() => m.userId && handleChat(m.userId._id || m.userId.id!)}
+                                            className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2"
+                                        >
                                             <MessageSquare size={16} /> Chat
                                         </button>
-                                        <button 
-                                            onClick={() => navigate(`/mentor/mentorship/${m._id}`)}
+                                        <button
+                                            onClick={() =>
+                                                navigate(
+                                                    `/mentor/mentorship/${m._id}`
+                                                )
+                                            }
                                             className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
                                         >
                                             Manage <ArrowRight size={16} />
@@ -220,7 +237,7 @@ const MentorMentorshipList: React.FC = () => {
                                         .filter(
                                             (s) =>
                                                 s.status ===
-                                                SessionStatus.BOOKED,
+                                                SessionStatus.BOOKED
                                         )
                                         .slice(0, 2)
                                         .map((session) => (
@@ -231,28 +248,28 @@ const MentorMentorshipList: React.FC = () => {
                                                 <div className="text-center border-r border-gray-100 pr-4">
                                                     <p className="text-[10px] font-black text-indigo-400 uppercase leading-none mb-1">
                                                         {new Date(
-                                                            session.date,
+                                                            session.date
                                                         ).toLocaleString(
                                                             'default',
-                                                            { month: 'short' },
+                                                            { month: 'short' }
                                                         )}
                                                     </p>
                                                     <p className="text-sm font-black text-gray-900 leading-none">
                                                         {new Date(
-                                                            session.date,
+                                                            session.date
                                                         ).getDate()}
                                                     </p>
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-bold text-gray-900">
                                                         {new Date(
-                                                            session.date,
+                                                            session.date
                                                         ).toLocaleTimeString(
                                                             [],
                                                             {
                                                                 hour: '2-digit',
                                                                 minute: '2-digit',
-                                                            },
+                                                            }
                                                         )}
                                                     </p>
                                                     <button className="text-[10px] font-black text-[#7F00FF] hover:underline">
@@ -262,8 +279,7 @@ const MentorMentorshipList: React.FC = () => {
                                             </div>
                                         ))}
                                     {m.sessions.filter(
-                                        (s) =>
-                                            s.status === SessionStatus.BOOKED,
+                                        (s) => s.status === SessionStatus.BOOKED
                                     ).length === 0 && (
                                         <p className="text-xs text-gray-400 font-medium italic">
                                             No sessions scheduled by student

@@ -13,7 +13,7 @@ export const getKanbanBoardApi = async (id: string | null) => {
 export const createTaskAPI = async (
     id: string,
     columnId: string,
-    task: Task,
+    task: Task
 ) => {
     const res = await api.post('/kanban/task/add', {
         id,
@@ -28,7 +28,7 @@ export const updateTaskAPI = async (
     id: string,
     columnId: string,
     taskId: string,
-    data: Partial<Task>,
+    data: Partial<Task>
 ) => {
     const res = await api.put('/kanban/task/update', {
         id,
@@ -43,7 +43,7 @@ export const updateTaskAPI = async (
 export const deleteKanbanTask = async (
     columnId: string,
     taskId: string,
-    id: string,
+    id: string
 ) => {
     const res = await api.delete(`/kanban/task/${id}`, {
         data: { columnId, taskId },
@@ -58,7 +58,7 @@ export const reorderTaskAPI = async (
     sourceColumnId: string,
     destColumnId: string,
     sourceTaskIndex: number,
-    destTaskIndex: number,
+    destTaskIndex: number
 ) => {
     const res = await api.put('/kanban/task/reorder', {
         id,

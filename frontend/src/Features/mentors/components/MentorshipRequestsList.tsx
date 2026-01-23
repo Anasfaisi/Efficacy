@@ -9,11 +9,15 @@ interface MentorshipRequestsListProps {
     isPage?: boolean;
 }
 
-const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage = false }) => {
+const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
+    isPage = false,
+}) => {
     const [requests, setRequests] = useState<Mentorship[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [filter, setFilter] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending');
+    const [filter, setFilter] = useState<
+        'pending' | 'approved' | 'rejected' | 'all'
+    >('pending');
 
     const [rejectModal, setRejectModal] = useState<{
         isOpen: boolean;
@@ -71,7 +75,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
             rejectModal.requestId,
             'rejected',
             suggestedDate,
-            rejectReason,
+            rejectReason
         );
         closeRejectModal();
     };
@@ -80,7 +84,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
         id: string,
         status: 'mentor_accepted' | 'rejected',
         suggestedStartDate?: Date,
-        reason?: string,
+        reason?: string
     ) => {
         try {
             await mentorshipApi.respondToRequest(id, {
@@ -89,7 +93,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                 reason,
             });
             toast.success(
-                `Request ${status === 'mentor_accepted' ? 'accepted' : 'rejected'}`,
+                `Request ${status === 'mentor_accepted' ? 'accepted' : 'rejected'}`
             );
             fetchRequests();
         } catch (error: any) {
@@ -107,49 +111,80 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
     const filteredRequests = requests.filter((r) => {
         if (filter === 'all') return true;
         if (filter === 'pending') return r.status === MentorshipStatus.PENDING;
-        if (filter === 'approved') return r.status === MentorshipStatus.MENTOR_ACCEPTED || r.status === MentorshipStatus.PAYMENT_PENDING || r.status === MentorshipStatus.ACTIVE;
-        if (filter === 'rejected') return r.status === MentorshipStatus.REJECTED;
+        if (filter === 'approved')
+            return (
+                r.status === MentorshipStatus.MENTOR_ACCEPTED ||
+                r.status === MentorshipStatus.PAYMENT_PENDING ||
+                r.status === MentorshipStatus.ACTIVE
+            );
+        if (filter === 'rejected')
+            return r.status === MentorshipStatus.REJECTED;
         return true;
     });
 
     return (
-        <div className={`bg-white rounded-2xl border border-gray-200 p-6 shadow-sm ${!isPage ? 'mb-8' : ''}`}>
+        <div
+            className={`bg-white rounded-2xl border border-gray-200 p-6 shadow-sm ${!isPage ? 'mb-8' : ''}`}
+        >
             {!isPage && (
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <AlertCircle className="text-indigo-600" size={20} />
                     Mentorship Requests
                 </h3>
             )}
-            
+
             {/* Filter Tabs */}
             <div className="flex flex-wrap gap-2 mb-6">
-                {(['pending', 'approved', 'rejected', 'all'] as const).map((status) => (
-                    <button
-                        key={status}
-                        onClick={() => setFilter(status)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold capitalize transition-colors ${
-                            filter === status
-                                ? 'bg-indigo-600 text-white'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                        {status} ({requests.filter(r => {
-                            if (status === 'all') return true;
-                            if (status === 'pending') return r.status === MentorshipStatus.PENDING;
-                            if (status === 'approved') return r.status === MentorshipStatus.MENTOR_ACCEPTED || r.status === MentorshipStatus.PAYMENT_PENDING || r.status === MentorshipStatus.ACTIVE;
-                             if (status === 'rejected') return r.status === MentorshipStatus.REJECTED;
-                            return false;
-                        }).length})
-                    </button>
-                ))}
+                {(['pending', 'approved', 'rejected', 'all'] as const).map(
+                    (status) => (
+                        <button
+                            key={status}
+                            onClick={() => setFilter(status)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold capitalize transition-colors ${
+                                filter === status
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                        >
+                            {status} (
+                            {
+                                requests.filter((r) => {
+                                    if (status === 'all') return true;
+                                    if (status === 'pending')
+                                        return (
+                                            r.status ===
+                                            MentorshipStatus.PENDING
+                                        );
+                                    if (status === 'approved')
+                                        return (
+                                            r.status ===
+                                                MentorshipStatus.MENTOR_ACCEPTED ||
+                                            r.status ===
+                                                MentorshipStatus.PAYMENT_PENDING ||
+                                            r.status === MentorshipStatus.ACTIVE
+                                        );
+                                    if (status === 'rejected')
+                                        return (
+                                            r.status ===
+                                            MentorshipStatus.REJECTED
+                                        );
+                                    return false;
+                                }).length
+                            }
+                            )
+                        </button>
+                    )
+                )}
             </div>
 
             {filteredRequests.length === 0 ? (
-                 <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm">
+                <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm">
                     <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <AlertCircle className="text-gray-400" size={32} />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">No {filter} requests found</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        No {filter} requests found
+                    </h3>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,12 +209,20 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                     <p className="text-xs text-gray-500">
                                         {req.userId?.email || ''}
                                     </p>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md mt-1 inline-block ${
-                                        req.status === MentorshipStatus.PENDING ? 'bg-yellow-100 text-yellow-700' :
-                                        req.status === MentorshipStatus.ACTIVE ? 'bg-green-100 text-green-700' :
-                                        req.status === MentorshipStatus.REJECTED ? 'bg-red-100 text-red-700' :
-                                        'bg-gray-100 text-gray-700'
-                                    }`}>
+                                    <span
+                                        className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md mt-1 inline-block ${
+                                            req.status ===
+                                            MentorshipStatus.PENDING
+                                                ? 'bg-yellow-100 text-yellow-700'
+                                                : req.status ===
+                                                    MentorshipStatus.ACTIVE
+                                                  ? 'bg-green-100 text-green-700'
+                                                  : req.status ===
+                                                      MentorshipStatus.REJECTED
+                                                    ? 'bg-red-100 text-red-700'
+                                                    : 'bg-gray-100 text-gray-700'
+                                        }`}
+                                    >
                                         {req.status}
                                     </span>
                                 </div>
@@ -195,13 +238,16 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                         Proposed:{' '}
                                         {req.proposedStartDate
                                             ? new Date(
-                                                  req.proposedStartDate,
+                                                  req.proposedStartDate
                                               ).toLocaleDateString()
                                             : 'ASAP'}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <Clock size={14} className="text-indigo-600" />
+                                    <Clock
+                                        size={14}
+                                        className="text-indigo-600"
+                                    />
                                     <span>
                                         1-Month Mentorship ({req.totalSessions}{' '}
                                         sessions)
@@ -213,7 +259,10 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                 <div className="flex gap-2 mt-2">
                                     <button
                                         onClick={() =>
-                                            handleRespond(req._id!, 'mentor_accepted')
+                                            handleRespond(
+                                                req._id!,
+                                                'mentor_accepted'
+                                            )
                                         }
                                         className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold shadow-sm shadow-green-100"
                                     >
@@ -242,7 +291,8 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                             Reject Request
                         </h3>
                         <p className="text-sm text-gray-500 mb-6">
-                            Please provide a reason. You can also suggest when they can re-apply.
+                            Please provide a reason. You can also suggest when
+                            they can re-apply.
                         </p>
 
                         <div className="space-y-4">
@@ -254,7 +304,9 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm h-32 resize-none"
                                     placeholder="e.g. Schedule conflict, expertise mismatch..."
                                     value={rejectReason}
-                                    onChange={(e) => setRejectReason(e.target.value)}
+                                    onChange={(e) =>
+                                        setRejectReason(e.target.value)
+                                    }
                                 />
                             </div>
 
@@ -283,7 +335,9 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                             className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm" // pl-3
                                             placeholder="e.g. 7"
                                             value={reApplyValue}
-                                            onChange={(e) => setReApplyValue(e.target.value)}
+                                            onChange={(e) =>
+                                                setReApplyValue(e.target.value)
+                                            }
                                         />
                                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">
                                             Days
@@ -294,8 +348,14 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({ isPage 
                                         type="date"
                                         className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
                                         value={reApplyValue}
-                                        min={new Date().toISOString().split('T')[0]}
-                                        onChange={(e) => setReApplyValue(e.target.value)}
+                                        min={
+                                            new Date()
+                                                .toISOString()
+                                                .split('T')[0]
+                                        }
+                                        onChange={(e) =>
+                                            setReApplyValue(e.target.value)
+                                        }
                                     />
                                 )}
                             </div>

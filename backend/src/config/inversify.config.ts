@@ -96,7 +96,10 @@ container
     .to(GoogleVerificationService);
 container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
-container.bind<ISocketService>(TYPES.SocketService).to(SocketService).inSingletonScope();
+container
+    .bind<ISocketService>(TYPES.SocketService)
+    .to(SocketService)
+    .inSingletonScope();
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
 container
     .bind<IMentorOnboardService>(TYPES.MentorOnboardService)

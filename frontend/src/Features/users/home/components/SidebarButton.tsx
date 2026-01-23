@@ -7,6 +7,7 @@ interface SidebarButtonProps {
     active?: boolean;
     onClick?: () => void;
     to?: string;
+    collapsed?: boolean;
 }
 
 const SidebarButton: React.FC<SidebarButtonProps> = ({
@@ -15,9 +16,10 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
     active,
     onClick,
     to,
+    collapsed
 }) => {
     const baseClass = `
-    flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm
+    flex items-center ${collapsed ? 'justify-center px-2' : 'gap-4 px-5'} py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm
     ${
         active
             ? 'bg-[#7F00FF] text-white shadow-lg shadow-[#7F00FF]/30 translate-x-1'
@@ -32,14 +34,14 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
             >
                 {icon}
             </span>
-            <span className="tracking-tight">{label}</span>
-            {active && (
+            {!collapsed && <span className="tracking-tight">{label}</span>}
+            {!collapsed && active && (
                 <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
             )}
         </>
     );
 
-    if (to && to !== '#') {
+    if (to) {
         return (
             <Link to={to} className={`${baseClass} group`}>
                 {content}
@@ -50,7 +52,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
     return (
         <button
             onClick={onClick}
-            className={`${baseClass} group cursor-not-allowed opacity-60`}
+            className={`${baseClass} group w-full ${!to && !onClick ? 'cursor-default' : 'cursor-pointer'}`}
         >
             {content}
         </button>

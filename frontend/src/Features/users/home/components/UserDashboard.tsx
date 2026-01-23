@@ -165,11 +165,11 @@ const UserDashboard: React.FC = () => {
                                             >
                                                 {d}
                                             </div>
-                                        ),
+                                        )
                                     )}
                                     {Array.from(
                                         { length: 21 },
-                                        (_, i) => i + 1,
+                                        (_, i) => i + 1
                                     ).map((d) => (
                                         <div
                                             key={d}

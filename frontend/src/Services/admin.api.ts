@@ -14,7 +14,7 @@ export const adminService = {
     },
 
     getMentorApplicationById: async (
-        id: string,
+        id: string
     ): Promise<MentorApplication> => {
         const response = await api.get(`/admin/mentors/applications/${id}`);
         return response.data;
@@ -26,14 +26,14 @@ export const adminService = {
 
     rejectMentorApplication: async (
         id: string,
-        reason: string,
+        reason: string
     ): Promise<void> => {
         await api.post(`/admin/mentors/applications/${id}/reject`, { reason });
     },
 
     requestChangesMentorApplication: async (
         id: string,
-        reason: string,
+        reason: string
     ): Promise<void> => {
         await api.post(`/admin/mentors/applications/${id}/request-changes`, {
             reason,
@@ -59,7 +59,7 @@ export const adminService = {
     getAllUsers: async (
         page: number = 1,
         limit: number = 10,
-        search: string = '',
+        search: string = ''
     ): Promise<{
         users: User[];
         totalCount: number;
@@ -67,7 +67,7 @@ export const adminService = {
         currentPage: number;
     }> => {
         const response = await api.get(
-            `/admin/users?page=${page}&limit=${limit}&search=${search}`,
+            `/admin/users?page=${page}&limit=${limit}&search=${search}`
         );
         return response.data;
     },

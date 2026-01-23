@@ -31,8 +31,6 @@ const MentorWalletPage: React.FC = () => {
         fetchData();
     }, []);
 
-
-
     const handleWithdraw = async () => {
         if (!withdrawAmount || isNaN(Number(withdrawAmount))) return;
         setIsWithdrawing(true);
@@ -114,13 +112,12 @@ const MentorWalletPage: React.FC = () => {
                                     <span className="text-xl font-bold">
                                         {wallet?.transactions
                                             ?.filter(
-                                                (t: any) =>
-                                                    t.type === 'earning',
+                                                (t: any) => t.type === 'earning'
                                             )
                                             .reduce(
                                                 (acc: number, t: any) =>
                                                     acc + t.amount,
-                                                0,
+                                                0
                                             ) || 0}
                                     </span>
                                 </div>
@@ -184,8 +181,6 @@ const MentorWalletPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-
                 {/* Recent Transactions */}
                 <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
                     <div className="p-8 border-b border-gray-50 flex items-center justify-between">
@@ -229,7 +224,7 @@ const MentorWalletPage: React.FC = () => {
                                             </p>
                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                                 {new Date(
-                                                    tx.date,
+                                                    tx.date
                                                 ).toLocaleDateString()}
                                             </p>
                                         </div>
@@ -253,8 +248,6 @@ const MentorWalletPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 };

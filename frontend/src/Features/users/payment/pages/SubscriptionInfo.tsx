@@ -189,9 +189,9 @@ const SubscriptionInfo: React.FC<Props> = ({ subscription }) => {
     const today = new Date();
     const daysLeft = Math.max(
         Math.ceil(
-            (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+            (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
         ),
-        0,
+        0
     );
 
     return (

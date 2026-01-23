@@ -49,10 +49,16 @@ const MentorshipManagementPage: React.FC = () => {
         setIsProcessing(true);
         try {
             await mentorshipApi.confirmSuggestion(id, confirm);
-            toast.success(confirm ? 'Mentorship confirmed! Proceed to payment.' : 'Mentorship request rejected.');
+            toast.success(
+                confirm
+                    ? 'Mentorship confirmed! Proceed to payment.'
+                    : 'Mentorship request rejected.'
+            );
             fetchData();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Failed to process request');
+            toast.error(
+                error.response?.data?.message || 'Failed to process request'
+            );
         } finally {
             setIsProcessing(false);
         }
@@ -62,14 +68,15 @@ const MentorshipManagementPage: React.FC = () => {
         if (!id) return;
         setIsProcessing(true);
         try {
-             // Redirect to Stripe checkout
-             const {sessionUrl} = await mentorshipApi.createMentorshipCheckoutSession(
-                 id,
-                 `${window.location.origin}/success`,
-                 `${window.location.origin}/failed`
-             );
-             
-             if (sessionUrl) window.location.href = sessionUrl;
+            // Redirect to Stripe checkout
+            const { sessionUrl } =
+                await mentorshipApi.createMentorshipCheckoutSession(
+                    id,
+                    `${window.location.origin}/success`,
+                    `${window.location.origin}/failed`
+                );
+
+            if (sessionUrl) window.location.href = sessionUrl;
         } catch (error) {
             toast.error('Failed to initiate payment');
             setIsProcessing(false);
@@ -86,7 +93,7 @@ const MentorshipManagementPage: React.FC = () => {
             fetchData();
         } catch (error: any) {
             toast.error(
-                error.response?.data?.message || 'Failed to book session',
+                error.response?.data?.message || 'Failed to book session'
             );
         } finally {
             setIsBooking(false);
@@ -98,7 +105,7 @@ const MentorshipManagementPage: React.FC = () => {
         try {
             await mentorshipApi.completeMentorship(id, 'user');
             toast.success(
-                'You have confirmed the completion of this mentorship!',
+                'You have confirmed the completion of this mentorship!'
             );
             fetchData();
         } catch (error: any) {
@@ -167,7 +174,7 @@ const MentorshipManagementPage: React.FC = () => {
                                         </h3>
                                         <p className="text-[#7F00FF] font-bold">
                                             {new Date(
-                                                mentorship.mentorSuggestedStartDate,
+                                                mentorship.mentorSuggestedStartDate
                                             ).toLocaleDateString(undefined, {
                                                 weekday: 'long',
                                                 year: 'numeric',
@@ -270,7 +277,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 {Math.round(
                                                     (mentorship.usedSessions /
                                                         mentorship.totalSessions) *
-                                                        100,
+                                                        100
                                                 )}
                                                 % Complete
                                             </span>
@@ -322,17 +329,17 @@ const MentorshipManagementPage: React.FC = () => {
                                                             <div className="w-12 h-12 bg-[#7F00FF]/5 rounded-2xl flex flex-col items-center justify-center text-[#7F00FF]">
                                                                 <span className="text-[10px] font-black uppercase">
                                                                     {new Date(
-                                                                        session.date,
+                                                                        session.date
                                                                     ).toLocaleString(
                                                                         'default',
                                                                         {
                                                                             month: 'short',
-                                                                        },
+                                                                        }
                                                                     )}
                                                                 </span>
                                                                 <span className="text-lg font-black leading-none">
                                                                     {new Date(
-                                                                        session.date,
+                                                                        session.date
                                                                     ).getDate()}
                                                                 </span>
                                                             </div>
@@ -350,13 +357,13 @@ const MentorshipManagementPage: React.FC = () => {
                                                                     />
                                                                     <span>
                                                                         {new Date(
-                                                                            session.date,
+                                                                            session.date
                                                                         ).toLocaleTimeString(
                                                                             [],
                                                                             {
                                                                                 hour: '2-digit',
                                                                                 minute: '2-digit',
-                                                                            },
+                                                                            }
                                                                         )}
                                                                     </span>
                                                                     <span className="mx-1">
@@ -381,7 +388,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                             </button>
                                                         )}
                                                     </div>
-                                                ),
+                                                )
                                             )
                                         )}
                                     </div>
@@ -404,7 +411,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 <span className="block mt-2 font-medium text-[#7F00FF]">
                                                     Note: Suggested Start Date:{' '}
                                                     {new Date(
-                                                        mentorship.mentorSuggestedStartDate,
+                                                        mentorship.mentorSuggestedStartDate
                                                     ).toLocaleDateString()}
                                                 </span>
                                             )}
@@ -483,7 +490,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                             onChange={(e) =>
                                                                 setBookingDate(
                                                                     e.target
-                                                                        .value,
+                                                                        .value
                                                                 )
                                                             }
                                                             min={new Date()

@@ -9,7 +9,7 @@ export const walletApi = {
     requestWithdrawal: async (amount: number) => {
         const response = await axiosInstance.post(
             '/mentorship/wallet/withdraw',
-            { amount },
+            { amount }
         );
         return response.data;
     },
@@ -17,14 +17,14 @@ export const walletApi = {
     updateBankDetails: async (details: any) => {
         const response = await axiosInstance.patch(
             '/mentorship/wallet/bank-details',
-            details,
+            details
         );
         return response.data;
     },
 
     getTransactions: async () => {
         const response = await axiosInstance.get(
-            '/mentorship/wallet/transactions',
+            '/mentorship/wallet/transactions'
         );
         return response.data;
     },

@@ -13,7 +13,6 @@ import { IGoogleVerificationService } from './Interfaces/IGoogle-verifcation.ser
 import { IPasswordService } from './Interfaces/IPassword.service';
 import { Role } from '@/types/role.types';
 import {
-    CurrentUserResDto,
     LoginResponseDTO,
     OtpVerificationResponseDto,
     ProfileResponseDto,

@@ -1,8 +1,5 @@
 import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
-import {
-    UserManagementResponseDto,
-    PaginatedUserResponseDto,
-} from '@/Dto/response.dto';
+import { PaginatedUserResponseDto } from '@/Dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
 import { ITransaction } from '@/models/Wallet.model';
 

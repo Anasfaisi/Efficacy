@@ -47,11 +47,11 @@ const MentorRegister: React.FC = () => {
                     email: result.tempEmail,
                     role: result.role,
                     resendAvailableAt: result.resendAvailableAt,
-                }),
+                })
             );
             if (result.tempEmail) {
                 toast.success(
-                    'Professional account initiated. Verify your email.',
+                    'Professional account initiated. Verify your email.'
                 );
                 navigate('/mentor/verify-otp');
             }
@@ -61,13 +61,13 @@ const MentorRegister: React.FC = () => {
     };
 
     const handleGoogleSuccess = async (
-        credentialResponse: CredentialResponse,
+        credentialResponse: CredentialResponse
     ) => {
         if (credentialResponse.credential) {
             try {
                 const result = await googleLoginApi(
                     credentialResponse.credential,
-                    'mentor',
+                    'mentor'
                 );
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
@@ -145,7 +145,7 @@ const MentorRegister: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.name &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.name && (
@@ -166,7 +166,7 @@ const MentorRegister: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.email &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.email && (
@@ -190,7 +190,7 @@ const MentorRegister: React.FC = () => {
                                         className={cn(
                                             'w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14',
                                             errors.password &&
-                                                'border-red-400 bg-red-50 focus:ring-red-100',
+                                                'border-red-400 bg-red-50 focus:ring-red-100'
                                         )}
                                     />
                                     <button
@@ -225,7 +225,7 @@ const MentorRegister: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.confirmPassword &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.confirmPassword && (
@@ -263,7 +263,7 @@ const MentorRegister: React.FC = () => {
                                     onSuccess={handleGoogleSuccess}
                                     onError={() => {
                                         toast.error(
-                                            'Google authentication failed',
+                                            'Google authentication failed'
                                         );
                                     }}
                                     theme="outline"

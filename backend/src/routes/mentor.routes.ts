@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from 'express';
+import { Router } from 'express';
 import { MentorController } from '@/controllers/mentor.controller';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';

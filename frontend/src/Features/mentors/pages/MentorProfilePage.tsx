@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import {  useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { updateCurrentUser } from '@/redux/slices/authSlice';
 import type { Mentor } from '@/types/auth';
 import {
@@ -109,7 +109,7 @@ const MentorProfilePage = () => {
     const [expertise, setExpertise] = useState('');
     const [monthlyCharge, setMonthlyCharge] = useState<number | string>('');
     const [achievements, setAchievements] = useState<string[]>([]);
-    
+
     // Bank Details State
     const [bankDetails, setBankDetails] = useState({
         accountNumber: '',
@@ -158,10 +158,13 @@ const MentorProfilePage = () => {
                 const walletData = await walletApi.getWallet();
                 if (walletData?.bankAccountDetails) {
                     setBankDetails({
-                        accountNumber: walletData.bankAccountDetails.accountNumber || '',
+                        accountNumber:
+                            walletData.bankAccountDetails.accountNumber || '',
                         bankName: walletData.bankAccountDetails.bankName || '',
                         ifscCode: walletData.bankAccountDetails.ifscCode || '',
-                        accountHolderName: walletData.bankAccountDetails.accountHolderName || '',
+                        accountHolderName:
+                            walletData.bankAccountDetails.accountHolderName ||
+                            '',
                     });
                 }
             } catch (error) {
@@ -183,7 +186,7 @@ const MentorProfilePage = () => {
 
     const handleSavePartial = async (
         fields: Partial<Mentor>,
-        sectionId: string,
+        sectionId: string
     ) => {
         try {
             // Validate with Zod
@@ -206,7 +209,7 @@ const MentorProfilePage = () => {
                     response?: { data?: { message?: string } };
                 };
                 toast.error(
-                    axiosError.response?.data?.message || 'Update failed',
+                    axiosError.response?.data?.message || 'Update failed'
                 );
             } else {
                 toast.error('Update failed');
@@ -247,7 +250,7 @@ const MentorProfilePage = () => {
                 };
                 toast.error(
                     axiosError.response?.data?.message ||
-                        'Password update failed',
+                        'Password update failed'
                 );
             } else {
                 toast.error('Password update failed');
@@ -271,7 +274,7 @@ const MentorProfilePage = () => {
 
     const handleMediaChange = async (
         file: File,
-        type: 'profilePic' | 'coverPic',
+        type: 'profilePic' | 'coverPic'
     ) => {
         setIsLoading(type);
         try {
@@ -283,7 +286,7 @@ const MentorProfilePage = () => {
                 idProof: null,
             });
             toast.success(
-                `${type === 'profilePic' ? 'Profile' : 'Cover'} picture updated`,
+                `${type === 'profilePic' ? 'Profile' : 'Cover'} picture updated`
             );
 
             // Update local state
@@ -392,7 +395,7 @@ const MentorProfilePage = () => {
                                 e.target.files?.[0] &&
                                 handleMediaChange(
                                     e.target.files[0],
-                                    'profilePic',
+                                    'profilePic'
                                 )
                             }
                         />
@@ -462,7 +465,7 @@ const MentorProfilePage = () => {
                         onSave={() =>
                             handleSavePartial(
                                 { phone, city, country },
-                                'contact',
+                                'contact'
                             )
                         }
                         isLoading={isLoading === 'contact'}
@@ -532,7 +535,7 @@ const MentorProfilePage = () => {
                                         graduationYear,
                                         academicSpan,
                                     },
-                                    'academic',
+                                    'academic'
                                 )
                             }
                             isLoading={isLoading === 'academic'}
@@ -611,7 +614,7 @@ const MentorProfilePage = () => {
                                     skills,
                                     expertise,
                                 },
-                                'industry',
+                                'industry'
                             )
                         }
                         isLoading={isLoading === 'industry'}
@@ -689,7 +692,7 @@ const MentorProfilePage = () => {
                         onSave={() =>
                             handleSavePartial(
                                 { monthlyCharge: Number(monthlyCharge) },
-                                'money',
+                                'money'
                             )
                         }
                         isLoading={isLoading === 'money'}
@@ -715,7 +718,7 @@ const MentorProfilePage = () => {
                         onSave={() =>
                             handleSavePartial(
                                 { linkedin, github, personalWebsite: website },
-                                'socials',
+                                'socials'
                             )
                         }
                         isLoading={isLoading === 'socials'}
@@ -793,8 +796,8 @@ const MentorProfilePage = () => {
                                             onClick={() =>
                                                 setAchievements(
                                                     achievements.filter(
-                                                        (_, i) => i !== index,
-                                                    ),
+                                                        (_, i) => i !== index
+                                                    )
                                                 )
                                             }
                                             className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-lg"
@@ -823,7 +826,7 @@ const MentorProfilePage = () => {
                         onSave={handleSaveBankDetails}
                         isLoading={isLoading === 'bank'}
                     >
-                         <div className="space-y-4">
+                        <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                                     Account Holder Name

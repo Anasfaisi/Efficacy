@@ -40,7 +40,7 @@ const UserManagement = () => {
             const data = await adminService.getAllUsers(
                 currentPage,
                 limit,
-                debouncedSearch,
+                debouncedSearch
             );
             setUsers(data.users);
             setTotalPages(data.totalPages);
@@ -59,21 +59,21 @@ const UserManagement = () => {
 
     const handleToggleStatus = async (
         userId: string,
-        currentStatus: boolean,
+        currentStatus: boolean
     ) => {
         try {
             setActionLoading(userId);
             await adminService.updateUserStatus(userId, !currentStatus);
             toast.success(
-                `User ${currentStatus ? 'blocked' : 'unblocked'} successfully`,
+                `User ${currentStatus ? 'blocked' : 'unblocked'} successfully`
             );
             // Update local state
             setUsers(
                 users.map((user) =>
                     user.id === userId
                         ? { ...user, isActive: !currentStatus }
-                        : user,
-                ),
+                        : user
+                )
             );
         } catch (error) {
             console.error('Failed to update user status:', error);
@@ -197,7 +197,7 @@ const UserManagement = () => {
                                                 />
                                                 {user.createdAt
                                                     ? new Date(
-                                                          user.createdAt,
+                                                          user.createdAt
                                                       ).toLocaleDateString()
                                                     : 'N/A'}
                                             </div>
@@ -223,7 +223,7 @@ const UserManagement = () => {
                                                 onClick={() =>
                                                     handleToggleStatus(
                                                         user.id,
-                                                        user.isActive,
+                                                        user.isActive
                                                     )
                                                 }
                                                 disabled={
@@ -297,7 +297,7 @@ const UserManagement = () => {
                             <div className="flex items-center gap-1">
                                 {Array.from(
                                     { length: totalPages },
-                                    (_, i) => i + 1,
+                                    (_, i) => i + 1
                                 ).map((pageNum) => (
                                     <button
                                         key={pageNum}

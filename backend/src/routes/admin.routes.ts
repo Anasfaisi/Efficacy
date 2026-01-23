@@ -1,7 +1,5 @@
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import { AdminController } from '../controllers/admin.controller';
-import { TYPES } from '@/config/inversify-key.types';
-import { container } from '@/config/inversify.config';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { Role } from '@/types/role.types';
 import { TokenService } from '@/serivces/token.service';

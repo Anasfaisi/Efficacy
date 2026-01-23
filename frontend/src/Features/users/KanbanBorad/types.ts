@@ -32,7 +32,7 @@ export interface KanbanColumnProps {
     updateTask: (
         ColumnId: string,
         editingTaskId: string,
-        data: Partial<Task>,
+        data: Partial<Task>
     ) => void;
     deleteTask: (ColumnId: string, taskId: string) => void;
 }

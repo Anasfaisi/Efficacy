@@ -31,7 +31,7 @@ export const ForgotResetPassword: React.FC = () => {
             if (token) {
                 if (!passwordRegex.test(password)) {
                     setErrorMessage(
-                        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.',
+                        'Password must be at least 8 characters, contain uppercase, lowercase, number, and special character.'
                     );
                     setIsLoading(false);
                     return;
@@ -45,7 +45,7 @@ export const ForgotResetPassword: React.FC = () => {
                 const result = await resetPasswordApi(token, password);
                 if (result) {
                     toast.success(
-                        result.message || 'Password reset successful!',
+                        result.message || 'Password reset successful!'
                     );
                     setTimeout(() => navigate('/login'), 2000);
                 }
@@ -58,7 +58,7 @@ export const ForgotResetPassword: React.FC = () => {
                 const result = await forgotPasswordApi(email);
                 if (result) {
                     toast.success(
-                        result.message || 'Reset link sent to your email.',
+                        result.message || 'Reset link sent to your email.'
                     );
                 }
             }

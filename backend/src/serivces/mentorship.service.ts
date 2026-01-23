@@ -184,7 +184,7 @@ export class MentorshipService implements IMentorshipService {
             Role.User,
             NotificationType.MENTORSHIP_ACTIVE,
             'Mentorship Active',
-            `Your mentorship is now active until ${end.toLocaleDateString()}.`,
+            `Your mentorship is now active until ${end.toLocaleDateString()}.`
         );
 
         await this._notificationService.createNotification(
@@ -393,7 +393,6 @@ export class MentorshipService implements IMentorshipService {
         return mentorship;
     }
 
-
     private async checkAndReleaseFunds(mentorship: IMentorship): Promise<void> {
         if (
             mentorship.status === MentorshipStatus.COMPLETED &&
@@ -406,7 +405,7 @@ export class MentorshipService implements IMentorshipService {
                 mentorship.mentorId as unknown as string,
                 mentorShare
             );
-            mentorship.paymentStatus = 'paid'; 
+            mentorship.paymentStatus = 'paid';
         }
     }
 

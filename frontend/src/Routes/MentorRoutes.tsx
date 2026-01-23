@@ -18,6 +18,7 @@ import MentorshipRequestsPage from '@/Features/mentors/pages/MentorshipRequestsP
 import MentorWalletPage from '@/Features/mentors/pages/MentorWalletPage';
 import NotFound from '@/Features/common/pages/NotFound';
 import MentorshipManagementPage from '@/Features/users/mentors/pages/MentorshipManagementPage';
+import MentorChatPage from '@/Features/mentors/pages/MentorChatPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -53,6 +54,8 @@ const MentorRoutes: React.FC = () => {
                 <Route path="guidelines" element={<MentorGuidelines />} />
             </Route>
 
+            <Route path="chat" element={<MentorChatPage />} />
+
             <Route
                 path="application-received"
                 element={<ApplicationReceived />}
@@ -63,7 +66,10 @@ const MentorRoutes: React.FC = () => {
             />
             <Route path="onboarding" element={<MentorOnboardingForm />} />
             <Route path="approved" element={<MentorApproved />} />
-            <Route path="mentorship/:id" element={<MentorshipManagementPage />} />
+            <Route
+                path="mentorship/:id"
+                element={<MentorshipManagementPage />}
+            />
             <Route path="logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
         </Routes>

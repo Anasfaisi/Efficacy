@@ -1,13 +1,12 @@
 import { Schema, model, Types, Document } from 'mongoose';
-import { MessageStatus } from '@/types/role.types';
+
 export interface IMessage extends Document {
-    _id: Types.ObjectId;
     conversationId: Types.ObjectId;
     senderId: Types.ObjectId;
     content: string;
-    attachments?: string[];
-    status?: MessageStatus;
-    seenBy?: Types.ObjectId[];
+    isRead: boolean;
+    type: 'text' | 'image' | 'file';
+    metadata?: Record<string, any>; 
     createdAt: Date;
     updatedAt: Date;
 }
@@ -18,36 +17,33 @@ const MessageSchema = new Schema<IMessage>(
             type: Schema.Types.ObjectId,
             ref: 'Conversation',
             required: true,
+            index: true,
         },
         senderId: {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Users',
             required: true,
         },
         content: {
             type: String,
             required: true,
+            trim: true,
         },
-        attachments: [
-            {
-                type: String,
-            },
-        ],
-        status: {
+        isRead: {
+            type: Boolean,
+            default: false,
+        },
+        type: {
             type: String,
-            enum: Object.values(MessageStatus),
-            default: MessageStatus.SENT,
-            required: false,
+            enum: ['text', 'image', 'file'],
+            default: 'text',
         },
-
-        seenBy: [
-            {
-                type: Types.ObjectId,
-                ref: 'User',
-            },
-        ],
+        metadata: {
+            type: Map,
+            of: Schema.Types.Mixed,
+        },
     },
     { timestamps: true }
 );
 
-export const Message = model<IMessage>('Message', MessageSchema);
+export const MessageModel = model<IMessage>('Message', MessageSchema);

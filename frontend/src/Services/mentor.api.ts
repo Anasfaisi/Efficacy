@@ -15,7 +15,7 @@ export const mentorApi = {
             certificate: File | null;
             resume: File | null;
             idProof: File | null;
-        },
+        }
     ): Promise<MentorApplicationResult> => {
         const formData = new FormData();
 
@@ -57,7 +57,7 @@ export const mentorApi = {
         limit: number = 10,
         search: string = '',
         sort: string = '',
-        filters: Record<string, any> = {},
+        filters: Record<string, any> = {}
     ): Promise<{ mentors: Mentor[]; total: number; pages: number }> => {
         const params = { page, limit, search, sort, ...filters };
         const res = await api.get('/mentor/list/approved', { params });
@@ -122,7 +122,7 @@ export const updateMentorProfileMedia = async (files: {
 
 export const updateMentorProfileArray = async (
     field: string,
-    elements: unknown[],
+    elements: unknown[]
 ) => {
     const formData = new FormData();
     formData.append('field', field);

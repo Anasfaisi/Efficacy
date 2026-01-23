@@ -28,14 +28,14 @@ const MentorGuidelines: React.FC = () => {
         (currentUser as Mentor).status === 'approved';
 
     const [monthlyCharge, setMonthlyCharge] = useState<number>(
-        (currentUser as Mentor)?.monthlyCharge || 2000,
+        (currentUser as Mentor)?.monthlyCharge || 2000
     );
     const [isActivating, setIsActivating] = useState(false);
 
     const handleActivate = async () => {
         if (monthlyCharge < 1500 || monthlyCharge > 2000) {
             toast.error(
-                'Charge must be between ₹1500 and ₹2000 during initial phase',
+                'Charge must be between ₹1500 and ₹2000 during initial phase'
             );
             return;
         }
@@ -52,7 +52,7 @@ const MentorGuidelines: React.FC = () => {
                             status: 'active',
                             monthlyCharge,
                         } as Mentor,
-                    }),
+                    })
                 );
             }
 

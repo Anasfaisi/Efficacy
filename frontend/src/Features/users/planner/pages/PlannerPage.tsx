@@ -11,7 +11,7 @@ const PlannerPage: React.FC = () => {
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(
-        undefined,
+        undefined
     );
     const [initialData, setInitialData] = useState<
         { date: string; startTime: string } | undefined

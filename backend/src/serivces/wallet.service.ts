@@ -45,7 +45,7 @@ export class WalletService implements IWalletService {
             description: `Earnings from mentorship ${mentorshipId}`,
             date: new Date(),
             referenceId: mentorshipId,
-        } as any);
+        });
 
         await this._walletRepository.update(wallet._id as any, wallet);
         return wallet;
@@ -65,7 +65,7 @@ export class WalletService implements IWalletService {
             status: TransactionStatus.PENDING,
             description: `Withdrawal request`,
             date: new Date(),
-        } as any);
+        });
 
         await this._walletRepository.update(wallet._id as any, wallet);
         return wallet;

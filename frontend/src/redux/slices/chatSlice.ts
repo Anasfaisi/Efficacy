@@ -1,10 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import type { ChatMessage, ChatState } from '@/types/chat.types';
+import { createSlice,type PayloadAction } from '@reduxjs/toolkit';
+import type { ChatState, Conversation, Message } from '@/types/chat.types';
 
 const initialState: ChatState = {
-    currentRoomId: null,
-    messages: {},
+    conversations: [],
+    currentConversation: null,
     isLoading: false,
     error: null,
 };
@@ -13,29 +12,39 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        setCurrentRoom(state, action: PayloadAction<string>) {
-            state.currentRoomId = action.payload;
+        setConversations(state, action: PayloadAction<Conversation[]>) {
+            state.conversations = action.payload;
         },
-        setMessages(
-            state,
-            action: PayloadAction<{ roomId: string; messages: ChatMessage[] }>,
-        ) {
-            state.messages[action.payload.roomId] = action.payload.messages;
+        setCurrentConversation(state, action: PayloadAction<Conversation | null>) {
+            state.currentConversation = action.payload;
         },
-        addMessages(state, action: PayloadAction<ChatMessage>) {
-            const { roomId } = action.payload;
-            if (!state.messages[roomId]) {
-                state.messages[roomId] = [];
+        updateConversationPreview(state, action: PayloadAction<Message>) {
+            const conversationIndex = state.conversations.findIndex(c => c._id === action.payload.conversationId);
+            if (conversationIndex !== -1) {
+                const conversation = state.conversations[conversationIndex];
+                conversation.lastMessage = action.payload;
+                conversation.updatedAt = action.payload.createdAt;
+                
+                // Move this conversation to the top
+                state.conversations.splice(conversationIndex, 1);
+                state.conversations.unshift(conversation);
             }
-            state.messages[roomId].push(action.payload);
         },
-
+        setLoading(state, action: PayloadAction<boolean>) {
+            state.isLoading = action.payload;
+        },
         setError(state, action: PayloadAction<string | null>) {
             state.error = action.payload;
-        },
+        }
     },
 });
 
-export const { setCurrentRoom, setMessages, addMessages, setError } =
-    chatSlice.actions;
+export const { 
+    setConversations, 
+    setCurrentConversation, 
+    updateConversationPreview,
+    setLoading, 
+    setError 
+} = chatSlice.actions;
+
 export default chatSlice.reducer;

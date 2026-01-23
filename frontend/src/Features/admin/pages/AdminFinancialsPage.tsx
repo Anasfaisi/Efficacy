@@ -1,10 +1,6 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminService } from '@/Services/admin.api';
-import {
-    IndianRupee,
-    ArrowDownLeft,
-    ArrowUpRight,
-} from 'lucide-react';
+import { IndianRupee, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminFinancialsPage = () => {
@@ -15,13 +11,17 @@ const AdminFinancialsPage = () => {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState<'all' | 'mentor' | 'user'>('all');
-    const [totalTransactions, setTotalTransactions] = useState(0); 
+    const [totalTransactions, setTotalTransactions] = useState(0);
     const limit = 10;
 
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const txData = await adminService.getTransactions(page, limit, filter);
+                const txData = await adminService.getTransactions(
+                    page,
+                    limit,
+                    filter
+                );
                 setTransactions(txData.transactions || []);
                 setTotalTransactions(txData.total || 0);
             } catch (error) {
@@ -31,18 +31,20 @@ const AdminFinancialsPage = () => {
 
         // Only fetch revenue once on mount
         const fetchRevenue = async () => {
-             try {
+            try {
                 const revData = await adminService.getRevenueDetails();
                 setRevenue(revData);
-             } catch (error) {
-                 console.error(error);
-             }
-        }
-        
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         if (loading) {
-             Promise.all([fetchRevenue(), fetchTransactions()]).finally(() => setLoading(false));
+            Promise.all([fetchRevenue(), fetchTransactions()]).finally(() =>
+                setLoading(false)
+            );
         } else {
-             fetchTransactions();
+            fetchTransactions();
         }
     }, [page, filter]);
 
@@ -195,18 +197,23 @@ const AdminFinancialsPage = () => {
                 {totalPages > 1 && (
                     <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/30">
                         <span className="text-sm text-gray-500">
-                            Page {page} of {totalPages} ({totalTransactions} transactions)
+                            Page {page} of {totalPages} ({totalTransactions}{' '}
+                            transactions)
                         </span>
                         <div className="flex gap-2">
                             <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                onClick={() =>
+                                    setPage((p) => Math.max(1, p - 1))
+                                }
                                 disabled={page === 1}
                                 className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 Previous
                             </button>
                             <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                onClick={() =>
+                                    setPage((p) => Math.min(totalPages, p + 1))
+                                }
                                 disabled={page === totalPages}
                                 className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >

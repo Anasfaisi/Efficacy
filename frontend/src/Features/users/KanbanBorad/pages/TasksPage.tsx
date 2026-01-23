@@ -27,7 +27,7 @@ const TasksPage: React.FC = () => {
     const [titleError, setTitleError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(
-        undefined,
+        undefined
     );
 
     useEffect(() => {
@@ -55,11 +55,11 @@ const TasksPage: React.FC = () => {
                 return tasks.filter((t) => isToday(new Date(t.startDate)));
             case 'Upcoming':
                 return tasks.filter((t) =>
-                    isAfter(new Date(t.startDate), todayEnd),
+                    isAfter(new Date(t.startDate), todayEnd)
                 );
             case 'Overdue':
                 return tasks.filter(
-                    (t) => !t.completed && isBefore(new Date(t.endDate), now),
+                    (t) => !t.completed && isBefore(new Date(t.endDate), now)
                 );
             default:
                 return tasks;
@@ -72,7 +72,7 @@ const TasksPage: React.FC = () => {
 
     const handleToggleComplete = async (
         taskId: string,
-        currentStatus: boolean,
+        currentStatus: boolean
     ) => {
         if (!currentUser?.id) return;
         try {
@@ -80,10 +80,10 @@ const TasksPage: React.FC = () => {
                 completed: !currentStatus,
             });
             setTasks((prev) =>
-                prev.map((t) => (t._id === taskId ? updatedTask : t)),
+                prev.map((t) => (t._id === taskId ? updatedTask : t))
             );
         } catch (error) {
-            console.error("Failed to update task", error);
+            console.error('Failed to update task', error);
         }
     };
 
@@ -191,7 +191,7 @@ const TasksPage: React.FC = () => {
                                                     'px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all',
                                                     activeTab === tab
                                                         ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50',
+                                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                                 )}
                                             >
                                                 {tab}
@@ -231,12 +231,12 @@ const TasksPage: React.FC = () => {
                                                 className={cn(
                                                     'w-full bg-gray-50 border-none focus:ring-2 focus:ring-primary/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 placeholder:text-gray-400',
                                                     titleError &&
-                                                        'ring-2 ring-rose-500/20',
+                                                        'ring-2 ring-rose-500/20'
                                                 )}
                                                 value={newTaskTitle}
                                                 onChange={(e) => {
                                                     setNewTaskTitle(
-                                                        e.target.value,
+                                                        e.target.value
                                                     );
                                                     if (
                                                         e.target.value.length >=
@@ -286,7 +286,7 @@ const TasksPage: React.FC = () => {
                                         onToggleComplete={() =>
                                             handleToggleComplete(
                                                 task._id,
-                                                task.completed,
+                                                task.completed
                                             )
                                         }
                                         onDelete={() => handleDelete(task._id)}

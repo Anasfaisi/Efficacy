@@ -141,7 +141,7 @@ export default function MentorOnboardingForm() {
                     dispatch(
                         setCredentials({
                             currentUser: profile as currentUserType,
-                        }),
+                        })
                     );
                 }
             } catch (error) {
@@ -191,14 +191,14 @@ export default function MentorOnboardingForm() {
                         'availableDays',
                         Array.isArray(mentor.availableDays)
                             ? mentor.availableDays
-                            : [],
+                            : []
                     );
                 if (mentor.preferredTime)
                     setValue(
                         'preferredTime',
                         Array.isArray(mentor.preferredTime)
                             ? mentor.preferredTime
-                            : [],
+                            : []
                     );
                 if (mentor.mentorType)
                     setValue('mentorType', mentor.mentorType);
@@ -229,7 +229,7 @@ export default function MentorOnboardingForm() {
 
     const handleFileChange = (
         e: React.ChangeEvent<HTMLInputElement>,
-        fieldName: 'resume' | 'certificate' | 'idProof',
+        fieldName: 'resume' | 'certificate' | 'idProof'
     ) => {
         const file = e.target.files?.[0] || null;
         setFiles((prev) => ({ ...prev, [fieldName]: file }));
@@ -264,7 +264,7 @@ export default function MentorOnboardingForm() {
 
                 if (!files.certificate) {
                     toast.error(
-                        'Highest Qualification Certificate is mandatory for Academic Mentors',
+                        'Highest Qualification Certificate is mandatory for Academic Mentors'
                     );
                     return false;
                 }
@@ -296,7 +296,7 @@ export default function MentorOnboardingForm() {
 
         if (stepConfig.fields.length > 0) {
             const result = await trigger(
-                stepConfig.fields as unknown as FieldPath<mentorFormSchemaType>[],
+                stepConfig.fields as unknown as FieldPath<mentorFormSchemaType>[]
             );
             return result;
         }
@@ -348,7 +348,7 @@ export default function MentorOnboardingForm() {
                 if (submissionData.guidanceAreas.includes('Others')) {
                     submissionData.guidanceAreas =
                         submissionData.guidanceAreas.filter(
-                            (area) => area !== 'Others',
+                            (area) => area !== 'Others'
                         );
 
                     if (submissionData.customGuidance) {
@@ -364,7 +364,7 @@ export default function MentorOnboardingForm() {
 
             const result = await mentorApi.submitApplication(
                 submissionData,
-                files,
+                files
             );
 
             if (result.status === 'pending') {
@@ -374,7 +374,7 @@ export default function MentorOnboardingForm() {
                     dispatch(
                         setCredentials({
                             currentUser: updatedUser as currentUserType,
-                        }),
+                        })
                     );
                 }
                 navigate('/mentor/application-received');
@@ -670,7 +670,7 @@ export default function MentorOnboardingForm() {
                                                 onChange={(e) =>
                                                     handleFileChange(
                                                         e,
-                                                        'resume',
+                                                        'resume'
                                                     )
                                                 }
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -720,7 +720,7 @@ export default function MentorOnboardingForm() {
                                                         type="checkbox"
                                                         value={day}
                                                         {...register(
-                                                            'availableDays',
+                                                            'availableDays'
                                                         )}
                                                         className="rounded text-sky-600 focus:ring-sky-500 w-5 h-5"
                                                     />
@@ -755,7 +755,7 @@ export default function MentorOnboardingForm() {
                                                         type="checkbox"
                                                         value={time}
                                                         {...register(
-                                                            'preferredTime',
+                                                            'preferredTime'
                                                         )}
                                                         className="rounded text-sky-600 focus:ring-sky-500 w-5 h-5"
                                                     />
@@ -816,7 +816,7 @@ export default function MentorOnboardingForm() {
                                         <div
                                             onClick={() =>
                                                 handleMentorTypeSelect(
-                                                    'Academic',
+                                                    'Academic'
                                                 )
                                             }
                                             className={`cursor-pointer border-2 rounded-xl p-6 hover:shadow-lg transition-all ${watchedMentorType === 'Academic' ? 'border-sky-500 bg-sky-50' : 'border-gray-100'}`}
@@ -841,7 +841,7 @@ export default function MentorOnboardingForm() {
                                         <div
                                             onClick={() =>
                                                 handleMentorTypeSelect(
-                                                    'Industry',
+                                                    'Industry'
                                                 )
                                             }
                                             className={`cursor-pointer border-2 rounded-xl p-6 hover:shadow-lg transition-all ${watchedMentorType === 'Industry' ? 'border-sky-500 bg-sky-50' : 'border-gray-100'}`}
@@ -898,7 +898,7 @@ export default function MentorOnboardingForm() {
                                                 </Label>
                                                 <select
                                                     {...register(
-                                                        'qualification',
+                                                        'qualification'
                                                     )}
                                                     className="w-full p-3 border border-gray-400 rounded-lg bg-white outline-none active:border-sky-600 focus:border-sky-600 focus:ring-2 focus:ring-sky-600"
                                                 >
@@ -981,7 +981,7 @@ export default function MentorOnboardingForm() {
                                                 <input
                                                     type="number"
                                                     {...register(
-                                                        'graduationYear',
+                                                        'graduationYear'
                                                     )}
                                                     className="w-full p-3 border border-gray-400 shadow-sm rounded-lg outline-none active:border-sky-600 focus:border-sky-600 focus:ring-2 focus:ring-sky-600"
                                                     placeholder="e.g. 2022"
@@ -1059,7 +1059,7 @@ export default function MentorOnboardingForm() {
                                                 onChange={(e) =>
                                                     handleFileChange(
                                                         e,
-                                                        'certificate',
+                                                        'certificate'
                                                     )
                                                 }
                                                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"
@@ -1093,7 +1093,7 @@ export default function MentorOnboardingForm() {
                                                 </Label>
                                                 <input
                                                     {...register(
-                                                        'industryCategory',
+                                                        'industryCategory'
                                                     )}
                                                     className="w-full p-3 border border-gray-400 shadow-sm rounded-lg"
                                                     placeholder="e.g. Fintech, Healthcare"
@@ -1116,7 +1116,7 @@ export default function MentorOnboardingForm() {
                                                 </Label>
                                                 <input
                                                     {...register(
-                                                        'experienceYears',
+                                                        'experienceYears'
                                                     )}
                                                     type="number"
                                                     className="w-full p-3 border border-gray-400 shadow-sm rounded-lg"
@@ -1190,7 +1190,7 @@ export default function MentorOnboardingForm() {
                                                             type="checkbox"
                                                             value={area}
                                                             {...register(
-                                                                'guidanceAreas',
+                                                                'guidanceAreas'
                                                             )}
                                                             className="rounded text-sky-600 w-4 h-4"
                                                         />
@@ -1199,12 +1199,12 @@ export default function MentorOnboardingForm() {
                                                 ))}
                                             </div>
                                             {watchedGuidanceAreas.includes(
-                                                'Others',
+                                                'Others'
                                             ) && (
                                                 <div className="mt-3">
                                                     <input
                                                         {...register(
-                                                            'customGuidance',
+                                                            'customGuidance'
                                                         )}
                                                         className="w-full p-3 border border-gray-400 shadow-sm rounded-lg"
                                                         placeholder="Enter other guidance areas..."
@@ -1219,7 +1219,7 @@ export default function MentorOnboardingForm() {
                                             </Label>
                                             <textarea
                                                 {...register(
-                                                    'experienceSummary',
+                                                    'experienceSummary'
                                                 )}
                                                 rows={4}
                                                 className="w-full p-3 border border-gray-400 shadow-sm rounded-lg"
@@ -1348,7 +1348,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'qualification',
+                                                                'qualification'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1358,7 +1358,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'domain',
+                                                                'domain'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1368,7 +1368,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'university',
+                                                                'university'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1378,7 +1378,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'graduationYear',
+                                                                'graduationYear'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1388,7 +1388,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'expertise',
+                                                                'expertise'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1410,7 +1410,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'currentRole',
+                                                                'currentRole'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1420,7 +1420,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'experienceYears',
+                                                                'experienceYears'
                                                             )
                                                                 ? `${getValues('experienceYears')} Years`
                                                                 : '-'}
@@ -1432,7 +1432,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'industryCategory',
+                                                                'industryCategory'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1442,7 +1442,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="font-medium text-gray-900">
                                                             {getValues(
-                                                                'skills',
+                                                                'skills'
                                                             ) || '-'}
                                                         </p>
                                                     </div>
@@ -1452,10 +1452,10 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <div className="flex flex-wrap gap-2 mt-1">
                                                             {getValues(
-                                                                'guidanceAreas',
+                                                                'guidanceAreas'
                                                             )?.map(
                                                                 (
-                                                                    area: string,
+                                                                    area: string
                                                                 ) => (
                                                                     <span
                                                                         key={
@@ -1465,7 +1465,7 @@ export default function MentorOnboardingForm() {
                                                                     >
                                                                         {area}
                                                                     </span>
-                                                                ),
+                                                                )
                                                             ) || '-'}
                                                         </div>
                                                     </div>
@@ -1476,7 +1476,7 @@ export default function MentorOnboardingForm() {
                                                         </p>
                                                         <p className="bg-gray-50 p-3 rounded-lg text-sm text-gray-600 italic border border-gray-100">
                                                             {getValues(
-                                                                'experienceSummary',
+                                                                'experienceSummary'
                                                             ) ||
                                                                 'No summary provided.'}
                                                         </p>
@@ -1518,7 +1518,7 @@ export default function MentorOnboardingForm() {
                                                                 >
                                                                     {day}
                                                                 </span>
-                                                            ),
+                                                            )
                                                         )
                                                     ) : (
                                                         <span className="text-gray-400 italic">
@@ -1541,7 +1541,7 @@ export default function MentorOnboardingForm() {
                                                                 >
                                                                     {time}
                                                                 </span>
-                                                            ),
+                                                            )
                                                         )
                                                     ) : (
                                                         <span className="text-gray-400 italic">
@@ -1626,14 +1626,14 @@ export default function MentorOnboardingForm() {
                                                         <Globe className="w-4 h-4 text-gray-400" />
                                                         <a
                                                             href={getValues(
-                                                                'linkedin',
+                                                                'linkedin'
                                                             )}
                                                             target="_blank"
                                                             rel="noreferrer"
                                                             className="text-sky-600 hover:underline truncate max-w-[200px] block"
                                                         >
                                                             {getValues(
-                                                                'linkedin',
+                                                                'linkedin'
                                                             ) || 'No LinkedIn'}
                                                         </a>
                                                     </li>
@@ -1642,14 +1642,14 @@ export default function MentorOnboardingForm() {
                                                             <Globe className="w-4 h-4 text-gray-400" />
                                                             <a
                                                                 href={getValues(
-                                                                    'github',
+                                                                    'github'
                                                                 )}
                                                                 target="_blank"
                                                                 rel="noreferrer"
                                                                 className="text-sky-600 hover:underline truncate max-w-[200px] block"
                                                             >
                                                                 {getValues(
-                                                                    'github',
+                                                                    'github'
                                                                 )}
                                                             </a>
                                                         </li>
@@ -1661,14 +1661,14 @@ export default function MentorOnboardingForm() {
                                                         </span>
                                                         <a
                                                             href={getValues(
-                                                                'demoVideoLink',
+                                                                'demoVideoLink'
                                                             )}
                                                             target="_blank"
                                                             rel="noreferrer"
                                                             className="text-sky-600 hover:underline truncate max-w-[150px] block"
                                                         >
                                                             {getValues(
-                                                                'demoVideoLink',
+                                                                'demoVideoLink'
                                                             ) || 'Missing'}
                                                         </a>
                                                     </li>
@@ -1694,7 +1694,7 @@ export default function MentorOnboardingForm() {
                                             type="checkbox"
                                             onChange={(e) =>
                                                 setCheckboxChecked(
-                                                    e.target.checked,
+                                                    e.target.checked
                                                 )
                                             }
                                             className="w-4 h-4 cursor-pointer"

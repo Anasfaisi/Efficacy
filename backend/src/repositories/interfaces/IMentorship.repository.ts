@@ -7,5 +7,8 @@ export interface IMentorshipRepository extends IBaseRepository<IMentorship> {
     findByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]>;
     findActiveByUserId(userId: string | ObjectId): Promise<IMentorship | null>;
     findActiveByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]>;
-    findByUserIdAndMentorId(mentorId:string|ObjectId,userId:string|ObjectId):Promise<IMentorship | null>
+    findByUserIdAndMentorId(
+        mentorId: string | ObjectId,
+        userId: string | ObjectId
+    ): Promise<IMentorship | null>;
 }

@@ -39,7 +39,7 @@ export default function MentorApplicationsPage() {
     const filteredApplications = applications.filter(
         (app) =>
             app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            app.email.toLowerCase().includes(searchTerm.toLowerCase()),
+            app.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
     console.log(filteredApplications, 'filteredApplications=================');
 
@@ -130,7 +130,7 @@ export default function MentorApplicationsPage() {
                                         <span
                                             className={cn(
                                                 'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border',
-                                                getStatusColor(app.status),
+                                                getStatusColor(app.status)
                                             )}
                                         >
                                             {app.status}
@@ -158,7 +158,7 @@ export default function MentorApplicationsPage() {
                                                     className="text-amber-500"
                                                 />
                                                 {new Date(
-                                                    app.createdAt,
+                                                    app.createdAt
                                                 ).toLocaleDateString()}
                                             </div>
                                         )}

@@ -19,7 +19,6 @@ import {
     ChevronRight,
     Home,
     CreditCard,
-    Settings,
     X,
 } from 'lucide-react';
 import { walletApi } from '@/Services/wallet.api';
@@ -112,8 +111,7 @@ const UserProfilePage = () => {
             setWalletData(data);
             if (data?.bankAccountDetails) {
                 setBankDetails({
-                    accountNumber:
-                        data.bankAccountDetails.accountNumber || '',
+                    accountNumber: data.bankAccountDetails.accountNumber || '',
                     bankName: data.bankAccountDetails.bankName || '',
                     ifscCode: data.bankAccountDetails.ifscCode || '',
                     accountHolderName:
@@ -188,11 +186,11 @@ const UserProfilePage = () => {
                     response?: { data?: { message?: string } };
                 };
                 toast.error(
-                    axiosError.response?.data?.message || 'Update failed',
+                    axiosError.response?.data?.message || 'Update failed'
                 );
             } else {
                 toast.error(
-                    typeof error === 'string' ? error : 'Update failed',
+                    typeof error === 'string' ? error : 'Update failed'
                 );
             }
         } finally {
@@ -213,7 +211,7 @@ const UserProfilePage = () => {
 
             await updateProfile(
                 { currentPassword, newPassword } as any,
-                currentUser?.id,
+                currentUser?.id
             );
 
             toast.success('Password updated successfully');
@@ -235,14 +233,14 @@ const UserProfilePage = () => {
         try {
             const res = await updateProfilePicture(
                 file,
-                'user',
+                'user'
                 // currentUser?.id,
             );
             toast.success('Profile picture updated');
 
             if (res.user.profilePic) {
                 dispatch(
-                    updateCurrentUser({ profilePic: res.user.profilePic }),
+                    updateCurrentUser({ profilePic: res.user.profilePic })
                 );
             }
         } catch (error) {
@@ -340,7 +338,7 @@ const UserProfilePage = () => {
                                         Joined{' '}
                                         {user?.createdAt
                                             ? new Date(
-                                                  user.createdAt,
+                                                  user.createdAt
                                               ).toLocaleDateString()
                                             : 'Recently'}
                                     </span>
@@ -465,7 +463,7 @@ const UserProfilePage = () => {
                                         onSave={() =>
                                             handleSavePartial(
                                                 { name, headline, bio, dob },
-                                                'basic',
+                                                'basic'
                                             )
                                         }
                                         isLoading={isLoading === 'basic'}
@@ -482,7 +480,7 @@ const UserProfilePage = () => {
                                                         value={name}
                                                         onChange={(e) =>
                                                             setName(
-                                                                e.target.value,
+                                                                e.target.value
                                                             )
                                                         }
                                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
@@ -501,7 +499,7 @@ const UserProfilePage = () => {
                                                         value={headline}
                                                         onChange={(e) =>
                                                             setHeadline(
-                                                                e.target.value,
+                                                                e.target.value
                                                             )
                                                         }
                                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
@@ -534,7 +532,7 @@ const UserProfilePage = () => {
                                                         value={dob}
                                                         onChange={(e) =>
                                                             setDob(
-                                                                e.target.value,
+                                                                e.target.value
                                                             )
                                                         }
                                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
@@ -592,7 +590,7 @@ const UserProfilePage = () => {
                                                         <button
                                                             onClick={() =>
                                                                 setShowWalletModal(
-                                                                    true,
+                                                                    true
                                                                 )
                                                             }
                                                             className="text-purple-600 text-xs hover:underline flex items-center gap-1 font-bold uppercase"
@@ -635,7 +633,7 @@ const UserProfilePage = () => {
                                                         value={currentPassword}
                                                         onChange={(e) =>
                                                             setCurrentPassword(
-                                                                e.target.value,
+                                                                e.target.value
                                                             )
                                                         }
                                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
@@ -654,7 +652,7 @@ const UserProfilePage = () => {
                                                         value={newPassword}
                                                         onChange={(e) =>
                                                             setNewPassword(
-                                                                e.target.value,
+                                                                e.target.value
                                                             )
                                                         }
                                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
@@ -829,7 +827,7 @@ const UserProfilePage = () => {
                                                                 </p>
                                                                 <p className="text-xs text-slate-400 font-medium">
                                                                     {new Date(
-                                                                        tx.date,
+                                                                        tx.date
                                                                     ).toLocaleDateString()}
                                                                 </p>
                                                             </div>
@@ -853,7 +851,7 @@ const UserProfilePage = () => {
                                                             </span>
                                                         </div>
                                                     </div>
-                                                ),
+                                                )
                                             )
                                         ) : (
                                             <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">

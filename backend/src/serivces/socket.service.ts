@@ -2,13 +2,21 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { Server, Socket } from 'socket.io';
 import { IChatService } from './Interfaces/IChat.service';
-import { IChatMessage } from '@/models/Chat-message.model';
-import { SendMessagePayload } from '@/types/response-messages.types';
-import { JoinRoomDto } from '@/Dto/request.dto';
 import { ISocketService } from './Interfaces/ISocket.service';
-import { IUser } from '@/models/User.model';
 import { IMessage } from '@/models/Message.model';
-import { Types } from 'mongoose';
+
+interface JoinRoomPayload {
+    roomId: string;
+    userId: string;
+}
+
+interface SendMessagePayload {
+    roomId: string;
+    senderId: string;
+    content: string;
+    type?: 'text' | 'image' | 'file';
+    senderName?: string; // Optional, useful for UI optimization
+}
 
 @injectable()
 export class SocketService implements ISocketService {
@@ -21,28 +29,25 @@ export class SocketService implements ISocketService {
     public register(io: Server) {
         this._io = io;
         io.on('connection', (socket: Socket) => {
-            console.log('User connected: in the backend', socket.id);
-
-            socket.on('joinRoom', (data: { roomId: string; user: unknown }) => {
-                const dto = new JoinRoomDto(data.roomId, data.user as IUser);
-                this.handleJoinRoom(socket, dto);
-            });
-
-            // socket.on('joinRoleRoom', (role: string) => {
-            //     socket.join(role);
-            //     console.log(`Socket ${socket.id} joined role room: ${role}`);
-            // });
+            console.log('Socket Connected:', socket.id);
 
             socket.on('joinUserRoom', (userId: string) => {
                 socket.join(userId);
-                console.log(`Socket ${socket.id} joined private user room there: ${userId}`);
+                console.log(
+                    `Socket ${socket.id} joined notification room: ${userId}`
+                );
             });
 
+            socket.on('joinRoom', (payload: JoinRoomPayload) =>
+                this.handleJoinRoom(socket, payload)
+            );
             socket.on('sendMessage', (payload: SendMessagePayload) =>
                 this.handleSendMessage(io, socket, payload)
             );
 
-            socket.on('disconnect', () => this.handleDisconnect(socket));
+            socket.on('disconnect', () => {
+                console.log('Socket Disconnected:', socket.id);
+            });
         });
     }
 
@@ -52,22 +57,36 @@ export class SocketService implements ISocketService {
         }
     }
 
-    public async emitNotification(roomId: string, notification: unknown) {
+    public async emitNotification(userId: string, notification: unknown) {
         if (this._io) {
-            const sockets = await this._io.in(roomId).fetchSockets();
-            for (const socket of sockets) {
-                socket.emit('newNotification', notification);
-            }
+            this._io.to(userId).emit('newNotification', notification);
         }
     }
 
-    private async handleJoinRoom(socket: Socket, payload: JoinRoomDto) {
-        const { roomId, user } = payload;
-        socket.join(roomId);
+    private async handleJoinRoom(
+        socket: Socket,
+        { roomId, userId }: JoinRoomPayload
+    ) {
+        try {
+            const canJoin = await this._chatService.validateRoomAccess(roomId, userId);
+            if (!canJoin) {
+                socket.emit('error', { message: 'Access denied to this room' });
+                return;
+            }
+            console.log("join room=================",roomId,userId,canJoin,"from socket service");
+            socket.join(roomId);
 
-        const history = await this._chatService.getRoomHistory(roomId);
-        socket.emit('lastMesages', history);
-        socket.to(roomId).emit('userJoined', { user });
+            const history = await this._chatService.getRoomMessages(
+                roomId,
+                userId
+            );
+
+            socket.emit('chatHistory', history);
+
+        } catch (error) {
+            console.error('Error joining room:', error);
+            socket.emit('error', { message: 'Failed to join chat room' });
+        }
     }
 
     private async handleSendMessage(
@@ -75,19 +94,22 @@ export class SocketService implements ISocketService {
         socket: Socket,
         payload: SendMessagePayload
     ) {
-        const { roomId, senderId, senderName, message } = payload;
+        try {
+            const { roomId, senderId, content, type = 'text' } = payload;
 
-        const saved = await this._chatService.saveMessage({
-            conversationId: roomId as unknown as Types.ObjectId,
-            senderId: senderId as unknown as Types.ObjectId,
-            content: message,
-            createdAt: new Date(),
-        } as Partial<IMessage>);
+            const savedMessage = await this._chatService.sendMessage(
+                senderId,
+                roomId,
+                content,
+                type
+            );
 
-        io.to(roomId).emit('receiveMessage', saved);
-    }
-
-    private handleDisconnect(socket: Socket) {
-        console.log('user disconnected', socket.id);
+            io.to(roomId).emit('receiveMessage', savedMessage);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            socket.emit('error', {
+                message: error instanceof Error ? error.message : 'Failed to send message',
+            });
+        }
     }
 }

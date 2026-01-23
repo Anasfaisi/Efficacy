@@ -96,7 +96,7 @@ const MentorMangement = () => {
                         value={filterStatus}
                         onChange={(e) =>
                             setFilterStatus(
-                                e.target.value as 'all' | 'active' | 'inactive',
+                                e.target.value as 'all' | 'active' | 'inactive'
                             )
                         }
                     >
@@ -112,7 +112,7 @@ const MentorMangement = () => {
                                 e.target.value as
                                     | 'all'
                                     | 'Academic'
-                                    | 'Industry',
+                                    | 'Industry'
                             )
                         }
                     >
@@ -224,7 +224,7 @@ const MentorMangement = () => {
                                     <button
                                         onClick={() =>
                                             navigate(
-                                                `/admin/mentors/details/${m.id}`,
+                                                `/admin/mentors/details/${m.id}`
                                             )
                                         }
                                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"

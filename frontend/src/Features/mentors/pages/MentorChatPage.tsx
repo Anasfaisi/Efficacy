@@ -1,27 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setConversations, setCurrentConversation } from '@/redux/slices/chatSlice';
 import { chatApi } from '@/Services/chat.api';
 import { useChatSocket } from '@/hooks/useChatSocket';
-import Sidebar from '../../home/layouts/Sidebar';
-import Navbar from '../../home/layouts/Navbar';
-// import { Conversation, Message } from '@/types/chat.types';
+import MentorSidebar from '@/Features/mentors/layout/MentorSidebar';
+import { Send, User as UserIcon, Menu } from 'lucide-react';
+import type { currentUserType, Mentor, User } from '@/types/auth';
 
-// Icons
-import { Send, User, Menu } from 'lucide-react';
+const getId = (user: currentUserType | User | Mentor | string | null | undefined): string => {
+    if (!user) return '';
+    if (typeof user === 'string') return user;
+    return (user as Mentor)._id || (user as User).id || '';
+};
 
-const ChatPage: React.FC = () => {
+const MentorChatPage: React.FC = () => {
     const dispatch = useAppDispatch();
     const { conversations, currentConversation } = useAppSelector((state) => state.chat);
     const { currentUser } = useAppSelector((state) => state.auth);
     
+    
     const { sendMessage, messages } = useChatSocket(currentConversation?._id);
-
-    // Initial Load of Conversations
     useEffect(() => {
         const fetchChats = async () => {
             try {
                 const data = await chatApi.getConversations();
+                console.log(data,"mentor chats page");
                 dispatch(setConversations(data));
             } catch (error) {
                 console.error("Failed to load chats", error);
@@ -30,8 +33,17 @@ const ChatPage: React.FC = () => {
         fetchChats();
     }, [dispatch]);
 
-    const [inputText, setInputText] = React.useState('');
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const [inputText, setInputText] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,13 +53,12 @@ const ChatPage: React.FC = () => {
     };
 
     return (
-        <div className="flex bg-gray-50 h-screen overflow-hidden">
-            <Sidebar />
+        <div className="flex bg-gray-50 min-h-screen overflow-hidden">
+            <MentorSidebar />
             
-            <div className="flex-1 flex flex-col h-screen">
-                <Navbar />
-                
-                <div className="flex-1 flex overflow-hidden relative border-t border-gray-200">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden"> 
+            
+                <div className="flex-1 flex overflow-hidden relative border-t border-gray-200 transition-all duration-300 w-full">
                     
                     {/* Chat Sidebar (Conversation List) */}
                     <div className={`${isSidebarOpen ? 'w-full md:w-80 absolute md:relative z-20 h-full' : 'hidden'} bg-white border-r border-gray-200 flex flex-col transition-all duration-300`}>
@@ -73,7 +84,7 @@ const ChatPage: React.FC = () => {
                                                 {otherUser?.profilePic ? (
                                                     <img src={otherUser.profilePic} alt={otherUser.name} className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <User size={20} className="text-gray-500" />
+                                                    <UserIcon size={20} className="text-gray-500" />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -91,19 +102,12 @@ const ChatPage: React.FC = () => {
                                     </div>
                                 );
                             })}
-                            {conversations.length === 0 && (
-                                <div className="p-8 text-center text-gray-400">
-                                    No conversations yet. Visit a mentor profile to say hi!
-                                </div>
-                            )}
                         </div>
                     </div>
 
                     {/* Chat Window */}
                     <div className="flex-1 flex flex-col bg-slate-50 relative w-full">
-       
-                        
-                        <button 
+                         <button 
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                             className={`absolute top-4 left-4 z-10 p-2 bg-white rounded-lg shadow-md md:hidden ${isSidebarOpen ? 'hidden' : 'block'}`}
                         >
@@ -114,7 +118,6 @@ const ChatPage: React.FC = () => {
                             <>
                                 {/* Header */}
                                 <div className="p-4 bg-white border-b border-gray-200 shadow-sm flex items-center gap-3">
-                                     {/* Add spacing for toggle button on mobile */}
                                      <div className="w-8 md:hidden"></div>
                                      {(() => {
                                         const otherUser = currentConversation.participants.find(p => (p as any)._id !== currentUser?.id && (p as any)._id !== (currentUser as any)?._id);
@@ -125,7 +128,6 @@ const ChatPage: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <h3 className="font-bold text-gray-900">{otherUser?.name}</h3>
-                                                    <span className="text-xs text-green-500 flex items-center gap-1">● Online</span>
                                                 </div>
                                             </>
                                         )
@@ -135,8 +137,8 @@ const ChatPage: React.FC = () => {
                                 {/* Messages Area */}
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                                     {messages.map((msg, idx) => {
-                                        const isMe = msg.senderId === currentUser?.id || msg.senderId === (currentUser as any)?._id;
-                                        return (
+                                        const isMe = msg.senderId === currentUser?.id || msg.senderId === (currentUser as any)?._id; 
+                                            return (
                                             <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                                                 <div 
                                                     className={`max-w-[70%] p-3 rounded-2xl ${
@@ -153,6 +155,7 @@ const ChatPage: React.FC = () => {
                                             </div>
                                         );
                                     })}
+                                    <div ref={messagesEndRef} />
                                 </div>
 
                                 {/* Input Area */}
@@ -190,4 +193,4 @@ const ChatPage: React.FC = () => {
     );
 };
 
-export default ChatPage;
+export default MentorChatPage;

@@ -59,7 +59,7 @@ const MentorListingPage: React.FC = () => {
                     3,
                     debouncedSearch,
                     sort,
-                    filters,
+                    filters
                 );
                 setMentors(data.mentors);
                 setTotalPages(data.pages);
@@ -316,7 +316,7 @@ const MentorListingPage: React.FC = () => {
                                                     <button
                                                         onClick={() =>
                                                             setSelectedMentor(
-                                                                mentor,
+                                                                mentor
                                                             )
                                                         }
                                                         className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25"
@@ -347,7 +347,7 @@ const MentorListingPage: React.FC = () => {
 
                                 {Array.from(
                                     { length: totalPages },
-                                    (_, i) => i + 1,
+                                    (_, i) => i + 1
                                 ).map((pageNum) => (
                                     <button
                                         key={pageNum}

@@ -27,12 +27,14 @@ const SuccessPage = () => {
         try {
             const activeMentorship = await mentorshipApi.getActiveMentorship();
             if (activeMentorship?._id) {
-                navigate(`/mentorship/${activeMentorship._id}`, { replace: true });
+                navigate(`/mentorship/${activeMentorship._id}`, {
+                    replace: true,
+                });
             } else {
                 navigate('/mentors', { replace: true });
             }
         } catch (error) {
-            console.error("Failed to fetch active mentorship", error);
+            console.error('Failed to fetch active mentorship', error);
             navigate('/mentors', { replace: true });
         }
     };
@@ -50,7 +52,8 @@ const SuccessPage = () => {
                     Payment Successful 🎉
                 </h1>
                 <p className="text-gray-600 text-lg mb-8">
-                    Thank you for subscribing! Your mentorship session has been confirmed. 🚀
+                    Thank you for subscribing! Your mentorship session has been
+                    confirmed. 🚀
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

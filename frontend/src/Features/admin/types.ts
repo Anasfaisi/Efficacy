@@ -1,6 +1,6 @@
-export type NotificationType = 
-    | 'mentor_application' 
-    | 'system' 
+export type NotificationType =
+    | 'mentor_application'
+    | 'system'
     | 'mentor'
     | 'mentorship_request'
     | 'mentorship_response'

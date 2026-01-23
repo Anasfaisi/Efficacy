@@ -44,7 +44,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [startTime, setStartTime] = useState(format(new Date(), 'HH:mm'));
     const [endTime, setEndTime] = useState(
-        format(new Date(Date.now() + 60 * 60 * 1000), 'HH:mm'),
+        format(new Date(Date.now() + 60 * 60 * 1000), 'HH:mm')
     );
     const [subtasks, setSubtasks] = useState<Partial<ISubtask>[]>([]);
     const [isCompleted, setIsCompleted] = useState(false);
@@ -69,7 +69,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             const [h, m] = initialData.startTime.split(':').map(Number);
             const endH = (h + 1) % 24;
             setEndTime(
-                `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`,
+                `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
             );
             setSubtasks([]);
             setIsCompleted(false);
@@ -266,13 +266,13 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                                 priority === p
                                                     ? colors[p] +
                                                           ' border-current shadow-sm'
-                                                    : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-gray-100',
+                                                    : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-gray-100'
                                             )}
                                         >
                                             {p}
                                         </button>
                                     );
-                                },
+                                }
                             )}
                         </div>
                     </div>
@@ -325,7 +325,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                         className={cn(
                                             'flex-1 bg-transparent outline-none text-sm transition-all',
                                             st.completed &&
-                                                'line-through text-gray-400',
+                                                'line-through text-gray-400'
                                         )}
                                     />
                                     <button

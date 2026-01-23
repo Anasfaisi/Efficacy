@@ -19,7 +19,7 @@ const ENDPOINTS: Record<Role, string> = {
 };
 
 export const fetchCurrentUser = async (
-    id: string | undefined,
+    id: string | undefined
 ): Promise<User> => {
     try {
         const res = await api.get(`/me/${id}`);
@@ -32,7 +32,7 @@ export const fetchCurrentUser = async (
 };
 
 export const loginApi = async (
-    credentials: LoginCredentials,
+    credentials: LoginCredentials
 ): Promise<LoginResponse> => {
     const role: Role = (credentials.role ?? 'user') as Role;
     const endpoint = ENDPOINTS[role];
@@ -65,7 +65,7 @@ export const logoutApi = async (): Promise<{ message: string }> => {
 };
 
 export const registerInitApi = async (
-    credentials: RegisterCredentials,
+    credentials: RegisterCredentials
 ): Promise<{
     tempEmail: string;
     message: string;
@@ -92,7 +92,7 @@ export const registerInitApi = async (
 export const verifyOtpApi = async (
     email: string | null,
     otp: string,
-    role: string | null,
+    role: string | null
 ): Promise<VerifyOtpResponse> => {
     try {
         const endpoint =
@@ -119,7 +119,7 @@ export const verifyOtpApi = async (
 };
 
 export const resendOtpApi = async (
-    email: string | null,
+    email: string | null
 ): Promise<ResendOtpResponse> => {
     try {
         const response = await api.post('/register/resend-otp', { email });
@@ -136,7 +136,7 @@ export const resendOtpApi = async (
 };
 
 export const forgotPasswordApi = async (
-    email: string,
+    email: string
 ): Promise<{ message: string }> => {
     try {
         const response = await api.post('/forgot-password/init', { email });
@@ -153,7 +153,7 @@ export const forgotPasswordApi = async (
 
 export const resetPasswordApi = async (
     token: string,
-    newPassword: string,
+    newPassword: string
 ): Promise<{ message: string }> => {
     try {
         const response = await api.post(`/forgot-password/verify`, {
@@ -174,7 +174,7 @@ export const resetPasswordApi = async (
 
 export const googleLoginApi = async (
     googleToken: string,
-    role: 'user' | 'mentor',
+    role: 'user' | 'mentor'
 ): Promise<{ user: User }> => {
     try {
         const endpoint =
@@ -196,7 +196,7 @@ export const googleLoginApi = async (
 //profile
 export const updateProfilePicture = async (
     file: File | null,
-    id?: string,
+    id?: string
 ): Promise<{ message: string; user: User }> => {
     try {
         if (!file) {
@@ -212,7 +212,7 @@ export const updateProfilePicture = async (
             formData,
             {
                 headers: { 'Content-Type': 'multipart/form-data' },
-            },
+            }
         );
         return response.data;
     } catch (error: unknown) {

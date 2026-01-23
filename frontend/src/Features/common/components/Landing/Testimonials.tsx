@@ -36,7 +36,7 @@ const Testimonials: React.FC = () => {
         setActiveIndex((prev) => (prev + 1) % testimonials.length);
     const prev = () =>
         setActiveIndex(
-            (prev) => (prev - 1 + testimonials.length) % testimonials.length,
+            (prev) => (prev - 1 + testimonials.length) % testimonials.length
         );
 
     useEffect(() => {

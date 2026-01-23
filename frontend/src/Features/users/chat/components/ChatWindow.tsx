@@ -13,7 +13,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ roomId }) => {
     const user = useAppSelector((state) => state.auth.user);
 
     const messages = useAppSelector((state) =>
-        roomId ? state.chat.messages[roomId] || [] : [],
+        roomId ? state.chat.messages[roomId] || [] : []
     );
 
     const send = useChatSocket(roomId || '');

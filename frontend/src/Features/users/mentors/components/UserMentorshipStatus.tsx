@@ -40,7 +40,7 @@ const UserMentorshipStatus: React.FC = () => {
         try {
             await mentorshipApi.confirmSuggestion(mentorship._id, confirm);
             toast.success(
-                confirm ? 'Suggestion confirmed!' : 'Suggestion rejected.',
+                confirm ? 'Suggestion confirmed!' : 'Suggestion rejected.'
             );
             fetchStatus();
         } catch (error: any) {
@@ -128,7 +128,7 @@ const UserMentorshipStatus: React.FC = () => {
                                         {new Date(
                                             mentorship.mentorSuggestedStartDate ||
                                                 mentorship.proposedStartDate ||
-                                                new Date(),
+                                                new Date()
                                         ).toLocaleDateString()}
                                     </p>
                                     <div className="flex gap-2">
@@ -188,7 +188,7 @@ const UserMentorshipStatus: React.FC = () => {
                                     {Math.round(
                                         (mentorship.usedSessions /
                                             mentorship.totalSessions) *
-                                            100,
+                                            100
                                     )}
                                     % Used
                                 </span>
@@ -215,13 +215,13 @@ const UserMentorshipStatus: React.FC = () => {
                                 <div>
                                     <p className="text-sm font-bold text-gray-900">
                                         {new Date(
-                                            mentorship.startDate!,
+                                            mentorship.startDate!
                                         ).toLocaleDateString()}
                                     </p>
                                     <p className="text-xs text-gray-500 font-medium">
                                         to{' '}
                                         {new Date(
-                                            mentorship.endDate!,
+                                            mentorship.endDate!
                                         ).toLocaleDateString()}
                                     </p>
                                 </div>

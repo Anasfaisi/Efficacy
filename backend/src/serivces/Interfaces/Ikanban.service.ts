@@ -2,7 +2,6 @@ import {
     AddKanbanTaskRequestDto,
     deleteKanbanTaskRequestDto,
     GetKanbanBoardRequestDto,
-    KanbanBoard,
     reorderKanbanTaskRequestDto,
     updateKanbanTaskRequestDto,
 } from '@/Dto/request.dto';

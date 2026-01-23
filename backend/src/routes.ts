@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser';
 import { Express } from 'express';
 import { container } from './config/inversify.config';
 import { AdminController } from './controllers/admin.controller';
@@ -15,7 +14,6 @@ import { TYPES } from './config/inversify-key.types';
 import PlannerTaskRoutes from './routes/planner-task.routes';
 import { MentorOnboardController } from './controllers/mentor-onboard.controller';
 import { PlannerTaskController } from './controllers/planner-task.controller';
-import { TokenService } from '@/serivces/token.service';
 import { MentorshipController } from './controllers/mentorship.controller';
 import mentorshipRoutes from './routes/mentorship.routes';
 

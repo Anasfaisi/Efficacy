@@ -39,14 +39,14 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({
                     : undefined,
             });
             toast.success(
-                'Mentorship request sent successfully! Wait for mentor approval.',
+                'Mentorship request sent successfully! Wait for mentor approval.'
             );
             onClose();
         } catch (error: any) {
             toast.error(
                 error.response?.data?.message ||
                     error.message ||
-                    'Failed to send mentorship request',
+                    'Failed to send mentorship request'
             );
         } finally {
             setIsBooking(false);

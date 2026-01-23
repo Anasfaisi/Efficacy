@@ -72,12 +72,12 @@ export class WalletController {
     async getTransactions(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const role = req.currentUser!.role;
-        
-        let wallet =
+
+        const wallet =
             role === Role.Mentor
                 ? await this._walletRepository.findByMentorId(userId)
                 : await this._walletRepository.findByUserId(userId);
-                
+
         res.status(code.OK).json(wallet?.transactions || []);
     }
 }

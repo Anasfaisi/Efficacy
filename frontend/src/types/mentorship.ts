@@ -29,8 +29,8 @@ export interface ISession {
 export interface Mentorship {
     id?: string;
     _id?: string;
-    userId: any; // Populated User
-    mentorId: any; // Populated Mentor
+    userId: any; 
+    mentorId: any; 
     status: MentorshipStatus;
     startDate?: Date | string;
     endDate?: Date | string;

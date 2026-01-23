@@ -54,7 +54,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
     const duration = differenceInHours(
         new Date(task.endDate),
-        new Date(task.startDate),
+        new Date(task.startDate)
     );
 
     return (
@@ -62,7 +62,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             className={cn(
                 'group relative grid grid-cols-[6px_40px_1fr_140px_200px_240px] gap-8 items-center p-4 mb-3 rounded-2xl border transition-all hover:shadow-md bg-white',
                 getPriorityStyles(task.priority),
-                task.completed && 'opacity-60 bg-gray-50/50 grayscale-[0.5]',
+                task.completed && 'opacity-60 bg-gray-50/50 grayscale-[0.5]'
             )}
         >
             {/* Priority Indicator */}
@@ -88,7 +88,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 <h3
                     className={cn(
                         'text-base font-bold text-gray-900 truncate',
-                        task.completed && 'line-through text-gray-500',
+                        task.completed && 'line-through text-gray-500'
                     )}
                 >
                     {task.title || '(No title)'}

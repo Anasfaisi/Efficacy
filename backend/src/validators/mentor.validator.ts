@@ -67,7 +67,7 @@ export const mentorApplicationSchema = z
             .min(1500, 'Minimum charge is 1500')
             .max(2500, 'Maximum charge is 2500'),
     })
-    .superRefine((data: any, ctx: z.RefinementCtx) => {
+    .superRefine((data, ctx) => {
         if (data.mentorType === 'Academic') {
             if (!data.qualification)
                 ctx.addIssue({

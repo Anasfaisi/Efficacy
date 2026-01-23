@@ -91,7 +91,7 @@ const FloatingTimer: React.FC = () => {
                             'flex-1 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-95 shadow-lg',
                             isActive
                                 ? 'bg-amber-100 text-amber-600 shadow-amber-200/50'
-                                : 'bg-primary text-white shadow-primary/30',
+                                : 'bg-primary text-white shadow-primary/30'
                         )}
                     >
                         {isActive ? (

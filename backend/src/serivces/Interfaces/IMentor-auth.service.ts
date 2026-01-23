@@ -13,7 +13,6 @@ import {
     MentorLoginResponseDTO,
     MentorRegisterInitResponseDto,
     MentorOtpVerificationResponseDto,
-    MentorLoginResponseDTO as LoginResponseDTO,
 } from '@/Dto/mentorResponse.dto';
 import { userGoogleLoginResponseDto } from '@/Dto/response.dto';
 

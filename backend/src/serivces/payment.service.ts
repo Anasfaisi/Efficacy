@@ -99,19 +99,17 @@ export class PaymentService implements IPaymentService {
                 signature,
                 process.env.STRIPE_WEBHOOK_SECRET!
             );
-        } catch (err: any) {
-            console.error(
-                `Webhook signature verification failed: ${err.message}`
-            );
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(`Webhook signature verification failed: ${message}`);
             throw new Error(
-                `Webhook signature verification failed: ${err.message}`
+                `Webhook signature verification failed: ${message}`
             );
         }
 
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object as Stripe.Checkout.Session;
 
-            // Handle Mentorship Payment
             if (session.metadata?.type === 'mentorship_payment') {
                 if (session.metadata.mentorshipId) {
                     await this._mentorshipService.verifyPayment(
@@ -119,9 +117,7 @@ export class PaymentService implements IPaymentService {
                         session.id
                     );
                 }
-            }
-            // Handle Subscription Payment (Check mode explicitly to avoid confusion)
-            else if (session.mode === 'subscription') {
+            } else if (session.mode === 'subscription') {
                 const subscriptionId = session.subscription as string;
                 const customerEmail = session.customer_email;
 
