@@ -15,7 +15,7 @@ export const NotificationDropdown = () => {
     const dispatch = useAppDispatch();
 
     const { notifications, unreadCount } = useAppSelector(
-        (state) => state.notification,
+        (state) => state.notification
     );
 
     useEffect(() => {
@@ -90,7 +90,7 @@ export const NotificationDropdown = () => {
                                         'p-3 border-b border-gray-100 transition-colors shadow-md cursor-pointer flex gap-3',
                                         !notification.isRead
                                             ? 'bg-blue-50 hover:bg-blue-50 shadow-md'
-                                            : 'bg-white hover:bg-gray-200 shadow-md border border-gray-50',
+                                            : 'bg-white hover:bg-gray-200 shadow-md border border-gray-50'
                                     )}
                                     onClick={() =>
                                         handleNotificationClick(notification)
@@ -100,14 +100,14 @@ export const NotificationDropdown = () => {
                                         className={cn(
                                             'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0',
                                             notification.type?.includes(
-                                                'mentor_application',
+                                                'mentor_application'
                                             )
                                                 ? 'bg-purple-100 text-purple-600'
-                                                : 'bg-gray-100 text-gray-600',
+                                                : 'bg-gray-100 text-gray-600'
                                         )}
                                     >
                                         {notification.type?.includes(
-                                            'mentor_application',
+                                            'mentor_application'
                                         ) ? (
                                             <User size={16} />
                                         ) : (
@@ -120,14 +120,14 @@ export const NotificationDropdown = () => {
                                             className={cn(
                                                 'text-sm text-gray-800 leading-snug',
                                                 !notification.isRead &&
-                                                    'font-medium',
+                                                    'font-medium'
                                             )}
                                         >
                                             {notification.message}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1">
                                             {new Date(
-                                                notification.createdAt,
+                                                notification.createdAt
                                             ).toLocaleString()}
                                         </p>
                                     </div>
@@ -139,7 +139,7 @@ export const NotificationDropdown = () => {
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleNotificationClick(
-                                                        notification,
+                                                        notification
                                                     );
                                                 }}
                                                 className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50"

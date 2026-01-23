@@ -53,6 +53,16 @@ import { PlannerTaskService } from '@/serivces/planner-task.service';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { PlannerTaskRepository } from '@/repositories/planner-task.repository';
 
+import { IMentorshipService } from '@/serivces/Interfaces/IMentorship.service';
+import { MentorshipService } from '@/serivces/mentorship.service';
+import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
+import { WalletService } from '@/serivces/wallet.service';
+import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
+import { MentorshipRepository } from '@/repositories/mentorship.repository';
+import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
+import { WalletRepository } from '@/repositories/wallet.repository';
+import { MentorshipController } from '@/controllers/mentorship.controller';
+import { WalletController } from '@/controllers/Wallet.controller';
 
 export const container = new Container();
 
@@ -70,8 +80,10 @@ container
 container
     .bind<PlannerTaskController>(TYPES.PlannerTaskController)
     .to(PlannerTaskController);
-
-
+container
+    .bind<MentorshipController>(TYPES.MentorshipController)
+    .to(MentorshipController);
+container.bind<WalletController>(TYPES.WalletController).to(WalletController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -84,7 +96,10 @@ container
     .to(GoogleVerificationService);
 container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 container.bind<IChatService>(TYPES.ChatService).to(ChatService);
-container.bind<ISocketService>(TYPES.SocketService).to(SocketService);
+container
+    .bind<ISocketService>(TYPES.SocketService)
+    .to(SocketService)
+    .inSingletonScope();
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService);
 container
     .bind<IMentorOnboardService>(TYPES.MentorOnboardService)
@@ -94,12 +109,17 @@ container
     .to(NotificationService);
 container.bind<IAdminService>(TYPES.AdminService).to(AdminService);
 container.bind<IPasswordService>(TYPES.PasswordService).to(PasswordService);
-container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
+container
+    .bind<IMentorAuthService>(TYPES.MentorAuthService)
+    .to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
-container.bind<IPlannerTaskService>(TYPES.PlannerTaskService).to(PlannerTaskService);
-
-
-
+container
+    .bind<IPlannerTaskService>(TYPES.PlannerTaskService)
+    .to(PlannerTaskService);
+container
+    .bind<IMentorshipService>(TYPES.MentorshipService)
+    .to(MentorshipService);
+container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -119,3 +139,7 @@ container
 container
     .bind<IPlannerTaskRepository>(TYPES.PlannerTaskRepository)
     .to(PlannerTaskRepository);
+container
+    .bind<IMentorshipRepository>(TYPES.MentorshipRepository)
+    .to(MentorshipRepository);
+container.bind<IWalletRepository>(TYPES.WalletRepository).to(WalletRepository);

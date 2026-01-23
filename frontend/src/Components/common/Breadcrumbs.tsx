@@ -16,7 +16,7 @@ const Breadcrumbs: React.FC = () => {
             <ol className="flex items-center space-x-2 text-sm text-gray-500">
                 <li>
                     <Link
-                        to="/"
+                        to="/home"
                         className="flex items-center hover:text-[#7F00FF] transition-colors"
                     >
                         <Home size={16} />
@@ -34,14 +34,18 @@ const Breadcrumbs: React.FC = () => {
                             />
                             {isLast ? (
                                 <span className="font-medium text-gray-900 capitalize">
-                                    {value.replace(/-/g, ' ')}
+                                    {value.length > 20
+                                        ? `${value.substring(0, 6)}...`
+                                        : value.replace(/-/g, ' ')}
                                 </span>
                             ) : (
                                 <Link
                                     to={to}
                                     className="hover:text-[#7F00FF] transition-colors capitalize"
                                 >
-                                    {value.replace(/-/g, ' ')}
+                                    {value.length > 20
+                                        ? `${value.substring(0, 6)}...`
+                                        : value.replace(/-/g, ' ')}
                                 </Link>
                             )}
                         </li>

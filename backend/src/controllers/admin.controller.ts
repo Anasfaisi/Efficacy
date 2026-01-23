@@ -159,11 +159,9 @@ export class AdminController {
         }
     }
 
-
     async getAllMentors(req: Request, res: Response): Promise<void> {
         const mentors = await this._adminService.getAllMentors();
         res.status(code.OK).json(mentors);
-        
     }
 
     async getMentorById(req: Request, res: Response): Promise<void> {
@@ -181,7 +179,7 @@ export class AdminController {
     }
 
     async updateMentorStatus(req: Request, res: Response): Promise<void> {
-        const {id }= req.params;
+        const { id } = req.params;
         const { status } = req.body;
         await this._adminService.updateMentorStatus(id, status);
         res.status(code.OK).json({ message: 'Mentor status updated' });
@@ -191,8 +189,12 @@ export class AdminController {
     async getAllUsers(req: Request, res: Response): Promise<void> {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
-        const search = req.query.search as string || '';
-        const result = await this._adminService.getAllUsers(page, limit, search);
+        const search = (req.query.search as string) || '';
+        const result = await this._adminService.getAllUsers(
+            page,
+            limit,
+            search
+        );
         res.status(code.OK).json(result);
     }
 
@@ -201,6 +203,26 @@ export class AdminController {
         const { isActive } = req.body;
         const dto = new UpdateUserStatusRequestDto(id, isActive);
         await this._adminService.updateUserStatus(dto);
-        res.status(code.OK).json({ message: 'User status updated successfully' });
+        res.status(code.OK).json({
+            message: 'User status updated successfully',
+        });
+    }
+
+    async getRevenueData(req: Request, res: Response): Promise<void> {
+        const id = req.currentUser?.id;
+        const revenue = await this._adminService.getRevenueDetails(id!);
+        res.status(code.OK).json(revenue);
+    }
+
+    async getTransactions(req: Request, res: Response): Promise<void> {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const filter = (req.query.filter as 'all' | 'mentor' | 'user') || 'all';
+        const transactions = await this._adminService.getAllTransactions(
+            page,
+            limit,
+            filter
+        );
+        res.status(code.OK).json(transactions);
     }
 }

@@ -29,7 +29,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -88,7 +88,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
                     {column.tasks.map((task: Task) => (
                         <SortableItem key={task.taskId} id={task.taskId}>
                             {(
-                                dragHandleProps: React.HTMLAttributes<HTMLElement>,
+                                dragHandleProps: React.HTMLAttributes<HTMLElement>
                             ) => (
                                 <KanbanCard
                                     key={task.taskId}

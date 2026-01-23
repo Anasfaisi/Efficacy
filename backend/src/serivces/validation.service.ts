@@ -1,7 +1,4 @@
-import { OAuth2Client } from 'google-auth-library';
-import { injectable } from 'inversify';
 import { IValidationService } from './Interfaces/IValidation.service';
-import { Role } from '@/types/role.types';
 export class ValidationService implements IValidationService {
     validateLoginInput({
         email,

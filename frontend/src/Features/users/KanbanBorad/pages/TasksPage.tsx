@@ -19,12 +19,16 @@ import { isToday, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
 const TasksPage: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
-    const [activeTab, setActiveTab] = useState<'All' | 'Today' | 'Upcoming' | 'Overdue'>('All');
+    const [activeTab, setActiveTab] = useState<
+        'All' | 'Today' | 'Upcoming' | 'Overdue'
+    >('All');
     const [isAdding, setIsAdding] = useState(false);
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [titleError, setTitleError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(undefined);
+    const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(
+        undefined
+    );
 
     useEffect(() => {
         if (currentUser) {
@@ -45,28 +49,39 @@ const TasksPage: React.FC = () => {
     const filteredTasks = useMemo(() => {
         const now = new Date();
         const todayEnd = endOfDay(now);
-        
+
         switch (activeTab) {
             case 'Today':
-                return tasks.filter(t => isToday(new Date(t.startDate)));
+                return tasks.filter((t) => isToday(new Date(t.startDate)));
             case 'Upcoming':
-                return tasks.filter(t => isAfter(new Date(t.startDate), todayEnd));
+                return tasks.filter((t) =>
+                    isAfter(new Date(t.startDate), todayEnd)
+                );
             case 'Overdue':
-                return tasks.filter(t => !t.completed && isBefore(new Date(t.endDate), now));
+                return tasks.filter(
+                    (t) => !t.completed && isBefore(new Date(t.endDate), now)
+                );
             default:
                 return tasks;
         }
     }, [tasks, activeTab]);
 
-    const completedCount = tasks.filter(t => t.completed).length;
+    const completedCount = tasks.filter((t) => t.completed).length;
     const totalCount = tasks.length;
     const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-    const handleToggleComplete = async (taskId: string, currentStatus: boolean) => {
+    const handleToggleComplete = async (
+        taskId: string,
+        currentStatus: boolean
+    ) => {
         if (!currentUser?.id) return;
         try {
-            const updatedTask = await updatePlannerTask(taskId, { completed: !currentStatus });
-            setTasks(prev => prev.map(t => t._id === taskId ? updatedTask : t));
+            const updatedTask = await updatePlannerTask(taskId, {
+                completed: !currentStatus,
+            });
+            setTasks((prev) =>
+                prev.map((t) => (t._id === taskId ? updatedTask : t))
+            );
         } catch (error) {
             console.error('Failed to update task', error);
         }
@@ -76,7 +91,7 @@ const TasksPage: React.FC = () => {
         if (!currentUser?.id) return;
         try {
             await deletePlannerTask(taskId);
-            setTasks(prev => prev.filter(t => t._id !== taskId));
+            setTasks((prev) => prev.filter((t) => t._id !== taskId));
         } catch (error) {
             console.error('Failed to delete task', error);
         }
@@ -84,7 +99,7 @@ const TasksPage: React.FC = () => {
 
     const handleAddTask = async () => {
         if (!currentUser?.id) return;
-        
+
         if (!isAdding) {
             setIsAdding(true);
             return;
@@ -107,12 +122,12 @@ const TasksPage: React.FC = () => {
             completed: false,
             startDate: start.toISOString(),
             endDate: end.toISOString(),
-            subtasks: []
+            subtasks: [],
         };
 
         try {
             const createdTask = await createPlannerTask(newTask);
-            setTasks(prev => [createdTask, ...prev]);
+            setTasks((prev) => [createdTask, ...prev]);
             setIsAdding(false);
             setNewTaskTitle('');
             setTitleError('');
@@ -149,28 +164,41 @@ const TasksPage: React.FC = () => {
                                         <ListTodo className="text-white w-7 h-7" />
                                     </div>
                                     <div>
-                                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Tasks</h1>
-                                        <p className="text-sm font-bold text-gray-400">Organize your flow with Efficacy</p>
+                                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+                                            Tasks
+                                        </h1>
+                                        <p className="text-sm font-bold text-gray-400">
+                                            Organize your flow with Efficacy
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-1.5 rounded-[1.25rem] border border-gray-200 shadow-sm">
                                     <div className="flex border-r border-gray-100 pr-1.5 mr-1.5">
-                                        {(['All', 'Today', 'Upcoming', 'Overdue'] as const).map((tab) => (
+                                        {(
+                                            [
+                                                'All',
+                                                'Today',
+                                                'Upcoming',
+                                                'Overdue',
+                                            ] as const
+                                        ).map((tab) => (
                                             <button
                                                 key={tab}
-                                                onClick={() => setActiveTab(tab)}
+                                                onClick={() =>
+                                                    setActiveTab(tab)
+                                                }
                                                 className={cn(
-                                                    "px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all",
-                                                    activeTab === tab 
-                                                        ? "bg-primary text-white shadow-lg shadow-primary/30" 
-                                                        : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                                                    'px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all',
+                                                    activeTab === tab
+                                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                                 )}
                                             >
                                                 {tab}
                                             </button>
                                         ))}
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => setIsAdding(true)}
                                         className="bg-primary text-white p-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                                     >
@@ -196,22 +224,31 @@ const TasksPage: React.FC = () => {
                                 <div className="bg-white p-4 rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 animate-in slide-in-from-top-2 duration-300">
                                     <div className="flex items-center gap-4">
                                         <div className="flex-1">
-                                            <input 
+                                            <input
                                                 autoFocus
                                                 type="text"
                                                 placeholder="What needs to be done?"
                                                 className={cn(
-                                                    "w-full bg-gray-50 border-none focus:ring-2 focus:ring-primary/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 placeholder:text-gray-400",
-                                                    titleError && "ring-2 ring-rose-500/20"
+                                                    'w-full bg-gray-50 border-none focus:ring-2 focus:ring-primary/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 placeholder:text-gray-400',
+                                                    titleError &&
+                                                        'ring-2 ring-rose-500/20'
                                                 )}
                                                 value={newTaskTitle}
                                                 onChange={(e) => {
-                                                    setNewTaskTitle(e.target.value);
-                                                    if (e.target.value.length >= 5) setTitleError('');
+                                                    setNewTaskTitle(
+                                                        e.target.value
+                                                    );
+                                                    if (
+                                                        e.target.value.length >=
+                                                        5
+                                                    )
+                                                        setTitleError('');
                                                 }}
                                                 onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') handleAddTask();
-                                                    if (e.key === 'Escape') cancelAdding();
+                                                    if (e.key === 'Enter')
+                                                        handleAddTask();
+                                                    if (e.key === 'Escape')
+                                                        cancelAdding();
                                                 }}
                                             />
                                             {titleError && (
@@ -221,13 +258,16 @@ const TasksPage: React.FC = () => {
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <button 
+                                            <button
                                                 onClick={handleAddTask}
                                                 className="bg-primary text-white p-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                                             >
-                                                <Check size={20} strokeWidth={3} />
+                                                <Check
+                                                    size={20}
+                                                    strokeWidth={3}
+                                                />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={cancelAdding}
                                                 className="bg-gray-100 text-gray-400 p-3 rounded-xl hover:bg-gray-200 transition-all"
                                             >
@@ -240,12 +280,17 @@ const TasksPage: React.FC = () => {
 
                             {filteredTasks.length > 0 ? (
                                 filteredTasks.map((task) => (
-                                    <TaskItem 
-                                        key={task._id} 
-                                        task={task} 
-                                        onToggleComplete={() => handleToggleComplete(task._id, task.completed)}
+                                    <TaskItem
+                                        key={task._id}
+                                        task={task}
+                                        onToggleComplete={() =>
+                                            handleToggleComplete(
+                                                task._id,
+                                                task.completed
+                                            )
+                                        }
                                         onDelete={() => handleDelete(task._id)}
-                                        onEdit={() => handleEdit(task)} 
+                                        onEdit={() => handleEdit(task)}
                                     />
                                 ))
                             ) : (
@@ -253,8 +298,10 @@ const TasksPage: React.FC = () => {
                                     <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
                                         <ListTodo className="text-gray-200 w-12 h-12" />
                                     </div>
-                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No tasks in your queue</p>
-                                    <button 
+                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+                                        No tasks in your queue
+                                    </p>
+                                    <button
                                         onClick={handleAddTask}
                                         className="mt-6 text-primary font-black text-sm hover:underline"
                                     >
@@ -271,12 +318,18 @@ const TasksPage: React.FC = () => {
                             <div className="bg-white rounded-[2.5rem] p-8 shadow-[0_-20px_60px_-15px_rgba(127,0,255,0.15)] border border-gray-100 w-full max-w-xl">
                                 <div className="flex justify-between items-center mb-5">
                                     <span className="text-xs font-black text-gray-400 uppercase tracking-widest">
-                                        Productivity Score: <span className="text-gray-900 ml-2">{completedCount}/{totalCount} Completed</span>
+                                        Productivity Score:{' '}
+                                        <span className="text-gray-900 ml-2">
+                                            {completedCount}/{totalCount}{' '}
+                                            Completed
+                                        </span>
                                     </span>
-                                    <span className="text-xs font-black text-primary">{Math.round(progress)}% Efficiency</span>
+                                    <span className="text-xs font-black text-primary">
+                                        {Math.round(progress)}% Efficiency
+                                    </span>
                                 </div>
                                 <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden p-1">
-                                    <div 
+                                    <div
                                         className="h-full bg-gradient-to-r from-primary to-purple-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(127,0,255,0.4)]"
                                         style={{ width: `${progress}%` }}
                                     />
@@ -287,12 +340,18 @@ const TasksPage: React.FC = () => {
                                 <button className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-primary transition-colors">
                                     View History
                                 </button>
-                                <button 
+                                <button
                                     onClick={handleAddTask}
                                     className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black shadow-2xl shadow-orange-500/40 hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-3 group"
                                 >
-                                    <Plus size={22} strokeWidth={3} className="group-hover:rotate-90 transition-transform" />
-                                    <span className="uppercase tracking-widest text-xs">Unleash Next Task</span>
+                                    <Plus
+                                        size={22}
+                                        strokeWidth={3}
+                                        className="group-hover:rotate-90 transition-transform"
+                                    />
+                                    <span className="uppercase tracking-widest text-xs">
+                                        Unleash Next Task
+                                    </span>
                                 </button>
                             </div>
                         </div>

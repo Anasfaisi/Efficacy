@@ -8,13 +8,13 @@ import {
     IndianRupee,
     Star,
     MessageSquare,
-    Video,
     ShieldCheck,
     Search,
     Filter,
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
+import MentorDetailsModal from '../components/MentorDetailsModal';
 
 const MentorListingPage: React.FC = () => {
     const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -27,6 +27,7 @@ const MentorListingPage: React.FC = () => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+    const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
     const resetFilters = () => {
         setSearchTerm('');
@@ -55,10 +56,10 @@ const MentorListingPage: React.FC = () => {
 
                 const data = await mentorApi.getApprovedMentors(
                     page,
-                    2,
+                    3,
                     debouncedSearch,
                     sort,
-                    filters,
+                    filters
                 );
                 setMentors(data.mentors);
                 setTotalPages(data.pages);
@@ -87,7 +88,7 @@ const MentorListingPage: React.FC = () => {
                         <header className="mb-8">
                             <Breadcrumbs />
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                Find Your Mentor
+                                Mentor Pool
                             </h1>
                             <p className="text-gray-600 mb-6">
                                 Connect with industry experts and academic
@@ -307,13 +308,15 @@ const MentorListingPage: React.FC = () => {
                                                     </span>
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button className="p-2 text-[#7F00FF] bg-[#7F00FF]/10 rounded-xl hover:bg-[#7F00FF]/20 transition-colors">
-                                                        <MessageSquare
-                                                            size={18}
-                                                        />
-                                                    </button>
-                                                    <button className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25">
-                                                        Connect
+                                                    <button
+                                                        onClick={() =>
+                                                            setSelectedMentor(
+                                                                mentor
+                                                            )
+                                                        }
+                                                        className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25"
+                                                    >
+                                                        View
                                                     </button>
                                                 </div>
                                             </div>
@@ -339,7 +342,7 @@ const MentorListingPage: React.FC = () => {
 
                                 {Array.from(
                                     { length: totalPages },
-                                    (_, i) => i + 1,
+                                    (_, i) => i + 1
                                 ).map((pageNum) => (
                                     <button
                                         key={pageNum}
@@ -371,6 +374,12 @@ const MentorListingPage: React.FC = () => {
                     </div>
                 </main>
             </div>
+            {selectedMentor && (
+                <MentorDetailsModal
+                    mentor={selectedMentor}
+                    onClose={() => setSelectedMentor(null)}
+                />
+            )}
         </div>
     );
 };

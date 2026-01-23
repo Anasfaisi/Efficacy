@@ -41,7 +41,7 @@ const MentorApproved: React.FC = () => {
         setIsLoading(true);
         try {
             const response = await mentorApi.activateMentor(
-                parseFloat(monthlyCharge),
+                parseFloat(monthlyCharge)
             );
 
             // Update local user state
@@ -123,7 +123,7 @@ const MentorApproved: React.FC = () => {
                                         checked={agreedToGuidelines}
                                         onChange={(e) => {
                                             setAgreedToGuidelines(
-                                                e.target.checked,
+                                                e.target.checked
                                             );
                                             if (
                                                 e.target.checked &&

@@ -3,7 +3,6 @@ import type { MentorApplication, Notification } from '../Features/admin/types';
 import type { LoginCredentials, Mentor, User } from '../types/auth';
 
 export const adminService = {
-
     adminLoginApi: async (credentials: LoginCredentials) => {
         const res = await api.post('/admin/login', credentials);
         return res.data;
@@ -15,7 +14,7 @@ export const adminService = {
     },
 
     getMentorApplicationById: async (
-        id: string,
+        id: string
     ): Promise<MentorApplication> => {
         const response = await api.get(`/admin/mentors/applications/${id}`);
         return response.data;
@@ -27,22 +26,19 @@ export const adminService = {
 
     rejectMentorApplication: async (
         id: string,
-        reason: string,
+        reason: string
     ): Promise<void> => {
         await api.post(`/admin/mentors/applications/${id}/reject`, { reason });
     },
 
     requestChangesMentorApplication: async (
         id: string,
-        reason: string,
+        reason: string
     ): Promise<void> => {
         await api.post(`/admin/mentors/applications/${id}/request-changes`, {
             reason,
         });
     },
-
-
-
 
     // Mentor Management
     getAllMentors: async (): Promise<Mentor[]> => {
@@ -60,8 +56,19 @@ export const adminService = {
     },
 
     //User Management
-    getAllUsers: async (page: number = 1, limit: number = 10, search: string = ''): Promise<{ users: User[], totalCount: number, totalPages: number, currentPage: number }> => {
-        const response = await api.get(`/admin/users?page=${page}&limit=${limit}&search=${search}`);
+    getAllUsers: async (
+        page: number = 1,
+        limit: number = 10,
+        search: string = ''
+    ): Promise<{
+        users: User[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+    }> => {
+        const response = await api.get(
+            `/admin/users?page=${page}&limit=${limit}&search=${search}`
+        );
         return response.data;
     },
 
@@ -69,7 +76,7 @@ export const adminService = {
         await api.patch(`/admin/users/${id}/status`, { isActive });
     },
 
-    //Notification 
+    //Notification
     getNotifications: async (): Promise<Notification[]> => {
         const response = await api.get('/admin/notifications');
         return response.data;
@@ -82,5 +89,21 @@ export const adminService = {
 
     markAllNotificationsAsRead: async (): Promise<void> => {
         await api.patch('/admin/notifications/mark-all-read');
+    },
+
+    getRevenueDetails: async (): Promise<{ totalRevenue: number }> => {
+        const response = await api.get('/admin/revenue');
+        return response.data;
+    },
+
+    getTransactions: async (
+        page: number = 1,
+        limit: number = 10,
+        filter: string = 'all'
+    ): Promise<{ transactions: any[]; total: number }> => {
+        const response = await api.get(
+            `/admin/transactions?page=${page}&limit=${limit}&filter=${filter}`
+        );
+        return response.data;
     },
 };

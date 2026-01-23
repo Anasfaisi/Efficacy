@@ -3,7 +3,25 @@ import type { IPlannerTask } from '../types';
 import { Priority } from '../types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, isSameDay } from 'date-fns';
+import {
+    format,
+    isSameDay,
+    startOfWeek,
+    endOfWeek,
+    startOfMonth,
+    endOfMonth,
+    eachDayOfInterval,
+    addDays,
+    addWeeks,
+    addMonths,
+    subDays,
+    subWeeks,
+    subMonths,
+    isSameMonth,
+    isToday,
+    startOfDay,
+    differenceInMinutes,
+} from 'date-fns';
 
 interface CalendarViewProps {
     tasks: IPlannerTask[];
@@ -13,32 +31,64 @@ interface CalendarViewProps {
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
-const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick, onSlotClick }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({
+    tasks,
+    onTaskClick,
+    onSlotClick,
+}) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [view, setView] = useState<'day' | 'week' | 'month'>('week');
 
-    const weekDays = useMemo(() => {
-        const start = new Date(currentDate);
-        start.setDate(currentDate.getDate() - currentDate.getDay());
-        return Array.from({ length: 7 }, (_, i) => {
-            const d = new Date(start);
-            d.setDate(start.getDate() + i);
-            return d;
-        });
-    }, [currentDate]);
+    const daysToRender = useMemo(() => {
+        let start: Date;
+        let end: Date;
+
+        switch (view) {
+            case 'day':
+                start = startOfDay(currentDate);
+                end = start;
+                break;
+            case 'week':
+                start = startOfWeek(currentDate);
+                end = endOfWeek(currentDate);
+                break;
+            case 'month':
+                const monthStart = startOfMonth(currentDate);
+                const monthEnd = endOfMonth(currentDate);
+                start = startOfWeek(monthStart);
+                end = endOfWeek(monthEnd);
+                break;
+        }
+
+        return eachDayOfInterval({ start, end });
+    }, [currentDate, view]);
 
     const handlePrev = () => {
-        const newDate = new Date(currentDate);
-        if (view === 'week') newDate.setDate(currentDate.getDate() - 7);
-        else if (view === 'day') newDate.setDate(currentDate.getDate() - 1);
-        setCurrentDate(newDate);
+        switch (view) {
+            case 'day':
+                setCurrentDate(subDays(currentDate, 1));
+                break;
+            case 'week':
+                setCurrentDate(subWeeks(currentDate, 1));
+                break;
+            case 'month':
+                setCurrentDate(subMonths(currentDate, 1));
+                break;
+        }
     };
 
     const handleNext = () => {
-        const newDate = new Date(currentDate);
-        if (view === 'week') newDate.setDate(currentDate.getDate() + 7);
-        else if (view === 'day') newDate.setDate(currentDate.getDate() + 1);
-        setCurrentDate(newDate);
+        switch (view) {
+            case 'day':
+                setCurrentDate(addDays(currentDate, 1));
+                break;
+            case 'week':
+                setCurrentDate(addWeeks(currentDate, 1));
+                break;
+            case 'month':
+                setCurrentDate(addMonths(currentDate, 1));
+                break;
+        }
     };
 
     const handleToday = () => setCurrentDate(new Date());
@@ -46,56 +96,260 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick, onSlotC
     const getTaskStyle = (task: IPlannerTask) => {
         const start = new Date(task.startDate);
         const end = new Date(task.endDate);
+        
+        // Calculate position based on time for Day/Week view
         const startHour = start.getHours() + start.getMinutes() / 60;
-        const duration = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        const durationInMinutes = differenceInMinutes(end, start);
+        const durationInHours = durationInMinutes / 60;
+        
+        const top = `${startHour * 64}px`; // 64px per hour
+        const height = `${Math.max(durationInHours * 64, 28)}px`; // Minimum height
 
-        const top = `${startHour * 64}px`;
-        const height = `${Math.max(duration * 64, 28)}px`;
-
-        let colorClasses = 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20';
-        if (task.priority === Priority.HIGH) colorClasses = 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100';
-        else if (task.priority === Priority.MEDIUM) colorClasses = 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100';
-        else if (task.priority === Priority.LOW) colorClasses = 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100';
+        let colorClasses =
+            'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20';
+        if (task.priority === Priority.HIGH)
+            colorClasses =
+                'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100';
+        else if (task.priority === Priority.MEDIUM)
+            colorClasses =
+                'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100';
+        else if (task.priority === Priority.LOW)
+            colorClasses =
+                'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100';
 
         if (task.completed) {
-            colorClasses = 'bg-gray-50 border-gray-100 text-gray-400 line-through';
+            colorClasses =
+                'bg-gray-50 border-gray-100 text-gray-400 line-through decoration-gray-400';
         }
 
         return { top, height, colorClasses };
     };
 
+    // Helper to get logic for Month View task display
+    const getMonthViewTaskStyle = (task: IPlannerTask) => {
+        let colorClasses = 'bg-primary/10 text-primary';
+        if (task.priority === Priority.HIGH) colorClasses = 'bg-rose-100 text-rose-800';
+        else if (task.priority === Priority.MEDIUM) colorClasses = 'bg-amber-100 text-amber-800';
+        else if (task.priority === Priority.LOW) colorClasses = 'bg-emerald-100 text-emerald-800';
+        
+        if (task.completed) colorClasses = 'bg-gray-100 text-gray-500 line-through';
+        
+        return colorClasses;
+    }
+
+    const renderTimeGridView = () => (
+        <div className="flex-1 overflow-auto custom-scrollbar relative bg-white">
+            <div className="min-w-[800px] relative">
+                {/* Header (Dates) */}
+                <div className="sticky top-0 z-20 flex bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+                     <div className="w-20 flex-shrink-0 border-r border-gray-100 flex items-end justify-end pb-2 pr-2">
+                        <span className="text-[10px] font-bold text-gray-400">
+                             GMT{format(new Date(), 'x')}
+                        </span>
+                    </div>
+                    {daysToRender.map((day) => {
+                         const today = isToday(day);
+                        return (
+                            <div
+                                key={day.toISOString()}
+                                className="flex-1 border-r border-gray-100 py-4 flex flex-col items-center justify-center min-w-[120px]"
+                            >
+                                <p className={cn(
+                                    "text-xs font-semibold uppercase tracking-wider mb-1",
+                                    today ? "text-primary" : "text-gray-500"
+                                )}>
+                                    {format(day, 'EEE')}
+                                </p>
+                                <div className={cn(
+                                    "w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition-all",
+                                    today ? "bg-primary text-white shadow-md shadow-primary/30" : "text-gray-900"
+                                )}>
+                                    {format(day, 'd')}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Body (Time grid) */}
+                <div className="flex relative">
+                    {/* Time labels */}
+                     <div className="w-20 flex-shrink-0 border-r border-gray-100 bg-white z-10">
+                        {HOURS.map((hour) => (
+                            <div key={hour} className="h-16 relative">
+                                <span className="absolute -top-3 right-2 text-xs font-medium text-gray-400">
+                                    {hour === 0 ? '' : format(new Date().setHours(hour), 'h a')}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {/* Columns */}
+                    {daysToRender.map((day) => (
+                        <div
+                            key={day.toISOString()}
+                             className="flex-1 border-r border-gray-100 relative min-w-[120px] bg-white"
+                        >
+                             {/* Grid Lines */}
+                             {HOURS.map((hour) => (
+                                <div
+                                    key={hour}
+                                    className="h-16 border-b border-gray-100 hover:bg-gray-50/50 transition-colors group cursor-pointer"
+                                     onClick={() => onSlotClick(day, hour)}
+                                />
+                             ))}
+
+                            {/* Tasks */}
+                            {tasks
+                                .filter((task) => isSameDay(new Date(task.startDate), day))
+                                .map((task) => {
+                                    const style = getTaskStyle(task);
+                                    return (
+                                        <div
+                                            key={task._id}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onTaskClick(task);
+                                            }}
+                                            className={cn(
+                                                'absolute left-1 right-1 rounded-md border p-2 shadow-sm cursor-pointer overflow-hidden transition-all hover:shadow-md hover:z-30 z-10',
+                                                style.colorClasses
+                                            )}
+                                            style={{
+                                                top: style.top,
+                                                height: style.height,
+                                            }}
+                                        >
+                                            <div className="flex flex-col h-full">
+                                                <span className="text-xs font-bold leading-tight line-clamp-1">
+                                                     {task.title || '(No title)'}
+                                                </span>
+                                                 <span className="text-[10px] font-medium opacity-80 mt-0.5">
+                                                     {format(new Date(task.startDate), 'h:mm a')}
+                                                 </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                             {/* Current Time Indicator logic could go here */}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderMonthView = () => (
+        <div className="flex-1 flex flex-col h-full bg-white overflow-y-auto">
+             {/* Days Header */}
+            <div className="flex border-b border-gray-200">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName) => (
+                    <div key={dayName} className="flex-1 py-2 text-center text-sm font-semibold text-gray-400 uppercase tracking-widest">
+                        {dayName}
+                    </div>
+                ))}
+            </div>
+            
+            {/* Grid */}
+            <div className="flex-1 grid grid-cols-7 grid-rows-5 auto-rows-fr">
+                {daysToRender.map((day, idx) => {
+                    const isCurrentMonth = isSameMonth(day, currentDate);
+                    const isDayToday = isToday(day);
+                    const dayTasks = tasks.filter(t => isSameDay(new Date(t.startDate), day));
+                    
+                    return (
+                        <div
+                            key={day.toISOString()}
+                            className={cn(
+                                "border-b border-r border-gray-100 min-h-[120px] p-2 flex flex-col transition-colors hover:bg-gray-50/30",
+                                !isCurrentMonth && "bg-gray-50/50 text-gray-400"
+                            )}
+                            onClick={() => onSlotClick(day, 9)} // Default to 9am on click
+                        >
+                            <div className="flex items-center justify-center mb-1">
+                                 <span className={cn(
+                                     "text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full",
+                                     isDayToday ? "bg-primary text-white" : "text-gray-700"
+                                 )}>
+                                     {format(day, 'd')}
+                                 </span>
+                            </div>
+
+                            <div className="flex-1 flex flex-col gap-1 overflow-y-auto custom-scrollbar-hidden">
+                                {dayTasks.map(task => (
+                                    <div
+                                        key={task._id}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onTaskClick(task);
+                                        }}
+                                        className={cn(
+                                            "text-[10px] px-1.5 py-1 rounded truncate font-medium cursor-pointer transition-opacity hover:opacity-80",
+                                            getMonthViewTaskStyle(task)
+                                        )}
+                                        title={task.title}
+                                    >
+                                        <span className="opacity-75 mr-1 text-[9px]">
+                                            {format(new Date(task.startDate), 'HH:mm')}
+                                        </span>
+                                        {task.title}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+
     return (
         <div className="h-full flex flex-col bg-white select-none">
             {/* Toolbar */}
-            <div className="px-8 py-3 border-b border-gray-100 flex items-center justify-between bg-white z-30">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shadow-[0_1px_3px_rgb(0,0,0,0.02)] z-30">
                 <div className="flex items-center gap-6">
-                    <button
-                        onClick={handleToday}
-                        className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-all hover:border-gray-300 active:scale-95"
-                    >
-                        Today
-                    </button>
-                    <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-lg">
-                        <button onClick={handlePrev} className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600">
+                     <div className="flex items-center gap-2">
+                         <span className="text-2xl font-bold text-gray-900 tracking-tight">
+                            {format(currentDate, 'MMMM')}
+                        </span>
+                        <span className="text-2xl font-light text-gray-500">
+                             {format(currentDate, 'yyyy')}
+                        </span>
+                     </div>
+                     
+                    <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-md p-0.5 shadow-sm">
+                        <button
+                            onClick={handlePrev}
+                            className="p-1.5 hover:bg-gray-50 rounded text-gray-600 transition-colors"
+                        >
                             <ChevronLeft size={18} />
                         </button>
-                        <button onClick={handleNext} className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600">
+                        <button
+                            onClick={handleToday}
+                             className="px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                        >
+                            Today
+                        </button>
+                        <button
+                            onClick={handleNext}
+                            className="p-1.5 hover:bg-gray-50 rounded text-gray-600 transition-colors"
+                        >
                             <ChevronRight size={18} />
                         </button>
                     </div>
-                    <span className="text-xl font-bold text-gray-900 tracking-tight">
-                        {format(currentDate, 'MMMM yyyy')}
-                    </span>
                 </div>
 
-                <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200/50">
+                <div className="flex bg-gray-100/80 p-1 rounded-lg border border-gray-200/50">
                     {(['day', 'week', 'month'] as const).map((v) => (
                         <button
                             key={v}
                             onClick={() => setView(v)}
                             className={cn(
-                                "px-5 py-1.5 rounded-lg text-sm font-semibold capitalize transition-all",
-                                view === v ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"
+                                'px-4 py-1.5 rounded-md text-sm font-semibold capitalize transition-all duration-200',
+                                view === v
+                                    ? 'bg-white text-primary shadow-sm ring-1 ring-black/5'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
                             )}
                         >
                             {v}
@@ -104,110 +358,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick, onSlotC
                 </div>
             </div>
 
-            {/* Grid Container */}
-            <div className="flex-1 overflow-auto custom-scrollbar relative">
-                <div className="min-w-[900px]">
-                    {/* Sticky Header Row */}
-                    <div className="sticky top-0 z-20 flex bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm h-28">
-                        {/* Time labels corner */}
-                        <div className="w-20 flex-shrink-0 border-r border-gray-100 flex items-end justify-end pb-4 pr-3">
-                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
-                                GMT{format(new Date(), 'xxx')}
-                             </span>
-                        </div>
-                        {/* Day headers */}
-                        {weekDays.map((day) => {
-                            const isToday = isSameDay(day, new Date());
-                            return (
-                                <div key={day.toISOString()} className="flex-1 border-r border-gray-100 flex flex-col items-center justify-center group">
-                                    <p className={cn(
-                                        "text-[10px] font-bold uppercase tracking-[0.2em] transition-colors",
-                                        isToday ? "text-primary" : "text-gray-400 group-hover:text-gray-600"
-                                    )}>
-                                        {format(day, 'EEE')}
-                                    </p>
-                                    <p className={cn(
-                                        "text-2xl font-black mt-1.5 w-12 h-12 flex items-center justify-center rounded-full transition-all",
-                                        isToday ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-gray-900 group-hover:bg-gray-50"
-                                    )}>
-                                        {day.getDate()}
-                                    </p>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Grid Body */}
-                    <div className="flex relative">
-                        {/* Time labels column */}
-                        <div className="w-20 flex-shrink-0 border-r border-gray-100 bg-white">
-                            {HOURS.map((hour) => (
-                                <div key={hour} className="h-16 relative">
-                                    {/* The label is centered on the top line of each 64px box */}
-                                    <div className="absolute -top-2.5 right-3">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                            {hour === 0 ? '' : `${hour > 12 ? hour - 12 : hour} ${hour >= 12 ? 'PM' : 'AM'}`}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Day columns */}
-                        {weekDays.map((day) => (
-                            <div key={day.toISOString()} className="flex-1 border-r border-gray-100 relative min-h-[1536px] group/col">
-                                {/* Hour Slots */}
-                                {HOURS.map((hour) => (
-                                    <div
-                                        key={hour}
-                                        className="h-16 border-b border-gray-100/50 hover:bg-gray-50/40 transition-colors cursor-pointer relative"
-                                        onClick={() => onSlotClick(day, hour)}
-                                    >
-                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-primary/[0.02]">
-                                            <span className="px-2 py-1 bg-white border border-primary/20 rounded shadow-sm text-[10px] font-bold text-primary">
-                                                + Add Task
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {/* Task Blocks */}
-                                {tasks
-                                    .filter((task) => isSameDay(new Date(task.startDate), day))
-                                    .map((task) => {
-                                        const style = getTaskStyle(task);
-                                        return (
-                                            <div
-                                                key={task._id}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onTaskClick(task);
-                                                }}
-                                                className={cn(
-                                                    "absolute left-1 right-1 rounded-lg border p-2.5 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer z-10 group/task hover:z-20",
-                                                    style.colorClasses
-                                                )}
-                                                style={{ top: style.top, height: style.height }}
-                                            >
-                                                <div className="flex flex-col h-full gap-0.5">
-                                                    <p className="text-xs font-bold leading-tight truncate">
-                                                        {task.title || '(No title)'}
-                                                    </p>
-                                                    <p className="text-[10px] font-medium opacity-80">
-                                                        {format(new Date(task.startDate), 'h:mm a')}
-                                                        {task.endDate && ` - ${format(new Date(task.endDate), 'h:mm a')}`}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            {/* Content */}
+             {view === 'month' ? renderMonthView() : renderTimeGridView()}
         </div>
     );
 };
 
 export default CalendarView;
+

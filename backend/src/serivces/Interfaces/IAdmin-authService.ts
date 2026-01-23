@@ -1,5 +1,3 @@
-import { Role } from '@/types/role.types';
-
 import { LoginRequestDto } from '@/Dto/request.dto';
 import { AdminLoginRespondseDto } from '@/Dto/response.dto';
 

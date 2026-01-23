@@ -33,18 +33,7 @@ export class NotificationService implements INotificationService {
             metadata,
             isRead: false,
         } as Partial<INotification>);
-
-     
-        this._socketService.emitToRoom(
-            recipientId,
-            'newNotification',
-            notification
-        );
-        this._socketService.emitToRoom(
-            recipientRole,
-            'newNotification',
-            notification
-        );
+        this._socketService.emitNotification(recipientId, notification);
 
         return notification;
     }
@@ -74,7 +63,6 @@ export class NotificationService implements INotificationService {
         message: string,
         metadata?: Record<string, unknown>
     ): Promise<void> {
- 
         await this.createNotification(
             'admin_global',
             Role.Admin,

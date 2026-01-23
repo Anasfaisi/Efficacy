@@ -1,35 +1,48 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
-export interface IChat {
-    _id: Types.ObjectId;
-    participants: Types.ObjectId[];
-    lastMessage?: Types.ObjectId;
-    isGroup?: boolean;
-    groupName?: string;
-    groupAvatar?: string;
-    createdBy?: Types.ObjectId;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-const ChatSchema = new Schema(
+const ParticipantSchema = new Schema(
     {
-        particpants: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-                required: true,
-            },
-        ],
+        _id: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            refPath: 'participants.onModel',
+        },
+        onModel: {
+            type: String,
+            required: true,
+            enum: ['Users', 'Mentors'],
+        },
+    },
+    { _id: false }
+);
+
+export interface IConversation extends Document {
+    participants: {
+        _id: Types.ObjectId | any; 
+        onModel: string;
+    }[];
+    isActive: boolean;
+    lastMessage?: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const ConversationSchema = new Schema<IConversation>(
+    {
+        participants: [ParticipantSchema],
+        isActive: { type: Boolean, default: true },
         lastMessage: {
             type: Schema.Types.ObjectId,
             ref: 'Message',
             default: null,
         },
-        isGroup: { type: Boolean, default: false },
-        groupName: { type: String },
-        createdBy: { type: Types.ObjectId, ref: 'User' },
     },
     { timestamps: true }
 );
 
-export const ChatModel = model<IChat>('Chat', ChatSchema);
+ConversationSchema.index({ participants: 1 });
+
+export const ConversationModel = model<IConversation>(
+    'Conversation',
+    ConversationSchema
+);

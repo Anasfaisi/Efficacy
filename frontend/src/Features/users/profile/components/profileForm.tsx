@@ -38,7 +38,7 @@ const ProfileForm: React.FC = () => {
     }, [user]);
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };

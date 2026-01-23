@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { User } from '@/types/auth';
-
 const UserDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     const user = currentUser as User;
@@ -166,11 +165,11 @@ const UserDashboard: React.FC = () => {
                                             >
                                                 {d}
                                             </div>
-                                        ),
+                                        )
                                     )}
                                     {Array.from(
                                         { length: 21 },
-                                        (_, i) => i + 1,
+                                        (_, i) => i + 1
                                     ).map((d) => (
                                         <div
                                             key={d}
@@ -319,7 +318,7 @@ const CollabCard: React.FC<{
     <div className="bg-white rounded-4xl border border-gray-100 shadow-2xl shadow-gray-200/60 overflow-hidden flex flex-col group">
         <div className="bg-[#009688] p-5 text-white flex justify-between items-center">
             <span className="text-lg font-black tracking-tight">{title}</span>
-            <div className="opacity-40 group-hover:opacity-100 transition-opacity translate-x-1 group-hover:translate-x-0 transition-transform">
+            <div className="opacity-40 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                 {icon}
             </div>
         </div>

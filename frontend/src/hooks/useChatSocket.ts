@@ -1,53 +1,57 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import {
-    connectSocket,
-    joinRoom,
-    leaveRoom,
-    sendMessage,
-    onReceiveMessage,
-    onLastMessages,
-    offChatEvents,
-} from '@/Services/socket/socketService';
+import { updateConversationPreview, setError } from '@/redux/slices/chatSlice';
+import { connectSocket } from '@/Services/socket/socketService';
+import type { Message } from '@/types/chat.types';
 
-import { addMessages, setMessages } from '@/redux/slices/chatSlice';
-import type { ChatMessage } from '@/types/chat.types';
-
-export const useChatSocket = (roomId: string) => {
+export const useChatSocket = (roomId: string | undefined) => {
     const dispatch = useAppDispatch();
     const { currentUser } = useAppSelector((state) => state.auth);
-
-    const socketRef = useRef<ReturnType<typeof connectSocket> | null>(null);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
-        if (!currentUser) return;
+        if (!currentUser || !roomId) return;
 
-        if (!socketRef.current) {
-            socketRef.current = connectSocket();
-        }
+        const socket = connectSocket();
 
-        joinRoom(roomId, currentUser);
+        // Join the specific chat room
+        const userId = currentUser.id 
+        socket.emit('joinRoom', { roomId, userId });
 
-        onReceiveMessage((msg: ChatMessage) => {
-            dispatch(addMessages(msg));
-        });
+        const handleHistory = (history: Message[]) => {
+            setMessages(history);
+        };
 
-        onLastMessages((messages: ChatMessage[]) => {
-            dispatch(setMessages({ roomId, messages }));
-        });
+        const handleReceiveMessage = (message: Message) => {
+            setMessages((prev) => [...prev, message]);
+            dispatch(updateConversationPreview(message));
+        };
+
+        const handleError = (err: { message: string }) => {
+            dispatch(setError(err.message));
+        };
+
+        socket.on('chatHistory', handleHistory);
+        socket.on('receiveMessage', handleReceiveMessage);
+        socket.on('error', handleError);
 
         return () => {
-            leaveRoom(roomId, currentUser.id!);
-            offChatEvents();
+            socket.off('chatHistory', handleHistory);
+            socket.off('receiveMessage', handleReceiveMessage);
+            socket.off('error', handleError);
         };
     }, [roomId, currentUser, dispatch]);
 
-    const send = (text: string) => {
-        if (currentUser) {
-            const name = currentUser.email || 'Admin';
-            sendMessage(roomId, text, currentUser.id!, name);
+    const sendMessage = (content: string) => {
+        const socket = connectSocket();
+        if (socket && roomId && currentUser) {
+            socket.emit('sendMessage', {
+                roomId,
+                senderId: currentUser.id,
+                content
+            });
         }
     };
 
-    return send;
+    return { sendMessage, messages };
 };

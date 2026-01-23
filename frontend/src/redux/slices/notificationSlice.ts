@@ -21,23 +21,27 @@ const notificationSlice = createSlice({
         },
         addNotification: (state, action: PayloadAction<Notification>) => {
             const newNotification = { ...action.payload };
-            // Ensure _id exists (handle id vs _id)
-            const data = newNotification as unknown as {
-                id?: string;
-                _id?: string;
-            };
-            if (!data._id && data.id) {
-                newNotification._id = data.id;
+
+            const rawData = newNotification as any;
+            const finalId = rawData._id || rawData.id;
+
+            if (finalId) {
+                newNotification._id = finalId;
+            } else {
+                newNotification._id = `auto-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             }
 
             // Check if notification already exists to avoid duplicates
-            if (
-                state.notifications.some((n) => n._id === newNotification._id)
-            ) {
-                return;
-            }
+            const isDuplicate = state.notifications.some(
+                (n) => n._id === newNotification._id
+            );
 
+            if (isDuplicate) return;
+
+            // Add to the beginning of the array
             state.notifications = [newNotification, ...state.notifications];
+
+            // Increment unread count if applicable
             if (!newNotification.isRead) {
                 state.unreadCount += 1;
             }
@@ -45,7 +49,7 @@ const notificationSlice = createSlice({
 
         markAsRead: (state, action: PayloadAction<string>) => {
             const notification = state.notifications.find(
-                (n) => n._id === action.payload,
+                (n) => n._id === action.payload
             );
             if (notification && !notification.isRead) {
                 notification.isRead = true;

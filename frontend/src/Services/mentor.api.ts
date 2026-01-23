@@ -1,6 +1,7 @@
 import api from './axiosConfig';
 import type { mentorFormSchemaType } from '@/types/zodSchemas';
 import type { Mentor } from '@/types/auth';
+import type { Notification } from '@/Features/admin/types';
 
 export interface MentorApplicationResult {
     status: string;
@@ -14,7 +15,7 @@ export const mentorApi = {
             certificate: File | null;
             resume: File | null;
             idProof: File | null;
-        },
+        }
     ): Promise<MentorApplicationResult> => {
         const formData = new FormData();
 
@@ -56,7 +57,7 @@ export const mentorApi = {
         limit: number = 10,
         search: string = '',
         sort: string = '',
-        filters: Record<string, any> = {},
+        filters: Record<string, any> = {}
     ): Promise<{ mentors: Mentor[]; total: number; pages: number }> => {
         const params = { page, limit, search, sort, ...filters };
         const res = await api.get('/mentor/list/approved', { params });
@@ -83,10 +84,17 @@ export const mentorApi = {
         });
         return res.data;
     },
+    getNotifications: async (): Promise<Notification[]> => {
+        const res = await api.get('/mentor/notifications');
+        return res.data;
+    },
+    markNotificationAsRead: async (id: string): Promise<void> => {
+        await api.patch(`/mentor/notifications/${id}/mark-read`);
+    },
+    markAllNotificationsAsRead: async (): Promise<void> => {
+        await api.patch('/mentor/notifications/mark-all-read');
+    },
 };
-
-
-
 
 export const updateMentorProfileBasicInfo = async (data: Partial<Mentor>) => {
     const res = await api.patch('/mentor/profile/basic-info', data);
@@ -114,7 +122,7 @@ export const updateMentorProfileMedia = async (files: {
 
 export const updateMentorProfileArray = async (
     field: string,
-    elements: unknown[],
+    elements: unknown[]
 ) => {
     const formData = new FormData();
     formData.append('field', field);

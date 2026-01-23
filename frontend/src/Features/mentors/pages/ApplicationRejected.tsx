@@ -11,7 +11,7 @@ export default function ApplicationRejected() {
     const dispatch = useAppDispatch();
     const { currentUser } = useAppSelector((state) => state.auth);
     const [feedbackReason, setFeedbackReason] = useState<string | undefined>(
-        (currentUser as Mentor)?.applicationFeedback,
+        (currentUser as Mentor)?.applicationFeedback
     );
 
     useEffect(() => {

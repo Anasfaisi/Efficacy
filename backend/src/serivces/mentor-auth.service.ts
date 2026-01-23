@@ -45,7 +45,6 @@ export class MentorAuthService implements IMentorAuthService {
     ) {}
 
     async mentorLogin(dto: LoginRequestDto) {
-        console.log(dto.email, dto, 'ddddtooototot');
         const account = await this._mentorRepository.findByEmail(dto.email);
         if (!account) throw new Error('User not found');
 
@@ -163,7 +162,7 @@ export class MentorAuthService implements IMentorAuthService {
                 email: payload.email,
                 name: payload.name || 'Google Mentor',
                 password: await bcrypt.hash(Math.random().toString(36), 10), // Random password
-                role: Role.Mentor
+                role: Role.Mentor,
             });
         }
 
@@ -177,7 +176,7 @@ export class MentorAuthService implements IMentorAuthService {
         );
 
         return new userGoogleLoginResponseDto(accessToken, refreshToken, {
-            id: account.id.toString(), 
+            id: account.id.toString(),
             email: account.email,
             name: account.name,
             role: account.role as Role,
@@ -185,7 +184,9 @@ export class MentorAuthService implements IMentorAuthService {
     }
 
     async mentorResendOtp(dto: resendOtpRequestDto) {
-        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(dto.email);
+        const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
+            dto.email
+        );
         if (!unverifiedUser) {
             throw new Error('Session expired, please register again');
         }
@@ -202,12 +203,15 @@ export class MentorAuthService implements IMentorAuthService {
             otpExpiresAt = now + OTP_EXPIRY_MS;
         }
 
-        const updatedUser = await this._unverifiedUserRepository.updateByEmail(dto.email, {
-            otp,
-            otpExpiresAt: new Date(otpExpiresAt),
-            lastOtpSent: new Date(now),
-            resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
-        });
+        const updatedUser = await this._unverifiedUserRepository.updateByEmail(
+            dto.email,
+            {
+                otp,
+                otpExpiresAt: new Date(otpExpiresAt),
+                lastOtpSent: new Date(now),
+                resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
+            }
+        );
 
         if (!updatedUser) {
             throw new Error('error happened in updating user otp');
@@ -221,11 +225,15 @@ export class MentorAuthService implements IMentorAuthService {
         );
     }
 
-    async mentorForgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }> {
+    async mentorForgotPassword(
+        dto: ForgotPasswordRequestDto
+    ): Promise<{ message: string }> {
         const mentor = await this._mentorRepository.findByEmail(dto.email);
         if (!mentor) throw new Error('Mentor not found with this email');
 
-        const resetToken = this._tokenService.generatePasswordResetToken(mentor.id);
+        const resetToken = this._tokenService.generatePasswordResetToken(
+            mentor.id
+        );
         // Pointing to mentor specific reset page
         const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
         await this._otpService.sendEmail(
@@ -236,11 +244,15 @@ export class MentorAuthService implements IMentorAuthService {
         return { message: 'Reset link sent to email' };
     }
 
-    async mentorResetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }> {
+    async mentorResetPassword(
+        dto: ResetPasswordrequestDto
+    ): Promise<{ message: string }> {
         const payload = this._tokenService.verifyPasswordResetToken(dto.token);
         const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
 
-        await this._mentorRepository.update(payload.id, { password: hashedPassword });
+        await this._mentorRepository.update(payload.id, {
+            password: hashedPassword,
+        });
 
         return { message: 'Password reset successful' };
     }

@@ -21,6 +21,7 @@ export class MentorOnboardService implements IMentorOnboardService {
         dto: MentorApplicationRequestDto
     ): Promise<MentorApplicationResponseDto | null> {
         const mentor = await this._mentorRepository.findById(dto.id);
+        console.log(mentor, 'mentor from mentor onboard service');
         if (!mentor) {
             throw new Error('Mentor not found');
         }
@@ -51,7 +52,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             expertise: dto.expertise,
             academicSpan: dto.academicSpan,
 
-    
             industryCategory: dto.industryCategory,
             experienceYears: dto.experienceYears,
             currentRole: dto.currentRole,
@@ -150,4 +150,3 @@ export class MentorOnboardService implements IMentorOnboardService {
         });
     }
 }
-

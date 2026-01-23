@@ -70,7 +70,7 @@ const SubscriptionForm = () => {
                         successUrl: window.location.origin + '/success',
                         cancelUrl: window.location.origin + '/cancel',
                     }),
-                },
+                }
             );
 
             const { sessionId } = await res.json();

@@ -61,14 +61,14 @@ const Login: React.FC = () => {
     };
 
     const handleGoogleSuccess = async (
-        credentialResponse: CredentialResponse,
+        credentialResponse: CredentialResponse
     ) => {
         setGoogleError(null);
         if (credentialResponse.credential) {
             try {
                 const result = await googleLoginApi(
                     credentialResponse.credential,
-                    'user',
+                    'user'
                 );
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
@@ -152,7 +152,7 @@ const Login: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.email &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.email && (
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
                                         className={cn(
                                             'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14',
                                             errors.password &&
-                                                'border-red-400 bg-red-50 focus:ring-red-100',
+                                                'border-red-400 bg-red-50 focus:ring-red-100'
                                         )}
                                     />
                                     <button
@@ -234,7 +234,7 @@ const Login: React.FC = () => {
                                     onSuccess={handleGoogleSuccess}
                                     onError={() =>
                                         setGoogleError(
-                                            'Google authentication failed',
+                                            'Google authentication failed'
                                         )
                                     }
                                     theme="outline"

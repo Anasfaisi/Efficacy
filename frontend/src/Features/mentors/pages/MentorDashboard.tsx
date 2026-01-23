@@ -38,7 +38,7 @@ const MentorDashboard: React.FC = () => {
                 navigate('/mentor/application-rejected');
             } else if (status === 'inactive') {
                 toast.error(
-                    'Your account is currently inactive. Please contact support.',
+                    'Your account is currently inactive. Please contact support.'
                 );
                 navigate('/mentor/login');
             }

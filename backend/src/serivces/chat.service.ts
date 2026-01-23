@@ -1,79 +1,105 @@
 import { injectable, inject } from 'inversify';
 import { IChatService } from './Interfaces/IChat.service';
-import { CreateChatDTO, CreateMessageDTO } from '@/Dto/request.dto';
-import { ChatResponseDTO, MessageResponseDto } from '@/Dto/response.dto';
-import { IMessageRepository } from '@/repositories/interfaces/IMessage.repository';
-import { TYPES } from '@/config/inversify-key.types';
-import { Types } from 'mongoose';
-import { MessageStatus } from '@/types/role.types';
 import { IChatRepository } from '@/repositories/interfaces/IChat.repository';
-import { IChat } from '@/models/Conversation.model';
+import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
+import { TYPES } from '@/config/inversify-key.types';
+import { IConversation } from '@/models/Conversation.model';
 import { IMessage } from '@/models/Message.model';
+import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
+
 
 @injectable()
 export class ChatService implements IChatService {
     constructor(
         @inject(TYPES.ChatRepository) private _chatRepository: IChatRepository,
-        @inject(TYPES.MessageRepository)
-        private _messageRepository: IMessageRepository
+        @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
+        @inject(TYPES.MentorshipRepository) private _mentorshipRepository: IMentorshipRepository
     ) {}
-    async findchatById(chatId: string): Promise<IChat | null> {
-        return this._chatRepository.findById(chatId);
+
+    private async validateActiveMentorship(userId: string, mentorId: string): Promise<void> {
+        const activeMentorship = await this._mentorshipRepository.findByUserIdAndMentorId(mentorId, userId);
+        if (!activeMentorship) {
+             throw new Error('You must have an active mentorship to chat with this mentor.');
+        }
+
+        const allowedStatuses = ['active', 'completed'];
+        if (!allowedStatuses.includes(activeMentorship.status)) {
+            throw new Error('Mentorship is not active or completed.');
+        }
     }
 
-    async createChat(data: CreateChatDTO): Promise<ChatResponseDTO> {
-        const existingChat = await this._chatRepository.findByParticipants(
-            data.userA,
-            data.userB
+    async initiateChat(
+        userId: string,
+        mentorId: string
+    ): Promise<IConversation> {
+        await this.validateActiveMentorship(userId, mentorId);
+
+        const participantsPayload = [
+            { _id: userId, onModel: 'Users' },
+            { _id: mentorId, onModel: 'Mentors' }
+        ];
+
+        const existing =
+            await this._chatRepository.findConversationByParticipants(participantsPayload);
+        if (existing) return existing;
+
+        return this._chatRepository.createConversation(participantsPayload);
+    }
+
+    async getUserConversations(userId: string): Promise<IConversation[]> {
+        return this._chatRepository.getUserConversations(userId);
+    }
+
+    async getRoomMessages(
+        roomId: string,
+        userId: string,
+        limit: number = 50,
+        skip: number = 0
+    ): Promise<IMessage[]> {
+        const conversation =
+            await this._chatRepository.getConversationById(roomId);
+        if (!conversation) throw new Error('Chat room not found');
+
+        console.log(conversation,"conversation in get room messages");
+        const isParticipant = conversation.participants.some(
+            (p) => p._id.toString() === userId || p.toString() === userId
         );
-        const chat =
-            existingChat ??
-            (await this._chatRepository.createChat(data.userA, data.userB));
+        if (!isParticipant)
+            throw new Error('Access denied to this chat room');
 
-        return {
-            id: chat._id.toString(),
-            participants: chat.participants.map((p) => p.toString()),
-            lastMessage: chat.lastMessage?.toString(),
-            isGroup: !!chat.isGroup,
-            createdAt: chat.createdAt,
-        };
+        return this._chatRepository.getMessages(roomId, limit, skip);
     }
 
-    async getRoomHistory(roomId: string): Promise<IMessage[]> {
-        return this._messageRepository.findByChat(roomId);
+    async sendMessage(
+        senderId: string,
+        roomId: string,
+        content: string,
+        type: 'text' | 'image' | 'file' = 'text'
+    ): Promise<IMessage> {
+        const message = await this._chatRepository.createMessage({
+            conversationId: roomId as any,
+            senderId: senderId as any,
+            content,
+            type,
+            isRead: false,
+        } as Partial<IMessage>);
+
+        await this._chatRepository.updateLastMessage(
+            roomId,
+            message._id as string
+        );
+
+        return message;
     }
 
-    async saveMessage(message: Partial<IMessage>): Promise<IMessage> {
-        return this._messageRepository.create(message);
+    async validateRoomAccess(roomId: string, userId: string): Promise<boolean> {
+        const conversation = await this._chatRepository.getConversationById(roomId);
+        if (!conversation) return false;
+        console.log(conversation,"conversation in chat service");
+        const isParticipant = conversation.participants.some(
+            (p) => p._id.toString() === userId || p.toString() === userId
+        );
+        console.log(isParticipant,"isParticipant in chat service");
+        return isParticipant;
     }
-
-    // async createMessage(dto: CreateMessageDTO): Promise<MessageResponseDto> {
-    // const messageData: Omit<IMessage, '_id' | 'status'> = {
-    //   conversationId: new Types.ObjectId(dto.conversationId),
-    //   senderId: new Types.ObjectId(dto.senderId),
-    //   content: dto.content,
-    //   attachments: dto.attachments,
-    //   seenBy: [],
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // };
-
-    //  const saved = await this._messageRepository.create(messageData);
-    //     await this._chatRepository.updateLastMessage(
-    //         dto.conversationId,
-    //         saved.
-    //     );
-
-    //     return new MessageResponseDto(
-
-    //         saved.conversationId.toString(),
-    //         saved.senderId.toString(),
-    //         saved.content,
-    //         saved.attachments,
-    //         saved.status,
-    //         saved.seenBy?.map((id) => id.toString()),
-    //         saved.createdAt,
-    //         saved.updatedAt
-    //     );
-    // }
 }

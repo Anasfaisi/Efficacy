@@ -13,6 +13,12 @@ import MentorApproved from '@/Features/mentors/pages/MentorApproved';
 import ApplicationRejected from '@/Features/mentors/pages/ApplicationRejected';
 import MentorProfilePage from '@/Features/mentors/pages/MentorProfilePage';
 import MentorLayout from '@/Features/mentors/layout/MentorLayout';
+import MentorMentorshipList from '@/Features/mentors/pages/MentorMentorshipList';
+import MentorshipRequestsPage from '@/Features/mentors/pages/MentorshipRequestsPage';
+import MentorWalletPage from '@/Features/mentors/pages/MentorWalletPage';
+import NotFound from '@/Features/common/pages/NotFound';
+import MentorshipManagementPage from '@/Features/users/mentors/pages/MentorshipManagementPage';
+import MentorChatPage from '@/Features/mentors/pages/MentorChatPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -41,13 +47,14 @@ const MentorRoutes: React.FC = () => {
                     path="students"
                     element={<div>Students Page (Placeholder)</div>}
                 />
-                <Route
-                    path="sessions"
-                    element={<div>Sessions Page (Placeholder)</div>}
-                />
+                <Route path="sessions" element={<MentorMentorshipList />} />
+                <Route path="requests" element={<MentorshipRequestsPage />} />
+                <Route path="wallet" element={<MentorWalletPage />} />
                 <Route path="profile" element={<MentorProfilePage />} />
                 <Route path="guidelines" element={<MentorGuidelines />} />
             </Route>
+
+            <Route path="chat" element={<MentorChatPage />} />
 
             <Route
                 path="application-received"
@@ -59,7 +66,12 @@ const MentorRoutes: React.FC = () => {
             />
             <Route path="onboarding" element={<MentorOnboardingForm />} />
             <Route path="approved" element={<MentorApproved />} />
+            <Route
+                path="mentorship/:id"
+                element={<MentorshipManagementPage />}
+            />
             <Route path="logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 };

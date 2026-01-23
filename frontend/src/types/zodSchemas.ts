@@ -9,7 +9,7 @@ export const registerSchema = z
             .max(50, 'Name must be at most 50 characters')
             .regex(
                 /^[A-Za-z\s]+$/,
-                'Name must contain only letters and spaces (no numbers)',
+                'Name must contain only letters and spaces (no numbers)'
             ),
         email: z
             .string()
@@ -22,16 +22,16 @@ export const registerSchema = z
             .min(8, 'Password must be at least 8 characters')
             .regex(
                 /[A-Z]/,
-                'Password must contain at least one uppercase letter',
+                'Password must contain at least one uppercase letter'
             )
             .regex(
                 /[a-z]/,
-                'Password must contain at least one lowercase letter',
+                'Password must contain at least one lowercase letter'
             )
             .regex(/[0-9]/, 'Password must contain at least one number')
             .regex(
                 /[^A-Za-z0-9]/,
-                'Password must contain at least one special character',
+                'Password must contain at least one special character'
             ),
 
         confirmPassword: z.string(),
@@ -56,7 +56,7 @@ export const loginFormSchema = z.object({
         .regex(/[0-9]/, 'Password must contain at least one number')
         .regex(
             /[^A-Za-z0-9]/,
-            'Password must contain at least one special character',
+            'Password must contain at least one special character'
         ),
 });
 
@@ -78,7 +78,7 @@ export const resetPasswordSchema = z.object({
         .regex(/[0-9]/, 'Password must contain at least one number')
         .regex(
             /[^A-Za-z0-9]/,
-            'Password must contain at least one special character',
+            'Password must contain at least one special character'
         ),
 });
 
@@ -244,7 +244,7 @@ export const mentorProfileUpdateSchema = z
             .regex(/[0-9]/, 'Must contain at least one number')
             .regex(
                 /[^A-Za-z0-9]/,
-                'Must contain at least one special character',
+                'Must contain at least one special character'
             )
             .optional(),
     })
@@ -276,7 +276,7 @@ export const userProfileUpdateSchema = z
             .regex(/[0-9]/, 'Must contain at least one number')
             .regex(
                 /[^A-Za-z0-9]/,
-                'Must contain at least one special character',
+                'Must contain at least one special character'
             )
             .optional(),
     })
@@ -289,3 +289,26 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type mentorProfileUpdateType = z.infer<typeof mentorProfileUpdateSchema>;
 export type userProfileUpdateType = z.infer<typeof userProfileUpdateSchema>;
+
+export const bankDetailsSchema = z.object({
+    accountHolderName: z
+        .string()
+        .trim()
+        .min(3, 'Account Holder Name is required')
+        .regex(
+            /^[A-Za-z\s]+$/,
+            'Account Holder Name must contain only letters'
+        ),
+    accountNumber: z
+        .string()
+        .trim()
+        .regex(/^\d{9,18}$/, 'Account Number must be 9-18 digits'),
+    bankName: z.string().trim().min(2, 'Bank Name is required'),
+    ifscCode: z
+        .string()
+        .trim()
+        .uppercase()
+        .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
+});
+
+export type bankDetailsSchemaType = z.infer<typeof bankDetailsSchema>;

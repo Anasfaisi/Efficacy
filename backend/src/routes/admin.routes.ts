@@ -1,7 +1,5 @@
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import { AdminController } from '../controllers/admin.controller';
-import { TYPES } from '@/config/inversify-key.types';
-import { container } from '@/config/inversify.config';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { Role } from '@/types/role.types';
 import { TokenService } from '@/serivces/token.service';
@@ -110,7 +108,6 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.updateMentorStatus.bind(adminController))
     );
 
-
     //user Management
     router.get(
         '/users',
@@ -122,6 +119,18 @@ export default function adminRoutes(adminController: AdminController) {
         '/users/:id/status',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
         asyncWrapper(adminController.updateUserStatus.bind(adminController))
+    );
+
+    router.get(
+        '/revenue',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getRevenueData.bind(adminController))
+    );
+
+    router.get(
+        '/transactions',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getTransactions.bind(adminController))
     );
 
     return router;

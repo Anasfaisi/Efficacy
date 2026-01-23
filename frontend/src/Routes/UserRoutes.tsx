@@ -14,7 +14,9 @@ import UserProfilePage from '@/Features/users/profile/pages/UserProfilePage';
 import TasksPage from '@/Features/users/KanbanBorad/pages/TasksPage';
 import MentorListingPage from '@/Features/users/mentors/pages/MentorListingPage';
 import PlannerPage from '@/Features/users/planner/pages/PlannerPage';
-
+import MentorshipManagementPage from '../Features/users/mentors/pages/MentorshipManagementPage';
+import MyMentorshipsPage from '@/Features/users/mentors/pages/MyMentorshipsPage';
+import NotFound from '@/Features/common/pages/NotFound';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -49,7 +51,13 @@ const UserRoutes: React.FC = () => {
 
             <Route path="tasks" element={<TasksPage />} />
             <Route path="mentors" element={<MentorListingPage />} />
+            <Route path="my-mentorships" element={<MyMentorshipsPage />} />
+            <Route
+                path="mentorship/:id"
+                element={<MentorshipManagementPage />}
+            />
             <Route path="planner" element={<PlannerPage />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 };

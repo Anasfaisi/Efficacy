@@ -23,7 +23,7 @@ export function OTPPage() {
             const available = new Date(resendAvailableAt).getTime();
             const diffInSeconds = Math.max(
                 0,
-                Math.floor((available - now) / 1000),
+                Math.floor((available - now) / 1000)
             );
             setTimer(diffInSeconds);
             if (diffInSeconds === 0) clearInterval(interval);
@@ -55,7 +55,7 @@ export function OTPPage() {
                     email: result.tempEmail,
                     role: result.role,
                     resendAvailableAt: result.resendAvailableAt,
-                }),
+                })
             );
             toast.success(`A new verification code has been sent.`);
         } catch (error: unknown) {

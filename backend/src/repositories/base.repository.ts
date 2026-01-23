@@ -1,6 +1,8 @@
 import { Model, Document, FilterQuery } from 'mongoose';
 import { IBaseRepository } from './interfaces/IBase.repository';
+import { injectable } from 'inversify';
 
+@injectable()
 export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     protected model: Model<T>;
 
@@ -14,7 +16,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
 
     async create(data: Partial<T>): Promise<T> {
         const document = new this.model(data);
-        console.log(document,'document');
+        console.log(document, 'document');
         return document.save();
     }
 

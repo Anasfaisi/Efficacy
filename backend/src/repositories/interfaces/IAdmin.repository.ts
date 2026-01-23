@@ -7,4 +7,5 @@ export interface IAdminRepository<T> {
         name: string;
         role: string;
     }): Promise<T>;
+    addRevenue(amount: number): Promise<void>;
 }

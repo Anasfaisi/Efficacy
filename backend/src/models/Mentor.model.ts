@@ -77,7 +77,15 @@ const mentorSchema = new Schema<IMentor>(
         publicProfile: { type: String },
         status: {
             type: String,
-            enum: ['incomplete', 'pending', 'approved', 'active', 'inactive', 'rejected', 'reapply'],
+            enum: [
+                'incomplete',
+                'pending',
+                'approved',
+                'active',
+                'inactive',
+                'rejected',
+                'reapply',
+            ],
             default: 'incomplete',
         },
 
@@ -127,7 +135,6 @@ const mentorSchema = new Schema<IMentor>(
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
     }
-    
 );
 
 export { IMentor };

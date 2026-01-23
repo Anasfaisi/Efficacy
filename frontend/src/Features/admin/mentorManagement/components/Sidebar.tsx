@@ -1,5 +1,11 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, FileText, LogOut, } from 'lucide-react';
+import {
+    LayoutDashboard,
+    Users,
+    FileText,
+    LogOut,
+    Banknote,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
@@ -17,10 +23,15 @@ export default function Sidebar() {
             icon: Users,
         },
         {
-            to:'/admin/userManagement',
-            label:'User Management',
-            icon:Users
-        }
+            to: '/admin/userManagement',
+            label: 'User Management',
+            icon: Users,
+        },
+        {
+            to: '/admin/financials',
+            label: 'Financials',
+            icon: Banknote,
+        },
     ];
 
     return (
@@ -44,13 +55,13 @@ export default function Sidebar() {
                                 isActive ||
                                 (item.to === '/admin/mentors/applications' &&
                                     location.pathname.includes(
-                                        '/admin/mentors/review',
+                                        '/admin/mentors/review'
                                     ));
                             return cn(
                                 'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group',
                                 isItemActive
                                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 translate-x-1'
-                                    : 'hover:bg-white/5 hover:text-white',
+                                    : 'hover:bg-white/5 hover:text-white'
                             );
                         }}
                     >
@@ -58,7 +69,7 @@ export default function Sidebar() {
                             size={18}
                             className={cn(
                                 'transition-colors',
-                                'group-hover:text-blue-400',
+                                'group-hover:text-blue-400'
                             )}
                         />
                         {item.label}
@@ -72,7 +83,7 @@ export default function Sidebar() {
                     className={({ isActive }) =>
                         cn(
                             'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-red-400 hover:bg-red-500/10 hover:text-red-300',
-                            isActive && 'bg-red-500/10',
+                            isActive && 'bg-red-500/10'
                         )
                     }
                 >

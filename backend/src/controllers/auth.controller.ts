@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
-import { AuthService } from '../serivces/auth.service';
 import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
-import { resendOtpRequestDto } from '@/Dto/request.dto';
 
 export class UserController {
     constructor(
@@ -226,4 +224,3 @@ export class UserController {
         }
     }
 }
-

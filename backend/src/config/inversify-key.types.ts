@@ -33,4 +33,11 @@ export const TYPES = {
     PlannerTaskService: Symbol('PlannerTaskService'),
     PlannerTaskRepository: Symbol('PlannerTaskRepository'),
     PlannerTaskController: Symbol('PlannerTaskController'),
+
+    MentorshipService: Symbol('MentorshipService'),
+    WalletService: Symbol('WalletService'),
+    MentorshipRepository: Symbol('MentorshipRepository'),
+    WalletRepository: Symbol('WalletRepository'),
+    MentorshipController: Symbol('MentorshipController'),
+    WalletController: Symbol('WalletController'),
 };

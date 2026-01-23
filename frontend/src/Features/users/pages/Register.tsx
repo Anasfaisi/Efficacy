@@ -48,7 +48,7 @@ const Register: React.FC = () => {
                     email: result.tempEmail,
                     role: result.role,
                     resendAvailableAt: result.resendAvailableAt,
-                }),
+                })
             );
 
             navigate('/verify-otp');
@@ -132,7 +132,7 @@ const Register: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.name &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.name && (
@@ -153,7 +153,7 @@ const Register: React.FC = () => {
                                     className={cn(
                                         'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all',
                                         errors.email &&
-                                            'border-red-400 bg-red-50 focus:ring-red-100',
+                                            'border-red-400 bg-red-50 focus:ring-red-100'
                                     )}
                                 />
                                 {errors.email && (
@@ -177,7 +177,7 @@ const Register: React.FC = () => {
                                         className={cn(
                                             'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14',
                                             errors.password &&
-                                                'border-red-400 bg-red-50 focus:ring-red-100',
+                                                'border-red-400 bg-red-50 focus:ring-red-100'
                                         )}
                                     />
                                     <button
@@ -218,14 +218,14 @@ const Register: React.FC = () => {
                                         className={cn(
                                             'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all pr-14',
                                             errors.confirmPassword &&
-                                                'border-red-400 bg-red-50 focus:ring-red-100',
+                                                'border-red-400 bg-red-50 focus:ring-red-100'
                                         )}
                                     />
                                     <button
                                         type="button"
                                         onClick={() =>
                                             setShowConfirmPassword(
-                                                !showConfirmPassword,
+                                                !showConfirmPassword
                                             )
                                         }
                                         className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200 rounded-xl transition-colors text-slate-400"

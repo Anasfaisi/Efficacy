@@ -4,7 +4,6 @@ import { Bell, User } from 'lucide-react';
 import {
     connectSocket,
     onNewNotification,
-    joinRoleRoom,
     offNotificationEvents,
 } from '@/Services/socket/socketService';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
@@ -34,16 +33,15 @@ export const NotificationListener: React.FC = () => {
                 }
             })
             .catch((err) =>
-                console.error('Failed to fetch notifications', err),
+                console.error('Failed to fetch notifications', err)
             );
 
         connectSocket();
-        joinRoleRoom('admin');
 
         onNewNotification((notification: Notification) => {
             console.log(
                 'Real-time notification received in Listener:',
-                notification,
+                notification
             );
 
             const processedNotification: Notification = {
@@ -103,17 +101,17 @@ export const NotificationListener: React.FC = () => {
                                         if (processedNotification._id) {
                                             try {
                                                 await adminService.markNotificationAsRead(
-                                                    processedNotification._id,
+                                                    processedNotification._id
                                                 );
                                                 dispatch(
                                                     markAsRead(
-                                                        processedNotification._id,
-                                                    ),
+                                                        processedNotification._id
+                                                    )
                                                 );
                                             } catch (err) {
                                                 console.error(
                                                     'Auto-marking as read failed',
-                                                    err,
+                                                    err
                                                 );
                                             }
                                         }
@@ -140,7 +138,7 @@ export const NotificationListener: React.FC = () => {
                 {
                     duration: 6000,
                     position: 'top-right',
-                },
+                }
             );
         });
 

@@ -19,7 +19,7 @@ const AdminLogin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { currentUser, isLoading } = useSelector(
-        (state: RootState) => state.auth,
+        (state: RootState) => state.auth
     );
 
     const {
@@ -42,16 +42,19 @@ const AdminLogin = () => {
 
     const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
         try {
-            const result = await adminService.adminLoginApi({ ...data, role: 'admin' });
+            const result = await adminService.adminLoginApi({
+                ...data,
+                role: 'admin',
+            });
             if (result.admin) {
                 dispatch(setCredentials({ currentUser: result.admin }));
                 toast.success('Admin logged in successfully');
                 navigate('/admin/dashboard');
             }
         } catch (err: unknown) {
-              if(err instanceof AxiosError){
-                    toast.error(err.response?.data.message);
-            }else{   
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            } else {
                 toast.error('Admin Login failed');
             }
         }
@@ -87,7 +90,7 @@ const AdminLogin = () => {
                             className={cn(
                                 'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all',
                                 errors.email &&
-                                    'border-red-400 bg-red-50 focus:ring-red-100',
+                                    'border-red-400 bg-red-50 focus:ring-red-100'
                             )}
                         />
                         {errors.email && (
@@ -109,7 +112,7 @@ const AdminLogin = () => {
                                 className={cn(
                                     'w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:border-slate-800 outline-none transition-all pr-14',
                                     errors.password &&
-                                        'border-red-400 bg-red-50 focus:ring-red-100',
+                                        'border-red-400 bg-red-50 focus:ring-red-100'
                                 )}
                             />
                             <button

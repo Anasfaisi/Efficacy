@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from 'express';
+import { Router } from 'express';
 import { MentorController } from '@/controllers/mentor.controller';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';
@@ -91,7 +91,9 @@ export default function mentorRoutes(
         '/profile/basic-info',
         authenticateAndAuthorize(tokenService, [Role.Mentor]),
         validateRequest(updateMentorProfileSchema),
-        asyncWrapper(mentorController.updateProfileBasicInfo.bind(mentorController))
+        asyncWrapper(
+            mentorController.updateProfileBasicInfo.bind(mentorController)
+        )
     );
 
     router.patch(
@@ -118,6 +120,28 @@ export default function mentorRoutes(
         '/list/approved',
         authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
         asyncWrapper(mentorController.getApprovedMentors.bind(mentorController))
+    );
+
+    router.get(
+        '/notifications',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(mentorController.getNotifications.bind(mentorController))
+    );
+
+    router.patch(
+        '/notifications/:id/mark-read',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(
+            mentorController.markNotificationAsRead.bind(mentorController)
+        )
+    );
+
+    router.patch(
+        '/notifications/mark-all-read',
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(
+            mentorController.markAllNotificationsAsRead.bind(mentorController)
+        )
     );
 
     return router;

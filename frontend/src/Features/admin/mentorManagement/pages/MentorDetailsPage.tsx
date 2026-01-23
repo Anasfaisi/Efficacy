@@ -59,7 +59,7 @@ export default function MentorDetailsPage() {
             await adminService.updateMentorStatus(mentor.id, newStatus);
             setMentor({ ...mentor, status: newStatus });
             toast.success(
-                `Mentor ${newStatus === 'active' ? 'unblocked' : 'blocked'} successfully`,
+                `Mentor ${newStatus === 'active' ? 'unblocked' : 'blocked'} successfully`
             );
         } catch (error) {
             toast.error('Failed to update status');
@@ -128,7 +128,7 @@ export default function MentorDetailsPage() {
                             Joined on{' '}
                             {mentor.createdAt
                                 ? new Date(
-                                      mentor.createdAt,
+                                      mentor.createdAt
                                   ).toLocaleDateString()
                                 : 'N/A'}
                         </p>
@@ -375,7 +375,7 @@ export default function MentorDetailsPage() {
                                                   >
                                                       {day}
                                                   </span>
-                                              ),
+                                              )
                                           )
                                         : typeof mentor.availableDays ===
                                             'string'

@@ -13,7 +13,6 @@ import { IGoogleVerificationService } from './Interfaces/IGoogle-verifcation.ser
 import { IPasswordService } from './Interfaces/IPassword.service';
 import { Role } from '@/types/role.types';
 import {
-    CurrentUserResDto,
     LoginResponseDTO,
     OtpVerificationResponseDto,
     ProfileResponseDto,
@@ -65,7 +64,8 @@ export class AuthService implements IAuthService {
         private _validationService: IValidationService,
         @inject(TYPES.GoogleVerificationService)
         private _googleVerificationService: IGoogleVerificationService,
-        @inject(TYPES.PasswordService) private _passwordService: IPasswordService
+        @inject(TYPES.PasswordService)
+        private _passwordService: IPasswordService
     ) {}
 
     async updateUserProfile(
@@ -140,7 +140,8 @@ export class AuthService implements IAuthService {
 
         const account = await this._userRepository.findByEmail(loginDto.email);
         if (!account) throw new Error('User not found');
-        if (account.isActive === false) throw new Error('Account is blocked. Please contact support.');
+        if (account.isActive === false)
+            throw new Error('Account is blocked. Please contact support.');
 
         if (!(await bcrypt.compare(loginDto.password, account.password))) {
             throw new Error('Invalid email or password');
@@ -378,7 +379,8 @@ export class AuthService implements IAuthService {
                     '$2a$10$BvNq8r.X.3zVWQs2Q7wJmeyGYqLMV/P6cyVUFyoLsEL1rXEmWMiiW' /*string = Abcd@1234*/,
             });
         }
-        if (account.isActive === false) throw new Error('Account is blocked. Please contact support.');
+        if (account.isActive === false)
+            throw new Error('Account is blocked. Please contact support.');
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,

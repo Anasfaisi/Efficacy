@@ -34,7 +34,7 @@ export default function MentorReviewPage() {
 
     const [loading, setLoading] = useState(true);
     const [application, setApplication] = useState<MentorApplication | null>(
-        null,
+        null
     );
     const [rejectReason, setRejectReason] = useState('');
     const [showRejectInput, setShowRejectInput] = useState(false);
@@ -78,25 +78,25 @@ export default function MentorReviewPage() {
                 } catch (error) {
                     console.error(
                         'Failed to mark notification as read:',
-                        error,
+                        error
                     );
                 }
             } else {
                 // Find and mark any unread notification related to this mentor
                 const relatedNotification = notifications.find(
-                    (n) => !n.isRead && n.metadata?.mentorId === id,
+                    (n) => !n.isRead && n.metadata?.mentorId === id
                 );
                 if (relatedNotification) {
                     try {
                         await adminService.markNotificationAsRead(
-                            relatedNotification._id,
+                            relatedNotification._id
                         );
                         dispatch(markAsRead(relatedNotification._id));
                         hasMarkedNotification.current = true;
                     } catch (error) {
                         console.error(
                             'Failed to mark notification as read:',
-                            error,
+                            error
                         );
                     }
                 }
@@ -224,7 +224,7 @@ export default function MentorReviewPage() {
                         <p className="text-sm text-gray-500">
                             Submitted on{' '}
                             {new Date(
-                                application.createdAt,
+                                application.createdAt
                             ).toLocaleDateString()}
                         </p>
                     </div>
@@ -428,7 +428,7 @@ export default function MentorReviewPage() {
                                                 >
                                                     {area}
                                                 </span>
-                                            ),
+                                            )
                                         ) || 'N/A'}
                                     </div>
                                 </div>
