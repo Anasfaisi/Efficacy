@@ -308,11 +308,6 @@ const MentorListingPage: React.FC = () => {
                                                     </span>
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button className="p-2 text-[#7F00FF] bg-[#7F00FF]/10 rounded-xl hover:bg-[#7F00FF]/20 transition-colors">
-                                                        <MessageSquare
-                                                            size={18}
-                                                        />
-                                                    </button>
                                                     <button
                                                         onClick={() =>
                                                             setSelectedMentor(
