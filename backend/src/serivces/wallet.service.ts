@@ -47,7 +47,7 @@ export class WalletService implements IWalletService {
             referenceId: mentorshipId,
         });
 
-        await this._walletRepository.update(wallet._id as any, wallet);
+        await this._walletRepository.update(wallet._id as string, wallet);
         return wallet;
     }
 
@@ -67,7 +67,7 @@ export class WalletService implements IWalletService {
             date: new Date(),
         });
 
-        await this._walletRepository.update(wallet._id as any, wallet);
+        await this._walletRepository.update(wallet._id as string, wallet);
         return wallet;
     }
 
@@ -79,10 +79,11 @@ export class WalletService implements IWalletService {
             ifscCode: string;
             accountHolderName: string;
         }
+        
     ): Promise<IWallet> {
         const wallet = await this.getWallet(mentorId);
         wallet.bankAccountDetails = details;
-        await this._walletRepository.update(wallet._id as any, wallet);
+        await this._walletRepository.update(wallet._id as string, wallet);
         return wallet;
     }
 

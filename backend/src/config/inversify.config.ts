@@ -6,7 +6,7 @@ import { Container } from 'inversify';
 import { AdminRepository } from '@/repositories/admin.repository';
 import { TokenService } from '@/serivces/token.service';
 import { ValidationService } from '@/serivces/validation.service';
-import { UserController } from '@/controllers/auth.controller';
+import { UserController } from '@/controllers/user.controller';
 import { MentorRepository } from '@/repositories/mentor.repository';
 import { MentorController } from '@/controllers/mentor.controller';
 import { GoogleVerificationService } from '@/serivces/google-verification.service';

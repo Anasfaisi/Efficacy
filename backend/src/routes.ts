@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import { container } from './config/inversify.config';
 import { AdminController } from './controllers/admin.controller';
-import { UserController } from './controllers/auth.controller';
+import { UserController } from './controllers/user.controller';
 import { ChatController } from './controllers/chat.controller';
 import { MentorController } from './controllers/mentor.controller';
 import { PaymentController } from './controllers/payment.controller';

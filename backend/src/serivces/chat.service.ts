@@ -60,7 +60,6 @@ export class ChatService implements IChatService {
             await this._chatRepository.getConversationById(roomId);
         if (!conversation) throw new Error('Chat room not found');
 
-        console.log(conversation,"conversation in get room messages");
         const isParticipant = conversation.participants.some(
             (p) => p._id.toString() === userId || p.toString() === userId
         );
@@ -95,11 +94,9 @@ export class ChatService implements IChatService {
     async validateRoomAccess(roomId: string, userId: string): Promise<boolean> {
         const conversation = await this._chatRepository.getConversationById(roomId);
         if (!conversation) return false;
-        console.log(conversation,"conversation in chat service");
         const isParticipant = conversation.participants.some(
             (p) => p._id.toString() === userId || p.toString() === userId
         );
-        console.log(isParticipant,"isParticipant in chat service");
         return isParticipant;
     }
 }

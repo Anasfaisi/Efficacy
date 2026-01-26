@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { RequestHandler } from 'express';
-import { UserController } from '../controllers/auth.controller';
+import { UserController } from '../controllers/user.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';

@@ -13,4 +13,8 @@ export class PasswordService implements IPasswordService {
     async verifyPassword(password: string, hashed: string): Promise<boolean> {
         return await bcrypt.compare(password, hashed);
     }
+
+    async comparePassword(password: string, hashed: string): Promise<boolean> {
+        return await bcrypt.compare(password, hashed);
+    }
 }
