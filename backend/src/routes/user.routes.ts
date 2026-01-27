@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { RequestHandler } from 'express';
 import { UserController } from '../controllers/user.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize.middleware';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';
 import { upload } from '@/config/multer.config';
@@ -13,13 +13,10 @@ export default function authRoutes(userController: UserController) {
     const router = Router();
     const _tokenService = container.get<TokenService>(TYPES.TokenService);
 
-    // router.get(
-    //     '/me/:id',
-    //     authenticateAndAuthorize(tokenService, Role.User),
-    //     userController.getCurrentUser.bind(userController) as RequestHandler
-    // );
-
-    router.post('/login', userController.login.bind(userController));
+    router.post(
+        '/login',
+        asyncWrapper(userController.login.bind(userController))
+    );
 
     router.post(
         '/logout',

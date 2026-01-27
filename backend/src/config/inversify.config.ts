@@ -63,6 +63,8 @@ import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository'
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
 import { WalletController } from '@/controllers/Wallet.controller';
+import { UserAuthService } from '@/serivces/user-auth.service';
+import { IUserAuthService } from '@/serivces/Interfaces/IUser-auth.service';
 
 export const container = new Container();
 
@@ -86,6 +88,7 @@ container
 container.bind<WalletController>(TYPES.WalletController).to(WalletController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
+container.bind<IUserAuthService>(TYPES.UserAuthService).to(UserAuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
 container.bind<OtpService>(TYPES.OtpService).to(OtpService);
 container

@@ -5,13 +5,13 @@ import { MentorOnboardController } from '@/controllers/mentor-onboard.controller
 import { upload } from '@/config/multer.config';
 
 import { TokenService } from '@/serivces/token.service';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize.middleware';
 import { Role } from '@/types/role.types';
 
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
 
-import { validateRequest } from '@/middleware/validateRequest';
+import { validateRequest } from '@/middleware/validate-request.middleware';
 import {
     mentorApplicationSchema,
     updateMentorProfileSchema,

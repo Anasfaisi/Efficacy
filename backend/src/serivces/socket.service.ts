@@ -68,12 +68,21 @@ export class SocketService implements ISocketService {
         { roomId, userId }: JoinRoomPayload
     ) {
         try {
-            const canJoin = await this._chatService.validateRoomAccess(roomId, userId);
+            const canJoin = await this._chatService.validateRoomAccess(
+                roomId,
+                userId
+            );
             if (!canJoin) {
                 socket.emit('error', { message: 'Access denied to this room' });
                 return;
             }
-            console.log("join room=================",roomId,userId,canJoin,"from socket service");
+            console.log(
+                'join room=================',
+                roomId,
+                userId,
+                canJoin,
+                'from socket service'
+            );
             socket.join(roomId);
 
             const history = await this._chatService.getRoomMessages(
@@ -82,7 +91,6 @@ export class SocketService implements ISocketService {
             );
 
             socket.emit('chatHistory', history);
-
         } catch (error) {
             console.error('Error joining room:', error);
             socket.emit('error', { message: 'Failed to join chat room' });
@@ -108,7 +116,10 @@ export class SocketService implements ISocketService {
         } catch (error) {
             console.error('Error sending message:', error);
             socket.emit('error', {
-                message: error instanceof Error ? error.message : 'Failed to send message',
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to send message',
             });
         }
     }

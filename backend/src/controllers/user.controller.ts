@@ -3,11 +3,14 @@ import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
+import { UserAuthService } from '@/serivces/user-auth.service';
 import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
+import AuthCookieMiddleware from '@/middleware/auth-cookie.middleware';
 
 export class UserController {
     constructor(
-        @inject(TYPES.AuthService) private _authService: IAuthService
+        @inject(TYPES.AuthService) private _authService: IAuthService,
+        @inject(TYPES.UserAuthService) private _userLoginService: UserAuthService
     ) {}
 
     async updateUserProfile(req: Request, res: Response) {
@@ -92,25 +95,15 @@ export class UserController {
     }
 
     async login(req: Request, res: Response) {
-        try {
-            const { accessToken, refreshToken, user } =
-                await this._authService.login(req.body);
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true,
-            });
+        const { accessToken, refreshToken, user } =
+            await this._userLoginService.login(req.body.email, req.body.password);
+        AuthCookieMiddleware.setAuthcookies(res, accessToken, refreshToken);
+        res.status(code.OK).json({ user });
+    }
 
-            res.cookie('accessToken', accessToken, {
-                httpOnly: true,
-                secure: true,
-            });
-            res.status(code.OK).json({ user });
-        } catch (error: unknown) {
-            const message =
-                error instanceof Error ? error.message : 'Login failed';
-            res.status(code.BAD_REQUEST).json({ message });
-            console.log(error);
-        }
+    async logout(req: Request, res: Response) {
+        AuthCookieMiddleware.clearAuthCookies(res);
+        res.status(code.OK).json(AuthMessages.LogoutSuccess);
     }
 
     async registerInit(req: Request, res: Response) {
@@ -125,14 +118,7 @@ export class UserController {
         const { accessToken, refreshToken, user } =
             await this._authService.registerVerify(req.body);
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-        });
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true,
-        });
+        AuthCookieMiddleware.setAuthcookies(res, accessToken, refreshToken);
 
         res.status(200).json(user);
     }
@@ -200,27 +186,5 @@ export class UserController {
         });
 
         res.status(code.OK).json({ user: result.user });
-    }
-
-    async logout(req: Request, res: Response) {
-        try {
-            res.clearCookie('refreshToken', {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-            });
-            res.clearCookie('accessToken', {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-            });
-
-            res.status(code.OK).json(AuthMessages.LogoutSuccess);
-        } catch (error: unknown) {
-            console.error('Logout error:', error);
-            res.status(code.INTERNAL_SERVER_ERROR).json(
-                AuthMessages.LogoutFailed
-            );
-        }
     }
 }
