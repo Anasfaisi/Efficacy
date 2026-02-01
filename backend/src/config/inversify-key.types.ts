@@ -40,4 +40,8 @@ export const TYPES = {
     WalletRepository: Symbol('WalletRepository'),
     MentorshipController: Symbol('MentorshipController'),
     WalletController: Symbol('WalletController'),
+
+    BookingRepository: Symbol('BookingRepository'),
+    BookingService: Symbol('BookingService'),
+    BookingController: Symbol('BookingController'),
 };

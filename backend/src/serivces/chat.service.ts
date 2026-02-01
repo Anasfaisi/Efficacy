@@ -7,19 +7,28 @@ import { IConversation } from '@/models/Conversation.model';
 import { IMessage } from '@/models/Message.model';
 import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
 
-
 @injectable()
 export class ChatService implements IChatService {
     constructor(
         @inject(TYPES.ChatRepository) private _chatRepository: IChatRepository,
         @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
-        @inject(TYPES.MentorshipRepository) private _mentorshipRepository: IMentorshipRepository
+        @inject(TYPES.MentorshipRepository)
+        private _mentorshipRepository: IMentorshipRepository
     ) {}
 
-    private async validateActiveMentorship(userId: string, mentorId: string): Promise<void> {
-        const activeMentorship = await this._mentorshipRepository.findByUserIdAndMentorId(mentorId, userId);
+    private async validateActiveMentorship(
+        userId: string,
+        mentorId: string
+    ): Promise<void> {
+        const activeMentorship =
+            await this._mentorshipRepository.findByUserIdAndMentorId(
+                mentorId,
+                userId
+            );
         if (!activeMentorship) {
-             throw new Error('You must have an active mentorship to chat with this mentor.');
+            throw new Error(
+                'You must have an active mentorship to chat with this mentor.'
+            );
         }
 
         const allowedStatuses = ['active', 'completed'];
@@ -36,11 +45,13 @@ export class ChatService implements IChatService {
 
         const participantsPayload = [
             { _id: userId, onModel: 'Users' },
-            { _id: mentorId, onModel: 'Mentors' }
+            { _id: mentorId, onModel: 'Mentors' },
         ];
 
         const existing =
-            await this._chatRepository.findConversationByParticipants(participantsPayload);
+            await this._chatRepository.findConversationByParticipants(
+                participantsPayload
+            );
         if (existing) return existing;
 
         return this._chatRepository.createConversation(participantsPayload);
@@ -63,8 +74,7 @@ export class ChatService implements IChatService {
         const isParticipant = conversation.participants.some(
             (p) => p._id.toString() === userId || p.toString() === userId
         );
-        if (!isParticipant)
-            throw new Error('Access denied to this chat room');
+        if (!isParticipant) throw new Error('Access denied to this chat room');
 
         return this._chatRepository.getMessages(roomId, limit, skip);
     }
@@ -92,7 +102,8 @@ export class ChatService implements IChatService {
     }
 
     async validateRoomAccess(roomId: string, userId: string): Promise<boolean> {
-        const conversation = await this._chatRepository.getConversationById(roomId);
+        const conversation =
+            await this._chatRepository.getConversationById(roomId);
         if (!conversation) return false;
         const isParticipant = conversation.participants.some(
             (p) => p._id.toString() === userId || p.toString() === userId

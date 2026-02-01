@@ -17,7 +17,7 @@ export class ChatController {
             res.status(Code.UNAUTHORIZED).json({
                 message: 'User not found',
             });
-            return
+            return;
         }
 
         const conversation = await this._chatService.initiateChat(
@@ -33,16 +33,20 @@ export class ChatController {
             res.status(Code.UNAUTHORIZED).json({
                 message: 'User not found',
             });
-            return
+            return;
         }
-        const conversations = await this._chatService.getUserConversations(userId);
+        const conversations =
+            await this._chatService.getUserConversations(userId);
         res.status(Code.OK).json(conversations);
     }
 
     async getRoomMessages(req: Request, res: Response) {
         const { roomId } = req.params;
         const userId = (req.currentUser as any)._id;
-        const messages = await this._chatService.getRoomMessages(roomId, userId);
+        const messages = await this._chatService.getRoomMessages(
+            roomId,
+            userId
+        );
 
         res.status(Code.OK).json(messages);
     }

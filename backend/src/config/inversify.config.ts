@@ -63,6 +63,11 @@ import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository'
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
 import { WalletController } from '@/controllers/Wallet.controller';
+import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
+import { BookingRepository } from '@/repositories/booking.repository';
+import { BookingService } from '@/serivces/booking.service';
+import { BookingController } from '@/controllers/booking.controller';
+import { IBookingService } from '@/serivces/Interfaces/IBooking.service';
 
 export const container = new Container();
 
@@ -84,6 +89,9 @@ container
     .bind<MentorshipController>(TYPES.MentorshipController)
     .to(MentorshipController);
 container.bind<WalletController>(TYPES.WalletController).to(WalletController);
+container
+    .bind<BookingController>(TYPES.BookingController)
+    .to(BookingController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -120,6 +128,7 @@ container
     .bind<IMentorshipService>(TYPES.MentorshipService)
     .to(MentorshipService);
 container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
+container.bind<IBookingService>(TYPES.BookingService).to(BookingService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -143,3 +152,6 @@ container
     .bind<IMentorshipRepository>(TYPES.MentorshipRepository)
     .to(MentorshipRepository);
 container.bind<IWalletRepository>(TYPES.WalletRepository).to(WalletRepository);
+container
+    .bind<IBookingRepository>(TYPES.BookingRepository)
+    .to(BookingRepository);

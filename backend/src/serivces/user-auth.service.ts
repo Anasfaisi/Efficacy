@@ -1,9 +1,9 @@
-import { inject, injectable } from "inversify";
-import { IUserRepository } from "@/repositories/interfaces/IUser.repository";
-import { TYPES } from "@/config/inversify-key.types";
-import { IPasswordService } from "./Interfaces/IPassword.service";
-import { IUser } from "@/models/User.model";
-    
+import { inject, injectable } from 'inversify';
+import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
+import { TYPES } from '@/config/inversify-key.types';
+import { IPasswordService } from './Interfaces/IPassword.service';
+import { IUser } from '@/models/User.model';
+
 @injectable()
 export class UserLoginService {
     constructor(
@@ -12,7 +12,7 @@ export class UserLoginService {
         @inject(TYPES.PasswordService)
         private _passwordService: IPasswordService
     ) {}
-    
+
     async login(email: string, password: string): Promise<IUser> {
         const user = await this._userRepository.findByEmail(email);
         if (!user) {
@@ -30,4 +30,4 @@ export class UserLoginService {
         }
         return user;
     }
-}   
+}

@@ -17,7 +17,7 @@ import MentorMentorshipList from '@/Features/mentors/pages/MentorMentorshipList'
 import MentorshipRequestsPage from '@/Features/mentors/pages/MentorshipRequestsPage';
 import MentorWalletPage from '@/Features/mentors/pages/MentorWalletPage';
 import NotFound from '@/Features/common/pages/NotFound';
-import MentorshipManagementPage from '@/Features/users/mentors/pages/MentorshipManagementPage';
+import MentorMentorshipManagementPage from '@/Features/mentors/pages/MentorMentorshipManagementPage';
 import MentorChatPage from '@/Features/mentors/pages/MentorChatPage';
 
 const Logout: React.FC = () => {
@@ -68,7 +68,7 @@ const MentorRoutes: React.FC = () => {
             <Route path="approved" element={<MentorApproved />} />
             <Route
                 path="mentorship/:id"
-                element={<MentorshipManagementPage />}
+                element={<MentorMentorshipManagementPage />}
             />
             <Route path="logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />

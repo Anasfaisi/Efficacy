@@ -25,7 +25,7 @@ export class MentorshipRepository
     async findByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]> {
         return await this.model
             .find({ mentorId })
-            .populate('userId', 'name profilePic email');
+            .populate('userId', 'name profilePic expertise availableDays preferredTime');
     }
 
     async findActiveByUserId(
@@ -45,7 +45,7 @@ export class MentorshipRepository
                 },
             })
             .sort({ createdAt: -1 })
-            .populate('mentorId', 'name profilePic expertise');
+            .populate('mentorId', 'name profilePic expertise availableDays preferredTime');
     }
 
     async findActiveByMentorId(
@@ -74,5 +74,13 @@ export class MentorshipRepository
                 ],
             },
         });
+    }
+
+    async findById(id: string): Promise<IMentorship | null> {
+        return await this.model
+            .findById(id)
+            .populate('mentorId', 'name profilePic expertise availableDays preferredTime')
+            .populate('userId', 'name profilePic email phone')
+            .exec();
     }
 }

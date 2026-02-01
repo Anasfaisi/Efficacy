@@ -79,7 +79,6 @@ export class WalletService implements IWalletService {
             ifscCode: string;
             accountHolderName: string;
         }
-        
     ): Promise<IWallet> {
         const wallet = await this.getWallet(mentorId);
         wallet.bankAccountDetails = details;

@@ -61,7 +61,7 @@ export class MentorshipService implements IMentorshipService {
             amount: mentor.monthlyCharge || 0,
             paymentStatus: 'pending',
             sessions: [],
-        } as any);
+        } );
 
         await this._notificationService.createNotification(
             mentorId as string,
@@ -210,7 +210,8 @@ export class MentorshipService implements IMentorshipService {
     async bookSession(
         mentorshipId: string,
         userId: string,
-        date: Date
+        date: Date,
+        slot: string
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
@@ -224,6 +225,7 @@ export class MentorshipService implements IMentorshipService {
 
         (mentorship.sessions as unknown as Types.DocumentArray<any>).push({
             date,
+            slot,
             status: SessionStatus.BOOKED,
         });
         mentorship.usedSessions += 1;
@@ -235,7 +237,8 @@ export class MentorshipService implements IMentorshipService {
     async rescheduleSession(
         mentorshipId: string,
         sessionId: string,
-        newDate: Date
+        newDate: Date,
+        newSlot: string
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
@@ -255,6 +258,7 @@ export class MentorshipService implements IMentorshipService {
             );
 
         session.date = newDate;
+        session.slot = newSlot;
         session.status = SessionStatus.RESCHEDULE_REQUESTED;
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
