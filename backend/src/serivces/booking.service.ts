@@ -42,12 +42,14 @@ export class BookingService implements IBookingService {
 
         // 3. Check mentor's configured availability
         const mentor = await this._mentorRepository.findById(data.mentorId);
+        console.log(mentor,"mentor from booking service");
         if (!mentor) throw new Error("Mentor not found");
         
         const dayName = bookingDate.toLocaleDateString('en-US', { weekday: 'long' });
         if (!mentor.availableDays?.includes(dayName)) {
             throw new Error(`Mentor is not available on ${dayName}s.`);
         }
+        console.log(data.slot,"slot from booking service")
         if (!mentor.preferredTime?.includes(data.slot)) {
             throw new Error(`Mentor is not available at ${data.slot}.`);
         }
@@ -120,7 +122,7 @@ export class BookingService implements IBookingService {
             if (mentor) {
                 await this._mentorRepository.update(booking.mentorId, {
                     sessionsCompleted: (mentor.sessionsCompleted || 0) + 1
-                } as any);
+                });
             }
         }
 

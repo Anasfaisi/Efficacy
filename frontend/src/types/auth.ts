@@ -79,6 +79,7 @@ export interface Mentor {
 
 export interface User {
     id: string;
+    _id?: string;
     userId?: string;
     name: string;
     email: string;
@@ -88,6 +89,7 @@ export interface User {
     headline?: string;
     profilePic?: string;
     dob?: string;
+    phone?: string;
 
     stripeCustomerId?: string;
     subscription?: Subscription;

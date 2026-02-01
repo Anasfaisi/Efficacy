@@ -16,6 +16,8 @@ import {
 import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { ObjectId, Types } from 'mongoose';
+import { IMentor } from '@/models/Mentor.model';
+import { IUser } from '@/models/User.model';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -95,7 +97,8 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');
-        if (mentorship.mentorId.toString() !== mentorId)
+        console.log(mentorship.mentorId== mentorId,mentorship.mentorId.toString(),mentorId,"mentorshipId from mentorshipService");
+        if ((mentorship.mentorId as Partial<IMentor>)?.id !== mentorId)
             throw new Error('Unauthorized');
 
         mentorship.status =
@@ -132,7 +135,7 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');
-        if (mentorship.userId.toString() !== userId)
+        if ((mentorship.userId as Partial<IUser>).id.toString() !== userId)
             throw new Error('Unauthorized');
 
         if (confirm) {

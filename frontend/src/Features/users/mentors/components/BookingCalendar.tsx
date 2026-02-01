@@ -25,7 +25,6 @@ interface BookingCalendarProps {
 }
 
 const BookingCalendar: React.FC<BookingCalendarProps> = ({ mentor, onSelectSlot, bookedSlots = [] }) => {
-    console.log(mentor,'frm line 28 in booking calendar')
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 

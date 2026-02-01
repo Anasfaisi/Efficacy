@@ -31,6 +31,8 @@ import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
 import { chatApi } from '@/Services/chat.api';
 
+import type { User as UserType, Mentor as MentorType } from '@/types/auth';
+
 const MentorMentorshipManagementPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -46,8 +48,9 @@ const MentorMentorshipManagementPage: React.FC = () => {
             setMentorship(mentorshipData);
 
             const allBookings = await bookingApi.getMentorBookings();
+            const studentId = (mentorshipData.userId as UserType)?._id || (mentorshipData.userId as UserType)?.id;
             const filtered = allBookings.filter(b => 
-                b.userId === (mentorshipData.userId?._id || mentorshipData.userId?.id)
+                b.userId === studentId
             );
             setBookings(filtered);
         } catch (error) {
@@ -67,15 +70,17 @@ const MentorMentorshipManagementPage: React.FC = () => {
             await bookingApi.updateStatus({ bookingId, status });
             toast.success(`Booking ${status} successfully`);
             fetchData();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Failed to update status');
+        } catch (error) {
+            const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status';
+            toast.error(errorMessage);
         }
     };
 
     const handleChat = async () => {
         if (!mentorship?.userId) return;
         try {
-            const userId = mentorship.userId._id || mentorship.userId.id;
+            const student = mentorship.userId as UserType;
+            const userId = student._id || student.id;
             const conversation = await chatApi.initiateChat(userId);
             dispatch(setCurrentConversation(conversation));
             navigate('/mentor/chat');
@@ -106,7 +111,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
         </div>
     );
 
-    const student = mentorship.userId;
+    const student = mentorship.userId as UserType;
     const pendingBookings = bookings.filter(b => b.status === BookingStatus.PENDING);
     const confirmedBookings = bookings.filter(b => b.status === BookingStatus.CONFIRMED);
 
@@ -321,20 +326,14 @@ const MentorMentorshipManagementPage: React.FC = () => {
                                                             DONE
                                                         </button>
                                                     )}
-                                                    {booking.meetingLink ? (
-                                                        <a 
-                                                            href={booking.meetingLink}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                    {booking.status === BookingStatus.CONFIRMED && (
+                                                        <button 
+                                                            onClick={() => navigate(`/meet/${booking.id}`)}
                                                             className="flex items-center gap-2 px-6 py-3 bg-black text-white text-xs font-black rounded-2xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95"
                                                         >
                                                             <ExternalLink size={14} />
                                                             START CALL
-                                                        </a>
-                                                    ) : (
-                                                        <span className="text-xs font-bold text-gray-400 bg-gray-100 px-4 py-3 rounded-2xl border border-gray-200">
-                                                            Awaiting Link
-                                                        </span>
+                                                        </button>
                                                     )}
                                                     <button className="p-3 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:bg-white hover:text-red-500 hover:border-red-100 transition-all shadow-sm active:scale-95">
                                                         <MoreVertical size={20} />
@@ -364,7 +363,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
                         <div className="mb-6">
                             {mentorship.mentorId && (
                                 <BookingCalendar 
-                                    mentor={mentorship.mentorId as any} 
+                                    mentor={mentorship.mentorId as MentorType} 
                                     onSelectSlot={() => {}} 
                                     bookedSlots={bookings.map(b => ({
                                         date: b.bookingDate,
@@ -382,39 +381,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Quick Stats Card */}
-                    <div className="bg-black rounded-[40px] p-8 text-white relative overflow-hidden group">
-                        <div className="absolute -bottom-10 -right-10 p-10 rotate-12 opacity-15 text-white group-hover:scale-125 transition-transform duration-700">
-                             <TrendingUp size={160} />
-                        </div>
-                        <h3 className="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6">Course Intel</h3>
-                        
-                        <div className="space-y-6 relative z-10">
-                            <div className="flex justify-between items-center bg-white/5 p-4 rounded-3xl border border-white/10">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progress</p>
-                                    <p className="text-xl font-black">{Math.round((mentorship.usedSessions/mentorship.totalSessions)*100)}%</p>
-                                </div>
-                                <div className="w-10 h-10 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20">
-                                    <TrendingUp size={18} className="text-white" />
-                                </div>
-                            </div>
-                            
-                            <div className="flex justify-between items-center bg-white/5 p-4 rounded-3xl border border-white/10">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Open Requests</p>
-                                    <p className="text-xl font-black">{pendingBookings.length}</p>
-                                </div>
-                                <div className="w-10 h-10 bg-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                                    <Clock size={18} className="text-white" />
-                                </div>
-                            </div>
 
-                            <button className="w-full py-4 bg-white text-black font-black text-xs rounded-2xl hover:bg-indigo-400 hover:text-white transition-all shadow-xl active:scale-95 mt-4">
-                                MANAGE CURRICULUM
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </motion.div>

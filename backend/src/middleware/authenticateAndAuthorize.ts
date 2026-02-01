@@ -14,7 +14,6 @@ const authenticateAndAuthorize = (
         }
 
         const currentUser = _tokenService.verifyAccessToken(token);
-
         req.currentUser = currentUser;
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
 

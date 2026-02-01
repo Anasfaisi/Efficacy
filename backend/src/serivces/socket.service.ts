@@ -45,6 +45,30 @@ export class SocketService implements ISocketService {
                 this.handleSendMessage(io, socket, payload)
             );
 
+            // --- Video Call Events ---
+            socket.on('joinVideoRoom', ({ roomId, userId, role }: { roomId: string, userId: string, role: string }) => {
+                console.log(`Socket ${socket.id} joined Video Room: ${roomId} as ${role}`);
+                socket.join(roomId);
+                console.log(roomId, userId, role, "from socket service")
+                
+                socket.to(roomId).emit('user-connected', { userId, role, socketId: socket.id });
+                
+                if (role === 'mentor') {
+                    io.to(roomId).emit('host-online'); 
+                }
+            });
+
+            socket.on('signal', (data: { to: string, signal: any, from: string }) => {
+                io.to(data.to).emit('signal', { signal: data.signal, from: data.from });
+            });
+
+             socket.on('check-video-status', (roomId: string, callback: (response: { active: boolean }) => void) => {
+                const room = io.sockets.adapter.rooms.get(roomId);
+                const isActive = room ? room.size > 0 : false;
+                callback({ active: isActive });
+            });
+            // -------------------------
+
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected:', socket.id);
             });
@@ -124,3 +148,7 @@ export class SocketService implements ISocketService {
         }
     }
 }
+
+
+
+//lastnote : ippo user and mentor video call page ll connect avunund. baaki koode sheri akaan und

@@ -15,17 +15,24 @@ import {
     MessageSquare,
     Info,
     ArrowLeft,
+    Video,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import BookingCalendar from '../components/BookingCalendar';
 import BookingModal from '../components/BookingModal';
 import { bookingApi } from '@/Services/booking.api';
 import type { Booking } from '@/types/booking';
+import { checkVideoStatus, onHostOnline, offVideoEvents } from '@/Services/socket/socketService';
+import { useAppSelector } from '@/redux/hooks';
+import type { Mentor } from '@/types/auth';
 
 const MentorshipManagementPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
+    const { currentUser } = useAppSelector((state) => state.auth);
+    const isMentor = currentUser?.role === 'mentor'; // OR location.pathname.includes('/mentor/')
+
     const [mentorship, setMentorship] = useState<Mentorship | null>(null);
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -36,16 +43,41 @@ const MentorshipManagementPage: React.FC = () => {
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
+    // Session State
+    const [nextSession, setNextSession] = useState<Booking | null>(null);
+    const [isSessionActive, setIsSessionActive] = useState(false);
+
     const fetchData = async () => {
         if (!id) return;
         try {
             const data = await mentorshipApi.getMentorshipById(id);
             setMentorship(data);
-            console.log(data,'data from mentorship management page');
-
             const bookings = await bookingApi.getUserBookings();
-            console.log(bookings,'bookings from mentorship management page');
-            setExistingBookings(bookings.filter(b => b.mentorId === data.mentorId?._id || b.mentorId === data.mentorId?.id));
+            
+            // Filter bookings for this mentorship/mentor
+            const mentor = data.mentorId as Mentor;
+            const relevantBookings = bookings.filter(b => b.mentorId === (mentor?._id || mentor?.id));
+            setExistingBookings(relevantBookings);
+            
+            // Find next session
+            const upcoming = relevantBookings
+                .filter(b => b.status === 'confirmed')
+                .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime())
+                .find(b => {
+                    const sessionDate = new Date(b.bookingDate);
+                    // Add logic to check if it's today or future (simplified)
+                    // For demo/dev, let's just pick the latest confirmed or closest one
+                    // Better: Check if end time is not passed
+                    return sessionDate.getTime() > Date.now() - 24 * 60 * 60 * 1000; // rough check
+                });
+            
+            if (upcoming) {
+                setNextSession(upcoming);
+                // Check if session is already active
+                const active = await checkVideoStatus(upcoming.id);
+                setIsSessionActive(active);
+            }
+
         } catch (error) {
             console.error('Failed to fetch mentorship:', error);
             toast.error('Failed to load mentorship details');
@@ -56,7 +88,30 @@ const MentorshipManagementPage: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, [id]);
+        
+        // Listen for User/Host online
+        onHostOnline(() => {
+            if (!isMentor) {
+                setIsSessionActive(true);
+                toast.success('Mentor has started the session! You can join now.');
+            }
+        });
+
+        return () => {
+            offVideoEvents();
+        };
+    }, [id, isMentor]);
+
+    const handleJoinSession = () => {
+        if (!nextSession) return;
+        navigate(`/meet/${nextSession.id}`);
+    };
+
+    const isSessionStartable = () => {
+        if (!nextSession) return false;
+         
+        return true; 
+    };
 
     const handleConfirm = async (confirm: boolean) => {
         if (!id) return;
@@ -103,12 +158,13 @@ const MentorshipManagementPage: React.FC = () => {
     };
 
     const handleConfirmBooking = async (topic: string) => {
-        if (!mentorship?.mentorId?._id && !mentorship?.mentorId?.id) return;
+        const mentor = mentorship?.mentorId as Mentor;
+        if (!mentor?._id && !mentor?.id) return;
         if (!selectedDate || !selectedSlot) return;
 
         try {
             await bookingApi.createBooking({
-                mentorId: (mentorship.mentorId._id || mentorship.mentorId.id) as string,
+                mentorId: (mentor._id || mentor.id) as string,
                 bookingDate: selectedDate.toISOString(),
                 slot: selectedSlot,
                 topic
@@ -246,6 +302,46 @@ const MentorshipManagementPage: React.FC = () => {
                                 </h1>
                             </div>
                         </div>
+
+                        {/* LIVE SESSION CARD */}
+                        {nextSession && (
+                            <div className="mb-8 w-full bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-gray-900/20 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#7F00FF] opacity-10 blur-[80px] rounded-full group-hover:opacity-20 transition-opacity"></div>
+                                <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center gap-6">
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="flex h-3 w-3 relative">
+                                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isSessionActive ? 'bg-green-400' : 'bg-yellow-400'}`}></span>
+                                                <span className={`relative inline-flex rounded-full h-3 w-3 ${isSessionActive ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+                                            </span>
+                                            <span className="text-xs font-black uppercase tracking-widest text-white/60">
+                                                {isSessionActive ? 'Happening Now' : 'Upcoming Session'}
+                                            </span>
+                                        </div>
+                                        <h2 className="text-2xl font-black mb-1">{nextSession.topic || 'Mentorship Session'}</h2>
+                                        <p className="text-white/60 text-sm">
+                                            {format(new Date(nextSession.bookingDate), 'MMMM d, yyyy')} • {nextSession.slot}
+                                        </p>
+                                    </div>
+                                    
+                                    <button
+                                        onClick={handleJoinSession}
+                                        disabled={!isMentor && !isSessionActive}
+                                        className={`px-8 py-4 rounded-xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-lg
+                                            ${isMentor 
+                                                ? 'bg-white text-gray-900 hover:bg-gray-100' 
+                                                : isSessionActive 
+                                                    ? 'bg-[#7F00FF] text-white hover:bg-[#6c00db] shadow-[#7F00FF]/30' 
+                                                    : 'bg-white/10 text-white/40 cursor-not-allowed'
+                                            }
+                                        `}
+                                    >
+                                        <Video size={20} />
+                                        {isMentor ? 'Start Session' : isSessionActive ? 'Join Session' : 'Waiting for Host...'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             {/* Left Column: Progress & Details */}
@@ -508,7 +604,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 </h3>
                                                 {mentorship.mentorId && (
                                                     <BookingCalendar 
-                                                        mentor={mentorship.mentorId} 
+                                                        mentor={mentorship.mentorId as Mentor} 
                                                         onSelectSlot={handleSelectSlot}
                                                         bookedSlots={existingBookings.map(b => ({
                                                             date: b.bookingDate,
@@ -530,7 +626,7 @@ const MentorshipManagementPage: React.FC = () => {
                                     onConfirm={handleConfirmBooking}
                                     date={selectedDate}
                                     slot={selectedSlot}
-                                    mentorName={mentorship.mentorId?.name || 'Mentor'}
+                                    mentorName={(mentorship.mentorId as Mentor)?.name || 'Mentor'}
                                 />
 
                                 {/* Mentor Profile Mini */}
@@ -541,20 +637,19 @@ const MentorshipManagementPage: React.FC = () => {
                                     <div className="flex items-center gap-4 mb-6">
                                         <img
                                             src={
-                                                mentorship.mentorId
+                                                (mentorship.mentorId as Mentor)
                                                     ?.profilePic ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(mentorship.mentorId?.name || 'Mentor')}`
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((mentorship.mentorId as Mentor)?.name || 'Mentor')}`
                                             }
                                             className="w-16 h-16 rounded-2xl object-cover"
                                             alt=""
                                         />
                                         <div>
                                             <h4 className="font-bold text-gray-900">
-                                                {mentorship.mentorId?.name}
-                                                {console.log(mentorship,"frm line 554")}
+                                                {(mentorship.mentorId as Mentor)?.name}
                                             </h4>
                                             <p className="text-xs text-[#7F00FF] font-semibold">
-                                                {mentorship.mentorId
+                                                {(mentorship.mentorId as Mentor)
                                                     ?.expertise || 'Mentor'}
                                             </p>
                                         </div>

@@ -742,10 +742,21 @@ export default function MentorOnboardingForm() {
                                         <Label required>Time Slots</Label>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                                             {[
-                                                'Morning (9 AM - 12 PM)',
-                                                'Afternoon (1 PM - 5 PM)',
-                                                'Evening (6 PM - 9 PM)',
-                                                'Night (9 PM - 12 AM)',
+                                                '9 AM - 10 AM',
+                                                '10 AM - 11 AM',
+                                                '11 AM - 12 PM',
+                                                '12 PM - 1 PM',
+                                                '1 PM - 2 PM',
+                                                '2 PM - 3 PM',
+                                                '3 PM - 4 PM',
+                                                '4 PM - 5 PM',
+                                                '5 PM - 6 PM',
+                                                '6 PM - 7 PM',
+                                                '7 PM - 8 PM',
+                                                '8 PM - 9 PM',
+                                                '9 PM - 10 PM',
+                                                '10 PM - 11 PM',
+                                                '11 PM - 12 PM',
                                             ].map((time) => (
                                                 <label
                                                     key={time}
