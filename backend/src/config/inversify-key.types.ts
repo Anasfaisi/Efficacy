@@ -14,6 +14,11 @@ export const TYPES = {
     PasswordService: Symbol('PasswordService'),
     MentorAuthService: Symbol('MentorAuthService'),
     MentorService: Symbol('MentorService'),
+    PomodoroService: Symbol('PomodoroService'),
+    PlannerTaskService: Symbol('PlannerTaskService'),
+    MentorshipService: Symbol('MentorshipService'),
+    WalletService: Symbol('WalletService'),
+    
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -22,6 +27,9 @@ export const TYPES = {
     ChatRepository: Symbol('ChatRepository'),
     MessageRepository: Symbol('MessageRepository'),
     NotificationRepository: Symbol('NotificationRepository'),
+    PomodoroRepository: Symbol('PomodoroRepository'),
+    MentorshipRepository: Symbol('MentorshipRepository'),
+    WalletRepository: Symbol('WalletRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -30,16 +38,15 @@ export const TYPES = {
     ChatController: Symbol('chatController'),
     SocketController: Symbol('SocketController'),
     MentorOnboardController: Symbol('MentorOnboardController'),
-    PlannerTaskService: Symbol('PlannerTaskService'),
     PlannerTaskRepository: Symbol('PlannerTaskRepository'),
     PlannerTaskController: Symbol('PlannerTaskController'),
-
-    MentorshipService: Symbol('MentorshipService'),
-    WalletService: Symbol('WalletService'),
-    MentorshipRepository: Symbol('MentorshipRepository'),
-    WalletRepository: Symbol('WalletRepository'),
-    MentorshipController: Symbol('MentorshipController'),
+    PomodoroController: Symbol('PomodoroController'),
     WalletController: Symbol('WalletController'),
+    MentorshipController: Symbol('MentorshipController'),
+    NoteService: Symbol('NoteService'),
+    NoteRepository: Symbol('NoteRepository'),
+    NoteController: Symbol('NoteController'),
+
 
     BookingRepository: Symbol('BookingRepository'),
     BookingService: Symbol('BookingService'),

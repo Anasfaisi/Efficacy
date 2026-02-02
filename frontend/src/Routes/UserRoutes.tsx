@@ -17,6 +17,8 @@ import PlannerPage from '@/Features/users/planner/pages/PlannerPage';
 import MentorshipManagementPage from '../Features/users/mentors/pages/MentorshipManagementPage';
 import MyMentorshipsPage from '@/Features/users/mentors/pages/MyMentorshipsPage';
 import NotFound from '@/Features/common/pages/NotFound';
+import PomodoroPage from '@/Features/users/pomodoro/pages/PomodoroPage';
+import NotesPage from '@/Features/users/notes/pages/NotesPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -57,6 +59,8 @@ const UserRoutes: React.FC = () => {
                 element={<MentorshipManagementPage />}
             />
             <Route path="planner" element={<PlannerPage />} />
+            <Route path="pomodoro" element={<PomodoroPage />} />
+            <Route path="notes" element={<NotesPage />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

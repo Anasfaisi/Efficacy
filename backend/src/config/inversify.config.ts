@@ -62,6 +62,18 @@ import { MentorshipRepository } from '@/repositories/mentorship.repository';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
+import { WalletController} from '@/controllers/Wallet.controller';
+import { PomodoroController } from '@/controllers/pomodoro.controller';
+import { IPomodoroService } from '@/serivces/Interfaces/IPomodoro.service';
+import { PomodoroService } from '@/serivces/pomodoro.service';
+import { IPomodoroRepository } from '@/repositories/interfaces/IPomodoro.repository';
+import { PomodoroRepository } from '@/repositories/pomodoro.repository';
+import { NoteController } from '@/controllers/note.controller';
+import { NoteService } from '@/serivces/note.service';
+import { NoteRepository } from '@/repositories/note.repository';
+import { INoteService } from '@/serivces/Interfaces/INote.service';
+import { INoteRepository } from '@/repositories/interfaces/INote.repository';
+
 import { WalletController } from '@/controllers/Wallet.controller';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
 import { BookingRepository } from '@/repositories/booking.repository';
@@ -89,6 +101,7 @@ container
     .bind<MentorshipController>(TYPES.MentorshipController)
     .to(MentorshipController);
 container.bind<WalletController>(TYPES.WalletController).to(WalletController);
+container.bind<PomodoroController>(TYPES.PomodoroController).to(PomodoroController);
 container
     .bind<BookingController>(TYPES.BookingController)
     .to(BookingController);
@@ -152,6 +165,16 @@ container
     .bind<IMentorshipRepository>(TYPES.MentorshipRepository)
     .to(MentorshipRepository);
 container.bind<IWalletRepository>(TYPES.WalletRepository).to(WalletRepository);
+
+
+container.bind<IPomodoroService>(TYPES.PomodoroService).to(PomodoroService);
+container.bind<IPomodoroRepository>(TYPES.PomodoroRepository).to(PomodoroRepository);
+
+
+// Note Bindings
+container.bind<NoteController>(TYPES.NoteController).to(NoteController);
+container.bind<INoteService>(TYPES.NoteService).to(NoteService);
+container.bind<INoteRepository>(TYPES.NoteRepository).to(NoteRepository);
 container
     .bind<IBookingRepository>(TYPES.BookingRepository)
     .to(BookingRepository);
