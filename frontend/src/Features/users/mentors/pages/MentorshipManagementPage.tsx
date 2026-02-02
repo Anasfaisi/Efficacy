@@ -51,7 +51,9 @@ const MentorshipManagementPage: React.FC = () => {
         if (!id) return;
         try {
             const data = await mentorshipApi.getMentorshipById(id);
+            console.log(data, 'data mentorship magnamentpage');
             setMentorship(data);
+            console.log(mentorship, 'mentorship from mentorshipmanagnement apge');
             const bookings = await bookingApi.getUserBookings();
             
             // Filter bookings for this mentorship/mentor
@@ -65,9 +67,7 @@ const MentorshipManagementPage: React.FC = () => {
                 .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime())
                 .find(b => {
                     const sessionDate = new Date(b.bookingDate);
-                    // Add logic to check if it's today or future (simplified)
-                    // For demo/dev, let's just pick the latest confirmed or closest one
-                    // Better: Check if end time is not passed
+                   
                     return sessionDate.getTime() > Date.now() - 24 * 60 * 60 * 1000; // rough check
                 });
             
