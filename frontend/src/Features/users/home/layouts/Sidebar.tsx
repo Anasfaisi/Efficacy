@@ -36,7 +36,7 @@ const Sidebar = () => {
         {
             icon: <StickyNote size={20} />,
             label: 'Notes',
-            to: '#',
+            to: '/notes',
             color: '#7F00FF',
         },
         {
@@ -47,9 +47,9 @@ const Sidebar = () => {
         },
         {
             icon: <Timer size={20} />,
-            label: 'Focus Timer',
-            to: '#',
-            color: '#E91E63',
+            label: 'Pomodoro Timer',
+            to: '/pomodoro',
+            color: '#f87171',
         },
         // {
         // //     icon: <MessageSquare size={20} />,

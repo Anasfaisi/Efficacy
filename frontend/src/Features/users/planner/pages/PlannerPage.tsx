@@ -5,7 +5,9 @@ import CalendarView from '../components/CalendarView';
 import type { IPlannerTask } from '../types';
 import { getPlannerTasks } from '@/Services/planner.api';
 import TaskModal from '@/Features/users/planner/components/TaskModal';
+import DailySummaryModal from '../components/DailySummaryModal';
 import { Plus } from 'lucide-react';
+import { isSameDay } from 'date-fns';
 
 const PlannerPage: React.FC = () => {
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
@@ -16,6 +18,11 @@ const PlannerPage: React.FC = () => {
     const [initialData, setInitialData] = useState<
         { date: string; startTime: string } | undefined
     >(undefined);
+
+    // Summary Context Menu State
+    const [summaryModalOpen, setSummaryModalOpen] = useState(false);
+    const [selectedDateForSummary, setSelectedDateForSummary] = useState<Date | null>(null);
+    const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
 
     const fetchTasks = async () => {
         try {
@@ -61,6 +68,13 @@ const PlannerPage: React.FC = () => {
         setIsModalOpen(true);
     };
 
+    const handleDayContextMenu = (date: Date, e: React.MouseEvent) => {
+        e.preventDefault(); // Override browser right click
+        setSelectedDateForSummary(date);
+        setContextMenuPos({ x: e.clientX, y: e.clientY });
+        setSummaryModalOpen(true);
+    };
+
     return (
         <div className="min-h-screen flex bg-white">
             <Sidebar />
@@ -92,6 +106,7 @@ const PlannerPage: React.FC = () => {
                             tasks={tasks}
                             onTaskClick={handleEditTask}
                             onSlotClick={handleSlotClick}
+                            onDayContextMenu={handleDayContextMenu}
                         />
                     </div>
                 </div>
@@ -104,6 +119,16 @@ const PlannerPage: React.FC = () => {
                     task={selectedTask}
                     onSave={fetchTasks}
                     initialData={initialData}
+                />
+            )}
+
+            {summaryModalOpen && selectedDateForSummary && (
+                <DailySummaryModal
+                    date={selectedDateForSummary}
+                    tasks={tasks.filter(t => isSameDay(new Date(t.startDate), selectedDateForSummary))}
+                    isOpen={summaryModalOpen}
+                    onClose={() => setSummaryModalOpen(false)}
+                    position={contextMenuPos}
                 />
             )}
         </div>

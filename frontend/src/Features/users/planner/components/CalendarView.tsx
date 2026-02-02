@@ -27,6 +27,7 @@ interface CalendarViewProps {
     tasks: IPlannerTask[];
     onTaskClick: (task: IPlannerTask) => void;
     onSlotClick: (date: Date, hour: number) => void;
+    onDayContextMenu: (date: Date, e: React.MouseEvent) => void;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -35,6 +36,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     tasks,
     onTaskClick,
     onSlotClick,
+    onDayContextMenu,
 }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [view, setView] = useState<'day' | 'week' | 'month'>('week');
@@ -266,6 +268,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 !isCurrentMonth && "bg-gray-50/50 text-gray-400"
                             )}
                             onClick={() => onSlotClick(day, 9)} // Default to 9am on click
+                            onContextMenu={(e) => onDayContextMenu(day, e)}
                         >
                             <div className="flex items-center justify-center mb-1">
                                  <span className={cn(
