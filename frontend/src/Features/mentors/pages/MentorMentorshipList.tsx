@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
+import type { User } from '@/types/auth';
 import { MentorshipStatus, SessionStatus } from '@/types/mentorship';
 import {
     Users,
@@ -56,8 +57,6 @@ const MentorMentorshipList: React.FC = () => {
         return true;
     });
 
-   
-
     if (loading)
         return (
             <div className="flex justify-center items-center h-64">
@@ -73,25 +72,13 @@ const MentorMentorshipList: React.FC = () => {
                         onClick={() => setActiveTab('active')}
                         className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        Active (
-                        {
-                            mentorships.filter(
-                                (m) => m.status === MentorshipStatus.ACTIVE
-                            ).length
-                        }
-                        )
+                        Active ({mentorships.filter((m) => m.status === MentorshipStatus.ACTIVE).length})
                     </button>
                     <button
                         onClick={() => setActiveTab('completed')}
                         className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        Completed (
-                        {
-                            mentorships.filter(
-                                (m) => m.status === MentorshipStatus.COMPLETED
-                            ).length
-                        }
-                        )
+                        Completed ({mentorships.filter((m) => m.status === MentorshipStatus.COMPLETED).length})
                     </button>
                     <button
                         onClick={() => setActiveTab('all')}
@@ -125,8 +112,7 @@ const MentorMentorshipList: React.FC = () => {
                             No {activeTab} mentorships found
                         </h3>
                         <p className="text-gray-500">
-                            Mentorships will appear here once you accept
-                            requests.
+                            Mentorships will appear here once you accept requests.
                         </p>
                     </div>
                 ) : (
@@ -139,8 +125,8 @@ const MentorMentorshipList: React.FC = () => {
                                 <div className="flex items-center gap-5">
                                     <img
                                         src={
-                                            m.userId?.profilePic ||
-                                            `https://ui-avatars.com/api/?name=${encodeURIComponent(m.userId?.name || 'User')}`
+                                            (m.userId as User)?.profilePic ||
+                                            `https://ui-avatars.com/api/?name=${encodeURIComponent((m.userId as User)?.name || 'User')}`
                                         }
                                         className="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-50"
                                         alt=""
@@ -148,7 +134,7 @@ const MentorMentorshipList: React.FC = () => {
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
                                             <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                                {m.userId?.name}
+                                                {(m.userId as User)?.name}
                                             </h3>
                                             <span
                                                 className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${m.status === MentorshipStatus.ACTIVE ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}
@@ -157,7 +143,7 @@ const MentorMentorshipList: React.FC = () => {
                                             </span>
                                         </div>
                                         <p className="text-sm text-gray-500 font-medium mb-1">
-                                            {m.userId?.email}
+                                            {(m.userId as User)?.email}
                                         </p>
 
                                         <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
@@ -208,7 +194,7 @@ const MentorMentorshipList: React.FC = () => {
 
                                     <div className="flex gap-2 w-full sm:w-auto">
                                         <button 
-                                            onClick={() => m.userId && handleChat(m.userId._id || m.userId.id!)}
+                                            onClick={() => m.userId && handleChat((m.userId as User)._id || (m.userId as User).id!)}
                                             className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2"
                                         >
                                             <MessageSquare size={16} /> Chat
@@ -226,8 +212,8 @@ const MentorMentorshipList: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Expandable Session List Placeholder */}
+                            
+                            {/* Expandable Session List */}
                             <div className="px-8 pb-8 pt-4 border-t border-gray-50 bg-gray-50/30">
                                 <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
                                     Upcoming Sessions

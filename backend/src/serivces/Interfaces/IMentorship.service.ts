@@ -31,12 +31,14 @@ export interface IMentorshipService {
     bookSession(
         mentorshipId: string,
         userId: string,
-        date: Date
+        date: Date,
+        slot: string
     ): Promise<IMentorship>;
     rescheduleSession(
         mentorshipId: string,
         sessionId: string,
-        newDate: Date
+        newDate: Date,
+        newSlot: string
     ): Promise<IMentorship>;
     completeMentorship(
         mentorshipId: string,

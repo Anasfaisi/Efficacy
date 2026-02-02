@@ -5,13 +5,21 @@ import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(),],
-   css: {
-    postcss: './postcss.config.js', // Ensure PostCSS is configured
+  plugins: [react(), tailwindcss()],
+  css: {
+    postcss: './postcss.config.js',
   },
-  resolve:{
-    alias:{
-      "@":path.resolve(__dirname,"./src")
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      process: "process/browser",
+      stream: "stream-browserify",
+      zlib: "browserify-zlib",
+      util: "util",
     },
+  },
+  define: {
+    "global": "window",
+     "process.env": {},
   },
 });

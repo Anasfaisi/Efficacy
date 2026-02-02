@@ -19,7 +19,7 @@ export default function chatRoutes(chatController: ChatController) {
 
     router.get(
         '/my-conversations',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]), 
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
         asyncWrapper(chatController.getUserConversations.bind(chatController))
     );
 

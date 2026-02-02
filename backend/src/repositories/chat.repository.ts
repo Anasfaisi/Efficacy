@@ -5,42 +5,53 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class ChatRepository implements IChatRepository {
-    async createConversation(participants: { _id: string, onModel: string }[]): Promise<IConversation> {
+    async createConversation(
+        participants: { _id: string; onModel: string }[]
+    ): Promise<IConversation> {
         const newConversation = await ConversationModel.create({
             participants,
         });
 
         // Populate to ensure frontend receives user details immediately
-        await newConversation.populate('participants._id', 'name profilePic role email');
-        
+        await newConversation.populate(
+            'participants._id',
+            'name profilePic role email'
+        );
+
         const convObject = newConversation.toObject();
         return {
             ...convObject,
-            participants: (convObject.participants as any[]).map(p => p._id)
+            participants: (convObject.participants as any[]).map((p) => p._id),
         } as any;
     }
 
     async findConversationByParticipants(
-        participants: { _id: string, onModel: string }[]
+        participants: { _id: string; onModel: string }[]
     ): Promise<IConversation | null> {
-        const participantIds = participants.map(p => p._id);
-        
+        const participantIds = participants.map((p) => p._id);
+
         const conversation = await ConversationModel.findOne({
             participants: { $size: participantIds.length },
-            "participants._id": { $all: participantIds }
-        }).populate('participants._id', 'name profilePic role email').lean();
+            'participants._id': { $all: participantIds },
+        })
+            .populate('participants._id', 'name profilePic role email')
+            .lean();
 
         if (!conversation) return null;
 
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(p => p._id)
+            participants: (conversation.participants as any[]).map(
+                (p) => p._id
+            ),
         } as any;
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
-        const conversations = await ConversationModel.find({ "participants._id": userId })
-            .populate('participants._id', 'name profilePic role email') 
+        const conversations = await ConversationModel.find({
+            'participants._id': userId,
+        })
+            .populate('participants._id', 'name profilePic role email')
             .populate('lastMessage')
             .sort({ updatedAt: -1 })
             .lean();
@@ -48,22 +59,23 @@ export class ChatRepository implements IChatRepository {
         // Transform stricture to match frontend expectation (flat array of participants)
         return conversations.map((conv: any) => ({
             ...conv,
-            participants: conv.participants.map((p: any) => p._id)
+            participants: conv.participants.map((p: any) => p._id),
         }));
     }
 
     async getConversationById(id: string): Promise<IConversation | null> {
-        const conversation = await ConversationModel.findById(id).populate(
-            'participants._id',
-            'name profilePic role email'
-        ).lean();
+        const conversation = await ConversationModel.findById(id)
+            .populate('participants._id', 'name profilePic role email')
+            .lean();
 
         if (!conversation) return null;
 
         // Transform for frontend
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(p => p._id)
+            participants: (conversation.participants as any[]).map(
+                (p) => p._id
+            ),
         } as any;
     }
 
@@ -78,7 +90,7 @@ export class ChatRepository implements IChatRepository {
         skip: number = 0
     ): Promise<IMessage[]> {
         return MessageModel.find({ conversationId })
-            .sort({ createdAt: 1 }) 
+            .sort({ createdAt: 1 })
             .skip(skip)
             .limit(limit);
     }

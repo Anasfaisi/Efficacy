@@ -20,6 +20,7 @@ import pomodoroRouter from './routes/pomodoro.routes';
 import { PomodoroController } from './controllers/pomodoro.controller';
 import { NoteController } from './controllers/note.controller';
 import noteRoutes from './routes/note.routes';
+import { bookingRoutes } from './routes/booking.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -61,4 +62,5 @@ export function applyRoutes(app: Express) {
     app.use('/api/mentorship', mentorshipRoutes(mentorshipController));
     app.use('/api/pomodoro', pomodoroRouter(pomodoroController));
     app.use('/api/notes', noteRoutes(noteController));
+    app.use('/api/booking', bookingRoutes(container));
 }

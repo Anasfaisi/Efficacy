@@ -6,7 +6,7 @@ export interface IMessage extends Document {
     content: string;
     isRead: boolean;
     type: 'text' | 'image' | 'file';
-    metadata?: Record<string, any>; 
+    metadata?: Record<string, any>;
     createdAt: Date;
     updatedAt: Date;
 }

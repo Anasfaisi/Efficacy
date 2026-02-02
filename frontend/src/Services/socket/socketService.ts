@@ -137,3 +137,40 @@ export const offChatEvents = () => {
     socket.off('lastMessages');
     socket.off('userJoined');
 };
+
+// --- Video Call Methods ---
+export const joinVideoRoom = (roomId: string, userId: string, role: 'mentor' | 'user') => {
+    socket?.emit('joinVideoRoom', { roomId, userId, role });
+};
+
+export const signalPeer = (data: { to: string, signal: any, from: string }) => {
+    socket?.emit('signal', data);
+};
+
+export const onUserConnected = (callback: (data: { userId: string, role: string, socketId: string }) => void) => {
+    socket?.on('user-connected', callback);
+};
+
+export const onSignal = (callback: (data: { signal: any, from: string }) => void) => {
+    socket?.on('signal', callback);
+};
+
+export const onHostOnline = (callback: () => void) => {
+    socket?.on('host-online', callback);
+};
+
+export const checkVideoStatus = (roomId: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+        socket?.emit('check-video-status', roomId, (response: { active: boolean }) => {
+            resolve(response.active);
+        });
+    });
+};
+
+export const offVideoEvents = () => {
+    if(!socket) return;
+    socket.off('user-connected');
+    socket.off('signal');
+    socket.off('host-online');
+};
+// -------------------------

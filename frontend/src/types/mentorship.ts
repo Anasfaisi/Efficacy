@@ -1,3 +1,5 @@
+import type { User, Mentor } from './auth';
+
 export enum MentorshipStatus {
     PENDING = 'pending',
     MENTOR_ACCEPTED = 'mentor_accepted',
@@ -29,8 +31,8 @@ export interface ISession {
 export interface Mentorship {
     id?: string;
     _id?: string;
-    userId: any; 
-    mentorId: any; 
+    userId: User | string; 
+    mentorId: Mentor | string; 
     status: MentorshipStatus;
     startDate?: Date | string;
     endDate?: Date | string;

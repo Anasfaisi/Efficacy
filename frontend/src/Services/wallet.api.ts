@@ -1,13 +1,13 @@
-import axiosInstance from './axiosConfig';
+import api from './axiosConfig';
 
 export const walletApi = {
     getWallet: async () => {
-        const response = await axiosInstance.get('/mentorship/wallet');
+        const response = await api.get('/mentorship/wallet');
         return response.data;
     },
 
     requestWithdrawal: async (amount: number) => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             '/mentorship/wallet/withdraw',
             { amount }
         );
@@ -15,7 +15,7 @@ export const walletApi = {
     },
 
     updateBankDetails: async (details: any) => {
-        const response = await axiosInstance.patch(
+        const response = await api.patch(
             '/mentorship/wallet/bank-details',
             details
         );
@@ -23,7 +23,7 @@ export const walletApi = {
     },
 
     getTransactions: async () => {
-        const response = await axiosInstance.get(
+        const response = await api.get(
             '/mentorship/wallet/transactions'
         );
         return response.data;

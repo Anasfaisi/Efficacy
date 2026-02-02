@@ -16,6 +16,8 @@ import {
 import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { ObjectId, Types } from 'mongoose';
+import { IMentor } from '@/models/Mentor.model';
+import { IUser } from '@/models/User.model';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -61,7 +63,7 @@ export class MentorshipService implements IMentorshipService {
             amount: mentor.monthlyCharge || 0,
             paymentStatus: 'pending',
             sessions: [],
-        } as any);
+        } );
 
         await this._notificationService.createNotification(
             mentorId as string,
@@ -95,7 +97,8 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');
-        if (mentorship.mentorId.toString() !== mentorId)
+        console.log(mentorship.mentorId== mentorId,mentorship.mentorId.toString(),mentorId,"mentorshipId from mentorshipService");
+        if ((mentorship.mentorId as Partial<IMentor>)?.id !== mentorId)
             throw new Error('Unauthorized');
 
         mentorship.status =
@@ -132,7 +135,7 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');
-        if (mentorship.userId.toString() !== userId)
+        if ((mentorship.userId as Partial<IUser>).id.toString() !== userId)
             throw new Error('Unauthorized');
 
         if (confirm) {
@@ -210,7 +213,8 @@ export class MentorshipService implements IMentorshipService {
     async bookSession(
         mentorshipId: string,
         userId: string,
-        date: Date
+        date: Date,
+        slot: string
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
@@ -224,6 +228,7 @@ export class MentorshipService implements IMentorshipService {
 
         (mentorship.sessions as unknown as Types.DocumentArray<any>).push({
             date,
+            slot,
             status: SessionStatus.BOOKED,
         });
         mentorship.usedSessions += 1;
@@ -235,7 +240,8 @@ export class MentorshipService implements IMentorshipService {
     async rescheduleSession(
         mentorshipId: string,
         sessionId: string,
-        newDate: Date
+        newDate: Date,
+        newSlot: string
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
@@ -255,6 +261,7 @@ export class MentorshipService implements IMentorshipService {
             );
 
         session.date = newDate;
+        session.slot = newSlot;
         session.status = SessionStatus.RESCHEDULE_REQUESTED;
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);

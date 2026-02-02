@@ -47,4 +47,8 @@ export const TYPES = {
     NoteRepository: Symbol('NoteRepository'),
     NoteController: Symbol('NoteController'),
 
+
+    BookingRepository: Symbol('BookingRepository'),
+    BookingService: Symbol('BookingService'),
+    BookingController: Symbol('BookingController'),
 };

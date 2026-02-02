@@ -89,22 +89,24 @@ export class MentorshipController {
     async bookSession(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const { id } = req.params;
-        const { date } = req.body;
+        const { date, slot } = req.body;
         const mentorship = await this._mentorshipService.bookSession(
             id,
             userId,
-            date
+            date,
+            slot
         );
         res.status(code.OK).json(mentorship);
     }
 
     async rescheduleSession(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const { sessionId, newDate } = req.body;
+        const { sessionId, newDate, newSlot } = req.body;
         const mentorship = await this._mentorshipService.rescheduleSession(
             id,
             sessionId,
-            newDate
+            newDate,
+            newSlot
         );
         res.status(code.OK).json(mentorship);
     }

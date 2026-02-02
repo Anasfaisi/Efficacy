@@ -18,7 +18,7 @@ const ParticipantSchema = new Schema(
 
 export interface IConversation extends Document {
     participants: {
-        _id: Types.ObjectId | any; 
+        _id: Types.ObjectId | any;
         onModel: string;
     }[];
     isActive: boolean;

@@ -1,4 +1,4 @@
-import axiosInstance from './axiosConfig';
+import api from './axiosConfig';
 
 export const mentorshipApi = {
     createRequest: async (data: {
@@ -6,17 +6,17 @@ export const mentorshipApi = {
         sessions: number;
         proposedStartDate?: Date;
     }) => {
-        const response = await axiosInstance.post('/mentorship/request', data);
+        const response = await api.post('/mentorship/request', data);
         return response.data;
     },
 
     getMentorRequests: async () => {
-        const response = await axiosInstance.get('/mentorship/requests/mentor');
+        const response = await api.get('/mentorship/requests/mentor');
         return response.data;
     },
 
     getUserRequests: async () => {
-        const response = await axiosInstance.get('/mentorship/requests/user');
+        const response = await api.get('/mentorship/requests/user');
         return response.data;
     },
 
@@ -28,7 +28,7 @@ export const mentorshipApi = {
             reason?: string;
         }
     ) => {
-        const response = await axiosInstance.patch(
+        const response = await api.patch(
             `/mentorship/request/${id}/respond`,
             data
         );
@@ -36,7 +36,7 @@ export const mentorshipApi = {
     },
 
     confirmSuggestion: async (id: string, confirm: boolean) => {
-        const response = await axiosInstance.patch(
+        const response = await api.patch(
             `/mentorship/request/${id}/confirm`,
             { confirm }
         );
@@ -44,7 +44,7 @@ export const mentorshipApi = {
     },
 
     verifyPayment: async (id: string, paymentId: string) => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             `/mentorship/request/${id}/verify-payment`,
             { paymentId }
         );
@@ -56,7 +56,7 @@ export const mentorshipApi = {
         successUrl: string,
         cancelUrl: string
     ) => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             `/payments/checkout-mentorship`,
             {
                 mentorshipId,
@@ -69,29 +69,29 @@ export const mentorshipApi = {
     },
 
     getActiveMentorship: async () => {
-        const response = await axiosInstance.get('/mentorship/active');
+        const response = await api.get('/mentorship/active');
 
         return response.data;
     },
 
     getMentorshipById: async (id: string) => {
-        const response = await axiosInstance.get(`/mentorship/${id}`);
+        const response = await api.get(`/mentorship/${id}`);
         return response.data;
     },
 
-    bookSession: async (id: string, date: Date) => {
-        const response = await axiosInstance.post(
+    bookSession: async (id: string, date: Date, slot: string) => {
+        const response = await api.post(
             `/mentorship/${id}/book-session`,
-            { date }
+            { date, slot }
         );
         return response.data;
     },
 
     rescheduleSession: async (
         id: string,
-        data: { sessionId: string; newDate: Date }
+        data: { sessionId: string; newDate: Date; newSlot: string }
     ) => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             `/mentorship/${id}/reschedule-session`,
             data
         );
@@ -99,7 +99,7 @@ export const mentorshipApi = {
     },
 
     completeMentorship: async (id: string, role: 'user' | 'mentor') => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             `/mentorship/${id}/complete`,
             { role }
         );
@@ -110,7 +110,7 @@ export const mentorshipApi = {
         id: string,
         data: { role: 'user' | 'mentor'; rating: number; comment: string }
     ) => {
-        const response = await axiosInstance.post(
+        const response = await api.post(
             `/mentorship/${id}/feedback`,
             data
         );
@@ -118,7 +118,7 @@ export const mentorshipApi = {
     },
 
     cancelMentorship: async (id: string) => {
-        const response = await axiosInstance.post(`/mentorship/${id}/cancel`);
+        const response = await api.post(`/mentorship/${id}/cancel`);
         return response.data;
     },
 };

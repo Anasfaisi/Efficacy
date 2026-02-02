@@ -22,6 +22,7 @@ export enum SessionStatus {
 interface ISession {
     _id?: string | ObjectId;
     date: Date;
+    slot?: string;
     status: SessionStatus;
     mentorNotes?: string;
     userNotes?: string;
@@ -29,8 +30,8 @@ interface ISession {
 }
 
 interface IMentorship extends Document {
-    userId: ObjectId;
-    mentorId: ObjectId;
+    userId: string | ObjectId;
+    mentorId: string | ObjectId;
     status: MentorshipStatus;
     startDate?: Date;
     endDate?: Date;
@@ -64,6 +65,7 @@ interface IMentorship extends Document {
 
 const sessionSchema = new Schema<ISession>({
     date: { type: Date, required: true },
+    slot: { type: String }, // Specific hourly slot
     status: {
         type: String,
         enum: Object.values(SessionStatus),

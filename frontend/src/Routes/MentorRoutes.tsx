@@ -17,8 +17,9 @@ import MentorMentorshipList from '@/Features/mentors/pages/MentorMentorshipList'
 import MentorshipRequestsPage from '@/Features/mentors/pages/MentorshipRequestsPage';
 import MentorWalletPage from '@/Features/mentors/pages/MentorWalletPage';
 import NotFound from '@/Features/common/pages/NotFound';
-import MentorshipManagementPage from '@/Features/users/mentors/pages/MentorshipManagementPage';
+import MentorMentorshipManagementPage from '@/Features/mentors/pages/MentorMentorshipManagementPage';
 import MentorChatPage from '@/Features/mentors/pages/MentorChatPage';
+import BookingRequestsPage from '@/Features/mentors/pages/BookingRequestsPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -49,9 +50,14 @@ const MentorRoutes: React.FC = () => {
                 />
                 <Route path="sessions" element={<MentorMentorshipList />} />
                 <Route path="requests" element={<MentorshipRequestsPage />} />
+                <Route path="booking-requests" element={<BookingRequestsPage />} />
                 <Route path="wallet" element={<MentorWalletPage />} />
                 <Route path="profile" element={<MentorProfilePage />} />
                 <Route path="guidelines" element={<MentorGuidelines />} />
+                <Route
+                    path="mentorship/:id"
+                    element={<MentorMentorshipManagementPage />}
+                />
             </Route>
 
             <Route path="chat" element={<MentorChatPage />} />
@@ -66,10 +72,6 @@ const MentorRoutes: React.FC = () => {
             />
             <Route path="onboarding" element={<MentorOnboardingForm />} />
             <Route path="approved" element={<MentorApproved />} />
-            <Route
-                path="mentorship/:id"
-                element={<MentorshipManagementPage />}
-            />
             <Route path="logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
         </Routes>

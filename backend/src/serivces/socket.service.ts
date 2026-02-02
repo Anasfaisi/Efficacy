@@ -45,6 +45,30 @@ export class SocketService implements ISocketService {
                 this.handleSendMessage(io, socket, payload)
             );
 
+            // --- Video Call Events ---
+            socket.on('joinVideoRoom', ({ roomId, userId, role }: { roomId: string, userId: string, role: string }) => {
+                console.log(`Socket ${socket.id} joined Video Room: ${roomId} as ${role}`);
+                socket.join(roomId);
+                console.log(roomId, userId, role, "from socket service")
+                
+                socket.to(roomId).emit('user-connected', { userId, role, socketId: socket.id });
+                
+                if (role === 'mentor') {
+                    io.to(roomId).emit('host-online'); 
+                }
+            });
+
+            socket.on('signal', (data: { to: string, signal: any, from: string }) => {
+                io.to(data.to).emit('signal', { signal: data.signal, from: data.from });
+            });
+
+             socket.on('check-video-status', (roomId: string, callback: (response: { active: boolean }) => void) => {
+                const room = io.sockets.adapter.rooms.get(roomId);
+                const isActive = room ? room.size > 0 : false;
+                callback({ active: isActive });
+            });
+            // -------------------------
+
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected:', socket.id);
             });
@@ -68,12 +92,21 @@ export class SocketService implements ISocketService {
         { roomId, userId }: JoinRoomPayload
     ) {
         try {
-            const canJoin = await this._chatService.validateRoomAccess(roomId, userId);
+            const canJoin = await this._chatService.validateRoomAccess(
+                roomId,
+                userId
+            );
             if (!canJoin) {
                 socket.emit('error', { message: 'Access denied to this room' });
                 return;
             }
-            console.log("join room=================",roomId,userId,canJoin,"from socket service");
+            console.log(
+                'join room=================',
+                roomId,
+                userId,
+                canJoin,
+                'from socket service'
+            );
             socket.join(roomId);
 
             const history = await this._chatService.getRoomMessages(
@@ -82,7 +115,6 @@ export class SocketService implements ISocketService {
             );
 
             socket.emit('chatHistory', history);
-
         } catch (error) {
             console.error('Error joining room:', error);
             socket.emit('error', { message: 'Failed to join chat room' });
@@ -108,8 +140,15 @@ export class SocketService implements ISocketService {
         } catch (error) {
             console.error('Error sending message:', error);
             socket.emit('error', {
-                message: error instanceof Error ? error.message : 'Failed to send message',
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to send message',
             });
         }
     }
 }
+
+
+
+//lastnote : ippo user and mentor video call page ll connect avunund. baaki koode sheri akaan und

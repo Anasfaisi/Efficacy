@@ -300,7 +300,7 @@ export class MentorController {
         res: Response
     ): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorizeds' });
             return;
         }
         await this._notificationService.markAllAsRead(req.currentUser.id);

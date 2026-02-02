@@ -74,6 +74,12 @@ import { NoteRepository } from '@/repositories/note.repository';
 import { INoteService } from '@/serivces/Interfaces/INote.service';
 import { INoteRepository } from '@/repositories/interfaces/INote.repository';
 
+import { WalletController } from '@/controllers/Wallet.controller';
+import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
+import { BookingRepository } from '@/repositories/booking.repository';
+import { BookingService } from '@/serivces/booking.service';
+import { BookingController } from '@/controllers/booking.controller';
+import { IBookingService } from '@/serivces/Interfaces/IBooking.service';
 
 export const container = new Container();
 
@@ -96,6 +102,9 @@ container
     .to(MentorshipController);
 container.bind<WalletController>(TYPES.WalletController).to(WalletController);
 container.bind<PomodoroController>(TYPES.PomodoroController).to(PomodoroController);
+container
+    .bind<BookingController>(TYPES.BookingController)
+    .to(BookingController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -132,6 +141,7 @@ container
     .bind<IMentorshipService>(TYPES.MentorshipService)
     .to(MentorshipService);
 container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
+container.bind<IBookingService>(TYPES.BookingService).to(BookingService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -165,3 +175,6 @@ container.bind<IPomodoroRepository>(TYPES.PomodoroRepository).to(PomodoroReposit
 container.bind<NoteController>(TYPES.NoteController).to(NoteController);
 container.bind<INoteService>(TYPES.NoteService).to(NoteService);
 container.bind<INoteRepository>(TYPES.NoteRepository).to(NoteRepository);
+container
+    .bind<IBookingRepository>(TYPES.BookingRepository)
+    .to(BookingRepository);

@@ -17,6 +17,7 @@ import { MentorOtpPage } from '@/Features/mentors/pages/auth/MentorOtpPage';
 import { MentorForgotResetPassword } from '@/Features/mentors/pages/auth/MentorForgotResetPassword';
 import { ToastContainer } from 'react-toastify';
 import NotFound from '@/Features/common/pages/NotFound';
+import VideoCallPage from '@/Features/common/pages/VideoCallPage';
 
 const ProtectedRoute: React.FC<{
     role: 'admin' | 'user' | 'mentor';
@@ -62,6 +63,8 @@ const AppRoutes: React.FC = () => {
                     path="/reset-password"
                     element={<ForgotResetPassword />}
                 />
+                
+                <Route path="/meet/:roomId" element={<VideoCallPage />} />
 
                 <Route
                     path="/*"
