@@ -130,6 +130,7 @@ const VideoCallPage: React.FC = () => {
             stream: stream || undefined,
         });
 
+
         peer.on('signal', (data: any) => {
             signalPeer({ 
                 to: fromId, 
@@ -147,7 +148,6 @@ const VideoCallPage: React.FC = () => {
             console.log(connectionStatus,"connection status from answer call in videocallpage ")
         });
 
-        // If we are answering a call, we signal back the answer
         peer.signal(signal);
         
         connectionRef.current = peer;

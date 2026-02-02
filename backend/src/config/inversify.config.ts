@@ -74,7 +74,6 @@ import { NoteRepository } from '@/repositories/note.repository';
 import { INoteService } from '@/serivces/Interfaces/INote.service';
 import { INoteRepository } from '@/repositories/interfaces/INote.repository';
 
-import { WalletController } from '@/controllers/Wallet.controller';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
 import { BookingRepository } from '@/repositories/booking.repository';
 import { BookingService } from '@/serivces/booking.service';
