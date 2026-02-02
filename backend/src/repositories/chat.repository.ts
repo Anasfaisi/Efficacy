@@ -80,8 +80,15 @@ export class ChatRepository implements IChatRepository {
     }
 
     async createMessage(data: Partial<IMessage>): Promise<IMessage> {
-        const message = await MessageModel.create(data);
-        return message;
+        let message = await MessageModel.create(data);
+        message = await message.populate('senderId', 'name');
+        
+        const msgObject = message.toObject();
+        return {
+            ...msgObject,
+            senderName: (msgObject.senderId as any)?.name,
+            senderId: (msgObject.senderId as any)?._id,
+        } as any;
     }
 
     async getMessages(
@@ -89,10 +96,18 @@ export class ChatRepository implements IChatRepository {
         limit: number = 50,
         skip: number = 0
     ): Promise<IMessage[]> {
-        return MessageModel.find({ conversationId })
+        const messages = await MessageModel.find({ conversationId })
+            .populate('senderId', 'name')
             .sort({ createdAt: 1 })
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .lean();
+        
+        return messages.map((msg: any) => ({
+            ...msg,
+            senderName: msg.senderId?.name,
+            senderId: msg.senderId?._id,
+        }));
     }
 
     async markMessagesAsRead(
@@ -112,5 +127,13 @@ export class ChatRepository implements IChatRepository {
         await ConversationModel.findByIdAndUpdate(conversationId, {
             lastMessage: messageId,
         });
+    }
+
+    async deleteMessage(messageId: string): Promise<IMessage | null> {
+        return MessageModel.findByIdAndDelete(messageId);
+    }
+
+    async getMessageById(messageId: string): Promise<IMessage | null> {
+        return MessageModel.findById(messageId);
     }
 }

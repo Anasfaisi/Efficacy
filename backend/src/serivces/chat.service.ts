@@ -83,7 +83,7 @@ export class ChatService implements IChatService {
         senderId: string,
         roomId: string,
         content: string,
-        type: 'text' | 'image' | 'file' = 'text'
+        type: 'text' | 'image' | 'audio' | 'file' = 'text'
     ): Promise<IMessage> {
         const message = await this._chatRepository.createMessage({
             conversationId: roomId as any,
@@ -109,5 +109,18 @@ export class ChatService implements IChatService {
             (p) => p._id.toString() === userId || p.toString() === userId
         );
         return isParticipant;
+    }
+
+    async deleteMessage(userId: string, messageId: string): Promise<IMessage> {
+        const message = await this._chatRepository.getMessageById(messageId);
+        if (!message) throw new Error('Message not found');
+
+        if (message.senderId.toString() !== userId) {
+            throw new Error('You can only delete your own messages');
+        }
+
+        const deleted = await this._chatRepository.deleteMessage(messageId);
+        if (!deleted) throw new Error('Failed to delete message');
+        return deleted;
     }
 }

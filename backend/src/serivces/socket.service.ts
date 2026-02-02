@@ -14,7 +14,7 @@ interface SendMessagePayload {
     roomId: string;
     senderId: string;
     content: string;
-    type?: 'text' | 'image' | 'file';
+    type?: 'text' | 'image' | 'audio' | 'file';
     senderName?: string; // Optional, useful for UI optimization
 }
 

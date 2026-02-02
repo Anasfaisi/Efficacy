@@ -35,7 +35,7 @@ const MessageSchema = new Schema<IMessage>(
         },
         type: {
             type: String,
-            enum: ['text', 'image', 'file'],
+            enum: ['text', 'image', 'audio', 'file'],
             default: 'text',
         },
         metadata: {

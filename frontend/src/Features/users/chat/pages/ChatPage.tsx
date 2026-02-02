@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setConversations, setCurrentConversation } from '@/redux/slices/chatSlice';
 import { chatApi } from '@/Services/chat.api';
 import { useChatSocket } from '@/hooks/useChatSocket';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
+import MessageBubble from '../components/MessageBubble';
 // import { Conversation, Message } from '@/types/chat.types';
 
 // Icons
-import { Send, User, Menu } from 'lucide-react';
+import { Send, User, Menu, Image as ImageIcon, Mic, X } from 'lucide-react';
+
+import React, { useEffect } from 'react'; // Re-adding useEffect
 
 const ChatPage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -16,6 +19,17 @@ const ChatPage: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     
     const { sendMessage, messages } = useChatSocket(currentConversation?._id);
+
+    const [inputText, setInputText] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
+    const isCancelledRef = useRef<boolean>(false);
 
     // Initial Load of Conversations
     useEffect(() => {
@@ -30,14 +44,101 @@ const ChatPage: React.FC = () => {
         fetchChats();
     }, [dispatch]);
 
-    const [inputText, setInputText] = React.useState('');
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
-    const handleSend = (e: React.FormEvent) => {
-        e.preventDefault();
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
         if (!inputText.trim()) return;
-        sendMessage(inputText);
+        sendMessage(inputText, 'text');
         setInputText('');
+    };
+
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!window.confirm('Are you sure you want to delete this message?')) return;
+        
+        try {
+            await chatApi.deleteMessage(messageId);
+        } catch (error) {
+            console.error('Failed to delete message', error);
+        }
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploading(true);
+            const { url } = await chatApi.uploadFile(file);
+            sendMessage(url, 'image');
+        } catch (error) {
+            console.error('Failed to upload image', error);
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            audioChunksRef.current = [];
+            isCancelledRef.current = false;
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                const stream = mediaRecorder.stream; 
+                stream.getTracks().forEach(track => track.stop());
+
+                if (isCancelledRef.current) return;
+
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const file = new File([audioBlob], 'voice-message.webm', { type: 'audio/webm' });
+                try {
+                    setIsUploading(true);
+                    const { url } = await chatApi.uploadFile(file);
+                    sendMessage(url, 'audio');
+                } catch (error) {
+                    console.error('Failed to upload audio', error);
+                } finally {
+                    setIsUploading(false);
+                }
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+        } catch (error) {
+            console.error('Failed to start recording', error);
+            alert('Could not access microphone');
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        }
+    };
+
+    const cancelRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            isCancelledRef.current = true;
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        }
     };
 
     return (
@@ -134,45 +235,90 @@ const ChatPage: React.FC = () => {
 
                                 {/* Messages Area */}
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                    {messages.map((msg, idx) => {
-                                        const isMe = msg.senderId === currentUser?.id || msg.senderId === (currentUser as any)?._id;
-                                        return (
-                                            <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                                                <div 
-                                                    className={`max-w-[70%] p-3 rounded-2xl ${
-                                                        isMe 
-                                                        ? 'bg-purple-600 text-white rounded-br-none' 
-                                                        : 'bg-white text-gray-800 shadow-sm rounded-bl-none border border-gray-100'
-                                                    }`}
-                                                >
-                                                    <p className="text-sm">{msg.content}</p>
-                                                    <div className={`text-[10px] mt-1 ${isMe ? 'text-purple-200' : 'text-gray-400'} text-right`}>
-                                                        {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                    {messages.map((msg) => (
+                                        <MessageBubble
+                                            key={msg._id || msg.createdAt}
+                                            message={msg}
+                                            isOwn={msg.senderId === currentUser?.id}
+                                            onDelete={handleDeleteMessage}
+                                        />
+                                    ))}
+                                    <div ref={messagesEndRef} />
                                 </div>
 
                                 {/* Input Area */}
                                 <div className="p-4 bg-white border-t border-gray-200">
-                                    <form onSubmit={handleSend} className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={inputText}
-                                            onChange={(e) => setInputText(e.target.value)}
-                                            placeholder="Type your message..."
-                                            className="flex-1 bg-gray-100 text-gray-900 placeholder-gray-500 border-0 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 transition-all"
-                                        />
-                                        <button 
-                                            type="submit" 
-                                            disabled={!inputText.trim()}
-                                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-colors"
+                                     <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleFileUpload}
+                                    />
+                                    <div className="flex gap-2 items-center">
+                                         <button 
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+                                            disabled={isUploading || isRecording}
                                         >
-                                            <Send size={20} />
+                                            <ImageIcon size={20} />
                                         </button>
-                                    </form>
+                                        
+                                        <div className="flex-1 relative">
+                                            {isRecording ? (
+                                                <div className="w-full bg-gray-100 text-red-500 rounded-xl px-4 py-3 flex items-center animate-pulse">
+                                                    <span className="mr-2">●</span> Recording...
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={inputText}
+                                                    onChange={(e) => setInputText(e.target.value)}
+                                                    placeholder="Type your message..."
+                                                    className="w-full bg-gray-100 text-gray-900 placeholder-gray-500 border-0 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 transition-all disabled:bg-gray-200"
+                                                    disabled={isUploading}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                                />
+                                            )}
+                                        </div>
+
+                                        {inputText.trim() ? (
+                                            <button 
+                                                onClick={() => handleSend()}
+                                                disabled={!inputText.trim() || isUploading}
+                                                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-colors"
+                                            >
+                                                <Send size={20} />
+                                            </button>
+                                        ) : (
+                                            isRecording ? (
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={cancelRecording}
+                                                        className="p-3 bg-red-100 text-red-500 hover:bg-red-200 rounded-xl transition-colors"
+                                                        title="Cancel"
+                                                    >
+                                                        <X size={20} />
+                                                    </button>
+                                                    <button
+                                                        onClick={stopRecording}
+                                                        className="p-3 bg-purple-600 text-white hover:bg-purple-700 rounded-xl transition-colors"
+                                                        title="Send"
+                                                    >
+                                                        <Send size={20} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={startRecording}
+                                                    className="p-3 bg-gray-100 text-gray-500 hover:bg-gray-200 rounded-xl transition-colors"
+                                                    disabled={isUploading}
+                                                >
+                                                    <Mic size={20} />
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
                                 </div>
                             </>
                         ) : (

@@ -4,9 +4,10 @@ export interface Message {
     conversationId: string;
     senderId: string; 
     content: string;
-    type: 'text' | 'image' | 'file';
+    type: 'text' | 'image' | 'audio' | 'file';
     isRead: boolean;
     createdAt: string; 
+    senderName?: string;
 }
 
 export interface Conversation {
