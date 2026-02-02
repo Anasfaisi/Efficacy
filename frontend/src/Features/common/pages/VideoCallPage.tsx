@@ -52,7 +52,6 @@ const VideoCallPage: React.FC = () => {
                 if (roomId && currentUserId) {
                    setConnectionStatus('Waiting for other participant...');
                    joinVideoRoom(roomId, currentUserId, isMentor ? 'mentor' : 'user');
-                   console.log(roomId, currentUserId, isMentor ? 'mentor' : 'user',"video call page")
                 }
             })
             .catch((err) => {
@@ -119,7 +118,6 @@ const VideoCallPage: React.FC = () => {
         connectionRef.current = peer;
     };
 
-    // User answers the call
     const answerCall = (signal: any, fromId: string) => {
         setCallAccepted(true);
         setConnectionStatus('Connecting...');

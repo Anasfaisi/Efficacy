@@ -20,9 +20,7 @@ export class AdminAuthService implements IAdminAuthService {
     ) {}
 
     async adminLogin(login: LoginRequestDto): Promise<AdminLoginRespondseDto> {
-        console.log('from admin service');
         const admin = await this._adminRepository.findByEmail(login.email);
-        console.log(admin, 'form service');
         if (!admin) throw new Error(ErrorMessages.NoAdmin);
 
         const isMatch = await this._passwordService.verifyPassword(

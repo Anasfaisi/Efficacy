@@ -6,6 +6,8 @@ import { RequestPaymentDto } from '@/Dto/request.dto';
 import { ResponsePaymentDto } from '@/Dto/response.dto';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { IMentorshipService } from './Interfaces/IMentorship.service';
+import { IMentor } from '@/models/Mentor.model';
+import { IUser } from '@/models/User.model';
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -64,7 +66,7 @@ export class PaymentService implements IPaymentService {
                         currency: 'inr',
                         product_data: {
                             name: 'Mentorship Session',
-                            description: `1 Month Mentorship with ${mentorship.mentorId}`, // Ideally fetch mentor name but this is sufficient for now
+                            description: `1 Month Mentorship with ${(mentorship.mentorId as Partial<IMentor>).id}`, // Ideally fetch mentor name but this is sufficient for now
                         },
                         unit_amount: mentorship.amount * 100,
                     },
@@ -79,7 +81,7 @@ export class PaymentService implements IPaymentService {
             cancel_url: cancelUrl,
             customer_email: (
                 await this._userRepository.findById(
-                    mentorship.userId.toString()
+                    (mentorship.userId as Partial<IUser>).id.toString()
                 )
             )?.email,
         });
