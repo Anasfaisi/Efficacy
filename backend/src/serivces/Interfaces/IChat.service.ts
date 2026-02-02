@@ -16,7 +16,8 @@ export interface IChatService {
         senderId: string,
         roomId: string,
         content: string,
-        type?: 'text' | 'image' | 'file'
+        type?: 'text' | 'image' | 'audio' | 'file'
     ): Promise<IMessage>;
     validateRoomAccess(roomId: string, userId: string): Promise<boolean>;
+    deleteMessage(userId: string, messageId: string): Promise<IMessage>;
 }

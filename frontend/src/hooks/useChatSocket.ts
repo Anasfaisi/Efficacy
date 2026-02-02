@@ -31,24 +31,31 @@ export const useChatSocket = (roomId: string | undefined) => {
             dispatch(setError(err.message));
         };
 
+        const handleMessageDeleted = ({ messageId }: { messageId: string }) => {
+            setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+        };
+
         socket.on('chatHistory', handleHistory);
         socket.on('receiveMessage', handleReceiveMessage);
+        socket.on('messageDeleted', handleMessageDeleted);
         socket.on('error', handleError);
 
         return () => {
             socket.off('chatHistory', handleHistory);
             socket.off('receiveMessage', handleReceiveMessage);
+            socket.off('messageDeleted', handleMessageDeleted);
             socket.off('error', handleError);
         };
     }, [roomId, currentUser, dispatch]);
 
-    const sendMessage = (content: string) => {
+    const sendMessage = (content: string, type: 'text' | 'image' | 'audio' | 'file' = 'text') => {
         const socket = connectSocket();
         if (socket && roomId && currentUser) {
             socket.emit('sendMessage', {
                 roomId,
                 senderId: currentUser.id,
-                content
+                content,
+                type,
             });
         }
     };

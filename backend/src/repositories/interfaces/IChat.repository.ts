@@ -19,4 +19,6 @@ export interface IChatRepository {
     ): Promise<IMessage[]>;
     markMessagesAsRead(conversationId: string, userId: string): Promise<void>;
     updateLastMessage(conversationId: string, messageId: string): Promise<void>;
+    deleteMessage(messageId: string): Promise<IMessage | null>;
+    getMessageById(messageId: string): Promise<IMessage | null>;
 }
