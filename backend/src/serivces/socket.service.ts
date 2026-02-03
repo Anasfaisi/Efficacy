@@ -150,5 +150,3 @@ export class SocketService implements ISocketService {
 }
 
 
-
-//lastnote : ippo user and mentor video call page ll connect avunund. baaki koode sheri akaan und

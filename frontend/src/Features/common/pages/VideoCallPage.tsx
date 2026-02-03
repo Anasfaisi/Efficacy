@@ -39,6 +39,7 @@ const VideoCallPage: React.FC = () => {
     useEffect(() => {
         // Initialize Socket
         socketRef.current = connectSocket();
+        console.log(socketRef,"socketRef on videocallpage")
 
         // Get Permissions
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -56,22 +57,27 @@ const VideoCallPage: React.FC = () => {
                 }
             })
             .catch((err) => {
-                console.error("Failed to get media:", err);
+                console.log("Failed to get media:", err);
                 setConnectionStatus('Camera/Microphone permission denied.');
             });
 
         // Socket Listeners
         if(isMentor) {
+            
             onUserConnected(({ userId, socketId }) => {
-                console.log("User connected:", userId);
+                console.log("User connected:", userId,currentUser.id,"111111111111111111111111111");
                 setConnectionStatus('Connecting to student...');
                 callUser(socketId);
             });
         }
 
-        onSignal(({ signal, from }) => {
-            answerCall(signal, from);
-        });
+     onSignal(({ signal, from }) => {
+    if (connectionRef.current) {
+        connectionRef.current.signal(signal);
+    } else {
+        answerCall(signal, from);
+    }
+});
 
         return () => {
             offVideoEvents();
