@@ -175,25 +175,15 @@ export const MentorNotificationListener: React.FC = () => {
                 console.error('Failed to fetch mentor notifications', err);
             });
 
-        // console.log('%c🔔 MentorNotificationListener: Initializing socket for mentor:', 'color: #7F00FF; font-weight: bold', currentUserId);
 
         const socket = connectSocket();
 
         if (socket) {
-            console.log(
-                '✅ MentorNotificationListener: Socket instance obtained, joining mentor rooms...'
-            );
+           
             if (currentUserId) joinUserRoom(currentUserId);
 
-            // Catch-all listener for debugging
-            socket.onAny((eventName, ...args) => {
-                console.log(`🔍 Socket event: ${eventName}`, args);
-            });
-
-            // Listen for real-time notifications with memoized handler
             onNewNotification(handleNotification);
 
-            // Log when connected
             socket.on('connect', () => {
                 console.log(
                     '🚀 MentorNotificationListener: Socket connected! Socket ID:',
@@ -209,15 +199,11 @@ export const MentorNotificationListener: React.FC = () => {
         }
 
         return () => {
-            console.log(
-                '🧹 MentorNotificationListener: Cleaning up socket events...'
-            );
+           
             offNotificationEvents();
         };
-        // Only re-run if currentUser ID changes or handler changes
     }, [currentUserId, currentUser?.role, handleNotification]);
 
-    // Expose for browser console debugging
     (window as any).__mentor_listener_active = true;
 
     return (

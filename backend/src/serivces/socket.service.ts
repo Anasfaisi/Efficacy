@@ -64,7 +64,9 @@ export class SocketService implements ISocketService {
 
              socket.on('check-video-status', (roomId: string, callback: (response: { active: boolean }) => void) => {
                 const room = io.sockets.adapter.rooms.get(roomId);
+                console.log(room,"room from the socket.service")
                 const isActive = room ? room.size > 0 : false;
+                console.log(isActive,"is active from the socket.service ===================================")
                 callback({ active: isActive });
             });
             // -------------------------
@@ -100,13 +102,7 @@ export class SocketService implements ISocketService {
                 socket.emit('error', { message: 'Access denied to this room' });
                 return;
             }
-            console.log(
-                'join room=================',
-                roomId,
-                userId,
-                canJoin,
-                'from socket service'
-            );
+           
             socket.join(roomId);
 
             const history = await this._chatService.getRoomMessages(

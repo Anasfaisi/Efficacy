@@ -25,6 +25,7 @@ const VideoCallPage: React.FC = () => {
     const currentUserId = currentUser?.id;
 
     const [stream, setStream] = useState<MediaStream | null>(null);
+    const streamRef = useRef<MediaStream | null>(null); 
     const [callAccepted, setCallAccepted] = useState(false);
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoStopped, setIsVideoStopped] = useState(false);
@@ -36,6 +37,14 @@ const VideoCallPage: React.FC = () => {
     const connectionRef = useRef<Peer.Instance | null>(null);
     const socketRef = useRef<any>(null);
 
+    // Sync remote stream to video element
+    useEffect(() => {
+        if (remoteStream && userVideo.current) {
+            console.log("LOG: [Common] Syncing remoteStream to userVideo element.");
+            userVideo.current.srcObject = remoteStream;
+        }
+    }, [remoteStream, callAccepted]);
+
     useEffect(() => {
         // Initialize Socket
         socketRef.current = connectSocket();
@@ -44,6 +53,7 @@ const VideoCallPage: React.FC = () => {
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then((currentStream) => {
                 setStream(currentStream);
+                streamRef.current = currentStream;
                 if (myVideo.current) {
                     myVideo.current.srcObject = currentStream;
                 }
@@ -62,38 +72,85 @@ const VideoCallPage: React.FC = () => {
         // Socket Listeners
         if(isMentor) {
             onUserConnected(({ userId, socketId }) => {
-                console.log("User connected:", userId);
+                console.log("LOG: [Mentor] 'user-connected' received from:", userId, socketId);
+                
+                // Avoid double-calling the same socket if already connected
+                if (connectionRef.current && !connectionRef.current.destroyed && connectionRef.current.connected) {
+                    console.log("LOG: [Mentor] Already connected to a peer. Skipping redundant call.");
+                    return;
+                }
+
                 setConnectionStatus('Connecting to student...');
                 callUser(socketId);
             });
         }
 
         onSignal(({ signal, from }) => {
-            answerCall(signal, from);
+            console.log("LOG: [Common] 'signal' received. Type:", signal.type || 'candidate/other');
+            
+            // If we receive a new OFFER, it means the Mentor restarted the call.
+            // We MUST destroy the old peer and create a new one to accept the new offer.
+            if (signal.type === 'offer') {
+                 if (connectionRef.current) {
+                    console.log("LOG: [User] Received NEW Offer. Destroying old peer to restart.");
+                    connectionRef.current.destroy();
+                    connectionRef.current = null;
+                 }
+                 answerCall(signal, from);
+                 return;
+            }
+
+            if (connectionRef.current && !connectionRef.current.destroyed) {
+                console.log("LOG: [Common] Already have peer, signaling it.");
+                try {
+                    connectionRef.current.signal(signal);
+                } catch (err) {
+                    console.error("Error signaling peer:", err);
+                }
+            } else if (!isMentor) {
+                 // Users answer calls, Mentors initiate them.
+                 // If a Mentor receives a signal but has no peer, something is wrong, 
+                 // but if a User receives a signal (offer), they should answer.
+                 console.log("LOG: [User] No peer yet, calling answerCall.");
+                 answerCall(signal, from);
+            }
         });
 
         return () => {
             offVideoEvents();
-            if(stream) {
-               stream.getTracks().forEach(track => track.stop());
+            if(streamRef.current) {
+               streamRef.current.getTracks().forEach(track => track.stop());
             }
             if(connectionRef.current) {
                 connectionRef.current.destroy();
+                connectionRef.current = null;
             }
         };
     }, [roomId]);
 
     // Mentor initiates the call
     const callUser = (userSocketId: string) => {
-        if(!stream) return;
+        console.log("LOG: [Mentor] callUser() called. checking streamRef...", streamRef.current);
+        if(!streamRef.current) {
+             console.error("LOG: [Mentor] ABORTING callUser because stream is null!");
+             return;
+        }
+
+        if (connectionRef.current) {
+            console.log("LOG: [Mentor] Found existing peer. Destroying before new call.");
+            connectionRef.current.destroy();
+            connectionRef.current = null;
+        }
         
+        console.log("LOG: [Mentor] Creating new Peer (initiator=true)...");
         const peer = new Peer({
             initiator: true,
             trickle: false,
-            stream: stream,
+            stream: streamRef.current,
         });
 
         peer.on('signal', (data: any) => {
+            console.log("LOG: [Mentor] Peer generated 'signal' (Offer). Sending to User:", userSocketId);
             signalPeer({
                 to: userSocketId,
                 signal: data,
@@ -102,10 +159,8 @@ const VideoCallPage: React.FC = () => {
         });
 
         peer.on('stream', (currentRemoteStream: any) => {
+            console.log("LOG: [Mentor] Received remote stream!");
             setRemoteStream(currentRemoteStream);
-            if (userVideo.current) {
-                userVideo.current.srcObject = currentRemoteStream;
-            }
             setCallAccepted(true);
             setConnectionStatus('Connected');
         });
@@ -115,17 +170,23 @@ const VideoCallPage: React.FC = () => {
             setConnectionStatus('Connection Failed');
         });
 
+        peer.on('close', () => {
+            console.log("Peer connection closed");
+            setCallAccepted(false);
+        });
+
         connectionRef.current = peer;
     };
 
     const answerCall = (signal: any, fromId: string) => {
+        console.log("LOG: [User] answerCall() called. checking streamRef...", streamRef.current);
         setCallAccepted(true);
         setConnectionStatus('Connecting...');
 
         const peer = new Peer({
             initiator: false,
             trickle: false,
-            stream: stream || undefined,
+            stream: streamRef.current || undefined,
         });
 
 
@@ -138,12 +199,9 @@ const VideoCallPage: React.FC = () => {
         });
 
         peer.on('stream', (currentRemoteStream: any) => {
+            console.log("LOG: [User] Received remote stream!");
             setRemoteStream(currentRemoteStream);
-            if (userVideo.current) {
-                userVideo.current.srcObject = currentRemoteStream;
-            }
             setConnectionStatus('Connected');
-            console.log(connectionStatus,"connection status from answer call in videocallpage ")
         });
 
         peer.signal(signal);

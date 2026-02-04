@@ -161,9 +161,18 @@ export const onHostOnline = (callback: () => void) => {
 
 export const checkVideoStatus = (roomId: string): Promise<boolean> => {
     return new Promise((resolve) => {
+        if (!socket || !socket.connected) {
+            console.warn("Socket not connected, returning false for video status");
+            resolve(false);
+            return;
+        }
+        
         socket?.emit('check-video-status', roomId, (response: { active: boolean }) => {
+            console.log("Video status check response:", response);
             resolve(response.active);
         });
+        
+     
     });
 };
 

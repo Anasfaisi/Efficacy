@@ -36,7 +36,7 @@ const MentorshipManagementPage: React.FC = () => {
     const location = useLocation();
     const { currentUser } = useAppSelector((state) => state.auth);
     const isMentor = currentUser?.role === 'mentor'; // OR location.pathname.includes('/mentor/')
-
+ 
     const [mentorship, setMentorship] = useState<Mentorship | null>(null);
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -55,15 +55,9 @@ const MentorshipManagementPage: React.FC = () => {
         if (!id) return;
         try {
             const data = await mentorshipApi.getMentorshipById(id);
-            console.log(data, 'data mentorship magnamentpage');
             setMentorship(data);
-            console.log(
-                mentorship,
-                'mentorship from mentorshipmanagnement apge'
-            );
             const bookings = await bookingApi.getUserBookings();
 
-            // Filter bookings for this mentorship/mentor
             const mentor = data.mentorId as Mentor;
             const relevantBookings = bookings.filter(
                 (b) => b.mentorId === (mentor?._id || mentor?.id)
@@ -83,15 +77,15 @@ const MentorshipManagementPage: React.FC = () => {
 
                     return (
                         sessionDate.getTime() > Date.now() - 24 * 60 * 60 * 1000
-                    ); // rough check
+                    );
                 });
 
-            // if (upcoming) {
-            //     setNextSession(upcoming);
-            //     // Check if session is already active
-            //     const active = await checkVideoStatus(upcoming.id);
-            //     setIsSessionActive(active);
-            // }
+            if (upcoming) {
+                setNextSession(upcoming);
+                const active = await checkVideoStatus(upcoming.id);
+                setIsSessionActive(active);
+                console.log(upcoming,isSessionActive,"upcoming,isSessionActive")
+            }
         } catch (error) {
             console.error('Failed to fetch mentorship:', error);
             toast.error('Failed to load mentorship details');
@@ -102,10 +96,11 @@ const MentorshipManagementPage: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-
         // Listen for User/Host online
         onHostOnline(() => {
+            
             if (!isMentor) {
+                console.log(isMentor,isSessionActive,"isMentor,isSessionActive")
                 setIsSessionActive(true);
                 toast.success(
                     'Mentor has started the session! You can join now.'
@@ -357,9 +352,10 @@ const MentorshipManagementPage: React.FC = () => {
                                             • {nextSession.slot}
                                         </p>
                                     </div>
-
+                                            
                                     <button
                                         onClick={handleJoinSession}
+                                        
                                         disabled={!isMentor && !isSessionActive}
                                         className={`px-8 py-4 rounded-xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-lg
                                             ${
@@ -370,6 +366,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                       : 'bg-white/10 text-white/40 cursor-not-allowed'
                                             }
                                         `}
+
                                     >
                                         <Video size={20} />
                                         {isMentor

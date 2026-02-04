@@ -14,8 +14,6 @@ const MentorLayout: React.FC = () => {
         (state) => state.notification
     );
     const dispatch = useAppDispatch();
-    console.log(notifications, 'checking the notifications on the mentor side');
-    // console.log('MentorLayout: Rendering, currentUser:', currentUser ? { id: currentUser.id, role: currentUser.role } : 'NULL');
 
     const mentor = currentUser as Mentor;
     const navigate = useNavigate();
