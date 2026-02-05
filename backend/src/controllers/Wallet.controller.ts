@@ -72,12 +72,30 @@ export class WalletController {
     async getTransactions(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const role = req.currentUser!.role;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
 
         const wallet =
             role === Role.Mentor
                 ? await this._walletRepository.findByMentorId(userId)
                 : await this._walletRepository.findByUserId(userId);
 
-        res.status(code.OK).json(wallet?.transactions || []);
+        if (!wallet) {
+            res.status(code.OK).json({ transactions: [], total: 0 });
+            return;
+        }
+
+        const result = await this._walletRepository.findPaginatedTransactions(
+            (wallet as any)._id,
+            page,
+            limit
+        );
+
+        res.status(code.OK).json({
+            transactions: result.transactions,
+            totalCount: result.total,
+            totalPages: Math.ceil(result.total / limit),
+            currentPage: page,
+        });
     }
 }

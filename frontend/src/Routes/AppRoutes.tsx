@@ -34,36 +34,116 @@ const ProtectedRoute: React.FC<{
     );
 };
 
+const PublicRoute: React.FC<{
+    children: React.ReactNode;
+}> = ({ children }) => {
+    const { currentUser } = useSelector((state: RootState) => state.auth);
+
+    if (currentUser?.role) {
+        let endPoint = '/home';
+        if (currentUser.role === 'admin') endPoint = '/admin/dashboard';
+        if (currentUser.role === 'mentor') endPoint = '/mentor/dashboard';
+        return <Navigate to={endPoint} replace />;
+    }
+
+    return <>{children}</>;
+};
+
 const AppRoutes: React.FC = () => {
     return (
         <>
             <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/mentor/login" element={<MentorLogin />} />
-                <Route path="/mentor/register" element={<MentorRegister />} />
-                <Route path="/mentor/verify-otp" element={<MentorOtpPage />} />
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <Register />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/admin/login"
+                    element={
+                        <PublicRoute>
+                            <AdminLogin />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/mentor/login"
+                    element={
+                        <PublicRoute>
+                            <MentorLogin />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/mentor/register"
+                    element={
+                        <PublicRoute>
+                            <MentorRegister />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/mentor/verify-otp"
+                    element={
+                        <PublicRoute>
+                            <MentorOtpPage />
+                        </PublicRoute>
+                    }
+                />
                 <Route
                     path="/mentor/forgot-password"
-                    element={<MentorForgotResetPassword />}
+                    element={
+                        <PublicRoute>
+                            <MentorForgotResetPassword />
+                        </PublicRoute>
+                    }
                 />
                 <Route
                     path="/mentor/reset-password"
-                    element={<MentorForgotResetPassword />}
+                    element={
+                        <PublicRoute>
+                            <MentorForgotResetPassword />
+                        </PublicRoute>
+                    }
                 />
 
-                <Route path="/verify-otp" element={<OTPPage />} />
+                <Route
+                    path="/verify-otp"
+                    element={
+                        <PublicRoute>
+                            <OTPPage />
+                        </PublicRoute>
+                    }
+                />
                 <Route
                     path="/forgot-password"
-                    element={<ForgotResetPassword />}
+                    element={
+                        <PublicRoute>
+                            <ForgotResetPassword />
+                        </PublicRoute>
+                    }
                 />
                 <Route
                     path="/reset-password"
-                    element={<ForgotResetPassword />}
+                    element={
+                        <PublicRoute>
+                            <ForgotResetPassword />
+                        </PublicRoute>
+                    }
                 />
-                
+
                 <Route path="/meet/:roomId" element={<VideoCallPage />} />
 
                 <Route

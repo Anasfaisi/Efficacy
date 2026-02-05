@@ -48,7 +48,18 @@ export class AdminController {
     }
 
     async getMentorApplications(req: Request, res: Response): Promise<void> {
-        const applications = await this._adminService.getMentorApplications();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const search = (req.query.search as string) || '';
+        const status = (req.query.status as string) || 'all';
+        const mentorType = (req.query.mentorType as string) || 'all';
+
+        const applications = await this._adminService.getMentorApplications(
+            page,
+            limit,
+            search,
+            { status, mentorType }
+        );
         res.status(code.OK).json(applications);
     }
 
@@ -160,7 +171,18 @@ export class AdminController {
     }
 
     async getAllMentors(req: Request, res: Response): Promise<void> {
-        const mentors = await this._adminService.getAllMentors();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const search = (req.query.search as string) || '';
+        const status = (req.query.status as string) || 'all';
+        const mentorType = (req.query.mentorType as string) || 'all';
+
+        const mentors = await this._adminService.getAllMentors(
+            page,
+            limit,
+            search,
+            { status, mentorType }
+        );
         res.status(code.OK).json(mentors);
     }
 

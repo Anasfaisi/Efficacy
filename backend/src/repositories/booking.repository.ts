@@ -69,4 +69,30 @@ export class BookingRepository implements IBookingRepository {
             status: { $ne: BookingStatus.CANCELLED }
         });
     }
+
+    async findPaginatedByMentor(
+        mentorId: string,
+        page: number,
+        limit: number,
+        status?: string
+    ): Promise<{ bookings: BookingEntity[]; total: number }> {
+        const query: any = { mentorId: new Types.ObjectId(mentorId) };
+        if (status && status !== 'all') {
+            query.status = status;
+        }
+
+        const skip = (page - 1) * limit;
+        const [docs, total] = await Promise.all([
+            Booking.find(query)
+                .sort({ bookingDate: 1 }) // Closest dates first
+                .skip(skip)
+                .limit(limit),
+            Booking.countDocuments(query),
+        ]);
+
+        return {
+            bookings: docs.map(BookingMapper.toEntity),
+            total,
+        };
+    }
 }

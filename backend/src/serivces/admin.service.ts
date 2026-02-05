@@ -1,6 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { IAdminService } from './Interfaces/IAdmin.service';
-import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
+import {
+    MentorApplicationResponseDto,
+    PaginatedMentorApplicationResponseDto,
+    PaginatedMentorResponseDto,
+} from '@/Dto/mentorResponse.dto';
 import { IMentor } from '@/models/Mentor.model';
 import { TYPES } from '@/config/inversify-key.types';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
@@ -87,11 +91,26 @@ export class AdminService implements IAdminService {
         );
     }
 
-    async getMentorApplications(): Promise<MentorApplicationResponseDto[]> {
-        const mentors = await this._mentorRepository.find({
-            status: { $ne: 'incomplete' },
-        });
-        return mentors.map((m) => this.mapToResponseDto(m));
+    async getMentorApplications(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorApplicationResponseDto> {
+        const { mentors, total } =
+            await this._mentorRepository.getMentorApplications(
+                page,
+                limit,
+                search,
+                filters
+            );
+        const mappedApplications = mentors.map((m) => this.mapToResponseDto(m));
+        return new PaginatedMentorApplicationResponseDto(
+            mappedApplications,
+            total,
+            Math.ceil(total / limit),
+            page
+        );
     }
 
     async getMentorApplicationById(
@@ -155,9 +174,27 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async getAllMentors(): Promise<MentorApplicationResponseDto[]> {
-        const mentors = await this._mentorRepository.getAllMentors();
-        return mentors.map((mentor) => this.mapToResponseDto(mentor));
+    async getAllMentors(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorResponseDto> {
+        const { mentors, total } = await this._mentorRepository.getAllMentors(
+            page,
+            limit,
+            search,
+            filters
+        );
+        const mappedMentors = mentors.map((mentor) =>
+            this.mapToResponseDto(mentor)
+        );
+        return new PaginatedMentorResponseDto(
+            mappedMentors,
+            total,
+            Math.ceil(total / limit),
+            page
+        );
     }
 
     async getMentorById(

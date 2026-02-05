@@ -19,6 +19,8 @@ import MyMentorshipsPage from '@/Features/users/mentors/pages/MyMentorshipsPage'
 import NotFound from '@/Features/common/pages/NotFound';
 import PomodoroPage from '@/Features/users/pomodoro/pages/PomodoroPage';
 import NotesPage from '@/Features/users/notes/pages/NotesPage';
+import UserWalletPage from '@/Features/users/profile/pages/UserWalletPage';
+
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -50,6 +52,8 @@ const UserRoutes: React.FC = () => {
 
             <Route path="chat" element={<ChatPage />} />
             <Route path="profile" element={<UserProfilePage />} />
+            <Route path="profile/wallet" element={<UserWalletPage />} />
+
 
             <Route path="tasks" element={<TasksPage />} />
             <Route path="mentors" element={<MentorListingPage />} />

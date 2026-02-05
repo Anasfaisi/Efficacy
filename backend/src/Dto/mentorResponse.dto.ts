@@ -95,3 +95,21 @@ export interface MentorApplicationResponseDto {
     reviewCount?: number;
     sessionsCompleted?: number;
 }
+
+export class PaginatedMentorResponseDto {
+    constructor(
+        public mentors: MentorApplicationResponseDto[],
+        public totalCount: number,
+        public totalPages: number,
+        public currentPage: number
+    ) {}
+}
+
+export class PaginatedMentorApplicationResponseDto {
+    constructor(
+        public applications: MentorApplicationResponseDto[],
+        public totalCount: number,
+        public totalPages: number,
+        public currentPage: number
+    ) {}
+}

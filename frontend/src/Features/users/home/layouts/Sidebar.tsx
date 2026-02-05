@@ -4,13 +4,13 @@ import {
     StickyNote,
     Calendar,
     Timer,
-    MessageSquare,
     Users,
     Music,
     User,
     Trophy,
     Layout,
     ChevronRight,
+    Wallet,
 } from 'lucide-react';
 import SidebarButton from '../components/SidebarButton';
 import { useLocation, Link } from 'react-router-dom';
@@ -77,6 +77,12 @@ const Sidebar = () => {
             icon: <User size={20} />,
             label: 'Profile',
             to: '/profile',
+            color: '#7F00FF',
+        },
+        {
+            icon: <Wallet size={20} />,
+            label: 'Wallet',
+            to: '/profile/wallet',
             color: '#7F00FF',
         },
         {

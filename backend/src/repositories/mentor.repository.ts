@@ -25,12 +25,74 @@ export class MentorRepository
         return this.create(data);
     }
 
-    async getAllMentors(): Promise<IMentor[]> {
-        return this.model
-            .find({
-                status: { $in: ['active', 'inactive'] },
-            })
+    async getAllMentors(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<{ mentors: IMentor[]; total: number }> {
+        const query: any = { status: { $in: ['active', 'inactive'] } };
+
+        if (filters?.status && filters.status !== 'all') {
+            query.status = filters.status;
+        }
+
+        if (filters?.mentorType && filters.mentorType !== 'all') {
+            query.mentorType = filters.mentorType;
+        }
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        const skip = (page - 1) * limit;
+        const total = await this.model.countDocuments(query);
+        const mentors = await this.model
+            .find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .exec();
+
+        return { mentors, total };
+    }
+
+    async getMentorApplications(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<{ mentors: IMentor[]; total: number }> {
+        const query: any = { status: { $ne: 'incomplete' } };
+
+        if (filters?.status && filters.status !== 'all') {
+            query.status = filters.status;
+        }
+
+        if (filters?.mentorType && filters.mentorType !== 'all') {
+            query.mentorType = filters.mentorType;
+        }
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        const skip = (page - 1) * limit;
+        const total = await this.model.countDocuments(query);
+        const mentors = await this.model
+            .find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        return { mentors, total };
     }
     async findAllApprovedMentors(
         page: number,

@@ -19,6 +19,10 @@ const MentorMangement = () => {
     const [mentors, setMentors] = useState<Mentor[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit] = useState(6); // Show 6 per page for the grid layout
     const [filterStatus, setFilterStatus] = useState<
         'all' | 'active' | 'inactive'
     >('all');
@@ -27,14 +31,28 @@ const MentorMangement = () => {
     >('all');
 
     useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+            setPage(1); // Reset to first page on search
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
         fetchMentors();
-    }, []);
+    }, [page, debouncedSearch, filterStatus, filterType]);
 
     const fetchMentors = async () => {
         try {
             setLoading(true);
-            const data = await adminService.getAllMentors();
-            setMentors(data);
+            const data = await adminService.getAllMentors(
+                page,
+                limit,
+                debouncedSearch,
+                { status: filterStatus, mentorType: filterType }
+            );
+            setMentors(data.mentors);
+            setTotalPages(data.totalPages);
         } catch (error) {
             console.error('Failed to fetch mentors:', error);
         } finally {
@@ -52,15 +70,7 @@ const MentorMangement = () => {
         }
     };
 
-    const filteredMentors = mentors.filter((m) => {
-        const matchesSearch =
-            m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            m.email.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus =
-            filterStatus === 'all' || m.status === filterStatus;
-        const matchesType = filterType === 'all' || m.mentorType === filterType;
-        return matchesSearch && matchesStatus && matchesType;
-    });
+    const filteredMentors = mentors; // Fully handled by backend now
 
     return (
         <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -94,11 +104,12 @@ const MentorMangement = () => {
                     <select
                         className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterStatus}
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setFilterStatus(
                                 e.target.value as 'all' | 'active' | 'inactive'
-                            )
-                        }
+                            );
+                            setPage(1);
+                        }}
                     >
                         <option value="all">All Status</option>
                         <option value="active">Active Only</option>
@@ -107,14 +118,15 @@ const MentorMangement = () => {
                     <select
                         className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterType}
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setFilterType(
                                 e.target.value as
                                     | 'all'
                                     | 'Academic'
                                     | 'Industry'
-                            )
-                        }
+                            );
+                            setPage(1);
+                        }}
                     >
                         <option value="all">All Types</option>
                         <option value="Academic">Academic</option>
@@ -273,6 +285,43 @@ const MentorMangement = () => {
                     <p className="text-gray-500 mt-1">
                         Try adjusting your filters or search terms
                     </p>
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8 pb-4">
+                    <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Previous
+                    </button>
+                    <div className="flex items-center gap-1">
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setPage(i + 1)}
+                                className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
+                                    page === i + 1
+                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                                        : 'hover:bg-gray-50 text-gray-600 border border-gray-200'
+                                }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() =>
+                            setPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={page === totalPages}
+                        className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Next
+                    </button>
                 </div>
             )}
 

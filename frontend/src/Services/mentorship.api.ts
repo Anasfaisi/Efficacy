@@ -10,8 +10,15 @@ export const mentorshipApi = {
         return response.data;
     },
 
-    getMentorRequests: async () => {
-        const response = await api.get('/mentorship/requests/mentor');
+    getMentorRequests: async (
+        page: number = 1,
+        limit: number = 6,
+        status?: string,
+        search?: string
+    ) => {
+        const response = await api.get(
+            `/mentorship/requests/mentor?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${search ? `&search=${search}` : ''}`
+        );
         return response.data;
     },
 

@@ -29,4 +29,9 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
         limit: number,
         filter: 'all' | 'mentor' | 'user'
     ): Promise<{ transactions: ITransaction[]; total: number }>;
+    findPaginatedTransactions(
+        walletId: string | ObjectId,
+        page: number,
+        limit: number
+    ): Promise<{ transactions: ITransaction[]; total: number }>;
 }

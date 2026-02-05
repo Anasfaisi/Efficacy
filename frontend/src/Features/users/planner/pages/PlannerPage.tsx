@@ -7,7 +7,7 @@ import { getPlannerTasks } from '@/Services/planner.api';
 import TaskModal from '@/Features/users/planner/components/TaskModal';
 import DailySummaryModal from '../components/DailySummaryModal';
 import { Plus } from 'lucide-react';
-import { isSameDay } from 'date-fns';
+import { format, addDays, startOfDay } from 'date-fns';
 
 const PlannerPage: React.FC = () => {
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
@@ -62,7 +62,7 @@ const PlannerPage: React.FC = () => {
     const handleSlotClick = (date: Date, hour: number) => {
         setSelectedTask(undefined);
         setInitialData({
-            date: date.toISOString().split('T')[0],
+            date: format(date, 'yyyy-MM-dd'),
             startTime: `${hour.toString().padStart(2, '0')}:00`,
         });
         setIsModalOpen(true);
@@ -125,7 +125,13 @@ const PlannerPage: React.FC = () => {
             {summaryModalOpen && selectedDateForSummary && (
                 <DailySummaryModal
                     date={selectedDateForSummary}
-                    tasks={tasks.filter(t => isSameDay(new Date(t.startDate), selectedDateForSummary))}
+                    tasks={tasks.filter(task => {
+                        const taskStart = new Date(task.startDate);
+                        const taskEnd = new Date(task.endDate);
+                        const dayStart = startOfDay(selectedDateForSummary);
+                        const dayEnd = addDays(dayStart, 1);
+                        return taskStart < dayEnd && taskEnd > dayStart;
+                    })}
                     isOpen={summaryModalOpen}
                     onClose={() => setSummaryModalOpen(false)}
                     position={contextMenuPos}

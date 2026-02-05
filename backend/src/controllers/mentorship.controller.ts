@@ -25,8 +25,18 @@ export class MentorshipController {
 
     async getMentorRequests(req: Request, res: Response): Promise<void> {
         const mentorId = req.currentUser!.id;
-        const requests =
-            await this._mentorshipService.getMentorRequests(mentorId);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const status = req.query.status as string;
+        const search = req.query.search as string;
+
+        const requests = await this._mentorshipService.getMentorRequests(
+            mentorId,
+            page,
+            limit,
+            status,
+            search
+        );
         res.status(code.OK).json(requests);
     }
 

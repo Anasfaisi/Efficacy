@@ -8,7 +8,6 @@ import {
     Clock, 
     CheckCircle2, 
     XCircle, 
-    AlertCircle, 
     ChevronLeft,
     ChevronRight,
     Home
@@ -16,22 +15,26 @@ import {
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 3;
 
 const BookingRequestsPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
 
     const fetchBookings = async () => {
         setLoading(true);
         try {
-            const allBookings = await bookingApi.getMentorBookings();
-            // Filter only pending bookings
-            const pending = allBookings.filter(b => b.status === BookingStatus.PENDING);
-            // Sort by date (newest first or closest date first?) - Closest date likely more urgent
-            pending.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
-            setBookings(pending);
+            const data = await bookingApi.getMentorBookings(
+                currentPage,
+                ITEMS_PER_PAGE,
+                BookingStatus.PENDING
+            );
+            setBookings(data.bookings);
+            setTotalPages(data.totalPages);
+            setTotalCount(data.totalCount);
         } catch (error) {
             console.error('Failed to fetch bookings:', error);
             toast.error('Failed to load booking requests');
@@ -42,25 +45,25 @@ const BookingRequestsPage: React.FC = () => {
 
     useEffect(() => {
         fetchBookings();
-    }, []);
+    }, [currentPage]);
 
-    const handleUpdateStatus = async (bookingId: string, status: BookingStatus) => {
+    const handleUpdateStatus = async (
+        bookingId: string,
+        status: BookingStatus
+    ) => {
         try {
             await bookingApi.updateStatus({ bookingId, status });
-            toast.success(`Booking ${status === BookingStatus.CONFIRMED ? 'accepted' : 'rejected'} successfully`);
+            toast.success(
+                `Booking ${status === BookingStatus.CONFIRMED ? 'accepted' : 'rejected'} successfully`
+            );
             fetchBookings(); // Refresh list
         } catch (error) {
-            const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status';
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to update status';
             toast.error(errorMessage);
         }
     };
-
-    // Pagination Logic
-    const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
-    const paginatedBookings = bookings.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
 
     const goToPage = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -93,7 +96,7 @@ const BookingRequestsPage: React.FC = () => {
                 <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
                     Booking Requests
                     <span className="bg-indigo-100 text-indigo-600 text-sm font-bold px-3 py-1 rounded-full">
-                        {bookings.length} Pending
+                        {totalCount} Pending
                     </span>
                 </h1>
                 <p className="text-gray-500 mt-2">Manage session requests from your mentees.</p>
@@ -110,7 +113,7 @@ const BookingRequestsPage: React.FC = () => {
             ) : (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {paginatedBookings.map((booking) => (
+                        {bookings.map((booking) => (
                             <div 
                                 key={booking.id} 
                                 className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-xl shadow-indigo-100/20 hover:shadow-indigo-100/50 transition-all group hover:-translate-y-1"

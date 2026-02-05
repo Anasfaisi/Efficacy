@@ -40,3 +40,10 @@ export interface BookingResponseDto {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface PaginatedBookingResponseDto {
+    bookings: BookingResponseDto[];
+    totalCount: number;
+    totalPages: number;
+    currentPage: number;
+}

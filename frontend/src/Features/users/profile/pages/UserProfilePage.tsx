@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { updateCurrentUser } from '@/redux/slices/authSlice';
 import type { User } from '@/types/auth';
@@ -18,13 +19,10 @@ import {
     Wallet,
     ChevronRight,
     Home,
-    CreditCard,
-    X,
 } from 'lucide-react';
-import { walletApi } from '@/Services/wallet.api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { bankDetailsSchema, userProfileUpdateSchema } from '@/types/zodSchemas';
+import { userProfileUpdateSchema } from '@/types/zodSchemas';
 import { ZodError } from 'zod';
 import { updateProfile, updateProfilePicture } from '@/Services/user.api';
 import Sidebar from '../../home/layouts/Sidebar';
@@ -93,59 +91,7 @@ const UserProfilePage = () => {
         'general' | 'billing' | 'security'
     >('general');
 
-    const [showWalletModal, setShowWalletModal] = useState(false);
-    const [walletData, setWalletData] = useState<any>(null);
-    const [walletLoading, setWalletLoading] = useState(false);
-    const [bankDetails, setBankDetails] = useState({
-        accountNumber: '',
-        bankName: '',
-        ifscCode: '',
-        accountHolderName: '',
-    });
-    const [isUpdatingBank, setIsUpdatingBank] = useState(false);
-
-    const fetchWallet = async () => {
-        setWalletLoading(true);
-        try {
-            const data = await walletApi.getWallet();
-            setWalletData(data);
-            if (data?.bankAccountDetails) {
-                setBankDetails({
-                    accountNumber: data.bankAccountDetails.accountNumber || '',
-                    bankName: data.bankAccountDetails.bankName || '',
-                    ifscCode: data.bankAccountDetails.ifscCode || '',
-                    accountHolderName:
-                        data.bankAccountDetails.accountHolderName || '',
-                });
-            }
-        } catch (error) {
-            console.error('Failed to fetch wallet');
-        } finally {
-            setWalletLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showWalletModal) fetchWallet();
-    }, [showWalletModal]);
-
-    const handleUpdateBankDetails = async () => {
-        setIsUpdatingBank(true);
-        try {
-            bankDetailsSchema.parse(bankDetails);
-            await walletApi.updateBankDetails(bankDetails);
-            toast.success('Bank details updated');
-            fetchWallet();
-        } catch (error) {
-            if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
-            } else {
-                toast.error('Failed to update bank details');
-            }
-        } finally {
-            setIsUpdatingBank(false);
-        }
-    };
+    const navigate = useNavigate();
 
     const profilePicRef = useRef<HTMLInputElement>(null);
 
@@ -162,13 +108,13 @@ const UserProfilePage = () => {
         }
     }, [currentUser]);
 
-    const handleSavePartial = async (fields: any, sectionId: string) => {
+    const handleSavePartial = async (fields: Record<string, unknown>, sectionId: string) => {
         try {
             // Validate with Zod
             userProfileUpdateSchema.parse(fields);
 
             setIsLoading(sectionId);
-            await updateProfile(fields, currentUser?.id);
+            await updateProfile(fields as any, currentUser?.id);
 
             toast.success('Profile updated successfully');
 
@@ -589,9 +535,7 @@ const UserProfilePage = () => {
                                                         </span>
                                                         <button
                                                             onClick={() =>
-                                                                setShowWalletModal(
-                                                                    true
-                                                                )
+                                                                navigate('/profile/wallet')
                                                             }
                                                             className="text-purple-600 text-xs hover:underline flex items-center gap-1 font-bold uppercase"
                                                         >
@@ -669,208 +613,6 @@ const UserProfilePage = () => {
                 </div>
             </div>
 
-            {/* Wallet Modal */}
-            {showWalletModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-3xl w-full max-w-4xl p-8 shadow-2xl animate-in fade-in zoom-in duration-200 h-[80vh] overflow-y-auto">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold text-gray-900">
-                                Wallet
-                            </h3>
-                            <button
-                                onClick={() => setShowWalletModal(false)}
-                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                            >
-                                <X size={24} />
-                            </button>
-                        </div>
-
-                        {walletLoading ? (
-                            <div className="flex justify-center py-12">
-                                <Loader2
-                                    className="animate-spin text-purple-600"
-                                    size={32}
-                                />
-                            </div>
-                        ) : (
-                            <div className="space-y-8">
-                                {/* Balance Section */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-8 text-white flex flex-col justify-center shadow-lg shadow-purple-200">
-                                        <p className="text-purple-200 text-xs font-black uppercase tracking-widest mb-2 opacity-80">
-                                            Available Balance
-                                        </p>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-5xl font-black">
-                                                ₹{walletData?.balance || 0}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-purple-200/80 font-medium">
-                                            <span>Pending Clearance:</span>
-                                            <span>
-                                                ₹
-                                                {walletData?.pendingBalance ||
-                                                    0}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                                        <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                            <CreditCard
-                                                size={18}
-                                                className="text-purple-600"
-                                            />
-                                            Bank Details
-                                        </h4>
-                                        <div className="space-y-3">
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <input
-                                                    placeholder="Account Holder Name"
-                                                    className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-purple-200 outline-none text-sm font-medium transition-all"
-                                                    value={
-                                                        bankDetails.accountHolderName
-                                                    }
-                                                    onChange={(e) =>
-                                                        setBankDetails({
-                                                            ...bankDetails,
-                                                            accountHolderName:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                                <input
-                                                    placeholder="Account Number"
-                                                    className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-purple-200 outline-none text-sm font-medium transition-all"
-                                                    value={
-                                                        bankDetails.accountNumber
-                                                    }
-                                                    onChange={(e) =>
-                                                        setBankDetails({
-                                                            ...bankDetails,
-                                                            accountNumber:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <input
-                                                    placeholder="Bank Name"
-                                                    className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-purple-200 outline-none text-sm font-medium transition-all"
-                                                    value={bankDetails.bankName}
-                                                    onChange={(e) =>
-                                                        setBankDetails({
-                                                            ...bankDetails,
-                                                            bankName:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                                <input
-                                                    placeholder="IFSC Code"
-                                                    className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-purple-200 outline-none text-sm font-medium uppercase transition-all"
-                                                    value={bankDetails.ifscCode}
-                                                    onChange={(e) =>
-                                                        setBankDetails({
-                                                            ...bankDetails,
-                                                            ifscCode:
-                                                                e.target.value,
-                                                        })
-                                                    }
-                                                />
-                                            </div>
-                                            <button
-                                                onClick={
-                                                    handleUpdateBankDetails
-                                                }
-                                                disabled={isUpdatingBank}
-                                                className="w-full mt-2 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-purple-100"
-                                            >
-                                                {isUpdatingBank ? (
-                                                    <Loader2 className="animate-spin w-4 h-4 mx-auto" />
-                                                ) : (
-                                                    'Save Bank Details'
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Transactions */}
-                                <div>
-                                    <h4 className="font-bold text-gray-900 mb-4 text-lg">
-                                        Recent Transactions
-                                    </h4>
-                                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                                        {walletData?.transactions?.length >
-                                        0 ? (
-                                            walletData.transactions.map(
-                                                (tx: any) => (
-                                                    <div
-                                                        key={tx._id}
-                                                        className="flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100/80 rounded-2xl border border-gray-100 transition-colors"
-                                                    >
-                                                        <div className="flex items-center gap-4">
-                                                            <div
-                                                                className={`p-3 rounded-xl ${tx.type === 'earning' || tx.type === 'refund' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}
-                                                            >
-                                                                <Wallet
-                                                                    size={18}
-                                                                />
-                                                            </div>
-                                                            <div>
-                                                                <p className="font-bold text-sm text-gray-900 line-clamp-1">
-                                                                    {
-                                                                        tx.description
-                                                                    }
-                                                                </p>
-                                                                <p className="text-xs text-slate-400 font-medium">
-                                                                    {new Date(
-                                                                        tx.date
-                                                                    ).toLocaleDateString()}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <p
-                                                                className={`font-black text-sm ${tx.type === 'earning' || tx.type === 'refund' ? 'text-green-600' : 'text-orange-600'}`}
-                                                            >
-                                                                {tx.type ===
-                                                                    'earning' ||
-                                                                tx.type ===
-                                                                    'refund'
-                                                                    ? '+'
-                                                                    : '-'}{' '}
-                                                                ₹{tx.amount}
-                                                            </p>
-                                                            <span
-                                                                className={`inline-block mt-1 text-[10px] uppercase px-2 py-0.5 rounded-md font-bold ${tx.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}
-                                                            >
-                                                                {tx.status}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            )
-                                        ) : (
-                                            <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                                                <Wallet
-                                                    className="mx-auto text-gray-300 mb-2"
-                                                    size={32}
-                                                />
-                                                <p className="text-gray-400 font-medium text-sm">
-                                                    No transactions yet
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

@@ -16,7 +16,11 @@ export const useNotes = () => {
         setIsLoading(true);
         try {
             const data = await getNotesApi();
-            setNotes(data);
+            // Sort by updatedAt descending
+            const sortedData = [...data].sort((a, b) => 
+                new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            );
+            setNotes(sortedData);
         } catch (error) {
             console.error('Failed to load notes:', error);
             // toast.error('Failed to load notes');
@@ -32,6 +36,7 @@ export const useNotes = () => {
                 content: '',
                 isSticky: false,
             });
+            // New notes already have updatedAt, but just to be safe
             setNotes((prev) => [newNote, ...prev]);
             setActiveNoteId(newNote._id);
             return newNote;
@@ -42,12 +47,19 @@ export const useNotes = () => {
     };
 
     const updateNote = async (id: string, updates: Partial<INote>) => {
-        // Optimistic update
-        setNotes((prev) =>
-            prev.map((note) =>
-                (note._id === id || note.id === id) ? { ...note, ...updates, updatedAt: new Date().toISOString() } : note
-            )
-        );
+        // Optimistic update with sorting
+        setNotes((prev) => {
+            const updated = prev.map((note) =>
+                (note._id === id || note.id === id) 
+                    ? { ...note, ...updates, updatedAt: new Date().toISOString() } 
+                    : note
+            );
+            
+            // Re-sort to bring the latest edited note to the top
+            return [...updated].sort((a, b) => 
+                new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            );
+        });
 
         try {
             await updateNoteApi(id, updates);

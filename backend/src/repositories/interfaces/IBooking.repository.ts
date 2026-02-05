@@ -9,4 +9,10 @@ export interface IBookingRepository {
     hasExistingBooking(userId: string, date: Date): Promise<boolean>;
     isSlotAvailable(mentorId: string, date: Date, slot: string): Promise<boolean>;
     countBookingsInDateRange(userId: string, startDate: Date, endDate: Date): Promise<number>;
+    findPaginatedByMentor(
+        mentorId: string,
+        page: number,
+        limit: number,
+        status?: string
+    ): Promise<{ bookings: BookingEntity[]; total: number }>;
 }

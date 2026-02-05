@@ -12,7 +12,7 @@ import type { IPlannerTask } from '@/Features/users/planner/types';
 import { Priority } from '@/Features/users/planner/types';
 import TaskItem from '../components/TaskItem';
 import TaskModal from '@/Features/users/planner/components/TaskModal';
-import { ListTodo, Plus, Check, X } from 'lucide-react';
+import { ListTodo, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isToday, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
 
@@ -29,6 +29,8 @@ const TasksPage: React.FC = () => {
     const [selectedTask, setSelectedTask] = useState<IPlannerTask | undefined>(
         undefined
     );
+    const [currentPage, setCurrentPage] = useState(1);
+    const TASKS_PER_PAGE = 6;
 
     useEffect(() => {
         if (currentUser) {
@@ -65,6 +67,16 @@ const TasksPage: React.FC = () => {
                 return tasks;
         }
     }, [tasks, activeTab]);
+
+    const totalPages = Math.ceil(filteredTasks.length / TASKS_PER_PAGE);
+    const paginatedTasks = useMemo(() => {
+        const startIndex = (currentPage - 1) * TASKS_PER_PAGE;
+        return filteredTasks.slice(startIndex, startIndex + TASKS_PER_PAGE);
+    }, [filteredTasks, currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab]);
 
     const completedCount = tasks.filter((t) => t.completed).length;
     const totalCount = tasks.length;
@@ -142,6 +154,11 @@ const TasksPage: React.FC = () => {
         setTitleError('');
     };
 
+    const handleOpenAddModal = () => {
+        setSelectedTask(undefined);
+        setIsModalOpen(true);
+    };
+
     const handleEdit = (task: IPlannerTask) => {
         setSelectedTask(task);
         setIsModalOpen(true);
@@ -199,7 +216,7 @@ const TasksPage: React.FC = () => {
                                         ))}
                                     </div>
                                     <button
-                                        onClick={() => setIsAdding(true)}
+                                        onClick={handleOpenAddModal}
                                         className="bg-primary text-white p-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                                     >
                                         <Plus size={18} strokeWidth={3} />
@@ -278,8 +295,8 @@ const TasksPage: React.FC = () => {
                                 </div>
                             )}
 
-                            {filteredTasks.length > 0 ? (
-                                filteredTasks.map((task) => (
+                            {paginatedTasks.length > 0 ? (
+                                paginatedTasks.map((task) => (
                                     <TaskItem
                                         key={task._id}
                                         task={task}
@@ -306,6 +323,44 @@ const TasksPage: React.FC = () => {
                                         className="mt-6 text-primary font-black text-sm hover:underline"
                                     >
                                         Create your first task
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="flex items-center justify-center gap-2 mt-8">
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm text-gray-400 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    >
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    
+                                    <div className="flex items-center gap-1">
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                            <button
+                                                key={page}
+                                                onClick={() => setCurrentPage(page)}
+                                                className={cn(
+                                                    "w-10 h-10 rounded-xl text-xs font-black transition-all",
+                                                    currentPage === page
+                                                        ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                                        : "bg-white text-gray-400 border border-gray-100 hover:border-primary/20 hover:text-primary"
+                                                )}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm text-gray-400 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    >
+                                        <ChevronRight size={20} />
                                     </button>
                                 </div>
                             )}
@@ -341,7 +396,7 @@ const TasksPage: React.FC = () => {
                                     View History
                                 </button>
                                 <button
-                                    onClick={handleAddTask}
+                                    onClick={handleOpenAddModal}
                                     className="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black shadow-2xl shadow-orange-500/40 hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-3 group"
                                 >
                                     <Plus

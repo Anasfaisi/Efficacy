@@ -4,8 +4,8 @@ import { format } from 'date-fns';
 import type { IPlannerTask } from '../../planner/types';
 import type { IPomodoroStats } from '@/Services/pomodoro.api';
 import { getDailyPomodoroStats } from '@/Services/pomodoro.api';
-import { CheckCircle2, Clock, Target, Flame } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Target, Flame } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface DailySummaryModalProps {
     date: Date;
@@ -28,7 +28,7 @@ const DailySummaryModal: React.FC<DailySummaryModalProps> = ({ date, tasks, isOp
     const fetchStats = async () => {
         setLoading(true);
         try {
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = format(date, 'yyyy-MM-dd');
             const data = await getDailyPomodoroStats(dateStr);
             setStats(data);
         } catch (error) {
