@@ -3,6 +3,7 @@ import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTask } from '@/models/PlannerTask.model';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { IPlannerTaskService } from './Interfaces/IPlannerTask.service';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PlannerTaskService implements IPlannerTaskService {
@@ -34,7 +35,7 @@ export class PlannerTaskService implements IPlannerTaskService {
     async deleteTask(taskId: string, userId: string): Promise<void> {
         const task = await this._plannerTaskRepository.findById(taskId);
         if (!task || task.userId.toString() !== userId) {
-            throw new Error('Task not found or unauthorized');
+            throw new Error(ErrorMessages.TaskNotFoundOrUnauthorized);
         }
         await this._plannerTaskRepository.deleteOne(taskId);
     }

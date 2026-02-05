@@ -52,10 +52,10 @@ export class KanbanService implements IKanbanService {
             dto.id
         );
         const column = board.columns.find((c) => c.columnId === dto.columnId);
-        if (!column) throw new Error('Invalid column');
+        if (!column) throw new Error(ErrorMessages.InvalidColumn);
 
         const task = column.tasks.find((t) => t.taskId === dto.taskId);
-        if (!task) throw new Error('Task not found');
+        if (!task) throw new Error(ErrorMessages.TaskNotFound);
 
         Object.assign(task, dto.data);
         const saved = await this._kanbanRepository.saveKanbanBoard(board);
@@ -71,12 +71,12 @@ export class KanbanService implements IKanbanService {
         if (!board) throw new Error(ErrorMessages.NoBoard);
 
         const column = board.columns.find((c) => c.columnId === dto.columnId);
-        if (!column) throw new Error('Invalid column');
+        if (!column) throw new Error(ErrorMessages.InvalidColumn);
 
         const taskIndex = column.tasks.findIndex(
             (t) => t.taskId === dto.taskId
         );
-        if (taskIndex === -1) throw new Error('Task not found');
+        if (taskIndex === -1) throw new Error(ErrorMessages.TaskNotFound);
 
         column.tasks.splice(taskIndex, 1);
 
@@ -98,7 +98,7 @@ export class KanbanService implements IKanbanService {
             (c) => c.columnId === dto.destColumnId
         );
 
-        if (!sourceCol || !destCol) throw new Error('Invalid column');
+        if (!sourceCol || !destCol) throw new Error(ErrorMessages.InvalidColumn);
 
         const [task] = sourceCol.tasks.splice(dto.sourceTaskIndex, 1);
         destCol.tasks.splice(dto.destTaskIndex, 0, task);

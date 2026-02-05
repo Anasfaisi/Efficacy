@@ -2,6 +2,11 @@ import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTaskService } from '@/serivces/Interfaces/IPlannerTask.service';
+import code from '@/types/http-status.enum';
+import {
+    ErrorMessages,
+    CommonMessages,
+} from '@/types/response-messages.types';
 
 @injectable()
 export class PlannerTaskController {
@@ -13,31 +18,31 @@ export class PlannerTaskController {
     async createTask(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
         const taskData = { ...req.body, userId };
         const task = await this._plannerTaskService.createTask(taskData);
-        res.status(201).json(task);
+        res.status(code.CREATED).json(task);
     }
 
     async getTasks(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
         const tasks = await this._plannerTaskService.getTasksByUserId(userId);
-        res.status(200).json(tasks);
+        res.status(code.OK).json(tasks);
     }
 
     async updateTask(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         const { taskId } = req.params;
         if (!userId) {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
@@ -47,10 +52,10 @@ export class PlannerTaskController {
             req.body
         );
         if (!task) {
-            res.status(404).json({ message: 'Task not found' });
+            res.status(code.NOT_FOUND).json({ message: ErrorMessages.TaskNotFound });
             return;
         }
-        res.status(200).json(task);
+        res.status(code.OK).json(task);
     }
 
     async deleteTask(req: Request, res: Response): Promise<void> {
@@ -62,6 +67,6 @@ export class PlannerTaskController {
         }
 
         await this._plannerTaskService.deleteTask(taskId, userId.toString());
-        res.status(204).send();
+        res.status(code.NO_CONTENT).send();
     }
 }

@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { IChatService } from './Interfaces/IChat.service';
 import { ISocketService } from './Interfaces/ISocket.service';
 import { IMessage } from '@/models/Message.model';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 interface JoinRoomPayload {
     roomId: string;
@@ -99,7 +100,7 @@ export class SocketService implements ISocketService {
                 userId
             );
             if (!canJoin) {
-                socket.emit('error', { message: 'Access denied to this room' });
+                socket.emit('error', { message: ErrorMessages.AccessDenied });
                 return;
             }
            
@@ -113,7 +114,7 @@ export class SocketService implements ISocketService {
             socket.emit('chatHistory', history);
         } catch (error) {
             console.error('Error joining room:', error);
-            socket.emit('error', { message: 'Failed to join chat room' });
+            socket.emit('error', { message: ErrorMessages.JoinChatRoomFailed });
         }
     }
 
@@ -139,7 +140,7 @@ export class SocketService implements ISocketService {
                 message:
                     error instanceof Error
                         ? error.message
-                        : 'Failed to send message',
+                        : ErrorMessages.SendMessageFailed,
             });
         }
     }

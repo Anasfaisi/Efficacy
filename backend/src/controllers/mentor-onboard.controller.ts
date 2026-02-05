@@ -4,6 +4,10 @@ import { TYPES } from '@/config/inversify-key.types';
 import { IMentorOnboardService } from '@/serivces/Interfaces/IMentor-onboard.service';
 import { MentorApplicationRequestDto } from '@/Dto/mentorRequest.dto';
 import code from '@/types/http-status.enum';
+import {
+    ErrorMessages,
+    SuccessMessages,
+} from '@/types/response-messages.types';
 
 export class MentorOnboardController {
     constructor(
@@ -25,7 +29,7 @@ export class MentorOnboardController {
         });
 
         res.status(code.OK).json({
-            message: 'Application submitted successfully',
+            message: SuccessMessages.ApplicationSubmitted,
             result,
         });
     }
@@ -35,7 +39,7 @@ export class MentorOnboardController {
         const mentorId = req.currentUser?.id;
 
         if (!mentorId) {
-            throw new Error('Mentor ID not found in session');
+            throw new Error(ErrorMessages.MentorIdNotFound);
         }
 
         const result = await this._mentorOnboardService.activateMentor(
@@ -44,7 +48,7 @@ export class MentorOnboardController {
         );
 
         res.status(code.OK).json({
-            message: 'Mentor activated successfully',
+            message: SuccessMessages.MentorActivated,
             user: result,
         });
     }

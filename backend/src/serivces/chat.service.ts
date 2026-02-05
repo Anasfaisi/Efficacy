@@ -6,6 +6,7 @@ import { TYPES } from '@/config/inversify-key.types';
 import { IConversation } from '@/models/Conversation.model';
 import { IMessage } from '@/models/Message.model';
 import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class ChatService implements IChatService {
@@ -27,13 +28,13 @@ export class ChatService implements IChatService {
             );
         if (!activeMentorship) {
             throw new Error(
-                'You must have an active mentorship to chat with this mentor.'
+                ErrorMessages.ActiveMentorshipRequired
             );
         }
 
         const allowedStatuses = ['active', 'completed'];
         if (!allowedStatuses.includes(activeMentorship.status)) {
-            throw new Error('Mentorship is not active or completed.');
+            throw new Error(ErrorMessages.MentorshipNotActiveOrCompleted);
         }
     }
 
@@ -69,12 +70,12 @@ export class ChatService implements IChatService {
     ): Promise<IMessage[]> {
         const conversation =
             await this._chatRepository.getConversationById(roomId);
-        if (!conversation) throw new Error('Chat room not found');
+        if (!conversation) throw new Error(ErrorMessages.ChatRoomNotFound);
 
         const isParticipant = conversation.participants.some(
             (p) => p._id.toString() === userId || p.toString() === userId
         );
-        if (!isParticipant) throw new Error('Access denied to this chat room');
+        if (!isParticipant) throw new Error(ErrorMessages.AccessDenied);
 
         return this._chatRepository.getMessages(roomId, limit, skip);
     }
@@ -113,14 +114,14 @@ export class ChatService implements IChatService {
 
     async deleteMessage(userId: string, messageId: string): Promise<IMessage> {
         const message = await this._chatRepository.getMessageById(messageId);
-        if (!message) throw new Error('Message not found');
+        if (!message) throw new Error(ErrorMessages.MessageNotFound);
 
         if (message.senderId.toString() !== userId) {
-            throw new Error('You can only delete your own messages');
+            throw new Error(ErrorMessages.DeleteOwnMessagesOnly);
         }
 
         const deleted = await this._chatRepository.deleteMessage(messageId);
-        if (!deleted) throw new Error('Failed to delete message');
+        if (!deleted) throw new Error(ErrorMessages.DeleteMessageFailed);
         return deleted;
     }
 }

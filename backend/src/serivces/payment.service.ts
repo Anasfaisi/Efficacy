@@ -8,6 +8,7 @@ import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { IMentorshipService } from './Interfaces/IMentorship.service';
 import { IMentor } from '@/models/Mentor.model';
 import { IUser } from '@/models/User.model';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -43,7 +44,7 @@ export class PaymentService implements IPaymentService {
         const session =
             await this._stripe.checkout.sessions.retrieve(sessionId);
         if (!session || session.payment_status !== 'paid') {
-            throw new Error('checkout session not valid or not paid');
+            throw new Error(ErrorMessages.InvalidCheckoutSession);
         }
         return new ResponsePaymentDto(session.id, session.url!);
     }
@@ -55,7 +56,7 @@ export class PaymentService implements IPaymentService {
     ): Promise<ResponsePaymentDto> {
         const mentorship =
             await this._mentorshipService.getMentorshipById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         const session = await this._stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -103,9 +104,9 @@ export class PaymentService implements IPaymentService {
             );
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
-            console.error(`Webhook signature verification failed: ${message}`);
+            console.error(`${ErrorMessages.WebhookSignatureFailed}: ${message}`);
             throw new Error(
-                `Webhook signature verification failed: ${message}`
+                `${ErrorMessages.WebhookSignatureFailed}: ${message}`
             );
         }
 

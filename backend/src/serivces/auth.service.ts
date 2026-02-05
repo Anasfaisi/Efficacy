@@ -32,7 +32,7 @@ import {
     userGoogleLoginRequestDto,
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
-import { ErrorMessages } from '@/types/response-messages.types';
+import { ErrorMessages, SuccessMessages, AuthMessages } from '@/types/response-messages.types';
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
@@ -139,12 +139,12 @@ export class AuthService implements IAuthService {
         });
 
         const account = await this._userRepository.findByEmail(loginDto.email);
-        if (!account) throw new Error('User not found');
+        if (!account) throw new Error(ErrorMessages.UserNotFound);
         if (account.isActive === false)
-            throw new Error('Account is blocked. Please contact support.');
+            throw new Error(ErrorMessages.AccountBlocked);
 
         if (!(await bcrypt.compare(loginDto.password, account.password))) {
-            throw new Error('Invalid email or password');
+            throw new Error(ErrorMessages.InvalidCredentials);
         }
 
         const accessToken = this._tokenService.generateAccessToken(
@@ -180,12 +180,12 @@ export class AuthService implements IAuthService {
         });
 
         const account = await this._userRepository.findByEmail(dto.email);
-        if (account) throw new Error('Email already registered');
+        if (account) throw new Error(ErrorMessages.EmailAlreadyRegistered);
 
         const existingUnverified =
             await this._unverifiedUserRepository.findByEmail(dto.email);
         if (existingUnverified)
-            throw new Error(`OTP already sent to ${dto.email}`);
+            throw new Error(ErrorMessages.OtpAlreadySent);
 
         const hashedPassword = await bcrypt.hash(dto.password, 10);
         const otp = await this._otpService.generateOtp();
@@ -213,16 +213,16 @@ export class AuthService implements IAuthService {
             dto.email
         );
         if (!unverifiedUser)
-            throw new Error('Re-intiate registration for this email');
+            throw new Error(ErrorMessages.RegistrationReinitRequired);
 
-        if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
+        if (unverifiedUser.otp !== dto.otp) throw new Error(AuthMessages.OtpFailed);
         if (unverifiedUser.otpExpiresAt < new Date())
             throw new Error(ErrorMessages.OtpExpired);
         let _repository: IUserRepository;
         if (unverifiedUser.role === 'user') {
             _repository = this._userRepository;
         } else {
-            throw new Error('invalid role');
+            throw new Error(ErrorMessages.InvalidRole);
         }
 
         const user = await _repository.createUser({
@@ -256,7 +256,7 @@ export class AuthService implements IAuthService {
             dto.email
         );
         if (!unverifiedUser) {
-            throw new Error('Session expired, please register again');
+            throw new Error(ErrorMessages.SessionExpired);
         }
 
         const now = Date.now();
@@ -282,7 +282,7 @@ export class AuthService implements IAuthService {
         );
         console.log(updatedUser);
         if (!updatedUser) {
-            throw new Error('error happened in creating new user');
+            throw new Error(ErrorMessages.UserCreationFailed);
         }
         await this._otpService.sendOtp(dto.email, otp);
 
@@ -298,7 +298,7 @@ export class AuthService implements IAuthService {
     ): Promise<{ message: string }> {
         const user = await this._userRepository.findByEmail(dto.email);
         console.log(user);
-        if (!user) throw new Error('User not exist in this email');
+        if (!user) throw new Error(ErrorMessages.UserNotFound);
 
         const resetToken = this._tokenService.generatePasswordResetToken(
             user.id
@@ -309,7 +309,7 @@ export class AuthService implements IAuthService {
             'Reset Your Password',
             `Click here to reset: ${resetLink}`
         );
-        return { message: 'Reset link sent to email' };
+        return { message: AuthMessages.OtpSuccess };
     }
 
     async resetPassword(
@@ -323,7 +323,7 @@ export class AuthService implements IAuthService {
             hashedPassword
         );
 
-        return { message: 'Password reset successful' };
+        return { message: SuccessMessages.PasswordResetSuccess };
     }
 
     async refreshToken(refreshToken: string) {
@@ -337,13 +337,13 @@ export class AuthService implements IAuthService {
 
         const account = await repository.findById(payload.id);
         if (!account) {
-            throw new Error('User not found');
+            throw new Error(ErrorMessages.UserNotFound);
         }
         if ('isActive' in account && account.isActive === false) {
-            throw new Error('Account is blocked');
+            throw new Error(ErrorMessages.AccountBlocked);
         }
         if ('status' in account && account.status === 'inactive') {
-            throw new Error('Account is inactive');
+            throw new Error(ErrorMessages.AccountInactive);
         }
 
         const accessToken = this._tokenService.generateAccessToken(
@@ -365,7 +365,7 @@ export class AuthService implements IAuthService {
         const payload = ticket.getPayload();
 
         if (!payload?.email) {
-            throw new Error('Google login failed: No email found');
+            throw new Error(ErrorMessages.NoEmailFromGoogle);
         }
 
         let account = await this._userRepository.findByEmail(payload.email);
@@ -380,7 +380,7 @@ export class AuthService implements IAuthService {
             });
         }
         if (account.isActive === false)
-            throw new Error('Account is blocked. Please contact support.');
+            throw new Error(ErrorMessages.AccountBlocked);
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,
@@ -409,10 +409,10 @@ export class AuthService implements IAuthService {
         });
 
         const account = await this._adminRepository.findByEmail(email);
-        if (!account) throw new Error('User not found');
+        if (!account) throw new Error(ErrorMessages.UserNotFound);
 
         if (!(await bcrypt.compare(password, account.password))) {
-            throw new Error('Invalid email or password');
+            throw new Error(ErrorMessages.InvalidCredentials);
         }
 
         const accessToken = this._tokenService.generateAccessToken(

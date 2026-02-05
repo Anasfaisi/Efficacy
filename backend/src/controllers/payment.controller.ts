@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify';
 import { IPaymentService } from '@/serivces/Interfaces/IPayment.service';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PaymentController {
@@ -60,7 +61,7 @@ export class PaymentController {
             res.status(code.OK).send({ received: true });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Webhook error';
+                error instanceof Error ? error.message : ErrorMessages.WebhookError;
             res.status(code.BAD_REQUEST).send(`Webhook Error: ${message}`);
             console.error(error);
         }

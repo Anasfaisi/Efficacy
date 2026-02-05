@@ -4,7 +4,12 @@ import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
-import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
+import {
+    AuthMessages,
+    ErrorMessages,
+    SuccessMessages,
+    CommonMessages,
+} from '@/types/response-messages.types';
 
 export class UserController {
     constructor(
@@ -42,7 +47,7 @@ export class UserController {
             } else {
                 console.error('Unknown error:', error);
                 res.status(code.INTERNAL_SERVER_ERROR).json({
-                    message: 'An unexpected error occurred',
+                    message: CommonMessages.UnexpectedError,
                 });
             }
         }
@@ -76,7 +81,7 @@ export class UserController {
                 return;
             }
             res.status(200).json({
-                message: 'Profile picture updated successfully',
+                message: SuccessMessages.ProfilePicUpdated,
                 user: updatedProfilePic,
             });
         } catch (error: unknown) {
@@ -88,7 +93,7 @@ export class UserController {
             } else {
                 console.error('Unknown error:', error);
                 res.status(code.INTERNAL_SERVER_ERROR).json({
-                    message: 'An unexpected error occurred',
+                    message: CommonMessages.UnexpectedError,
                 });
             }
         }
@@ -110,7 +115,7 @@ export class UserController {
             res.status(code.OK).json({ user });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Login failed';
+                error instanceof Error ? error.message : ErrorMessages.LoginFailed;
             res.status(code.BAD_REQUEST).json({ message });
             console.log(error);
         }
@@ -146,7 +151,7 @@ export class UserController {
             await this._authService.resendOtp(req.body);
 
         res.status(code.OK).json({
-            message: 'OTP sent succesfully',
+            message: SuccessMessages.OtpSent,
             tempEmail,
             resendAvailableAt,
         });
@@ -186,7 +191,7 @@ export class UserController {
             res.json({ success: true });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Token refresh failed';
+                error instanceof Error ? error.message : ErrorMessages.TokenRefreshFailed;
             res.status(code.UNAUTHORIZED).json({ message });
         }
     }
@@ -229,7 +234,7 @@ export class UserController {
 
     async getNotifications(req: Request, res: Response): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
         const notifications =
@@ -242,7 +247,7 @@ export class UserController {
     async markNotificationAsRead(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._notificationService.markAsRead(id);
-        res.status(code.OK).json({ message: 'Notification marked as read' });
+        res.status(code.OK).json({ message: SuccessMessages.NotificationMarkedRead });
     }
 
     async markAllNotificationsAsRead(
@@ -250,12 +255,12 @@ export class UserController {
         res: Response
     ): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorizeds' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
         await this._notificationService.markAllAsRead(req.currentUser.id);
         res.status(code.OK).json({
-            message: 'All notifications marked as read',
+            message: SuccessMessages.AllNotificationsMarkedRead,
         });
     }
 }

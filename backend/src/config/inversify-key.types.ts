@@ -18,6 +18,7 @@ export const TYPES = {
     PlannerTaskService: Symbol('PlannerTaskService'),
     MentorshipService: Symbol('MentorshipService'),
     WalletService: Symbol('WalletService'),
+    KanbanService: Symbol('KanbanService'),
     
 
     AdminRepository: Symbol('AdminRepository'),
@@ -30,6 +31,7 @@ export const TYPES = {
     PomodoroRepository: Symbol('PomodoroRepository'),
     MentorshipRepository: Symbol('MentorshipRepository'),
     WalletRepository: Symbol('WalletRepository'),
+    KanbanRepository: Symbol('KanbanRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),

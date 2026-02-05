@@ -1,4 +1,5 @@
 import { IValidationService } from './Interfaces/IValidation.service';
+import { ErrorMessages } from '@/types/response-messages.types';
 export class ValidationService implements IValidationService {
     validateLoginInput({
         email,
@@ -10,14 +11,13 @@ export class ValidationService implements IValidationService {
         role?: string;
     }) {
         if (!email || !password) {
-            console.error(Error);
-            throw new Error('Email and password are required');
+            throw new Error(ErrorMessages.EmailPasswordRequired);
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            throw new Error('Invalid email format');
+            throw new Error(ErrorMessages.InvalidEmail);
         }
         if (password.length < 6) {
-            throw new Error('Password must be at least 6 characters');
+            throw new Error(ErrorMessages.PasswordComplexity);
         }
     }
 
@@ -31,14 +31,14 @@ export class ValidationService implements IValidationService {
         name: string;
     }) {
         if (!email || !password || !name) {
-            throw new Error('Email, password, and name are required');
+            throw new Error(ErrorMessages.AllFieldsRequired);
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            throw new Error('Invalid email format');
+            throw new Error(ErrorMessages.InvalidEmail);
         }
         console.log('email...', email);
         if (password.length < 6) {
-            throw new Error('Password must be at least 6 characters');
+            throw new Error(ErrorMessages.PasswordComplexity);
         }
     }
 
@@ -55,7 +55,7 @@ export class ValidationService implements IValidationService {
                 (endpoint === 'user' && role !== 'user') ||
                 (endpoint === 'mentor' && role !== 'mentor'))
         ) {
-            throw new Error(`Invalid role for ${endpoint} Google login`);
+            throw new Error(`${ErrorMessages.InvalidRoleGoogleLogin} for ${endpoint}`);
         }
         console.log('Successfully validated Google login at backend');
     }

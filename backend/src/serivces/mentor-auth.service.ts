@@ -27,7 +27,7 @@ import {
 } from '@/Dto/mentorRequest.dto';
 import { userGoogleLoginResponseDto } from '@/Dto/response.dto';
 import { mentorStatus } from '@/types/mentor-status.types';
-import { ErrorMessages } from '@/types/response-messages.types';
+import { ErrorMessages, SuccessMessages, AuthMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -46,13 +46,13 @@ export class MentorAuthService implements IMentorAuthService {
 
     async mentorLogin(dto: LoginRequestDto) {
         const account = await this._mentorRepository.findByEmail(dto.email);
-        if (!account) throw new Error('User not found');
+        if (!account) throw new Error(ErrorMessages.UserNotFound);
 
         if (
             !account.password ||
             !(await bcrypt.compare(dto.password, account.password))
         ) {
-            throw new Error('Invalid email or password');
+            throw new Error(ErrorMessages.InvalidCredentials);
         }
 
         const accessToken = this._tokenService.generateAccessToken(
@@ -82,12 +82,12 @@ export class MentorAuthService implements IMentorAuthService {
         });
 
         const account = await this._mentorRepository.findByEmail(dto.email);
-        if (account) throw new Error('Email already registered');
+        if (account) throw new Error(ErrorMessages.EmailAlreadyRegistered);
 
         const existingUnverified =
             await this._unverifiedUserRepository.findByEmail(dto.email);
         if (existingUnverified)
-            throw new Error(`OTP already sent to ${dto.email}`);
+            throw new Error(ErrorMessages.OtpAlreadySent);
 
         const hashedPassword = await bcrypt.hash(dto.password, 10);
         const otp = await this._otpService.generateOtp();
@@ -115,9 +115,9 @@ export class MentorAuthService implements IMentorAuthService {
             dto.email
         );
         if (!unverifiedUser)
-            throw new Error('No pending registration for this email');
+            throw new Error(ErrorMessages.RegistrationReinitRequired);
 
-        if (unverifiedUser.otp !== dto.otp) throw new Error('Invalid OTP');
+        if (unverifiedUser.otp !== dto.otp) throw new Error(AuthMessages.OtpFailed);
         if (unverifiedUser.otpExpiresAt < new Date())
             throw new Error(ErrorMessages.OtpExpired);
 
@@ -153,7 +153,7 @@ export class MentorAuthService implements IMentorAuthService {
         const payload = ticket.getPayload();
 
         if (!payload?.email) {
-            throw new Error('Google login failed: No email found');
+            throw new Error(ErrorMessages.NoEmailFromGoogle);
         }
 
         let account = await this._mentorRepository.findByEmail(payload.email);
@@ -188,7 +188,7 @@ export class MentorAuthService implements IMentorAuthService {
             dto.email
         );
         if (!unverifiedUser) {
-            throw new Error('Session expired, please register again');
+            throw new Error(ErrorMessages.SessionExpired);
         }
 
         const now = Date.now();
@@ -214,7 +214,7 @@ export class MentorAuthService implements IMentorAuthService {
         );
 
         if (!updatedUser) {
-            throw new Error('error happened in updating user otp');
+            throw new Error(ErrorMessages.OtpUpdateFailed);
         }
         await this._otpService.sendOtp(dto.email, otp);
 
@@ -229,7 +229,7 @@ export class MentorAuthService implements IMentorAuthService {
         dto: ForgotPasswordRequestDto
     ): Promise<{ message: string }> {
         const mentor = await this._mentorRepository.findByEmail(dto.email);
-        if (!mentor) throw new Error('Mentor not found with this email');
+        if (!mentor) throw new Error(ErrorMessages.MentorNotFound);
 
         const resetToken = this._tokenService.generatePasswordResetToken(
             mentor.id
@@ -241,7 +241,7 @@ export class MentorAuthService implements IMentorAuthService {
             'Reset Your Password',
             `Click here to reset your mentor account password: ${resetLink}`
         );
-        return { message: 'Reset link sent to email' };
+        return { message: AuthMessages.OtpSuccess };
     }
 
     async mentorResetPassword(
@@ -254,7 +254,7 @@ export class MentorAuthService implements IMentorAuthService {
             password: hashedPassword,
         });
 
-        return { message: 'Password reset successful' };
+        return { message: SuccessMessages.PasswordResetSuccess };
     }
 
     async logout(refreshToken: string): Promise<void> {
