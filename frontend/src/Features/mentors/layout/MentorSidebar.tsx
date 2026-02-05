@@ -50,7 +50,7 @@ const MentorSidebar: React.FC = () => {
         },
         {
             icon: <Users size={20} />,
-            label: 'Requests',
+            label: 'Mentorship Requests',
             to: '/mentor/requests',
         },
         {

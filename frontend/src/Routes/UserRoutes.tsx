@@ -20,6 +20,7 @@ import NotFound from '@/Features/common/pages/NotFound';
 import PomodoroPage from '@/Features/users/pomodoro/pages/PomodoroPage';
 import NotesPage from '@/Features/users/notes/pages/NotesPage';
 import UserWalletPage from '@/Features/users/profile/pages/UserWalletPage';
+import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
 
 
 const Logout: React.FC = () => {
@@ -42,8 +43,10 @@ const Logout: React.FC = () => {
 
 const UserRoutes: React.FC = () => {
     return (
-        <Routes>
-            <Route path="home" element={<Home />} />
+        <>
+            <UserNotificationListener />
+            <Routes>
+                <Route path="home" element={<Home />} />
             <Route path="logout" element={<Logout />} />
 
             <Route path="success" element={<SuccessPage />} />
@@ -67,6 +70,7 @@ const UserRoutes: React.FC = () => {
             <Route path="notes" element={<NotesPage />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
+        </>
     );
 };
 

@@ -111,7 +111,7 @@ export default function mentorRoutes(
     );
 
     router.patch(
-        '/profile/array-update',
+        '/profile/array',
         authenticateAndAuthorize(tokenService, [Role.Mentor]),
         validateRequest(updateMentorProfileSchema),
         asyncWrapper(mentorController.updateProfileArray.bind(mentorController))

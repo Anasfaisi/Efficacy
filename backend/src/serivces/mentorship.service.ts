@@ -42,6 +42,13 @@ export class MentorshipService implements IMentorshipService {
         sessions: number,
         proposedStartDate?: Date
     ): Promise<IMentorship> {
+        if (proposedStartDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (proposedStartDate < today) {
+                throw new Error('Proposed start date cannot be in the past.');
+            }
+        }
         const mentor = await this._mentorRepository.findById(
             mentorId as string
         );
@@ -112,6 +119,13 @@ export class MentorshipService implements IMentorshipService {
         suggestedStartDate?: Date,
         reason?: string
     ): Promise<IMentorship> {
+        if (suggestedStartDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (suggestedStartDate < today) {
+                throw new Error('Suggested start date cannot be in the past.');
+            }
+        }
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');
@@ -129,8 +143,12 @@ export class MentorshipService implements IMentorshipService {
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
+        const recipientId =
+            (mentorship.userId as any)._id?.toString() ||
+            mentorship.userId.toString();
+
         await this._notificationService.createNotification(
-            mentorship.userId.toString(),
+            recipientId,
             Role.User,
             NotificationType.MENTORSHIP_RESPONSE,
             status === 'mentor_accepted'
@@ -166,6 +184,22 @@ export class MentorshipService implements IMentorshipService {
         }
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
+
+        const mentorId =
+            (mentorship.mentorId as any)._id?.toString() ||
+            mentorship.mentorId.toString();
+
+        await this._notificationService.createNotification(
+            mentorId,
+            Role.Mentor,
+            NotificationType.MENTORSHIP_RESPONSE,
+            confirm ? 'Mentorship Suggestion Accepted' : 'Mentorship Cancelled',
+            confirm
+                ? `User has accepted your suggested dates. Mentorship is now pending payment.`
+                : `User has declined your suggested dates and cancelled the request.`,
+            { mentorshipId }
+        );
+
         return mentorship;
     }
 
@@ -201,7 +235,8 @@ export class MentorshipService implements IMentorshipService {
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
         await this._notificationService.createNotification(
-            mentorship.userId.toString(),
+            (mentorship.userId as any)._id?.toString() ||
+                mentorship.userId.toString(),
             Role.User,
             NotificationType.MENTORSHIP_ACTIVE,
             'Mentorship Active',
@@ -209,7 +244,8 @@ export class MentorshipService implements IMentorshipService {
         );
 
         await this._notificationService.createNotification(
-            mentorship.mentorId.toString(),
+            (mentorship.mentorId as any)._id?.toString() ||
+                mentorship.mentorId.toString(),
             Role.Mentor,
             NotificationType.MENTORSHIP_ACTIVE,
             'Mentorship Active',
@@ -306,7 +342,8 @@ export class MentorshipService implements IMentorshipService {
             await this.checkAndReleaseFunds(mentorship); // Helper called here
 
             await this._notificationService.createNotification(
-                mentorship.userId.toString(),
+                (mentorship.userId as any)._id?.toString() ||
+                    mentorship.userId.toString(),
                 Role.User,
                 NotificationType.MENTORSHIP_COMPLETED,
                 'Mentorship Completed',
@@ -315,7 +352,8 @@ export class MentorshipService implements IMentorshipService {
             );
 
             await this._notificationService.createNotification(
-                mentorship.mentorId.toString(),
+                (mentorship.mentorId as any)._id?.toString() ||
+                    mentorship.mentorId.toString(),
                 Role.Mentor,
                 NotificationType.MENTORSHIP_COMPLETED,
                 'Mentorship Completed',

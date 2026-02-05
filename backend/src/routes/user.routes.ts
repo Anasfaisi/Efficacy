@@ -59,15 +59,36 @@ export default function authRoutes(userController: UserController) {
     );
 
     router.patch(
-        '/update/profile/:id',
+        '/profile/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         userController.updateUserProfile.bind(userController)
     );
     router.patch(
-        '/profile/proPicUpdate/:id',
+        '/profile/picture/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         upload.single('image'),
         userController.updateProfilePic.bind(userController)
     );
+
+    router.get(
+        '/notifications',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        asyncWrapper(userController.getNotifications.bind(userController))
+    );
+
+    router.patch(
+        '/notifications/:id/mark-read',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        asyncWrapper(userController.markNotificationAsRead.bind(userController))
+    );
+
+    router.patch(
+        '/notifications/mark-all-read',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        asyncWrapper(
+            userController.markAllNotificationsAsRead.bind(userController)
+        )
+    );
+
     return router;
 }

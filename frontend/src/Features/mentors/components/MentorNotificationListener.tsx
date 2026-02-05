@@ -27,11 +27,7 @@ export const MentorNotificationListener: React.FC = () => {
     // Memoize the notification handler to prevent unnecessary re-registrations
     const handleNotification = useCallback(
         (notification: Notification) => {
-            console.log(
-                'Mentor notification received in mentor NotificatoinListener.tsx======================:',
-                notification
-            );
-
+           
             const processedNotification: Notification = {
                 ...notification,
                 _id: notification._id || `temp-${Date.now()}`,
@@ -144,27 +140,12 @@ export const MentorNotificationListener: React.FC = () => {
             );
         },
         [dispatch, navigate]
-    ); // Only re-create if dispatch or navigate change (they won't)
+    );
 
     const currentUserId = (currentUser as any)?.id || (currentUser as any)?._id;
 
     useEffect(() => {
-        if (!currentUser) {
-            console.warn(
-                '⚠️ MentorNotificationListener: No current user found in Redux state'
-            );
-            return;
-        }
-        if (currentUser.role !== 'mentor') {
-            console.warn(
-                '⚠️ MentorNotificationListener: User role is not mentor:',
-                currentUser.role
-            );
-            return;
-        }
-
-        // Fetch initial notifications
-        mentorApi
+            mentorApi
             .getNotifications()
             .then((data) => {
                 if (Array.isArray(data)) {
@@ -204,7 +185,6 @@ export const MentorNotificationListener: React.FC = () => {
         };
     }, [currentUserId, currentUser?.role, handleNotification]);
 
-    (window as any).__mentor_listener_active = true;
 
     return (
         <div

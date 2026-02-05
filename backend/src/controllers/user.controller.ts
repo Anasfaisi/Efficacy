@@ -3,11 +3,14 @@ import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
 import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
+import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { AuthMessages, ErrorMessages } from '@/types/response-messages.types';
 
 export class UserController {
     constructor(
-        @inject(TYPES.AuthService) private _authService: IAuthService
+        @inject(TYPES.AuthService) private _authService: IAuthService,
+        @inject(TYPES.NotificationService)
+        private _notificationService: INotificationService
     ) {}
 
     async updateUserProfile(req: Request, res: Response) {
@@ -222,5 +225,37 @@ export class UserController {
                 AuthMessages.LogoutFailed
             );
         }
+    }
+
+    async getNotifications(req: Request, res: Response): Promise<void> {
+        if (!req.currentUser) {
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            return;
+        }
+        const notifications =
+            await this._notificationService.getNotificationsByRecipient(
+                req.currentUser.id
+            );
+        res.status(code.OK).json(notifications);
+    }
+
+    async markNotificationAsRead(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        await this._notificationService.markAsRead(id);
+        res.status(code.OK).json({ message: 'Notification marked as read' });
+    }
+
+    async markAllNotificationsAsRead(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        if (!req.currentUser) {
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorizeds' });
+            return;
+        }
+        await this._notificationService.markAllAsRead(req.currentUser.id);
+        res.status(code.OK).json({
+            message: 'All notifications marked as read',
+        });
     }
 }

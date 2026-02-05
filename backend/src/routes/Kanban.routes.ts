@@ -23,7 +23,7 @@ export default function KanbanRoutes(kanbanController: KanbanController) {
         kanbanController.addKanbanTask.bind(kanbanController)
     );
     router.put(
-        '/task/update',
+        '/task',
         authenticateAndAuthorize(tokenService, Role.User),
         kanbanController.updateKanbanTask.bind(kanbanController)
     );
