@@ -3,8 +3,7 @@ import type {
     Booking,
     CreateBookingRequestDto,
     UpdateBookingStatusRequestDto,
-    RescheduleRequestDto,
-    BookingStatus
+    RescheduleRequestDto
 } from '@/types/booking';
 
 export const bookingApi = {
@@ -18,8 +17,14 @@ export const bookingApi = {
         return res.data;
     },
 
-    getMentorBookings: async (): Promise<Booking[]> => {
-        const res = await api.get('/booking/mentor');
+    getMentorBookings: async (
+        page: number = 1,
+        limit: number = 10,
+        status?: string
+    ): Promise<{ bookings: Booking[]; totalCount: number; totalPages: number; currentPage: number }> => {
+        const res = await api.get(
+            `/booking/mentor?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}`
+        );
         return res.data;
     },
 

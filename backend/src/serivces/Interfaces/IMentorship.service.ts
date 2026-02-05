@@ -1,5 +1,7 @@
+
 import { IMentorship } from '@/models/Mentorship.model';
 import { ObjectId } from 'mongoose';
+import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
 
 export interface IMentorshipService {
     createRequest(
@@ -8,7 +10,13 @@ export interface IMentorshipService {
         sessions: number,
         proposedStartDate?: Date
     ): Promise<IMentorship>;
-    getMentorRequests(mentorId: string | ObjectId): Promise<IMentorship[]>;
+    getMentorRequests(
+        mentorId: string | ObjectId,
+        page?: number,
+        limit?: number,
+        status?: string,
+        search?: string
+    ): Promise<PaginatedMentorshipResponseDto>;
     getUserRequests(userId: string | ObjectId): Promise<IMentorship[]>;
     respondToRequest(
         mentorshipId: string,

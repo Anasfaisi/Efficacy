@@ -191,4 +191,28 @@ export class WalletRepository
 
         return { transactions: data, total };
     }
+
+    async findPaginatedTransactions(
+        walletId: string | ObjectId,
+        page: number,
+        limit: number
+    ): Promise<{ transactions: ITransaction[]; total: number }> {
+        const pipeline: PipelineStage[] = [
+            { $match: { _id: new Wallet.base.Types.ObjectId(walletId.toString()) } },
+            { $unwind: '$transactions' },
+            { $sort: { 'transactions.date': -1 } },
+            {
+                $facet: {
+                    metadata: [{ $count: 'total' }],
+                    data: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+                },
+            },
+        ];
+
+        const result = await Wallet.aggregate(pipeline);
+        const data = result[0].data.map((item: any) => item.transactions);
+        const total = result[0].metadata[0]?.total || 0;
+
+        return { transactions: data, total };
+    }
 }

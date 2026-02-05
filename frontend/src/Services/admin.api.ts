@@ -8,8 +8,21 @@ export const adminService = {
         return res.data;
     },
     // Mentor Application Review
-    getMentorApplications: async (): Promise<MentorApplication[]> => {
-        const response = await api.get('/admin/mentors/applications');
+    getMentorApplications: async (
+        page: number = 1,
+        limit: number = 10,
+        search: string = '',
+        filters: { status?: string; mentorType?: string } = {}
+    ): Promise<{
+        applications: MentorApplication[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+    }> => {
+        const { status = 'all', mentorType = 'all' } = filters;
+        const response = await api.get(
+            `/admin/mentors/applications?page=${page}&limit=${limit}&search=${search}&status=${status}&mentorType=${mentorType}`
+        );
         return response.data;
     },
 
@@ -41,8 +54,21 @@ export const adminService = {
     },
 
     // Mentor Management
-    getAllMentors: async (): Promise<Mentor[]> => {
-        const response = await api.get('/admin/mentors');
+    getAllMentors: async (
+        page: number = 1,
+        limit: number = 10,
+        search: string = '',
+        filters: { status?: string; mentorType?: string } = {}
+    ): Promise<{
+        mentors: Mentor[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+    }> => {
+        const { status = 'all', mentorType = 'all' } = filters;
+        const response = await api.get(
+            `/admin/mentors?page=${page}&limit=${limit}&search=${search}&status=${status}&mentorType=${mentorType}`
+        );
         return response.data;
     },
 

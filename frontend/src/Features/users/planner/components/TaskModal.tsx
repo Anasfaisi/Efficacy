@@ -17,7 +17,7 @@ import {
     deletePlannerTask,
 } from '@/Services/planner.api';
 import { cn } from '@/lib/utils';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 import { toast } from 'sonner';
 
 interface TaskModalProps {
@@ -93,8 +93,16 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
         try {
             setIsSaving(true);
-            const startDate = new Date(`${date}T${startTime}`).toISOString();
-            const endDate = new Date(`${date}T${endTime}`).toISOString();
+            const startDateTime = new Date(`${date}T${startTime}`);
+            let endDateTime = new Date(`${date}T${endTime}`);
+
+            // If end time is before or equal to start time, it means it spans to the next day
+            if (endDateTime <= startDateTime) {
+                endDateTime.setDate(endDateTime.getDate() + 1);
+            }
+
+            const startDate = startDateTime.toISOString();
+            const endDate = endDateTime.toISOString();
 
             const taskData: Partial<IPlannerTask> = {
                 title,
@@ -223,9 +231,17 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                 <input
                                     type="time"
                                     value={startTime}
-                                    onChange={(e) =>
-                                        setStartTime(e.target.value)
-                                    }
+                                    min={isToday(new Date(date)) ? format(new Date(), 'HH:mm') : undefined}
+                                    onChange={(e) => {
+                                        const newStart = e.target.value;
+                                        setStartTime(newStart);
+                                        // If endTime is now earlier or same as newStart, bump it by 1 hour
+                                        if (endTime <= newStart) {
+                                            const [h, m] = newStart.split(':').map(Number);
+                                            const endH = (h + 1) % 24;
+                                            setEndTime(`${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                                        }
+                                    }}
                                     className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                                 />
                                 <span className="text-gray-400 text-xs font-bold">
@@ -234,6 +250,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                 <input
                                     type="time"
                                     value={endTime}
+                                    min={startTime}
                                     onChange={(e) => setEndTime(e.target.value)}
                                     className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                                 />

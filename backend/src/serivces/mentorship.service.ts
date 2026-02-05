@@ -18,6 +18,7 @@ import { Role } from '@/types/role.types';
 import { ObjectId, Types } from 'mongoose';
 import { IMentor } from '@/models/Mentor.model';
 import { IUser } from '@/models/User.model';
+import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -78,9 +79,26 @@ export class MentorshipService implements IMentorshipService {
     }
 
     async getMentorRequests(
-        mentorId: string | ObjectId
-    ): Promise<IMentorship[]> {
-        return await this._mentorshipRepository.findByMentorId(mentorId);
+        mentorId: string | ObjectId,
+        page: number = 1,
+        limit: number = 10,
+        status?: string,
+        search?: string
+    ): Promise<PaginatedMentorshipResponseDto> {
+        const { mentorships, total } =
+            await this._mentorshipRepository.findPaginatedByMentorId(
+                mentorId,
+                page,
+                limit,
+                status,
+                search
+            );
+        return new PaginatedMentorshipResponseDto(
+            mentorships,
+            total,
+            Math.ceil(total / limit),
+            page
+        );
     }
 
     async getUserRequests(userId: string | ObjectId): Promise<IMentorship[]> {

@@ -22,9 +22,9 @@ export const walletApi = {
         return response.data;
     },
 
-    getTransactions: async () => {
+    getTransactions: async (page: number = 1, limit: number = 6) => {
         const response = await api.get(
-            '/mentorship/wallet/transactions'
+            `/mentorship/wallet/transactions?page=${page}&limit=${limit}`
         );
         return response.data;
     },

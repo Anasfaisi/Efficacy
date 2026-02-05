@@ -3,7 +3,7 @@ import { TYPES } from "@/config/inversify-key.types";
 import { IBookingRepository } from "@/repositories/interfaces/IBooking.repository";
 import { INotificationService } from "./Interfaces/INotification.service";
 import { IMentorRepository } from "@/repositories/interfaces/IMentor.repository";
-import { CreateBookingRequestDto, BookingResponseDto, UpdateBookingStatusRequestDto, RescheduleRequestDto } from "@/Dto/booking.dto";
+import { CreateBookingRequestDto, BookingResponseDto, UpdateBookingStatusRequestDto, RescheduleRequestDto, PaginatedBookingResponseDto } from "@/Dto/booking.dto";
 import { BookingMapper } from "@/Mapper/booking.mapper";
 import { BookingStatus } from "@/models/Booking.model";
 import { BookingEntity } from "@/entity/booking.entity";
@@ -105,9 +105,25 @@ export class BookingService implements IBookingService {
         return bookings.map(BookingMapper.toResponseDto);
     }
 
-    async getMentorBookings(mentorId: string): Promise<BookingResponseDto[]> {
-        const bookings = await this._bookingRepository.findByMentor(mentorId);
-        return bookings.map(BookingMapper.toResponseDto);
+    async getMentorBookings(
+        mentorId: string,
+        page: number = 1,
+        limit: number = 10,
+        status?: string
+    ): Promise<PaginatedBookingResponseDto> {
+        const { bookings, total } =
+            await this._bookingRepository.findPaginatedByMentor(
+                mentorId,
+                page,
+                limit,
+                status
+            );
+        return {
+            bookings: bookings.map(BookingMapper.toResponseDto),
+            totalCount: total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+        };
     }
 
     async updateBookingStatus(data: UpdateBookingStatusRequestDto): Promise<BookingResponseDto> {

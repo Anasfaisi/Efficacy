@@ -37,8 +37,17 @@ export class BookingController {
             res.status(code.UNAUTHORIZED).json({ message: "Mentor not authenticated" });
             return;
         }
-        const bookings = await this._bookingService.getMentorBookings(mentorId);
-        res.status(code.OK).json(bookings);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const status = req.query.status as string;
+
+        const result = await this._bookingService.getMentorBookings(
+            mentorId,
+            page,
+            limit,
+            status
+        );
+        res.status(code.OK).json(result);
     }
 
     async respondToReschedule(req: Request, res: Response): Promise<void> {

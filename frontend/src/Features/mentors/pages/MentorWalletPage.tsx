@@ -6,21 +6,33 @@ import {
     ArrowDownCircle,
     IndianRupee,
     Clock,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const MentorWalletPage: React.FC = () => {
     const [wallet, setWallet] = useState<any>(null);
+    const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [isWithdrawing, setIsWithdrawing] = useState(false);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit] = useState(6);
 
     const fetchData = async () => {
         try {
-            const data = await walletApi.getWallet();
-            setWallet(data);
+            setLoading(true);
+            const [walletData, txData] = await Promise.all([
+                walletApi.getWallet(),
+                walletApi.getTransactions(page, limit)
+            ]);
+            setWallet(walletData);
+            setTransactions(txData.transactions);
+            setTotalPages(txData.totalPages);
         } catch (error) {
-            console.error('Failed to fetch wallet:', error);
+            console.error('Failed to fetch wallet data:', error);
             toast.error('Failed to load wallet data');
         } finally {
             setLoading(false);
@@ -29,7 +41,7 @@ const MentorWalletPage: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [page]);
 
     const handleWithdraw = async () => {
         if (!withdrawAmount || isNaN(Number(withdrawAmount))) return;
@@ -187,12 +199,9 @@ const MentorWalletPage: React.FC = () => {
                         <h3 className="text-lg font-bold text-gray-900">
                             Recent Transactions
                         </h3>
-                        <button className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-all">
-                            View All
-                        </button>
                     </div>
                     <div className="divide-y divide-gray-50">
-                        {wallet?.transactions?.length === 0 ? (
+                        {transactions.length === 0 ? (
                             <div className="p-20 text-center">
                                 <Clock
                                     className="mx-auto text-gray-200 mb-4"
@@ -203,9 +212,10 @@ const MentorWalletPage: React.FC = () => {
                                 </p>
                             </div>
                         ) : (
-                            wallet?.transactions?.slice(0, 5).map((tx: any) => (
+                            <>
+                            {transactions.map((tx: any, idx: number) => (
                                 <div
-                                    key={tx._id}
+                                    key={tx._id || idx}
                                     className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
@@ -243,7 +253,30 @@ const MentorWalletPage: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
-                            ))
+                            ))}
+
+                            {totalPages > 1 && (
+                                <div className="p-6 border-t border-gray-50 flex items-center justify-center gap-4">
+                                    <button
+                                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                                        disabled={page === 1}
+                                        className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <span className="text-sm font-bold text-gray-600">
+                                        Page {page} of {totalPages}
+                                    </span>
+                                    <button
+                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={page === totalPages}
+                                        className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            )}
+                            </>
                         )}
                     </div>
                 </div>

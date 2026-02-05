@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     format,
-    isSameDay,
     startOfWeek,
     endOfWeek,
     startOfMonth,
@@ -20,7 +19,6 @@ import {
     isSameMonth,
     isToday,
     startOfDay,
-    differenceInMinutes,
 } from 'date-fns';
 
 interface CalendarViewProps {
@@ -95,14 +93,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
     const handleToday = () => setCurrentDate(new Date());
 
-    const getTaskStyle = (task: IPlannerTask) => {
-        const start = new Date(task.startDate);
-        const end = new Date(task.endDate);
+    const getTaskStyle = (task: IPlannerTask, day: Date) => {
+        const taskStart = new Date(task.startDate);
+        const taskEnd = new Date(task.endDate);
+        const dayStart = startOfDay(day);
+        const dayEnd = addDays(dayStart, 1);
         
-        // Calculate position based on time for Day/Week view
-        const startHour = start.getHours() + start.getMinutes() / 60;
-        const durationInMinutes = differenceInMinutes(end, start);
-        const durationInHours = durationInMinutes / 60;
+        // Intersection of task interval and day interval
+        const displayStart = new Date(Math.max(taskStart.getTime(), dayStart.getTime()));
+        const displayEnd = new Date(Math.min(taskEnd.getTime(), dayEnd.getTime()));
+        
+        const startHour = (displayStart.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
+        const endHour = (displayEnd.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
+        const durationInHours = endHour - startHour;
         
         const top = `${startHour * 64}px`; // 64px per hour
         const height = `${Math.max(durationInHours * 64, 28)}px`; // Minimum height
@@ -203,9 +206,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
                             {/* Tasks */}
                             {tasks
-                                .filter((task) => isSameDay(new Date(task.startDate), day))
+                                .filter((task) => {
+                                    const taskStart = new Date(task.startDate);
+                                    const taskEnd = new Date(task.endDate);
+                                    const dayStart = startOfDay(day);
+                                    const dayEnd = addDays(dayStart, 1);
+                                    return taskStart < dayEnd && taskEnd > dayStart;
+                                })
                                 .map((task) => {
-                                    const style = getTaskStyle(task);
+                                    const style = getTaskStyle(task, day);
                                     return (
                                         <div
                                             key={task._id}
@@ -258,7 +267,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {daysToRender.map((day, idx) => {
                     const isCurrentMonth = isSameMonth(day, currentDate);
                     const isDayToday = isToday(day);
-                    const dayTasks = tasks.filter(t => isSameDay(new Date(t.startDate), day));
+                    const dayTasks = tasks.filter((task) => {
+                        const taskStart = new Date(task.startDate);
+                        const taskEnd = new Date(task.endDate);
+                        const dayStart = startOfDay(day);
+                        const dayEnd = addDays(dayStart, 1);
+                        return taskStart < dayEnd && taskEnd > dayStart;
+                    });
                     
                     return (
                         <div

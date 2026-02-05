@@ -1,3 +1,4 @@
+
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import Mentorship, {
@@ -5,7 +6,7 @@ import Mentorship, {
     MentorshipStatus,
 } from '@/models/Mentorship.model';
 import { IMentorshipRepository } from './interfaces/IMentorship.repository';
-import { ObjectId } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 
 @injectable()
 export class MentorshipRepository
@@ -79,8 +80,73 @@ export class MentorshipRepository
     async findById(id: string): Promise<IMentorship | null> {
         return await this.model
             .findById(id)
-            .populate('mentorId', 'name profilePic expertise availableDays preferredTime')
+            .populate(
+                'mentorId',
+                'name profilePic expertise availableDays preferredTime'
+            )
             .populate('userId', 'name profilePic email phone')
             .exec();
+    }
+
+    async findPaginatedByMentorId(
+        mentorId: string | ObjectId,
+        page: number,
+        limit: number,
+        status?: string,
+        search?: string
+    ): Promise<{ mentorships: IMentorship[]; total: number }> {
+        const match: any = { mentorId: new Types.ObjectId(mentorId as string) };
+        if (status && status !== 'all') {
+            if (status === 'approved') {
+                match.status = {
+                    $in: [
+                        MentorshipStatus.MENTOR_ACCEPTED,
+                        MentorshipStatus.PAYMENT_PENDING,
+                        MentorshipStatus.ACTIVE,
+                    ],
+                };
+            } else {
+                match.status = status;
+            }
+        }
+
+        const pipeline: any[] = [{ $match: match }];
+
+        pipeline.push({
+            $lookup: {
+                from: 'users',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'userDetails',
+            },
+        });
+
+        pipeline.push({ $unwind: '$userDetails' });
+
+        if (search) {
+            pipeline.push({
+                $match: {
+                    'userDetails.name': { $regex: search, $options: 'i' },
+                },
+            });
+        }
+
+        const countPipeline = [...pipeline, { $count: 'total' }];
+        const countResult = await this.model.aggregate(countPipeline);
+        const total = countResult.length > 0 ? countResult[0].total : 0;
+
+        pipeline.push({ $sort: { createdAt: -1 } });
+        pipeline.push({ $skip: (page - 1) * limit });
+        pipeline.push({ $limit: limit });
+
+        const results = await this.model.aggregate(pipeline);
+
+        // Map back to expected structure (populating userId)
+        const mentorships = results.map((m) => ({
+            ...m,
+            userId: m.userDetails,
+        }));
+
+        return { mentorships, total };
     }
 }

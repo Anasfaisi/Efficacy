@@ -11,4 +11,11 @@ export interface IMentorshipRepository extends IBaseRepository<IMentorship> {
         mentorId: string | ObjectId,
         userId: string | ObjectId
     ): Promise<IMentorship | null>;
+    findPaginatedByMentorId(
+        mentorId: string | ObjectId,
+        page: number,
+        limit: number,
+        status?: string,
+        search?: string
+    ): Promise<{ mentorships: IMentorship[]; total: number }>;
 }

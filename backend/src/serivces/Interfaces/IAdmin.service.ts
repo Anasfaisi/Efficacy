@@ -1,10 +1,19 @@
-import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
+import {
+    MentorApplicationResponseDto,
+    PaginatedMentorApplicationResponseDto,
+    PaginatedMentorResponseDto,
+} from '@/Dto/mentorResponse.dto';
 import { PaginatedUserResponseDto } from '@/Dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
 import { ITransaction } from '@/models/Wallet.model';
 
 export interface IAdminService {
-    getMentorApplications(): Promise<MentorApplicationResponseDto[]>;
+    getMentorApplications(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorApplicationResponseDto>;
     getMentorApplicationById(
         id: string
     ): Promise<MentorApplicationResponseDto | null>;
@@ -12,7 +21,12 @@ export interface IAdminService {
     approveMentorApplication(id: string): Promise<void>;
     rejectMentorApplication(id: string, reason: string): Promise<void>;
     requestChangesMentorApplication(id: string, reason: string): Promise<void>;
-    getAllMentors(): Promise<MentorApplicationResponseDto[]>;
+    getAllMentors(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorResponseDto>;
     getMentorById(id: string): Promise<MentorApplicationResponseDto | null>;
     updateMentorStatus(id: string, status: string): Promise<void>;
     getAllUsers(

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
 import { MentorshipStatus } from '@/types/mentorship';
-import { Calendar, Check, X, Clock, AlertCircle } from 'lucide-react';
+import { Calendar, Check, X, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import type { User as UserType } from '@/types/auth';
 
 interface MentorshipRequestsListProps {
     isPage?: boolean;
@@ -14,6 +15,9 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
 }) => {
     const [requests, setRequests] = useState<Mentorship[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit] = useState(6);
 
     const [filter, setFilter] = useState<
         'pending' | 'approved' | 'rejected' | 'all'
@@ -29,9 +33,14 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
 
     const fetchRequests = async () => {
         try {
-            const data = await mentorshipApi.getMentorRequests();
-            // console.log(data, "mentorship from mentorshipRequestlist.tsx");
-            setRequests(data);
+            setLoading(true);
+            const data = await mentorshipApi.getMentorRequests(
+                page,
+                limit,
+                filter
+            );
+            setRequests(data.mentorships);
+            setTotalPages(data.totalPages);
         } catch (error) {
             console.error('Failed to fetch mentorship requests:', error);
         } finally {
@@ -41,7 +50,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
 
     useEffect(() => {
         fetchRequests();
-    }, []);
+    }, [page, filter]);
 
     const openRejectModal = (id: string) => {
         setRejectModal({ isOpen: true, requestId: id });
@@ -108,20 +117,6 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
             </div>
         );
 
-    const filteredRequests = requests.filter((r) => {
-        if (filter === 'all') return true;
-        if (filter === 'pending') return r.status === MentorshipStatus.PENDING;
-        if (filter === 'approved')
-            return (
-                r.status === MentorshipStatus.MENTOR_ACCEPTED ||
-                r.status === MentorshipStatus.PAYMENT_PENDING ||
-                r.status === MentorshipStatus.ACTIVE
-            );
-        if (filter === 'rejected')
-            return r.status === MentorshipStatus.REJECTED;
-        return true;
-    });
-
     return (
         <div
             className={`bg-white rounded-2xl border border-gray-200 p-6 shadow-sm ${!isPage ? 'mb-8' : ''}`}
@@ -139,45 +134,23 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                     (status) => (
                         <button
                             key={status}
-                            onClick={() => setFilter(status)}
+                            onClick={() => {
+                                setFilter(status);
+                                setPage(1);
+                            }}
                             className={`px-4 py-2 rounded-lg text-sm font-bold capitalize transition-colors ${
                                 filter === status
                                     ? 'bg-indigo-600 text-white'
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                         >
-                            {status} (
-                            {
-                                requests.filter((r) => {
-                                    if (status === 'all') return true;
-                                    if (status === 'pending')
-                                        return (
-                                            r.status ===
-                                            MentorshipStatus.PENDING
-                                        );
-                                    if (status === 'approved')
-                                        return (
-                                            r.status ===
-                                                MentorshipStatus.MENTOR_ACCEPTED ||
-                                            r.status ===
-                                                MentorshipStatus.PAYMENT_PENDING ||
-                                            r.status === MentorshipStatus.ACTIVE
-                                        );
-                                    if (status === 'rejected')
-                                        return (
-                                            r.status ===
-                                            MentorshipStatus.REJECTED
-                                        );
-                                    return false;
-                                }).length
-                            }
-                            )
+                            {status}
                         </button>
                     )
                 )}
             </div>
 
-            {filteredRequests.length === 0 ? (
+            {requests.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm">
                     <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <AlertCircle className="text-gray-400" size={32} />
@@ -187,100 +160,128 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                     </h3>
                 </div>
             ) : (
+                <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredRequests.map((req) => (
-                        <div
-                            key={req._id}
-                            className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-4"
-                        >
-                            <div className="flex items-center gap-3">
-                                <img
-                                    src={
-                                        req.userId?.profilePic ||
-                                        `https://ui-avatars.com/api/?name=${encodeURIComponent(req.userId?.name || 'User')}`
-                                    }
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                                    alt=""
-                                />
-                                <div>
-                                    <p className="font-bold text-gray-900">
-                                        {req.userId?.name || 'Anonymous User'}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        {req.userId?.email || ''}
-                                    </p>
-                                    <span
-                                        className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md mt-1 inline-block ${
-                                            req.status ===
-                                            MentorshipStatus.PENDING
-                                                ? 'bg-yellow-100 text-yellow-700'
-                                                : req.status ===
-                                                    MentorshipStatus.ACTIVE
-                                                  ? 'bg-green-100 text-green-700'
-                                                  : req.status ===
-                                                      MentorshipStatus.REJECTED
-                                                    ? 'bg-red-100 text-red-700'
-                                                    : 'bg-gray-100 text-gray-700'
-                                        }`}
-                                    >
-                                        {req.status}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <Calendar
-                                        size={14}
-                                        className="text-indigo-600"
-                                    />
-                                    <span>
-                                        Proposed:{' '}
-                                        {req.proposedStartDate
-                                            ? new Date(
-                                                  req.proposedStartDate
-                                              ).toLocaleDateString()
-                                            : 'ASAP'}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <Clock
-                                        size={14}
-                                        className="text-indigo-600"
-                                    />
-                                    <span>
-                                        1-Month Mentorship ({req.totalSessions}{' '}
-                                        sessions)
-                                    </span>
-                                </div>
-                            </div>
-
-                            {req.status === MentorshipStatus.PENDING && (
-                                <div className="flex gap-2 mt-2">
-                                    <button
-                                        onClick={() =>
-                                            handleRespond(
-                                                req._id!,
-                                                'mentor_accepted'
-                                            )
+                    {requests.map((req) => {
+                        const student = req.userId as UserType;
+                        return (
+                            <div
+                                key={req._id}
+                                className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-4"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src={
+                                            student?.profilePic ||
+                                            `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || 'User')}`
                                         }
-                                        className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold shadow-sm shadow-green-100"
-                                    >
-                                        <Check size={16} /> Accept
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            openRejectModal(req._id!)
-                                        }
-                                        className="flex-1 flex items-center justify-center gap-2 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-bold"
-                                    >
-                                        <X size={16} /> Reject
-                                    </button>
+                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                        alt=""
+                                    />
+                                    <div>
+                                        <p className="font-bold text-gray-900">
+                                            {student?.name || 'Anonymous User'}
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                            {student?.email || ''}
+                                        </p>
+                                        <span
+                                            className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md mt-1 inline-block ${
+                                                req.status ===
+                                                MentorshipStatus.PENDING
+                                                    ? 'bg-yellow-100 text-yellow-700'
+                                                    : req.status ===
+                                                        MentorshipStatus.ACTIVE
+                                                      ? 'bg-green-100 text-green-700'
+                                                      : req.status ===
+                                                          MentorshipStatus.REJECTED
+                                                        ? 'bg-red-100 text-red-700'
+                                                        : 'bg-gray-100 text-gray-700'
+                                            }`}
+                                        >
+                                            {req.status}
+                                        </span>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
+
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Calendar
+                                            size={14}
+                                            className="text-indigo-600"
+                                        />
+                                        <span>
+                                            Proposed:{' '}
+                                            {req.proposedStartDate
+                                                ? new Date(
+                                                      req.proposedStartDate
+                                                  ).toLocaleDateString()
+                                                : 'ASAP'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Clock
+                                            size={14}
+                                            className="text-indigo-600"
+                                        />
+                                        <span>
+                                            1-Month Mentorship ({req.totalSessions}{' '}
+                                            sessions)
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {req.status === MentorshipStatus.PENDING && (
+                                    <div className="flex gap-2 mt-2">
+                                        <button
+                                            onClick={() =>
+                                                handleRespond(
+                                                    req._id!,
+                                                    'mentor_accepted'
+                                                )
+                                            }
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold shadow-sm shadow-green-100"
+                                        >
+                                            <Check size={16} /> Accept
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                openRejectModal(req._id!)
+                                            }
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-bold"
+                                        >
+                                            <X size={16} /> Reject
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-4 mt-8">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        <span className="text-sm font-bold text-gray-600">
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
+                </>
             )}
 
             {/* Reject Modal */}

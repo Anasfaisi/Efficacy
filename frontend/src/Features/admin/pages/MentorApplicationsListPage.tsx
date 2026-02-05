@@ -18,17 +18,34 @@ export default function MentorApplicationsPage() {
     const [applications, setApplications] = useState<MentorApplication[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit] = useState(5);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
         fetchApplications();
-    }, []);
+    }, [page, debouncedSearch]);
 
     const fetchApplications = async () => {
         try {
             setLoading(true);
-            const data = await adminService.getMentorApplications();
-            setApplications(data);
+            const data = await adminService.getMentorApplications(
+                page,
+                limit,
+                debouncedSearch
+            );
+            setApplications(data.applications);
+            setTotalPages(data.totalPages);
         } catch (error) {
             console.error('Failed to fetch applications', error);
         } finally {
@@ -36,11 +53,7 @@ export default function MentorApplicationsPage() {
         }
     };
 
-    const filteredApplications = applications.filter(
-        (app) =>
-            app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            app.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredApplications = applications; // Now handled by backend search
     console.log(filteredApplications, 'filteredApplications=================');
 
     const getStatusColor = (status: string) => {
@@ -176,6 +189,43 @@ export default function MentorApplicationsPage() {
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {!loading && totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8 pb-4">
+                    <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                        Previous
+                    </button>
+                    <div className="flex items-center gap-1">
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setPage(i + 1)}
+                                className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
+                                    page === i + 1
+                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                                        : 'hover:bg-gray-50 text-gray-600 border border-gray-200'
+                                }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() =>
+                            setPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={page === totalPages}
+                        className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                        Next
+                    </button>
                 </div>
             )}
         </div>
