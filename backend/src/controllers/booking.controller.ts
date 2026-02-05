@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "@/config/inversify-key.types";
 import { IBookingService } from "@/serivces/Interfaces/IBooking.service";
 import code from "@/types/http-status.enum";
+import { CommonMessages } from "@/types/response-messages.types";
 
 @injectable()
 export class BookingController {
@@ -14,7 +15,7 @@ export class BookingController {
     async createBooking(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.UserNotAuthenticated });
             return;
         }
         const booking = await this._bookingService.createBooking({ ...req.body, userId });
@@ -24,7 +25,7 @@ export class BookingController {
     async getUserBookings(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.UserNotAuthenticated });
             return;
         }
         const bookings = await this._bookingService.getUserBookings(userId);
@@ -34,7 +35,7 @@ export class BookingController {
     async getMentorBookings(req: Request, res: Response): Promise<void> {
         const mentorId = req.currentUser?.id;
         if (!mentorId) {
-            res.status(code.UNAUTHORIZED).json({ message: "Mentor not authenticated" });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.MentorNotAuthenticated });
             return;
         }
         const page = parseInt(req.query.page as string) || 1;
@@ -60,7 +61,7 @@ export class BookingController {
         const userId = req.currentUser?.id;
         const role = req.currentUser?.role;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: "Not authenticated" });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.NotAuthenticated });
             return;
         }
 

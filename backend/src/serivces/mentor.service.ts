@@ -18,7 +18,7 @@ export class MentorService implements IMentorService {
 
     async getMentorProfile(id: string): Promise<IMentor> {
         const mentor = await this._mentorRepository.findById(id);
-        if (!mentor) throw new Error('Mentor not found');
+        if (!mentor) throw new Error(ErrorMessages.MentorNotFound);
         return mentor;
     }
 
@@ -34,13 +34,13 @@ export class MentorService implements IMentorService {
         if (updateData.newPassword && updateData.currentPassword) {
             const mentor = await this._mentorRepository.findById(id);
             if (!mentor || !mentor.password)
-                throw new Error('Mentor details not found');
+                throw new Error(ErrorMessages.UserNotFound);
 
             const isMatch = await this._passwordService.verifyPassword(
                 updateData.currentPassword,
                 mentor.password
             );
-            if (!isMatch) throw new Error('Current password is incorrect');
+            if (!isMatch) throw new Error(ErrorMessages.IncorrectPassword);
 
             updateData.password = await this._passwordService.hashPassword(
                 updateData.newPassword

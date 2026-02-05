@@ -7,6 +7,7 @@ import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository'
 import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
 import { INotificationService } from './Interfaces/INotification.service';
 import { NotificationType } from '@/types/notification.enum';
+import { ErrorMessages, NotificationMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class MentorOnboardService implements IMentorOnboardService {
@@ -23,7 +24,7 @@ export class MentorOnboardService implements IMentorOnboardService {
         const mentor = await this._mentorRepository.findById(dto.id);
         console.log(mentor, 'mentor from mentor onboard service');
         if (!mentor) {
-            throw new Error('Mentor not found');
+            throw new Error(ErrorMessages.MentorNotFound);
         }
 
         const updateData: Partial<IMentor> = {
@@ -70,13 +71,13 @@ export class MentorOnboardService implements IMentorOnboardService {
             updateData
         );
         if (!updatedMentorDoc) {
-            throw new Error('Could not update mentor documentation');
+            throw new Error(ErrorMessages.MentorUpdateFailed);
         }
 
         await this._notificationService
             .notifyAdmin(
                 NotificationType.MENTOR_APPLICATION_SUBMITTED,
-                'New Mentor Application',
+                NotificationMessages.NewMentorAppTitle,
                 `Mentor ${updatedMentorDoc.name} has submitted an application for review.`,
                 {
                     mentorId: updatedMentorDoc.id,
@@ -137,11 +138,11 @@ export class MentorOnboardService implements IMentorOnboardService {
     ): Promise<IMentor | null> {
         const mentor = await this._mentorRepository.findById(mentorId);
         if (!mentor) {
-            throw new Error('Mentor not found');
+            throw new Error(ErrorMessages.MentorNotFound);
         }
 
         if (mentor.status !== 'approved') {
-            throw new Error('Mentor must be approved before activation');
+            throw new Error(ErrorMessages.MentorNotApproved);
         }
 
         return await this._mentorRepository.update(mentorId, {

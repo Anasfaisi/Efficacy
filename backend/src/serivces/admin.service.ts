@@ -22,6 +22,7 @@ import {
     PaginatedUserResponseDto,
 } from '@/Dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+import { NotificationMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -130,7 +131,7 @@ export class AdminService implements IAdminService {
                 mentor.id,
                 Role.Mentor,
                 NotificationType.MENTOR_APPLICATION_APPROVED,
-                'Application Approved',
+                NotificationMessages.MentorAppApprovedTitle,
                 'Congratulations! Your mentor application has been approved. You can now access the mentor dashboard.',
                 { link: '/mentor/dashboard' }
             );
@@ -147,7 +148,7 @@ export class AdminService implements IAdminService {
                 mentor.id,
                 Role.Mentor,
                 NotificationType.MENTOR_APPLICATION_REJECTED,
-                'Application Rejected',
+                NotificationMessages.MentorAppRejectedTitle,
                 `Your mentor application has been rejected. Reason: ${reason}`,
                 { reason }
             );
@@ -167,7 +168,7 @@ export class AdminService implements IAdminService {
                 mentor.id,
                 Role.Mentor,
                 NotificationType.SYSTEM_ANNOUNCEMENT,
-                'Changes Requested',
+                NotificationMessages.ChangesRequestedTitle,
                 `The admin has requested changes to your application. Reason: ${reason}`,
                 { reason, link: '/mentor/onboarding' }
             );

@@ -3,6 +3,11 @@ import { injectable, inject } from 'inversify';
 import { INoteService } from '../serivces/Interfaces/INote.service';
 import { TYPES } from '../config/inversify-key.types';
 import HttpStatus from '../types/http-status.enum';
+import {
+    ErrorMessages,
+    SuccessMessages,
+    CommonMessages,
+} from '@/types/response-messages.types';
 
 interface AuthenticatedRequest extends Request {
     user?: {
@@ -17,7 +22,7 @@ export class NoteController {
     async createNote(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(HttpStatus.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
@@ -36,7 +41,7 @@ export class NoteController {
     async getNotes(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(HttpStatus.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
@@ -50,7 +55,7 @@ export class NoteController {
 
         const updatedNote = await this.noteService.updateNote(id, updateData);
         if (!updatedNote) {
-            res.status(HttpStatus.NOT_FOUND).json({ message: 'Note not found' });
+            res.status(HttpStatus.NOT_FOUND).json({ message: ErrorMessages.NoteNotFound });
             return;
         }
 
@@ -60,6 +65,6 @@ export class NoteController {
     async deleteNote(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this.noteService.deleteNote(id);
-        res.status(HttpStatus.OK).json({ message: 'Note deleted successfully' });
+        res.status(HttpStatus.OK).json({ message: SuccessMessages.NoteDeleted });
     }
 }

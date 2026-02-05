@@ -3,6 +3,7 @@ import { IPomodoroService } from '@/serivces/Interfaces/IPomodoro.service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PomodoroController {
@@ -19,7 +20,7 @@ export class PomodoroController {
         const { duration, type } = req.body;
 
         if (!duration || !type) {
-                res.status(code.BAD_REQUEST).json({ message: 'Duration and type are required' });
+                res.status(code.BAD_REQUEST).json({ message: ErrorMessages.PomodoroRequiredFields });
                 return;
         }
 
@@ -32,7 +33,7 @@ export class PomodoroController {
             const { date } = req.query;
 
             if (!date || typeof date !== 'string') {
-                res.status(code.BAD_REQUEST).json({ message: 'Date is required' });
+                res.status(code.BAD_REQUEST).json({ message: ErrorMessages.DateRequired });
                 return;
             }
 

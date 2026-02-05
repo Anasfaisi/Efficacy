@@ -11,6 +11,7 @@ import { Role } from "@/types/role.types";
 import { NotificationType } from "@/types/notification.enum";
 import { IUserRepository } from "@/repositories/interfaces/IUser.repository";
 import { IBookingService } from "@/serivces/Interfaces/IBooking.service";
+import { ErrorMessages, NotificationMessages } from "@/types/response-messages.types";
 
 @injectable()
 export class BookingService implements IBookingService {
@@ -32,31 +33,31 @@ export class BookingService implements IBookingService {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (bookingDate < today) {
-            throw new Error("Cannot book sessions for past dates.");
+            throw new Error(ErrorMessages.PastDateBooking);
         }
         
         // 1. Prevent more than one session per day (Check if user has any booking on this day)
         const hasBookingToday = await this._bookingRepository.hasExistingBooking(data.userId, bookingDate);
         if (hasBookingToday) {
-            throw new Error("You already have a booking scheduled for this day. Only one session per day is allowed.");
+            throw new Error(ErrorMessages.ExistingBookingDay);
         }
 
         const isAvailable = await this._bookingRepository.isSlotAvailable(data.mentorId, bookingDate, data.slot);
         if (!isAvailable) {
-            throw new Error("This slot is already booked for the mentor.");
+            throw new Error(ErrorMessages.SlotAlreadyBooked);
         }
 
         const mentor = await this._mentorRepository.findById(data.mentorId);
         console.log(mentor,"mentor from booking service");
-        if (!mentor) throw new Error("Mentor not found");
+        if (!mentor) throw new Error(ErrorMessages.MentorNotFound);
         
         const dayName = bookingDate.toLocaleDateString('en-US', { weekday: 'long' });
         if (!mentor.availableDays?.includes(dayName)) {
-            throw new Error(`Mentor is not available on ${dayName}s.`);
+            throw new Error(ErrorMessages.MentorNotAvailableDay);
         }
         console.log(data.slot,"slot from booking service")
         if (!mentor.preferredTime?.includes(data.slot)) {
-            throw new Error(`Mentor is not available at ${data.slot}.`);
+            throw new Error(ErrorMessages.MentorNotAvailableSlot);
         }
 
         const thirtyDaysAgo = new Date(bookingDate);
@@ -64,7 +65,7 @@ export class BookingService implements IBookingService {
         const bookingCount = await this._bookingRepository.countBookingsInDateRange(data.userId, thirtyDaysAgo, bookingDate);
         
         if (bookingCount >= 10) {
-            throw new Error("You have reached the maximum limit of 10 bookings in a 30-day period.");
+            throw new Error(ErrorMessages.BookingLimitReached);
         }
 
         const bookingEntity = new BookingEntity(
@@ -79,7 +80,7 @@ export class BookingService implements IBookingService {
             null,
             undefined,
             undefined,
-            `https://meet.efficacy.com/${Math.random().toString(36).substring(7)}` // Dummy Room ID
+            `#` // Dummy Room ID
         );
 
         const createdBooking = await this._bookingRepository.create(bookingEntity);
@@ -90,7 +91,7 @@ export class BookingService implements IBookingService {
             data.mentorId,
             Role.Mentor,
             NotificationType.SYSTEM_ANNOUNCEMENT,
-            "New Booking Request",
+            NotificationMessages.NewBookingRequestTitle,
             `${user?.name || 'A student'} has requested a session at ${data.slot} on ${bookingDate.toLocaleDateString()}.`,
             { bookingId: createdBooking.id }
         );
@@ -134,7 +135,7 @@ export class BookingService implements IBookingService {
         if (!booking) throw new Error("Booking not found");
 
         const updatedBooking = await this._bookingRepository.update(data.bookingId, { status: data.status });
-        if (!updatedBooking) throw new Error("Failed to update booking");
+        if (!updatedBooking) throw new Error(ErrorMessages.BookingUpdateFailed);
 
         if (data.status === BookingStatus.COMPLETED) {
             const mentor = await this._mentorRepository.findById(booking.mentorId);
@@ -146,7 +147,7 @@ export class BookingService implements IBookingService {
         }
 
         // Notify user
-        const title = data.status === BookingStatus.CONFIRMED ? "Booking Confirmed" : "Booking Status Updated";
+        const title = data.status === BookingStatus.CONFIRMED ? NotificationMessages.BookingConfirmedTitle : NotificationMessages.BookingStatusUpdatedTitle;
         const message = `Your booking for ${booking.bookingDate.toLocaleDateString()} at ${booking.slot} is now ${data.status}.`;
         
         await this._notificationService.createNotification(
@@ -163,13 +164,13 @@ export class BookingService implements IBookingService {
 
     async requestReschedule(data: RescheduleRequestDto): Promise<BookingResponseDto> {
         const booking = await this._bookingRepository.findById(data.bookingId);
-        if (!booking) throw new Error("Booking not found");
+        if (!booking) throw new Error(ErrorMessages.BookingNotFound);
 
         const proposedDate = new Date(data.proposedDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (proposedDate < today) {
-            throw new Error("Cannot reschedule to a past date.");
+            throw new Error(ErrorMessages.PastDateReschedule);
         }
 
         const now = new Date();
@@ -178,7 +179,7 @@ export class BookingService implements IBookingService {
         const diffHours = (bookingTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
         if (data.requestedBy === 'user' && diffHours < 3) {
-            throw new Error("Reschedule requests must be made at least 3 hours before the session. If not, the session is lost.");
+            throw new Error(ErrorMessages.RescheduleTimeLimit);
         }
 
         const updatedBooking = await this._bookingRepository.update(data.bookingId, {
@@ -188,7 +189,7 @@ export class BookingService implements IBookingService {
             proposedSlot: data.proposedSlot
         });
 
-        if (!updatedBooking) throw new Error("Failed to update booking");
+        if (!updatedBooking) throw new Error(ErrorMessages.BookingUpdateFailed);
 
         const recipientId = data.requestedBy === 'user' ? booking.mentorId : booking.userId;
         const recipientRole = data.requestedBy === 'user' ? Role.Mentor : Role.User;
@@ -198,7 +199,7 @@ export class BookingService implements IBookingService {
             recipientId,
             recipientRole,
             NotificationType.SYSTEM_ANNOUNCEMENT,
-            "Reschedule Request",
+            NotificationMessages.RescheduleRequestTitle,
             `${senderName} requested to reschedule the session to ${data.proposedSlot} on ${new Date(data.proposedDate).toLocaleDateString()}.`,
             { bookingId: booking.id }
         );
@@ -208,15 +209,15 @@ export class BookingService implements IBookingService {
 
     async handleRescheduleResponse(bookingId: string, approve: boolean): Promise<BookingResponseDto> {
         const booking = await this._bookingRepository.findById(bookingId);
-        if (!booking) throw new Error("Booking not found");
-        if (booking.status !== BookingStatus.RESCHEDULED) throw new Error("No active reschedule request");
+        if (!booking) throw new Error(ErrorMessages.BookingNotFound);
+        if (booking.status !== BookingStatus.RESCHEDULED) throw new Error(ErrorMessages.NoRescheduleRequest);
 
         let updatedBooking: BookingEntity | null;
 
         if (approve) {
             // Check if proposed slot is still available
             const isAvailable = await this._bookingRepository.isSlotAvailable(booking.mentorId, booking.proposedDate!, booking.proposedSlot!);
-            if (!isAvailable) throw new Error("The proposed slot is no longer available.");
+            if (!isAvailable) throw new Error(ErrorMessages.ProposedSlotUnavailable);
 
             updatedBooking = await this._bookingRepository.update(bookingId, {
                 status: BookingStatus.CONFIRMED,
@@ -235,7 +236,7 @@ export class BookingService implements IBookingService {
             });
         }
 
-        if (!updatedBooking) throw new Error("Failed to update booking");
+        if (!updatedBooking) throw new Error(ErrorMessages.BookingUpdateFailed);
 
         const recipientId = booking.rescheduleBy === 'user' ? booking.userId : booking.mentorId;
         const recipientRole = booking.rescheduleBy === 'user' ? Role.User : Role.Mentor;
@@ -244,7 +245,7 @@ export class BookingService implements IBookingService {
             recipientId,
             recipientRole,
             NotificationType.SYSTEM_ANNOUNCEMENT,
-            approve ? "Reschedule Accepted" : "Reschedule Rejected",
+            approve ? NotificationMessages.RescheduleAcceptedTitle : NotificationMessages.RescheduleRejectedTitle,
             approve ? `The session has been rescheduled.` : `The reschedule request was rejected and session is cancelled.`,
             { bookingId: booking.id }
         );

@@ -5,7 +5,12 @@ import code from '@/types/http-status.enum';
 import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
 import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
-import { AuthMessages } from '@/types/response-messages.types';
+import {
+    AuthMessages,
+    ErrorMessages,
+    SuccessMessages,
+    CommonMessages,
+} from '@/types/response-messages.types';
 import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
 
 export class MentorController {
@@ -64,7 +69,7 @@ export class MentorController {
             console.log('at the mentor logout route', req.cookies);
             const refreshToken = req.cookies.refreshToken;
             if (!refreshToken) {
-                throw new Error('Invalid refresh token or no refresh token');
+                throw new Error(AuthMessages.InvalidRefreshToken);
             }
             await this._mentorAuthService.logout(refreshToken);
 
@@ -77,7 +82,7 @@ export class MentorController {
             res.json(AuthMessages.LogoutSuccess);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Unknown error';
+                error instanceof Error ? error.message : CommonMessages.UnexpectedError;
             console.error('Logout error:', message);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
@@ -86,19 +91,19 @@ export class MentorController {
     }
     async getProfile(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error('User context missing');
+            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const mentor = await this._mentorService.getMentorProfile(userId);
             res.status(code.OK).json({ mentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Unknown error';
+                error instanceof Error ? error.message : CommonMessages.UnexpectedError;
             res.status(code.NOT_FOUND).json({ message });
         }
     }
     async updateProfileBasicInfo(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error('User context missing');
+            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
 
             const updateDto = new UpdateMentorProfileDto();
@@ -112,14 +117,14 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Update failed';
+                error instanceof Error ? error.message : ErrorMessages.GeneralUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async updateProfileMedia(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error('User context missing');
+            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const updatedMentor =
                 await this._mentorService.updateMentorProfileMedia(
@@ -129,14 +134,14 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Media update failed';
+                error instanceof Error ? error.message : ErrorMessages.MediaUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async updateProfileArray(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error('User context missing');
+            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const { field, data } = req.body;
 
@@ -152,7 +157,7 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Array update failed';
+                error instanceof Error ? error.message : ErrorMessages.ArrayUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -205,7 +210,7 @@ export class MentorController {
                 error instanceof Error
                     ? error.message
                     : 'Failed to fetch mentors';
-            res.status(code.INTERNAL_SERVER_ERROR).json({ message });
+            res.status(code.INTERNAL_SERVER_ERROR).json({ message: ErrorMessages.FetchMentorsFailed });
         }
     }
 
@@ -217,7 +222,7 @@ export class MentorController {
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Failed to resend OTP';
+                error instanceof Error ? error.message : ErrorMessages.ResendOtpFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -234,7 +239,7 @@ export class MentorController {
             const message =
                 error instanceof Error
                     ? error.message
-                    : 'Failed to send reset link';
+                    : ErrorMessages.ForgotPasswordFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -249,7 +254,7 @@ export class MentorController {
             const message =
                 error instanceof Error
                     ? error.message
-                    : 'Failed to reset password';
+                    : ErrorMessages.ResetPasswordFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -272,14 +277,14 @@ export class MentorController {
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : 'Google login failed';
+                error instanceof Error ? error.message : ErrorMessages.GoogleLoginFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async getNotifications(req: Request, res: Response): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
         const notifications =
@@ -292,7 +297,7 @@ export class MentorController {
     async markNotificationAsRead(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._notificationService.markAsRead(id);
-        res.status(code.OK).json({ message: 'Notification marked as read' });
+        res.status(code.OK).json({ message: SuccessMessages.NotificationMarkedRead });
     }
 
     async markAllNotificationsAsRead(
@@ -300,12 +305,12 @@ export class MentorController {
         res: Response
     ): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorizeds' });
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
         await this._notificationService.markAllAsRead(req.currentUser.id);
         res.status(code.OK).json({
-            message: 'All notifications marked as read',
+            message: SuccessMessages.AllNotificationsMarkedRead,
         });
     }
 }

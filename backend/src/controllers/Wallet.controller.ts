@@ -4,6 +4,7 @@ import { TYPES } from '@/config/inversify-key.types';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import code from '@/types/http-status.enum';
 import { Role } from '@/types/role.types';
+import { SuccessMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class WalletController {
@@ -66,7 +67,7 @@ export class WalletController {
 
     async requestWithdrawal(req: Request, res: Response): Promise<void> {
         // Placeholder for withdrawal logic
-        res.status(code.OK).json({ message: 'Withdrawal requested' });
+        res.status(code.OK).json({ message: SuccessMessages.WithdrawalRequested });
     }
 
     async getTransactions(req: Request, res: Response): Promise<void> {

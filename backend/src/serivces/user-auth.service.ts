@@ -3,6 +3,7 @@ import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPasswordService } from './Interfaces/IPassword.service';
 import { IUser } from '@/models/User.model';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class UserLoginService {
@@ -16,17 +17,17 @@ export class UserLoginService {
     async login(email: string, password: string): Promise<IUser> {
         const user = await this._userRepository.findByEmail(email);
         if (!user) {
-            throw new Error('User not found');
+            throw new Error(ErrorMessages.UserNotFound);
         }
         if (!user.password) {
-            throw new Error('User password not found');
+            throw new Error(ErrorMessages.UserNotFound);
         }
         const isPasswordValid = await this._passwordService.comparePassword(
             password,
             user.password
         );
         if (!isPasswordValid) {
-            throw new Error('Invalid password');
+            throw new Error(ErrorMessages.InvalidPassword);
         }
         return user;
     }

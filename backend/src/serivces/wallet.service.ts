@@ -9,6 +9,7 @@ import {
     TransactionStatus,
 } from '@/models/Wallet.model';
 import { ObjectId } from 'mongoose';
+import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class WalletService implements IWalletService {
@@ -56,7 +57,7 @@ export class WalletService implements IWalletService {
         amount: number
     ): Promise<IWallet> {
         const wallet = await this.getWallet(mentorId);
-        if (wallet.balance < amount) throw new Error('Insufficient balance');
+        if (wallet.balance < amount) throw new Error(ErrorMessages.InsufficientBalance);
 
         wallet.balance -= amount;
         wallet.transactions.push({

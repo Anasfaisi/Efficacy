@@ -4,6 +4,11 @@ import { TYPES } from '@/config/inversify-key.types';
 import { IChatService } from '@/serivces/Interfaces/IChat.service';
 import { ISocketService } from '@/serivces/Interfaces/ISocket.service';
 import Code from '@/types/http-status.enum';
+import {
+    ErrorMessages,
+    SuccessMessages,
+    CommonMessages,
+} from '@/types/response-messages.types';
 
 @injectable()
 export class ChatController {
@@ -17,7 +22,7 @@ export class ChatController {
         const userId = req.currentUser?.id;
         if (!userId) {
             res.status(Code.UNAUTHORIZED).json({
-                message: 'User not found',
+                message: ErrorMessages.UserNotFound,
             });
             return;
         }
@@ -33,7 +38,7 @@ export class ChatController {
         const userId = req.currentUser?.id;
         if (!userId) {
             res.status(Code.UNAUTHORIZED).json({
-                message: 'User not found',
+                message: ErrorMessages.UserNotFound,
             });
             return;
         }
@@ -55,7 +60,7 @@ export class ChatController {
 
     async uploadFile(req: Request, res: Response) {
         if (!req.file) {
-            res.status(Code.BAD_REQUEST).json({ message: 'No file uploaded' });
+            res.status(Code.BAD_REQUEST).json({ message: ErrorMessages.NoFileUploaded });
             return;
         }
 
@@ -71,7 +76,7 @@ export class ChatController {
         const userId = req.currentUser?.id;
 
         if (!userId) {
-            res.status(Code.UNAUTHORIZED).json({ message: 'Unauthorized' });
+            res.status(Code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
             return;
         }
 
@@ -86,6 +91,6 @@ export class ChatController {
             { messageId: deletedMessage._id }
         );
 
-        res.status(Code.OK).json({ message: 'Message deleted' });
+        res.status(Code.OK).json({ message: SuccessMessages.MessageDeleted });
     }
 }

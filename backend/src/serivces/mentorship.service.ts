@@ -19,6 +19,7 @@ import { ObjectId, Types } from 'mongoose';
 import { IMentor } from '@/models/Mentor.model';
 import { IUser } from '@/models/User.model';
 import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
+import { ErrorMessages, SuccessMessages, AuthMessages, CommonMessages, NotificationMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -46,22 +47,20 @@ export class MentorshipService implements IMentorshipService {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             if (proposedStartDate < today) {
-                throw new Error('Proposed start date cannot be in the past.');
+                throw new Error(ErrorMessages.PastDateBooking);
             }
         }
         const mentor = await this._mentorRepository.findById(
             mentorId as string
         );
-        if (!mentor) throw new Error('Mentor not found');
+        if (!mentor) throw new Error(ErrorMessages.MentorNotFound);
         const existingMentorship =
             await this._mentorshipRepository.findByUserIdAndMentorId(
                 mentorId,
                 userId
             );
         if (existingMentorship)
-            throw new Error(
-                'You already have an ongoing mentorship request or active session with this mentor.'
-            );
+            throw new Error(ErrorMessages.MentorshipAlreadyExists);
         const mentorship = await this._mentorshipRepository.create({
             userId,
             mentorId,
@@ -77,7 +76,7 @@ export class MentorshipService implements IMentorshipService {
             mentorId as string,
             Role.Mentor,
             NotificationType.MENTORSHIP_REQUEST,
-            'New Mentorship Request',
+            NotificationMessages.NewMentorshipRequestTitle,
             'A user has requested a 1-month mentorship with you.',
             { mentorshipId: mentorship._id }
         );
@@ -123,15 +122,15 @@ export class MentorshipService implements IMentorshipService {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             if (suggestedStartDate < today) {
-                throw new Error('Suggested start date cannot be in the past.');
+                throw new Error(ErrorMessages.PastDateBooking);
             }
         }
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         console.log(mentorship.mentorId== mentorId,mentorship.mentorId.toString(),mentorId,"mentorshipId from mentorshipService");
         if ((mentorship.mentorId as Partial<IMentor>)?.id !== mentorId)
-            throw new Error('Unauthorized');
+            throw new Error(CommonMessages.Unauthorized);
 
         mentorship.status =
             status === 'mentor_accepted'
@@ -152,8 +151,8 @@ export class MentorshipService implements IMentorshipService {
             Role.User,
             NotificationType.MENTORSHIP_RESPONSE,
             status === 'mentor_accepted'
-                ? 'Mentorship Request Accepted'
-                : 'Mentorship Request Rejected',
+                ? NotificationMessages.MentorshipRequestAcceptedTitle
+                : NotificationMessages.MentorshipRequestRejectedTitle,
             status === 'mentor_accepted'
                 ? `Mentor has accepted your request${suggestedStartDate ? ' with a suggested start date' : ''}.`
                 : `Mentor has rejected your request: ${reason}`,
@@ -170,9 +169,9 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         if ((mentorship.userId as Partial<IUser>).id.toString() !== userId)
-            throw new Error('Unauthorized');
+            throw new Error(CommonMessages.Unauthorized);
 
         if (confirm) {
             mentorship.status = MentorshipStatus.PAYMENT_PENDING;
@@ -193,7 +192,7 @@ export class MentorshipService implements IMentorshipService {
             mentorId,
             Role.Mentor,
             NotificationType.MENTORSHIP_RESPONSE,
-            confirm ? 'Mentorship Suggestion Accepted' : 'Mentorship Cancelled',
+            confirm ? NotificationMessages.MentorshipSuggestionAcceptedTitle : NotificationMessages.MentorshipCancelledTitle,
             confirm
                 ? `User has accepted your suggested dates. Mentorship is now pending payment.`
                 : `User has declined your suggested dates and cancelled the request.`,
@@ -209,7 +208,7 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         mentorship.paymentId = paymentId;
         mentorship.paymentStatus = 'verified';
@@ -239,7 +238,7 @@ export class MentorshipService implements IMentorshipService {
                 mentorship.userId.toString(),
             Role.User,
             NotificationType.MENTORSHIP_ACTIVE,
-            'Mentorship Active',
+            NotificationMessages.MentorshipActiveTitle,
             `Your mentorship is now active until ${end.toLocaleDateString()}.`
         );
 
@@ -248,7 +247,7 @@ export class MentorshipService implements IMentorshipService {
                 mentorship.mentorId.toString(),
             Role.Mentor,
             NotificationType.MENTORSHIP_ACTIVE,
-            'Mentorship Active',
+            NotificationMessages.MentorshipActiveTitle,
             `A new mentorship with user is now active.`,
             { mentorshipId }
         );
@@ -272,13 +271,13 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         if (mentorship.userId.toString() !== userId)
-            throw new Error('Unauthorized');
+            throw new Error(CommonMessages.Unauthorized);
         if (mentorship.status !== MentorshipStatus.ACTIVE)
-            throw new Error('Mentorship is not active');
+            throw new Error(ErrorMessages.MentorshipNotActive);
         if (mentorship.usedSessions >= mentorship.totalSessions)
-            throw new Error('No sessions remaining');
+            throw new Error(ErrorMessages.NoSessionsRemaining);
 
         (mentorship.sessions as unknown as Types.DocumentArray<any>).push({
             date,
@@ -299,19 +298,19 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         const session = (
             mentorship.sessions as unknown as Types.DocumentArray<any>
         ).id(sessionId);
-        if (!session) throw new Error('Session not found');
+        if (!session) throw new Error(ErrorMessages.SessionNotFound);
 
         const now = new Date();
         const hoursDiff =
             (session.date.getTime() - now.getTime()) / (1000 * 60 * 60);
         if (hoursDiff < 6)
             throw new Error(
-                'Rescheduling must be done at least 6 hours in advance'
+                ErrorMessages.RescheduleTimeLimitMentorship
             );
 
         session.date = newDate;
@@ -328,7 +327,7 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         if (role === 'user') mentorship.userConfirmedCompletion = true;
         if (role === 'mentor') mentorship.mentorConfirmedCompletion = true;
@@ -346,7 +345,7 @@ export class MentorshipService implements IMentorshipService {
                     mentorship.userId.toString(),
                 Role.User,
                 NotificationType.MENTORSHIP_COMPLETED,
-                'Mentorship Completed',
+                NotificationMessages.MentorshipCompletedTitle,
                 'Your mentorship has been marked as completed. Please provide feedback.',
                 { mentorshipId }
             );
@@ -356,7 +355,7 @@ export class MentorshipService implements IMentorshipService {
                     mentorship.mentorId.toString(),
                 Role.Mentor,
                 NotificationType.MENTORSHIP_COMPLETED,
-                'Mentorship Completed',
+                NotificationMessages.MentorshipCompletedTitle,
                 'Your mentorship has been marked as completed.',
                 { mentorshipId }
             );
@@ -374,7 +373,7 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         if (role === 'user') {
             mentorship.userFeedback = { rating, comment };
@@ -394,17 +393,17 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-        if (!mentorship) throw new Error('Mentorship not found');
+        if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         if (mentorship.userId.toString() !== userId)
-            throw new Error('Unauthorized');
+            throw new Error(CommonMessages.Unauthorized);
         if (mentorship.status !== MentorshipStatus.ACTIVE)
-            throw new Error('Can only cancel active mentorships');
+            throw new Error(ErrorMessages.CancelOnlyActive);
 
         const startDate = mentorship.startDate || new Date();
         const diffDays =
             (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
         if (diffDays > 7)
-            throw new Error('Cancellation period (7 days) has expired');
+            throw new Error(ErrorMessages.CancellationExpired);
 
         let refundAmount = 0;
         const usedSessions = mentorship.usedSessions;
