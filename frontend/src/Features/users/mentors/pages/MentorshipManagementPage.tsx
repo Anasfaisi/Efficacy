@@ -174,6 +174,13 @@ const MentorshipManagementPage: React.FC = () => {
         if (!mentor?._id && !mentor?.id) return;
         if (!selectedDate || !selectedSlot) return;
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate < today) {
+            toast.error('Cannot book sessions for past dates.');
+            return;
+        }
+
         try {
             await bookingApi.createBooking({
                 mentorId: (mentor._id || mentor.id) as string,

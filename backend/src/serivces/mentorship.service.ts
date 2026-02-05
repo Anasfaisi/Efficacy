@@ -42,6 +42,13 @@ export class MentorshipService implements IMentorshipService {
         sessions: number,
         proposedStartDate?: Date
     ): Promise<IMentorship> {
+        if (proposedStartDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (proposedStartDate < today) {
+                throw new Error('Proposed start date cannot be in the past.');
+            }
+        }
         const mentor = await this._mentorRepository.findById(
             mentorId as string
         );
@@ -112,6 +119,13 @@ export class MentorshipService implements IMentorshipService {
         suggestedStartDate?: Date,
         reason?: string
     ): Promise<IMentorship> {
+        if (suggestedStartDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (suggestedStartDate < today) {
+                throw new Error('Suggested start date cannot be in the past.');
+            }
+        }
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error('Mentorship not found');

@@ -28,19 +28,24 @@ export class BookingService implements IBookingService {
     async createBooking(data: CreateBookingRequestDto): Promise<BookingResponseDto> {
         const bookingDate = new Date(data.bookingDate);
         
+        // 0. Prevent booking for past dates
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (bookingDate < today) {
+            throw new Error("Cannot book sessions for past dates.");
+        }
+        
         // 1. Prevent more than one session per day (Check if user has any booking on this day)
         const hasBookingToday = await this._bookingRepository.hasExistingBooking(data.userId, bookingDate);
         if (hasBookingToday) {
             throw new Error("You already have a booking scheduled for this day. Only one session per day is allowed.");
         }
 
-        // 2. Check if mentor is available at this slot (Double booking prevention)
         const isAvailable = await this._bookingRepository.isSlotAvailable(data.mentorId, bookingDate, data.slot);
         if (!isAvailable) {
             throw new Error("This slot is already booked for the mentor.");
         }
 
-        // 3. Check mentor's configured availability
         const mentor = await this._mentorRepository.findById(data.mentorId);
         console.log(mentor,"mentor from booking service");
         if (!mentor) throw new Error("Mentor not found");
@@ -54,7 +59,6 @@ export class BookingService implements IBookingService {
             throw new Error(`Mentor is not available at ${data.slot}.`);
         }
 
-        // 4. Multiple booking prevention: Only 10 per 30 days
         const thirtyDaysAgo = new Date(bookingDate);
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const bookingCount = await this._bookingRepository.countBookingsInDateRange(data.userId, thirtyDaysAgo, bookingDate);
@@ -63,15 +67,14 @@ export class BookingService implements IBookingService {
             throw new Error("You have reached the maximum limit of 10 bookings in a 30-day period.");
         }
 
-        // 5. Create booking entity
         const bookingEntity = new BookingEntity(
-            "", // ID will be generated
+            "",
             data.userId,
             data.mentorId,
             bookingDate,
             data.slot,
             BookingStatus.PENDING,
-            60, // 1 hour fixed
+            60,
             data.topic,
             null,
             undefined,
@@ -161,6 +164,13 @@ export class BookingService implements IBookingService {
     async requestReschedule(data: RescheduleRequestDto): Promise<BookingResponseDto> {
         const booking = await this._bookingRepository.findById(data.bookingId);
         if (!booking) throw new Error("Booking not found");
+
+        const proposedDate = new Date(data.proposedDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (proposedDate < today) {
+            throw new Error("Cannot reschedule to a past date.");
+        }
 
         const now = new Date();
         const bookingTime = new Date(booking.bookingDate);

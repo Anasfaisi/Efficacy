@@ -29,6 +29,15 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({
     const [proposedStartDate, setProposedStartDate] = useState('');
 
     const handleBooking = async () => {
+        if (proposedStartDate) {
+            const selectedDate = new Date(proposedStartDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
+                toast.error('Proposed start date cannot be in the past.');
+                return;
+            }
+        }
         setIsBooking(true);
         try {
             await mentorshipApi.createRequest({
