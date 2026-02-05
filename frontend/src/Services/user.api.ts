@@ -11,6 +11,7 @@ import type {
 import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
+import type { Notification } from '@/Features/admin/types';
 
 const ENDPOINTS: Record<Role, string> = {
     admin: '/admin/login',
@@ -246,4 +247,17 @@ export const updateProfile = async (form: ProfileForm, id?: string) => {
         }
         throw new Error('Unknown error during profile update');
     }
+};
+
+export const userApi = {
+    getNotifications: async (): Promise<Notification[]> => {
+        const res = await api.get('/notifications');
+        return res.data;
+    },
+    markNotificationAsRead: async (id: string): Promise<void> => {
+        await api.patch(`/notifications/${id}/mark-read`);
+    },
+    markAllNotificationsAsRead: async (): Promise<void> => {
+        await api.patch('/notifications/mark-all-read');
+    },
 };

@@ -8,9 +8,14 @@ import {
     offNotificationEvents,
 } from '@/Services/socket/socketService';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
-import { addNotification, markAsRead } from '@/redux/slices/notificationSlice';
+import {
+    addNotification,
+    markAsRead,
+    setNotifications,
+} from '@/redux/slices/notificationSlice';
 import { useNavigate } from 'react-router-dom';
 import type { Notification } from '@/Features/admin/types';
+import { userApi } from '@/Services/user.api';
 
 export const UserNotificationListener: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -128,16 +133,22 @@ export const UserNotificationListener: React.FC = () => {
         [dispatch, navigate]
     );
 
-    const currentUserId = (currentUser as any)?.id || (currentUser as any)?._id;
+    const currentUserId = currentUser ? (('id' in currentUser ? currentUser.id : undefined) || ('_id' in currentUser ? (currentUser as { _id?: string })._id : undefined)) : undefined;
 
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'user') return;
 
-        console.log(
-            '%c🔔 UserNotificationListener: Initializing socket for user:',
-            'color: #00D1FF; font-weight: bold',
-            currentUserId
-        );
+        // Fetch initial notifications
+        userApi
+            .getNotifications()
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    dispatch(setNotifications(data));
+                }
+            })
+            .catch((err) => {
+                console.error('Failed to fetch user notifications', err);
+            });
 
         const socket = connectSocket();
 
@@ -145,11 +156,17 @@ export const UserNotificationListener: React.FC = () => {
             if (currentUserId) joinUserRoom(currentUserId);
 
             onNewNotification(handleNotification);
+
+            socket.on('connect', () => {
+                console.log('User socket connected, re-joining room');
+                if (currentUserId) joinUserRoom(currentUserId);
+            });
         }
 
         return () => {
             console.log('🧹 UserNotificationListener: Cleaning up...');
             offNotificationEvents();
+            socket?.off('connect');
         };
     }, [currentUserId, currentUser?.role, handleNotification]);
 

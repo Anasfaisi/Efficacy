@@ -143,8 +143,12 @@ export class MentorshipService implements IMentorshipService {
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
+        const recipientId =
+            (mentorship.userId as any)._id?.toString() ||
+            mentorship.userId.toString();
+
         await this._notificationService.createNotification(
-            mentorship.userId.toString(),
+            recipientId,
             Role.User,
             NotificationType.MENTORSHIP_RESPONSE,
             status === 'mentor_accepted'
@@ -180,6 +184,22 @@ export class MentorshipService implements IMentorshipService {
         }
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
+
+        const mentorId =
+            (mentorship.mentorId as any)._id?.toString() ||
+            mentorship.mentorId.toString();
+
+        await this._notificationService.createNotification(
+            mentorId,
+            Role.Mentor,
+            NotificationType.MENTORSHIP_RESPONSE,
+            confirm ? 'Mentorship Suggestion Accepted' : 'Mentorship Cancelled',
+            confirm
+                ? `User has accepted your suggested dates. Mentorship is now pending payment.`
+                : `User has declined your suggested dates and cancelled the request.`,
+            { mentorshipId }
+        );
+
         return mentorship;
     }
 
@@ -215,7 +235,8 @@ export class MentorshipService implements IMentorshipService {
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
         await this._notificationService.createNotification(
-            mentorship.userId.toString(),
+            (mentorship.userId as any)._id?.toString() ||
+                mentorship.userId.toString(),
             Role.User,
             NotificationType.MENTORSHIP_ACTIVE,
             'Mentorship Active',
@@ -223,7 +244,8 @@ export class MentorshipService implements IMentorshipService {
         );
 
         await this._notificationService.createNotification(
-            mentorship.mentorId.toString(),
+            (mentorship.mentorId as any)._id?.toString() ||
+                mentorship.mentorId.toString(),
             Role.Mentor,
             NotificationType.MENTORSHIP_ACTIVE,
             'Mentorship Active',
@@ -320,7 +342,8 @@ export class MentorshipService implements IMentorshipService {
             await this.checkAndReleaseFunds(mentorship); // Helper called here
 
             await this._notificationService.createNotification(
-                mentorship.userId.toString(),
+                (mentorship.userId as any)._id?.toString() ||
+                    mentorship.userId.toString(),
                 Role.User,
                 NotificationType.MENTORSHIP_COMPLETED,
                 'Mentorship Completed',
@@ -329,7 +352,8 @@ export class MentorshipService implements IMentorshipService {
             );
 
             await this._notificationService.createNotification(
-                mentorship.mentorId.toString(),
+                (mentorship.mentorId as any)._id?.toString() ||
+                    mentorship.mentorId.toString(),
                 Role.Mentor,
                 NotificationType.MENTORSHIP_COMPLETED,
                 'Mentorship Completed',
