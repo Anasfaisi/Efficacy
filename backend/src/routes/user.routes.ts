@@ -59,12 +59,12 @@ export default function authRoutes(userController: UserController) {
     );
 
     router.patch(
-        '/update/profile/:id',
+        '/profile/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         userController.updateUserProfile.bind(userController)
     );
     router.patch(
-        '/profile/proPicUpdate/:id',
+        '/profile/picture/:id',
         authenticateAndAuthorize(_tokenService, Role.User),
         upload.single('image'),
         userController.updateProfilePic.bind(userController)

@@ -209,7 +209,7 @@ export const updateProfilePicture = async (
         const formData = new FormData();
         formData.append('image', file);
         const response = await api.patch(
-            `/profile/proPicUpdate/${id}`,
+            `/profile/picture/${id}`,
             formData,
             {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -236,7 +236,7 @@ export const updateProfile = async (form: ProfileForm, id?: string) => {
         if (!id) {
             throw new Error('no user id was given');
         }
-        const response = await api.patch(`/update/profile/${id}`, form);
+        const response = await api.patch(`/profile/${id}`, form);
         return response;
     } catch (error: unknown) {
         if (error instanceof AxiosError) {

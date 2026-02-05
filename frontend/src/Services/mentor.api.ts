@@ -128,7 +128,7 @@ export const updateMentorProfileArray = async (
     formData.append('field', field);
     formData.append('data', JSON.stringify(elements));
 
-    const res = await api.patch('/mentor/profile/array-update', formData, {
+    const res = await api.patch('/mentor/profile/array', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
     });
     return res.data;

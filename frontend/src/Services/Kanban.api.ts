@@ -30,7 +30,7 @@ export const updateTaskAPI = async (
     taskId: string,
     data: Partial<Task>
 ) => {
-    const res = await api.put('/kanban/task/update', {
+    const res = await api.put('/kanban/task', {
         id,
         columnId,
         taskId,
