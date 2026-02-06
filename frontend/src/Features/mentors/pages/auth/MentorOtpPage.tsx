@@ -52,8 +52,11 @@ export function MentorOtpPage() {
                 toast.success('Mentor email verified successfully!');
                 navigate('/mentor/dashboard');
             }
-        } catch (error: any) {
-            toast.error(error.message || 'Verification failed');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || (error as Error).message || 'Verification failed';
+            toast.error(errorMessage);
         }
     };
 
@@ -69,10 +72,11 @@ export function MentorOtpPage() {
                 })
             );
             toast.success(`A new verification code has been sent.`);
-        } catch (error: unknown) {
-            const message =
-                typeof error === 'string' ? error : 'Failed to resend OTP';
-            toast.error(message);
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || (error as Error).message || 'Failed to resend OTP';
+            toast.error(errorMessage);
         }
     };
 

@@ -146,6 +146,7 @@ export class MentorshipController {
     async cancelMentorship(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const { id } = req.params;
+    
         const mentorship = await this._mentorshipService.cancelMentorship(
             id,
             userId

@@ -33,7 +33,10 @@ const MentorWalletPage: React.FC = () => {
             setTotalPages(txData.totalPages);
         } catch (error) {
             console.error('Failed to fetch wallet data:', error);
-            toast.error('Failed to load wallet data');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to load wallet data';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -51,8 +54,11 @@ const MentorWalletPage: React.FC = () => {
             toast.success('Withdrawal request submitted successfully!');
             setWithdrawAmount('');
             fetchData();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Withdrawal failed');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Withdrawal failed';
+            toast.error(errorMessage);
         } finally {
             setIsWithdrawing(false);
         }

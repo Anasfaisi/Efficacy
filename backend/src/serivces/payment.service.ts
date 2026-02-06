@@ -67,7 +67,7 @@ export class PaymentService implements IPaymentService {
                         currency: 'inr',
                         product_data: {
                             name: 'Mentorship Session',
-                            description: `1 Month Mentorship with ${(mentorship.mentorId as Partial<IMentor>).id}`, // Ideally fetch mentor name but this is sufficient for now
+                            description: `1 Month Mentorship with ${((mentorship.mentorId as any)._id || mentorship.mentorId).toString()}`, // Ideally fetch mentor name but this is sufficient for now
                         },
                         unit_amount: mentorship.amount * 100,
                     },
@@ -82,7 +82,7 @@ export class PaymentService implements IPaymentService {
             cancel_url: cancelUrl,
             customer_email: (
                 await this._userRepository.findById(
-                    (mentorship.userId as Partial<IUser>).id.toString()
+                    ((mentorship.userId as any)._id || mentorship.userId).toString()
                 )
             )?.email,
         });

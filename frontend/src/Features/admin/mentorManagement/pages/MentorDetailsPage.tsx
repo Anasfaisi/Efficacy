@@ -41,7 +41,8 @@ export default function MentorDetailsPage() {
             } catch (err: unknown) {
                 console.error('Failed to fetch mentor:', err);
                 const errorMessage =
-                    (err as any).response?.data?.message ||
+                    (err as { response?: { data?: { message?: string } } })
+                        ?.response?.data?.message ||
                     'Failed to load mentor details.';
                 setError(errorMessage);
             } finally {
@@ -62,7 +63,10 @@ export default function MentorDetailsPage() {
                 `Mentor ${newStatus === 'active' ? 'unblocked' : 'blocked'} successfully`
             );
         } catch (error) {
-            toast.error('Failed to update status');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to update status';
+            toast.error(errorMessage);
         }
     };
 
@@ -381,7 +385,7 @@ export default function MentorDetailsPage() {
                                             'string'
                                           ? mentor.availableDays
                                                 .split(',')
-                                                .map((d) => (
+                                                .map((d: string) => (
                                                     <span
                                                         key={d}
                                                         className="px-2 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded"
@@ -474,7 +478,7 @@ export default function MentorDetailsPage() {
                                         Resume
                                     </span>
                                     <a
-                                        href={mentor.resume}
+                                        href={typeof mentor.resume === 'string' ? mentor.resume : '#'}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="text-xs text-blue-600 font-bold hover:underline"

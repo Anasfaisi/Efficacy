@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { mentorshipApi } from '@/Services/mentorship.api';
+import type { Mentor } from '@/types/auth';
 import type { Mentorship } from '@/types/mentorship';
 import { MentorshipStatus } from '@/types/mentorship';
 import {
@@ -43,8 +44,11 @@ const UserMentorshipStatus: React.FC = () => {
                 confirm ? 'Suggestion confirmed!' : 'Suggestion rejected.'
             );
             fetchStatus();
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to confirm suggestion');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || (error as Error).message || 'Failed to confirm suggestion';
+            toast.error(errorMessage);
         }
     };
 
@@ -62,13 +66,18 @@ const UserMentorshipStatus: React.FC = () => {
             } else {
                 toast.error('Failed to initiate payment session');
             }
-        } catch (error: any) {
-            toast.error(error.message || 'Payment initiation failed');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || (error as Error).message || 'Payment initiation failed';
+            toast.error(errorMessage);
         }
     };
 
     if (loading) return null;
     if (!mentorship) return null;
+
+    const mentor = mentorship.mentorId as Mentor;
 
     return (
         <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 mb-8 overflow-hidden relative group">
@@ -82,8 +91,8 @@ const UserMentorshipStatus: React.FC = () => {
                         <div className="relative">
                             <img
                                 src={
-                                    mentorship.mentorId?.profilePic ||
-                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(mentorship.mentorId?.name || 'Mentor')}`
+                                    mentor?.profilePic ||
+                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(mentor?.name || 'Mentor')}`
                                 }
                                 className="w-16 h-16 rounded-2xl object-cover border-2 border-[#7F00FF]/20"
                                 alt=""
@@ -97,10 +106,10 @@ const UserMentorshipStatus: React.FC = () => {
                                 Your Mentorship
                             </p>
                             <h3 className="text-xl font-black text-gray-900">
-                                {mentorship.mentorId?.name}
+                                {mentor?.name}
                             </h3>
                             <p className="text-sm text-gray-500 font-medium">
-                                {mentorship.mentorId?.currentRole ||
+                                {mentor?.currentRole ||
                                     'Expert Mentor'}
                             </p>
                         </div>

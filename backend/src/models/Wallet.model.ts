@@ -75,5 +75,8 @@ const walletSchema = new Schema<IWallet>(
     { timestamps: true }
 );
 
+walletSchema.index({ mentorId: 1 }, { unique: true, sparse: true });
+walletSchema.index({ userId: 1 }, { unique: true, sparse: true });
+
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

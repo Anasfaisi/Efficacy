@@ -32,7 +32,10 @@ const MyMentorshipsPage: React.FC = () => {
             navigate('/chat');
         } catch (error) {
             console.error('Failed to initiate chat', error);
-            toast.error('Failed to start chat. Ensure mentorship is active.');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to start chat. Ensure mentorship is active.';
+            toast.error(errorMessage);
         }
     };
 
@@ -50,6 +53,10 @@ const MyMentorshipsPage: React.FC = () => {
                 setMentorships(sortedData);
             } catch (error) {
                 console.error('Failed to fetch mentorships:', error);
+                const errorMessage =
+                    (error as { response?: { data?: { message?: string } } })
+                        ?.response?.data?.message || 'Failed to fetch mentorships';
+                toast.error(errorMessage);
             } finally {
                 setLoading(false);
             }
@@ -125,13 +132,11 @@ const MyMentorshipsPage: React.FC = () => {
                             : m
                     )
                 );
-            } catch (err: unknown) {
-                const error = err as {
-                    response?: { data?: { message?: string } };
-                };
-                toast.error(
-                    error.response?.data?.message || 'Failed to cancel'
-                );
+            } catch (error) {
+                const errorMessage =
+                    (error as { response?: { data?: { message?: string } } })
+                        ?.response?.data?.message || 'Failed to cancel';
+                toast.error(errorMessage);
             }
         }
     };

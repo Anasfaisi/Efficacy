@@ -40,12 +40,12 @@ export interface Mentor {
     skills?: string;
     experienceSummary?: string;
 
-    availableDays?: string[];
+    availableDays?: string[] | string;
     preferredTime?: string[];
 
-    resume?: File;
-    certificate?: File;
-    idProof?: File;
+    resume?: string | File;
+    certificate?: string | File;
+    idProof?: string | File;
 
     isVerified?: boolean;
 

@@ -16,8 +16,9 @@ import {
     TrendingUp,
     AlertCircle,
     Info,
-    CheckCircle,
-    Check
+    Check,
+    RefreshCw,
+    X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -26,7 +27,7 @@ import { bookingApi } from '@/Services/booking.api';
 import type { Mentorship } from '@/types/mentorship';
 import type { Booking } from '@/types/booking';
 import { BookingStatus } from '@/types/booking';
-import BookingCalendar from '@/Features/users/mentors/components/BookingCalendar';
+import MentorCalendar from '@/Features/mentors/components/MentorCalendar';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
 import { chatApi } from '@/Services/chat.api';
@@ -37,9 +38,12 @@ const MentorMentorshipManagementPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [mentorship, setMentorship] = useState<Mentorship | null>(null);
+     const [mentorship, setMentorship] = useState<Mentorship | null>(null);
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [allMentorBookings, setAllMentorBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
+    const [reschedulingBookingId, setReschedulingBookingId] = useState<string | null>(null);
+    const [selectedSlot, setSelectedSlot] = useState<{ date: Date, slot: string } | null>(null);
 
     const fetchData = async () => {
         if (!id) return;
@@ -47,7 +51,9 @@ const MentorMentorshipManagementPage: React.FC = () => {
             const mentorshipData = await mentorshipApi.getMentorshipById(id);
             setMentorship(mentorshipData);
 
-            const allBookings = await bookingApi.getMentorBookings();
+            const response = await bookingApi.getMentorBookings(1, 100);
+            const allBookings = response.bookings;
+            setAllMentorBookings(allBookings);
             const studentId = (mentorshipData.userId as UserType)?._id || (mentorshipData.userId as UserType)?.id;
             const filtered = allBookings.filter(b => 
                 b.userId === studentId
@@ -55,7 +61,10 @@ const MentorMentorshipManagementPage: React.FC = () => {
             setBookings(filtered);
         } catch (error) {
             console.error('Failed to fetch data:', error);
-            toast.error('Could not load mentorship details');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Could not load mentorship details';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -86,7 +95,31 @@ const MentorMentorshipManagementPage: React.FC = () => {
             navigate('/mentor/chat');
         } catch (error) {
             console.error('Failed to initiate chat', error);
-            toast.error('Failed to open chat');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to open chat';
+            toast.error(errorMessage);
+        }
+    };
+
+    const handleProposeReschedule = async () => {
+        if (!reschedulingBookingId || !selectedSlot) return;
+        
+        try {
+            await bookingApi.requestReschedule({
+                bookingId: reschedulingBookingId,
+                proposedDate: selectedSlot.date.toISOString(),
+                proposedSlot: selectedSlot.slot
+            });
+            toast.success('New time proposed to student');
+            setReschedulingBookingId(null);
+            setSelectedSlot(null);
+            fetchData();
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to propose reschedule';
+            toast.error(errorMessage);
         }
     };
 
@@ -113,6 +146,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
 
     const student = mentorship.userId as UserType;
     const pendingBookings = bookings.filter(b => b.status === BookingStatus.PENDING);
+    const pendingReschedules = bookings.filter(b => b.status === BookingStatus.RESCHEDULED);
     const confirmedBookings = bookings.filter(b => b.status === BookingStatus.CONFIRMED);
 
     return (
@@ -156,7 +190,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
                                     alt={student?.name}
                                 />
                                 <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                                    <CheckCircle size={16} className="text-white" />
+                                    <CheckCircle2 size={16} className="text-white" />
                                 </div>
                             </div>
                             
@@ -271,6 +305,58 @@ const MentorMentorshipManagementPage: React.FC = () => {
                                 </div>
                             </motion.div>
                         )}
+                        
+                        {pendingReschedules.length > 0 && (
+                            <motion.div 
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="space-y-4 pt-4"
+                            >
+                                <div className="flex items-center justify-between px-2">
+                                    <h3 className="text-lg font-black text-orange-600 flex items-center gap-2">
+                                        <RefreshCw size={20} className="animate-spin-slow" />
+                                        Reschedule Requests
+                                    </h3>
+                                    <span className="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-tighter">
+                                        ACTION REQUIRED
+                                    </span>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {pendingReschedules.map((booking) => (
+                                        <div key={booking.id} className="bg-white p-6 rounded-[32px] border-2 border-orange-100 shadow-xl shadow-orange-100/50 group">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-100">
+                                                    <Clock size={24} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-black text-gray-400 uppercase tracking-tight">Original Time</p>
+                                                    <p className="text-sm font-bold text-gray-900">{format(new Date(booking.bookingDate), 'MMM d')} • {booking.slot}</p>
+                                                </div>
+                                            </div>
+                                            <p className="text-xs text-orange-600 font-bold mb-4 bg-orange-50/50 p-2 rounded-xl">Student has requested to reschedule this session.</p>
+                                            
+                                            <div className="flex gap-2">
+                                                <button 
+                                                    onClick={() => setReschedulingBookingId(booking.id)}
+                                                    className={`flex-1 flex items-center justify-center gap-2 py-3 ${reschedulingBookingId === booking.id ? 'bg-orange-600 text-white' : 'bg-black text-white'} text-xs font-black rounded-xl hover:bg-indigo-600 transition-all active:scale-95`}
+                                                >
+                                                    <Calendar size={16} />
+                                                    {reschedulingBookingId === booking.id ? 'Pick Date Below' : 'Propose New Time'}
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleUpdateBookingStatus(booking.id, BookingStatus.CANCELLED)}
+                                                    className="px-4 py-3 bg-gray-50 text-gray-400 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all"
+                                                    title="Cancel Session"
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
                     </AnimatePresence>
 
                     {/* Booked Sessions List */}
@@ -362,18 +448,49 @@ const MentorMentorshipManagementPage: React.FC = () => {
                         
                         <div className="mb-6">
                             {mentorship.mentorId && (
-                                <BookingCalendar 
+                                <MentorCalendar 
                                     mentor={mentorship.mentorId as MentorType} 
-                                    onSelectSlot={() => {}} 
-                                    bookedSlots={bookings.map(b => ({
-                                        date: b.bookingDate,
-                                        slot: b.slot
-                                    }))}
+                                    allBookings={allMentorBookings}
+                                    currentMenteeId={(mentorship.userId as UserType)?._id || (mentorship.userId as UserType)?.id}
+                                    selectable={!!reschedulingBookingId}
+                                    onSelectSlot={(date, slot) => setSelectedSlot({ date, slot })}
                                 />
                             )}
                         </div>
                         
-                        <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50">
+                        {reschedulingBookingId && (
+                            <div className="mt-8 pt-8 border-t border-gray-100 space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest">Selected New Time</h4>
+                                    <button 
+                                        onClick={() => { setReschedulingBookingId(null); setSelectedSlot(null); }}
+                                        className="text-[10px] font-black text-gray-400 hover:text-red-500 uppercase"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                {selectedSlot ? (
+                                    <div className="p-4 bg-green-50 rounded-[24px] border border-green-100 flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-black text-green-700">{format(selectedSlot.date, 'EEEE, MMM d')}</p>
+                                            <p className="text-xs font-bold text-green-600">{selectedSlot.slot}</p>
+                                        </div>
+                                        <button 
+                                            onClick={handleProposeReschedule}
+                                            className="px-6 py-3 bg-green-600 text-white text-[10px] font-black uppercase rounded-2xl shadow-lg shadow-green-200 hover:bg-black transition-all"
+                                        >
+                                            Propose
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="p-6 border-2 border-dashed border-gray-100 rounded-[32px] text-center">
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Click a free slot on the calendar</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        
+                        <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50 mt-6">
                             <p className="text-[11px] font-bold text-indigo-700 leading-relaxed">
                                 <span className="font-black uppercase tracking-widest mr-1">Note:</span>
                                 Only sessions for this mentee are highlighted here. Approved sessions are locked automatically.

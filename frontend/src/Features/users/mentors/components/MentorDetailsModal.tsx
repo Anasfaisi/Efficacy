@@ -51,12 +51,13 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({
                 'Mentorship request sent successfully! Wait for mentor approval.'
             );
             onClose();
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message ||
-                    error.message ||
-                    'Failed to send mentorship request'
-            );
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 
+                (error as Error).message || 
+                'Failed to send mentorship request';
+            toast.error(errorMessage);
         } finally {
             setIsBooking(false);
         }

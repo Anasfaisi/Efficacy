@@ -129,7 +129,8 @@ export class MentorshipService implements IMentorshipService {
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         console.log(mentorship.mentorId== mentorId,mentorship.mentorId.toString(),mentorId,"mentorshipId from mentorshipService");
-        if ((mentorship.mentorId as Partial<IMentor>)?.id !== mentorId)
+        const currentMentorId = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
+        if (currentMentorId !== mentorId)
             throw new Error(CommonMessages.Unauthorized);
 
         mentorship.status =
@@ -142,22 +143,22 @@ export class MentorshipService implements IMentorshipService {
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
-        const recipientId =
-            (mentorship.userId as any)._id?.toString() ||
-            mentorship.userId.toString();
+        const recipientId = mentorship.userId instanceof Types.ObjectId ? mentorship.userId.toString() : (mentorship.userId as any)?._id?.toString();
 
-        await this._notificationService.createNotification(
-            recipientId,
-            Role.User,
-            NotificationType.MENTORSHIP_RESPONSE,
-            status === 'mentor_accepted'
-                ? NotificationMessages.MentorshipRequestAcceptedTitle
-                : NotificationMessages.MentorshipRequestRejectedTitle,
-            status === 'mentor_accepted'
-                ? `Mentor has accepted your request${suggestedStartDate ? ' with a suggested start date' : ''}.`
-                : `Mentor has rejected your request: ${reason}`,
-            { mentorshipId, status, link: '/my-mentorships' }
-        );
+        if (recipientId) {
+            await this._notificationService.createNotification(
+                recipientId,
+                Role.User,
+                NotificationType.MENTORSHIP_RESPONSE,
+                status === 'mentor_accepted'
+                    ? NotificationMessages.MentorshipRequestAcceptedTitle
+                    : NotificationMessages.MentorshipRequestRejectedTitle,
+                status === 'mentor_accepted'
+                    ? `Mentor has accepted your request${suggestedStartDate ? ' with a suggested start date' : ''}.`
+                    : `Mentor has rejected your request: ${reason}`,
+                { mentorshipId, status, link: '/my-mentorships' }
+            );
+        }
 
         return mentorship;
     }
@@ -170,7 +171,8 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
-        if ((mentorship.userId as Partial<IUser>).id.toString() !== userId)
+        const mentorshipUserId = (mentorship.userId as any)._id?.toString() || mentorship.userId.toString();
+        if (mentorshipUserId !== userId)
             throw new Error(CommonMessages.Unauthorized);
 
         if (confirm) {
@@ -184,20 +186,20 @@ export class MentorshipService implements IMentorshipService {
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
-        const mentorId =
-            (mentorship.mentorId as any)._id?.toString() ||
-            mentorship.mentorId.toString();
+        const mentorId = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
 
-        await this._notificationService.createNotification(
-            mentorId,
-            Role.Mentor,
-            NotificationType.MENTORSHIP_RESPONSE,
-            confirm ? NotificationMessages.MentorshipSuggestionAcceptedTitle : NotificationMessages.MentorshipCancelledTitle,
-            confirm
-                ? `User has accepted your suggested dates. Mentorship is now pending payment.`
-                : `User has declined your suggested dates and cancelled the request.`,
-            { mentorshipId }
-        );
+        if (mentorId) {
+            await this._notificationService.createNotification(
+                mentorId,
+                Role.Mentor,
+                NotificationType.MENTORSHIP_RESPONSE,
+                confirm ? NotificationMessages.MentorshipSuggestionAcceptedTitle : NotificationMessages.MentorshipCancelledTitle,
+                confirm
+                    ? `User has accepted your suggested dates. Mentorship is now pending payment.`
+                    : `User has declined your suggested dates and cancelled the request.`,
+                { mentorshipId }
+            );
+        }
 
         return mentorship;
     }
@@ -224,33 +226,36 @@ export class MentorshipService implements IMentorshipService {
         const adminShare = mentorship.amount * 0.1;
         const mentorShare = mentorship.amount * 0.9;
 
+        const currentMentorId = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
         await this._adminRepository.addRevenue(adminShare);
         await this._walletRepository.creditPendingBalance(
-            mentorship.mentorId as unknown as string,
+            currentMentorId as string,
             mentorShare,
             `Mentorship Payment for Mentorship id #${mentorship._id}`
         );
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
 
+        const currentUserId = mentorship.userId instanceof Types.ObjectId ? mentorship.userId.toString() : (mentorship.userId as any)?._id?.toString();
         await this._notificationService.createNotification(
-            (mentorship.userId as any)._id?.toString() ||
-                mentorship.userId.toString(),
+            currentUserId as string,
             Role.User,
             NotificationType.MENTORSHIP_ACTIVE,
             NotificationMessages.MentorshipActiveTitle,
             `Your mentorship is now active until ${end.toLocaleDateString()}.`
         );
 
-        await this._notificationService.createNotification(
-            (mentorship.mentorId as any)._id?.toString() ||
-                mentorship.mentorId.toString(),
-            Role.Mentor,
-            NotificationType.MENTORSHIP_ACTIVE,
-            NotificationMessages.MentorshipActiveTitle,
-            `A new mentorship with user is now active.`,
-            { mentorshipId }
-        );
+        const mentorIdForNotif = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
+        if (mentorIdForNotif) {
+            await this._notificationService.createNotification(
+                mentorIdForNotif,
+                Role.Mentor,
+                NotificationType.MENTORSHIP_ACTIVE,
+                NotificationMessages.MentorshipActiveTitle,
+                `A new mentorship with user is now active.`,
+                { mentorshipId }
+            );
+        }
 
         return mentorship;
     }
@@ -340,25 +345,29 @@ export class MentorshipService implements IMentorshipService {
 
             await this.checkAndReleaseFunds(mentorship); // Helper called here
 
-            await this._notificationService.createNotification(
-                (mentorship.userId as any)._id?.toString() ||
-                    mentorship.userId.toString(),
-                Role.User,
-                NotificationType.MENTORSHIP_COMPLETED,
-                NotificationMessages.MentorshipCompletedTitle,
-                'Your mentorship has been marked as completed. Please provide feedback.',
-                { mentorshipId }
-            );
+            const userIdForNotif = mentorship.userId instanceof Types.ObjectId ? mentorship.userId.toString() : (mentorship.userId as any)?._id?.toString();
+            if (userIdForNotif) {
+                await this._notificationService.createNotification(
+                    userIdForNotif,
+                    Role.User,
+                    NotificationType.MENTORSHIP_COMPLETED,
+                    NotificationMessages.MentorshipCompletedTitle,
+                    'Your mentorship has been marked as completed. Please provide feedback.',
+                    { mentorshipId }
+                );
+            }
 
-            await this._notificationService.createNotification(
-                (mentorship.mentorId as any)._id?.toString() ||
-                    mentorship.mentorId.toString(),
-                Role.Mentor,
-                NotificationType.MENTORSHIP_COMPLETED,
-                NotificationMessages.MentorshipCompletedTitle,
-                'Your mentorship has been marked as completed.',
-                { mentorshipId }
-            );
+            const mentorIdForNotif = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
+            if (mentorIdForNotif) {
+                await this._notificationService.createNotification(
+                    mentorIdForNotif,
+                    Role.Mentor,
+                    NotificationType.MENTORSHIP_COMPLETED,
+                    NotificationMessages.MentorshipCompletedTitle,
+                    'Your mentorship has been marked as completed.',
+                    { mentorshipId }
+                );
+            }
         }
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
@@ -394,11 +403,11 @@ export class MentorshipService implements IMentorshipService {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
-        if (mentorship.userId.toString() !== userId)
+        const mentorshipUserId = (mentorship.userId as any)._id?.toString() || mentorship.userId.toString();
+        if (mentorshipUserId !== userId)
             throw new Error(CommonMessages.Unauthorized);
         if (mentorship.status !== MentorshipStatus.ACTIVE)
             throw new Error(ErrorMessages.CancelOnlyActive);
-
         const startDate = mentorship.startDate || new Date();
         const diffDays =
             (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
@@ -426,16 +435,17 @@ export class MentorshipService implements IMentorshipService {
             retainedAdminShare - originalAdminShare
         );
 
+        const currentMentorId = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
         const debitAmount = originalMentorShare - retainedMentorShare;
-        if (debitAmount > 0) {
+        if (debitAmount > 0 && currentMentorId) {
             await this._walletRepository.debitPendingBalance(
-                mentorship.mentorId as unknown as string,
+                currentMentorId,
                 debitAmount
             );
         }
-        if (retainedMentorShare > 0) {
+        if (retainedMentorShare > 0 && currentMentorId) {
             await this._walletRepository.releasePendingBalance(
-                mentorship.mentorId as unknown as string,
+                currentMentorId,
                 retainedMentorShare
             );
         }
@@ -463,10 +473,13 @@ export class MentorshipService implements IMentorshipService {
             mentorship.paymentStatus === 'verified'
         ) {
             const mentorShare = mentorship.amount * 0.9;
-            await this._walletRepository.releasePendingBalance(
-                mentorship.mentorId as unknown as string,
-                mentorShare
-            );
+            const currentMentorId = mentorship.mentorId instanceof Types.ObjectId ? mentorship.mentorId.toString() : (mentorship.mentorId as any)?._id?.toString();
+            if (currentMentorId) {
+                await this._walletRepository.releasePendingBalance(
+                    currentMentorId,
+                    mentorShare
+                );
+            }
             mentorship.paymentStatus = 'paid';
         }
     }

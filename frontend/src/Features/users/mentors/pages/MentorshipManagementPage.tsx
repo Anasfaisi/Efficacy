@@ -20,6 +20,7 @@ import {
 import { toast } from 'sonner';
 import BookingCalendar from '../components/BookingCalendar';
 import BookingModal from '../components/BookingModal';
+import RescheduleModal from '../components/RescheduleModal';
 import { bookingApi } from '@/Services/booking.api';
 import type { Booking } from '@/types/booking';
 import {
@@ -29,6 +30,9 @@ import {
 } from '@/Services/socket/socketService';
 import { useAppSelector } from '@/redux/hooks';
 import type { Mentor } from '@/types/auth';
+import { isBookingPast, canReschedule } from '@/utils/timeUtils';
+import { RefreshCw } from 'lucide-react';
+import { BookingStatus } from '@/types/booking';
 
 const MentorshipManagementPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -46,6 +50,9 @@ const MentorshipManagementPage: React.FC = () => {
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
+
+    const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
+    const [rescheduleData, setRescheduleData] = useState<{ id: string; date: string; slot: string } | null>(null);
 
     // Session State
     const [nextSession, setNextSession] = useState<Booking | null>(null);
@@ -88,7 +95,10 @@ const MentorshipManagementPage: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to fetch mentorship:', error);
-            toast.error('Failed to load mentorship details');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to load mentorship details';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -118,10 +128,11 @@ const MentorshipManagementPage: React.FC = () => {
         navigate(`/meet/${nextSession.id}`);
     };
 
+
     const isSessionStartable = () => {
         if (!nextSession) return false;
-
-        return true;
+        // If it's confirmed and NOT in the past
+        return nextSession.status === 'confirmed' && !isBookingPast(nextSession.bookingDate, nextSession.slot);
     };
 
     const handleConfirm = async (confirm: boolean) => {
@@ -135,11 +146,11 @@ const MentorshipManagementPage: React.FC = () => {
                     : 'Mentorship request rejected.'
             );
             fetchData();
-        } catch (error: unknown) {
-            toast.error(
+        } catch (error) {
+            const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    .response?.data?.message || 'Failed to process request'
-            );
+                    ?.response?.data?.message || 'Failed to process request';
+            toast.error(errorMessage);
         } finally {
             setIsProcessing(false);
         }
@@ -158,7 +169,10 @@ const MentorshipManagementPage: React.FC = () => {
 
             if (sessionUrl) window.location.href = sessionUrl;
         } catch (error) {
-            toast.error('Failed to initiate payment');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to initiate payment';
+            toast.error(errorMessage);
             setIsProcessing(false);
         }
     };
@@ -189,10 +203,11 @@ const MentorshipManagementPage: React.FC = () => {
                 topic,
             });
             fetchData();
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message || 'Failed to book session'
-            );
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to book session';
+            toast.error(errorMessage);
             throw error; // Re-throw for modal handling
         }
     };
@@ -205,8 +220,45 @@ const MentorshipManagementPage: React.FC = () => {
                 'You have confirmed the completion of this mentorship!'
             );
             fetchData();
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to confirm completion');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Failed to confirm completion';
+            toast.error(errorMessage);
+        }
+    };
+    
+    const handleRequestReschedule = (bookingId: string) => {
+        const booking = existingBookings.find((b) => b.id === bookingId);
+        if (booking) {
+            setRescheduleData({
+                id: bookingId,
+                date: format(new Date(booking.bookingDate), 'MMM do, yyyy'),
+                slot: booking.slot,
+            });
+            setIsRescheduleModalOpen(true);
+        }
+    };
+
+    const confirmReschedule = async () => {
+        if (!rescheduleData) return;
+        try {
+            await bookingApi.updateStatus({
+                bookingId: rescheduleData.id,
+                status: BookingStatus.RESCHEDULED,
+            });
+            toast.success(
+                'Reschedule request sent to mentor. They will propose a new time.'
+            );
+            fetchData();
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to request reschedule';
+            toast.error(errorMessage);
+            throw error;
         }
     };
 
@@ -363,11 +415,17 @@ const MentorshipManagementPage: React.FC = () => {
                                     <button
                                         onClick={handleJoinSession}
                                         
-                                        disabled={!isMentor && !isSessionActive}
+                                        disabled={
+                                            isMentor 
+                                                ? !isSessionStartable()
+                                                : !isSessionActive
+                                        }
                                         className={`px-8 py-4 rounded-xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-lg
                                             ${
                                                 isMentor
-                                                    ? 'bg-white text-gray-900 hover:bg-gray-100'
+                                                    ? isSessionStartable()
+                                                        ? 'bg-white text-gray-900 hover:bg-gray-100'
+                                                        : 'bg-white/10 text-white/40 cursor-not-allowed'
                                                     : isSessionActive
                                                       ? 'bg-[#7F00FF] text-white hover:bg-[#6c00db] shadow-[#7F00FF]/30'
                                                       : 'bg-white/10 text-white/40 cursor-not-allowed'
@@ -377,7 +435,11 @@ const MentorshipManagementPage: React.FC = () => {
                                     >
                                         <Video size={20} />
                                         {isMentor
-                                            ? 'Start Session'
+                                            ? isSessionStartable() 
+                                                ? 'Start Session'
+                                                : isBookingPast(nextSession.bookingDate, nextSession.slot)
+                                                    ? 'Session Expired'
+                                                    : 'Start Session'
                                             : isSessionActive
                                               ? 'Join Session'
                                               : 'Waiting for Host...'}
@@ -479,11 +541,13 @@ const MentorshipManagementPage: React.FC = () => {
                                             </div>
                                         ) : (
                                             existingBookings.map(
-                                                (booking, idx) => (
-                                                    <div
-                                                        key={booking.id}
-                                                        className="p-6 hover:bg-gray-50 transition-colors flex flex-col gap-4 group"
-                                                    >
+                                                (booking, idx) => {
+                                                    const isPast = isBookingPast(booking.bookingDate, booking.slot);
+                                                    return (
+                                                        <div
+                                                            key={booking.id}
+                                                            className={`p-6 hover:bg-gray-50 transition-colors flex flex-col gap-4 group ${isPast ? 'opacity-50 grayscale-[0.3]' : ''}`}
+                                                        >
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex items-center gap-4">
                                                                 <div className="w-12 h-12 bg-[#7F00FF]/5 rounded-2xl flex flex-col items-center justify-center text-[#7F00FF]">
@@ -546,6 +610,15 @@ const MentorshipManagementPage: React.FC = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-2">
+                                                                {booking.status === 'confirmed' && !isPast && canReschedule(booking.bookingDate, booking.slot) && (
+                                                                    <button
+                                                                        onClick={() => handleRequestReschedule(booking.id)}
+                                                                        className="p-3 bg-white border border-gray-100 rounded-xl text-orange-500 hover:bg-orange-500 hover:text-white transition-all shadow-sm"
+                                                                        title="Request Reschedule"
+                                                                    >
+                                                                        <RefreshCw size={18} />
+                                                                    </button>
+                                                                )}
                                                                 {booking.status ===
                                                                     'confirmed' &&
                                                                     booking.meetingLink && (
@@ -638,8 +711,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                                 )}
                                                             </div>
                                                         )}
-                                                    </div>
-                                                )
+                                                        </div>
+                                                    );
+                                                }
                                             )
                                         )}
                                     </div>
@@ -845,6 +919,13 @@ const MentorshipManagementPage: React.FC = () => {
                     </div>
                 </main>
             </div>
+            
+            <RescheduleModal
+                isOpen={isRescheduleModalOpen}
+                onClose={() => setIsRescheduleModalOpen(false)}
+                onConfirm={confirmReschedule}
+                bookingDetails={rescheduleData}
+            />
         </div>
     );
 };

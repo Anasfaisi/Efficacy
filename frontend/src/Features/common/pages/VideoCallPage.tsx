@@ -37,13 +37,20 @@ const VideoCallPage: React.FC = () => {
     const connectionRef = useRef<Peer.Instance | null>(null);
     const socketRef = useRef<any>(null);
 
-    // Sync remote stream to video element
+    // Sync streams to video elements
     useEffect(() => {
         if (remoteStream && userVideo.current) {
             console.log("LOG: [Common] Syncing remoteStream to userVideo element.");
             userVideo.current.srcObject = remoteStream;
         }
     }, [remoteStream, callAccepted]);
+
+    useEffect(() => {
+        if (stream && myVideo.current) {
+            console.log("LOG: [Common] Syncing local stream to myVideo element.");
+            myVideo.current.srcObject = stream;
+        }
+    }, [stream]);
 
     useEffect(() => {
         // Initialize Socket
@@ -54,9 +61,6 @@ const VideoCallPage: React.FC = () => {
             .then((currentStream) => {
                 setStream(currentStream);
                 streamRef.current = currentStream;
-                if (myVideo.current) {
-                    myVideo.current.srcObject = currentStream;
-                }
                 
                 // Join Room ONLY after stream is ready
                 if (roomId && currentUserId) {
@@ -250,44 +254,63 @@ const VideoCallPage: React.FC = () => {
             </div>
 
             {/* Main Video Area */}
-            <div className="flex-1 relative bg-gray-900 flex items-center justify-center">
+            <div className="flex-1 relative bg-[#0a0a0c] flex items-center justify-center p-6 sm:p-12">
                 
-                {/* Remote Video (Full Screen) */}
-                {callAccepted && remoteStream ? (
-                     <video 
-                        ref={userVideo} 
-                        playsInline 
-                        autoPlay 
-                        className="w-full h-full object-cover"
-                     />
-                ) : (
-                    <div className="flex flex-col items-center justify-center space-y-4">
-                        <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-pulse">
-                            <Users className="text-white/40 w-10 h-10" />
+                {/* Remote Participant Card */}
+                <div className="w-full max-w-5xl aspect-video bg-gray-900 rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl relative group">
+                    {callAccepted && remoteStream ? (
+                         <video 
+                            ref={userVideo} 
+                            playsInline 
+                            autoPlay 
+                            className="w-full h-full object-cover"
+                         />
+                    ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 bg-gradient-to-br from-gray-900 to-black">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-[#7F00FF] blur-3xl opacity-20 animate-pulse" />
+                                <div className="relative w-28 h-28 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                    <Users className="text-white/20 w-12 h-12" />
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-white/60 font-bold tracking-[0.2em] uppercase text-xs mb-1">Session Protocol</p>
+                                <p className="text-white/30 text-sm">{connectionStatus}</p>
+                            </div>
                         </div>
-                        <p className="text-white/40 font-medium">Waiting for participant...</p>
-                    </div>
-                )}
+                    )}
 
-                {/* Local Video (Floating Picture-in-Picture) */}
+                    {/* Participant Label */}
+                    {callAccepted && (
+                        <div className="absolute bottom-6 left-6 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
+                            <p className="text-white text-xs font-bold tracking-widest uppercase">Remote Participant</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Local Video - PiP Card */}
                 {stream && (
-                    <div className="absolute bottom-24 right-6 w-48 sm:w-64 aspect-video bg-black/50 rounded-2xl overflow-hidden border border-white/20 shadow-2xl transition-all hover:scale-105 z-30 group">
+                    <div className="absolute bottom-10 right-10 w-48 sm:w-72 aspect-video bg-black rounded-2xl overflow-hidden border border-white/20 shadow-2xl transition-all hover:scale-105 z-40 ring-1 ring-white/10 group">
                          <video 
                             ref={myVideo} 
                             playsInline 
                             autoPlay 
                             muted 
-                            className={`w-full h-full object-cover transform scale-x-[-1] transition-opacity ${isVideoStopped ? 'opacity-0' : 'opacity-100'}`}
+                            className={`w-full h-full object-cover transform scale-x-[-1] transition-all duration-500 ${isVideoStopped ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                          />
                          {isVideoStopped && (
-                             <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                                     <VideoOff className="text-white/50 w-5 h-5" />
+                             <div className="absolute inset-0 flex items-center justify-center bg-[#1a1b1e]">
+                                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                     <VideoOff className="text-white/20 w-6 h-6" />
                                  </div>
                              </div>
                          )}
-                         <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-lg">
-                             <p className="text-white text-[10px] font-medium tracking-wide">YOU</p>
+                         <div className="absolute top-4 right-4 h-2 w-2">
+                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                         </div>
+                         <div className="absolute bottom-4 left-4 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                             <p className="text-white text-[10px] font-black tracking-widest uppercase">Self View</p>
                          </div>
                     </div>
                 )}

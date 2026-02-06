@@ -71,7 +71,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                             >
                                 <CheckCircle2 size={48} className="text-white" />
                             </motion.div>
-                            <h2 className="text-2xl font-black text-gray-900 mb-2">Session Booked!</h2>
+                            <h2 className="text-2xl font-black text-gray-900 mb-2">Session Booking Request submitted !</h2>
                             <p className="text-gray-500">Your session with {mentorName} has been scheduled successfully.</p>
                         </div>
                     ) : (
