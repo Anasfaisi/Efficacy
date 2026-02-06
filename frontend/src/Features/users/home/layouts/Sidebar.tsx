@@ -59,7 +59,7 @@ const Sidebar = () => {
         // // },
         {
             icon: <Users size={20} />,
-            label: 'Mentor Room',
+            label: 'Mentor Pool',
             color: '#7F00FF',
             subItems: [
                 { label: 'Find Mentors', to: '/mentors' },

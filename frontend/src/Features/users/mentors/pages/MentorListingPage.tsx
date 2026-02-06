@@ -26,6 +26,8 @@ const MentorListingPage: React.FC = () => {
     const [sort, setSort] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [debouncedMinPrice, setDebouncedMinPrice] = useState('');
+    const [debouncedMaxPrice, setDebouncedMaxPrice] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
@@ -36,23 +38,27 @@ const MentorListingPage: React.FC = () => {
         setMaxPrice('');
         setPage(1);
         setDebouncedSearch('');
+        setDebouncedMinPrice('');
+        setDebouncedMaxPrice('');
     };
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
-            setPage(1); // Reset to page 1 on search change
+            setDebouncedMinPrice(minPrice);
+            setDebouncedMaxPrice(maxPrice);
+            setPage(1); // Reset to page 1 on search/filter change
         }, 500);
         return () => clearTimeout(timer);
-    }, [searchTerm]);
+    }, [searchTerm, minPrice, maxPrice]);
 
     useEffect(() => {
         const fetchMentors = async () => {
             setLoading(true);
             try {
                 const filters: any = {};
-                if (minPrice) filters.minPrice = minPrice;
-                if (maxPrice) filters.maxPrice = maxPrice;
+                if (debouncedMinPrice) filters.minPrice = debouncedMinPrice;
+                if (debouncedMaxPrice) filters.maxPrice = debouncedMaxPrice;
 
                 const data = await mentorApi.getApprovedMentors(
                     page,
@@ -70,7 +76,7 @@ const MentorListingPage: React.FC = () => {
             }
         };
         fetchMentors();
-    }, [page, debouncedSearch, sort, minPrice, maxPrice]);
+    }, [page, debouncedSearch, sort, debouncedMinPrice, debouncedMaxPrice]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {

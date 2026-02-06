@@ -58,3 +58,52 @@ export const splitTimeRange = (range: string): string[] => {
 export const getAllSlots = (ranges: string[]): string[] => {
     return ranges.flatMap(range => splitTimeRange(range));
 };
+export const isBookingPast = (bookingDate: string, slot: string): boolean => {
+    try {
+        const date = new Date(bookingDate);
+        const slotParts = slot.split('-').map((p) => p.trim());
+        const lastPart = slotParts.length > 1 ? slotParts[1] : slotParts[0];
+
+        const match = lastPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) return false;
+
+        let [_, hours, mins, period] = match;
+        let h = parseInt(hours);
+        let m = parseInt(mins);
+
+        if (period.toUpperCase() === 'PM' && h < 12) h += 12;
+        if (period.toUpperCase() === 'AM' && h === 12) h = 0;
+
+        const endDateTime = new Date(date);
+        endDateTime.setHours(h, m, 0, 0);
+
+        return endDateTime.getTime() < Date.now();
+    } catch (e) {
+        return false;
+    }
+};
+export const canReschedule = (bookingDate: string, slot: string): boolean => {
+    try {
+        const date = new Date(bookingDate);
+        const slotParts = slot.split('-').map((p) => p.trim());
+        const firstPart = slotParts[0];
+
+        const match = firstPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) return false;
+
+        let [_, hours, mins, period] = match;
+        let h = parseInt(hours);
+        let m = parseInt(mins);
+
+        if (period.toUpperCase() === 'PM' && h < 12) h += 12;
+        if (period.toUpperCase() === 'AM' && h === 12) h = 0;
+
+        const startDateTime = new Date(date);
+        startDateTime.setHours(h, m, 0, 0);
+
+        const sixHoursInMs = 6 * 60 * 60 * 1000;
+        return startDateTime.getTime() - Date.now() > sixHoursInMs;
+    } catch (e) {
+        return false;
+    }
+};

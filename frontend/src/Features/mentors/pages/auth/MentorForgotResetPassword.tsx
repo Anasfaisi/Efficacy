@@ -63,9 +63,10 @@ export const MentorForgotResetPassword: React.FC = () => {
         } catch (error: unknown) {
             console.log(error, 'error');
             const message =
-                error instanceof Error
-                    ? (error as any)?.response?.data?.message
-                    : error?.message || 'Verification failed';
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Verification failed';
             toast.error(message);
         } finally {
             setIsLoading(false);

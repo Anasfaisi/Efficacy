@@ -43,6 +43,10 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
             setTotalPages(data.totalPages);
         } catch (error) {
             console.error('Failed to fetch mentorship requests:', error);
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to fetch mentorship requests';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -105,8 +109,11 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                 `Request ${status === 'mentor_accepted' ? 'accepted' : 'rejected'}`
             );
             fetchRequests();
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to respond to request');
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || (error as Error).message || 'Failed to respond to request';
+            toast.error(errorMessage);
         }
     };
 

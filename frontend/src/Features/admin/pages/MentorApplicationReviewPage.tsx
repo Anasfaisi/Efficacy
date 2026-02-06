@@ -52,7 +52,8 @@ export default function MentorReviewPage() {
             } catch (err: unknown) {
                 console.error('Failed to fetch application:', err);
                 const errorMessage =
-                    (err as any).response?.data?.message ||
+                    (err as { response?: { data?: { message?: string } } })
+                        ?.response?.data?.message ||
                     'Failed to load application details.';
                 setError(errorMessage);
             } finally {
@@ -114,7 +115,8 @@ export default function MentorReviewPage() {
             navigate('/admin/mentors/applications');
         } catch (err: unknown) {
             const errorMessage =
-                (err as any).response?.data?.message ||
+                (err as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
                 'Failed to approve application.';
             toast.error(errorMessage);
         }
@@ -137,7 +139,8 @@ export default function MentorReviewPage() {
             navigate('/admin/mentors/applications');
         } catch (err: unknown) {
             const errorMessage =
-                (err as any).response?.data?.message ||
+                (err as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
                 'Failed to reject application.';
             toast.error(errorMessage);
         }
@@ -154,7 +157,8 @@ export default function MentorReviewPage() {
             navigate('/admin/mentors/applications');
         } catch (err: unknown) {
             const errorMessage =
-                (err as any).response?.data?.message ||
+                (err as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
                 'Failed to request changes.';
             toast.error(errorMessage);
         }

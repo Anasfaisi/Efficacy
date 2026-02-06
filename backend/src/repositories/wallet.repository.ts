@@ -19,6 +19,7 @@ export class WalletRepository
     }
 
     async findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null> {
+        if (!mentorId || mentorId.toString() === 'null' || mentorId.toString() === 'undefined') return null;
         return await Wallet.findOne({ mentorId });
     }
 
@@ -29,6 +30,10 @@ export class WalletRepository
     ): Promise<void> {
         let wallet = await this.findByMentorId(mentorId);
         if (!wallet) {
+            if (!mentorId || mentorId.toString() === 'null' || mentorId.toString() === 'undefined') {
+                console.error('Attempted to create mentor wallet with nullish ID');
+                return;
+            }
             wallet = await this.create({
                 mentorId,
                 balance: 0,
@@ -92,6 +97,7 @@ export class WalletRepository
     }
 
     async findByUserId(userId: string | ObjectId): Promise<IWallet | null> {
+        if (!userId || userId.toString() === 'null' || userId.toString() === 'undefined') return null;
         return await Wallet.findOne({ userId });
     }
 
@@ -102,6 +108,10 @@ export class WalletRepository
     ): Promise<void> {
         let wallet = await this.findByUserId(userId);
         if (!wallet) {
+            if (!userId || userId.toString() === 'null' || userId.toString() === 'undefined') {
+                console.error('Attempted to create user wallet with nullish ID');
+                return;
+            }
             wallet = await this.create({
                 userId,
                 balance: 0,

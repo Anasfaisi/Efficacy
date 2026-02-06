@@ -3,7 +3,6 @@ import {
     CheckCircle,
     ArrowRight,
     IndianRupee,
-    ShieldCheck,
     BookOpen,
     Loader2,
 } from 'lucide-react';
@@ -49,9 +48,12 @@ const MentorApproved: React.FC = () => {
 
             toast.success('Account activated successfully!');
             navigate('/mentor/dashboard');
-        } catch (error: any) {
+        } catch (error) {
             console.error('Activation failed:', error);
-            toast.error(error.response?.data?.message || 'Activation failed');
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Activation failed';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
