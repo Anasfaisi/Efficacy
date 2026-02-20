@@ -47,7 +47,7 @@ export class MentorService implements IMentorService {
             );
         }
 
-        // Clean up temporary fields
+       
         delete updateData.currentPassword;
         delete updateData.newPassword;
 

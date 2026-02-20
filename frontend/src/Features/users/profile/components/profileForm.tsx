@@ -1,4 +1,3 @@
-// src/components/profile/ProfileForm.tsx
 import React, { useState, useEffect } from 'react';
 import ProfileInput from './ProfileInput';
 import ProfilePic from './ProfilePic';

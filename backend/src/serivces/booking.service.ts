@@ -29,18 +29,17 @@ export class BookingService implements IBookingService {
     async createBooking(data: CreateBookingRequestDto): Promise<BookingResponseDto> {
         const bookingDate = new Date(data.bookingDate);
         
-        // 0. Prevent booking for past dates
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (bookingDate < today) {
             throw new Error(ErrorMessages.PastDateBooking);
         }
         
-        // 1. Prevent more than one session per day (Check if user has any booking on this day)
         const hasBookingToday = await this._bookingRepository.hasExistingBooking(data.userId, bookingDate);
         if (hasBookingToday) {
             throw new Error(ErrorMessages.ExistingBookingDay);
         }
+
 
         const isAvailable = await this._bookingRepository.isSlotAvailable(data.mentorId, bookingDate, data.slot);
         if (!isAvailable) {
@@ -80,12 +79,11 @@ export class BookingService implements IBookingService {
             null,
             undefined,
             undefined,
-            `#` // Dummy Room ID
+            `#` 
         );
 
         const createdBooking = await this._bookingRepository.create(bookingEntity);
 
-        // 6. Notify mentor
         const user = await this._userRepository.findById(data.userId);
         await this._notificationService.createNotification(
             data.mentorId,
@@ -146,7 +144,6 @@ export class BookingService implements IBookingService {
             }
         }
 
-        // Notify user
         const title = data.status === BookingStatus.CONFIRMED ? NotificationMessages.BookingConfirmedTitle : NotificationMessages.BookingStatusUpdatedTitle;
         const message = `Your booking for ${booking.bookingDate.toLocaleDateString()} at ${booking.slot} is now ${data.status}.`;
         
@@ -175,7 +172,6 @@ export class BookingService implements IBookingService {
 
         const now = new Date();
         const bookingTime = new Date(booking.bookingDate);
-        // Assuming slot is parsed roughly for the 3 hour check
         const diffHours = (bookingTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
         if (data.requestedBy === 'user' && diffHours < 3) {
@@ -215,7 +211,6 @@ export class BookingService implements IBookingService {
         let updatedBooking: BookingEntity | null;
 
         if (approve) {
-            // Check if proposed slot is still available
             const isAvailable = await this._bookingRepository.isSlotAvailable(booking.mentorId, booking.proposedDate!, booking.proposedSlot!);
             if (!isAvailable) throw new Error(ErrorMessages.ProposedSlotUnavailable);
 
@@ -251,5 +246,15 @@ export class BookingService implements IBookingService {
         );
 
         return BookingMapper.toResponseDto(updatedBooking);
+    }
+
+    async verifyBookingAccess(bookingId: string, userId: string): Promise<boolean> {
+        const booking = await this._bookingRepository.findById(bookingId);
+        if (!booking) return false;
+        
+        const isParticipant = booking.userId.toString() === userId || booking.mentorId.toString() === userId;
+        const isConfirmed = booking.status === BookingStatus.CONFIRMED;
+        
+        return isParticipant && isConfirmed;
     }
 }

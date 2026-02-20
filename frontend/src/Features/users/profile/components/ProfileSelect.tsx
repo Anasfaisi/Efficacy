@@ -1,4 +1,3 @@
-// src/components/profile/ProfileSelect.tsx
 import React from 'react';
 
 interface ProfileSelectProps {

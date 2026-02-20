@@ -1,21 +1,21 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface DayStats {
-    date: string; // ISO date string (YYYY-MM-DD)
+    date: string; 
     cycles: number;
-    productiveTime: number; // in seconds
-    shortBreaks: number; // count
-    longBreaks: number; // count
+    productiveTime: number; 
+    shortBreaks: number; 
+    longBreaks: number; 
 }
 
 interface PomodoroState {
     today: DayStats;
-    currentSessionCompleted: number; // 0-4
+    currentSessionCompleted: number; 
     timerState: {
         mode: 'pomodoro' | 'shortBreak' | 'longBreak';
         timeLeft: number;
         isActive: boolean;
-        lastUpdated: number | null; // Timestamp to calculate elapsed time
+        lastUpdated: number | null; 
     };
 }
 
@@ -45,7 +45,6 @@ const pomodoroSlice = createSlice({
         updateSession: (state, action: PayloadAction<{ duration: number; type: 'pomodoro' | 'shortBreak' | 'longBreak' }>) => {
             const todayDate = getTodayDate();
             
-            // Reset if it's a new day
             if (state.today.date !== todayDate) {
                 state.today = {
                     date: todayDate,

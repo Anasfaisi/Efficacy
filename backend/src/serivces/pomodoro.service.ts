@@ -19,9 +19,7 @@ export class PomodoroService implements IPomodoroService {
         const { duration, type } = data;
         const now = new Date();
         const date = now.toISOString().split('T')[0];
-        
-        // Calculate start time based on duration (approximate is fine for logs, or pass strictly if needed)
-        // Note: duration is in seconds
+
         const startTime = new Date(now.getTime() - duration * 1000);
         
         return this.pomodoroRepository.addSession(userId, date, {

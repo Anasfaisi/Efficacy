@@ -20,6 +20,7 @@ export const bookingRoutes = (container: Container) => {
     router.patch("/status", auth([Role.Mentor, Role.User]), asyncWrapper(controller.updateStatus.bind(controller)));
     router.post("/reschedule-request", auth([Role.Mentor, Role.User]), asyncWrapper(controller.requestReschedule.bind(controller)));
     router.post("/reschedule-respond", auth([Role.Mentor, Role.User]), asyncWrapper(controller.respondToReschedule.bind(controller)));
+    router.get("/verify/:bookingId", auth([Role.Mentor, Role.User]), asyncWrapper(controller.verifyAccess.bind(controller)));
 
     return router;
 };

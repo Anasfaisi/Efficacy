@@ -11,10 +11,10 @@ export const chatApi = {
         return response.data;
     },
 
-    getMessages: async (roomId: string): Promise<Message[]> => {
-        const response = await api.get(`/chat/${roomId}/messages`);
-        return response.data;
-    },
+    // getMessages: async (roomId: string): Promise<Message[]> => {
+    //     const response = await api.get(`/chat/${roomId}/messages`);
+    //     return response.data;
+    // },
 
     uploadFile: async (file: File): Promise<{ url: string }> => {
         const formData = new FormData();

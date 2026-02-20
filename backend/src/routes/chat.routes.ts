@@ -25,11 +25,11 @@ export default function chatRoutes(chatController: ChatController) {
         asyncWrapper(chatController.getUserConversations.bind(chatController))
     );
 
-    router.get(
-        '/:roomId/messages',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(chatController.getRoomMessages.bind(chatController))
-    );
+    // router.get(
+    //     '/:roomId/messages',
+    //     authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+    //     asyncWrapper(chatController.getRoomMessages.bind(chatController))
+    // );
 
     router.post(
         '/upload',

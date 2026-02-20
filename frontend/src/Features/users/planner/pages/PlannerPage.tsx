@@ -19,7 +19,6 @@ const PlannerPage: React.FC = () => {
         { date: string; startTime: string } | undefined
     >(undefined);
 
-    // Summary Context Menu State
     const [summaryModalOpen, setSummaryModalOpen] = useState(false);
     const [selectedDateForSummary, setSelectedDateForSummary] = useState<Date | null>(null);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
@@ -69,7 +68,7 @@ const PlannerPage: React.FC = () => {
     };
 
     const handleDayContextMenu = (date: Date, e: React.MouseEvent) => {
-        e.preventDefault(); // Override browser right click
+        e.preventDefault();
         setSelectedDateForSummary(date);
         setContextMenuPos({ x: e.clientX, y: e.clientY });
         setSummaryModalOpen(true);

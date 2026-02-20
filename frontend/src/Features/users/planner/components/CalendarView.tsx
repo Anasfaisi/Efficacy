@@ -99,7 +99,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         const dayStart = startOfDay(day);
         const dayEnd = addDays(dayStart, 1);
         
-        // Intersection of task interval and day interval
         const displayStart = new Date(Math.max(taskStart.getTime(), dayStart.getTime()));
         const displayEnd = new Date(Math.min(taskEnd.getTime(), dayEnd.getTime()));
         
@@ -107,8 +106,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         const endHour = (displayEnd.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
         const durationInHours = endHour - startHour;
         
-        const top = `${startHour * 64}px`; // 64px per hour
-        const height = `${Math.max(durationInHours * 64, 28)}px`; // Minimum height
+        const top = `${startHour * 64}px`; 
+        const height = `${Math.max(durationInHours * 64, 28)}px`; 
 
         let colorClasses =
             'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20';
@@ -130,7 +129,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         return { top, height, colorClasses };
     };
 
-    // Helper to get logic for Month View task display
     const getMonthViewTaskStyle = (task: IPlannerTask) => {
         let colorClasses = 'bg-primary/10 text-primary';
         if (task.priority === Priority.HIGH) colorClasses = 'bg-rose-100 text-rose-800';
@@ -282,7 +280,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 "border-b border-r border-gray-100 min-h-[120px] p-2 flex flex-col transition-colors hover:bg-gray-50/30",
                                 !isCurrentMonth && "bg-gray-50/50 text-gray-400"
                             )}
-                            onClick={() => onSlotClick(day, 9)} // Default to 9am on click
+                            onClick={() => onSlotClick(day, 9)} 
                             onContextMenu={(e) => onDayContextMenu(day, e)}
                         >
                             <div className="flex items-center justify-center mb-1">

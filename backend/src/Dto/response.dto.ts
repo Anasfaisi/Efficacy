@@ -7,7 +7,6 @@ type subscription = {
     priceId?: string;
     current_period_end?: Date;
 };
-//login
 export class LoginResponseDTO {
     constructor(
         public readonly accessToken: string,
@@ -60,7 +59,6 @@ export class AdminLoginRespondseDto {
     ) {}
 }
 
-//Register
 export class RegisterInitResponseDto {
     constructor(
         public readonly tempEmail: string,
@@ -69,7 +67,6 @@ export class RegisterInitResponseDto {
     ) {}
 }
 
-//otpverification
 export class OtpVerificationResponseDto {
     constructor(
         public readonly accessToken: string,
@@ -84,7 +81,6 @@ export class OtpVerificationResponseDto {
     ) {}
 }
 
-//forget password
 export class ForgotPasswordVerifyDto {
     constructor(
         public readonly email: string,
@@ -94,26 +90,11 @@ export class ForgotPasswordVerifyDto {
     ) {}
 }
 
-//refreshing access token
 export class RefreshResponseDto {
     constructor(public readonly success: string) {}
 }
 
-// export class SubscriptionResponseDTO {
-//   constructor(
-//     public readonly id: string,
-//     public readonly status: string,
-//     public readonly priceId: string,
-//     public readonly currentPeriodEnd: Date,
-//     public readonly user: {
-//       id: string;
-//       name: string;
-//       email: string;
-//     }
-//   ) {}
-// }
 
-// Dto/responseDto/ResponsePayment.dto.ts
 export class ResponsePaymentDto {
     constructor(
         public readonly sessionId: string,
@@ -188,7 +169,6 @@ export type UserResponseDto = {
     dob?: string;
     xpPoints?: number;
     badge?: string;
-    //user nte wallet okke evde add aakand..vere db collection ll adhoke vara adh pole habit tracker kondu varano
 };
 
 //========================= kanbana board ============================//

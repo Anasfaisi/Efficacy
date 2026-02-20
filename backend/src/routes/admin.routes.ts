@@ -46,7 +46,6 @@ export default function adminRoutes(adminController: AdminController) {
         )
     );
 
-    //mentor application
     router.get(
         '/mentors/applications',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
@@ -89,7 +88,6 @@ export default function adminRoutes(adminController: AdminController) {
         )
     );
 
-    //mentor management
     router.get(
         '/mentors',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
@@ -108,7 +106,6 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.updateMentorStatus.bind(adminController))
     );
 
-    //user Management
     router.get(
         '/users',
         authenticateAndAuthorize(tokenService, [Role.Admin]),

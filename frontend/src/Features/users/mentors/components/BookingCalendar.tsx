@@ -21,7 +21,7 @@ import { getAllSlots } from '@/utils/timeUtils';
 interface BookingCalendarProps {
     mentor: Mentor;
     onSelectSlot: (date: Date, slot: string) => void;
-    bookedSlots?: { date: string, slot: string }[]; // Optional: existing bookings to gray out
+    bookedSlots?: { date: string, slot: string }[]; 
 }
 
 const BookingCalendar: React.FC<BookingCalendarProps> = ({ mentor, onSelectSlot, bookedSlots = [] }) => {

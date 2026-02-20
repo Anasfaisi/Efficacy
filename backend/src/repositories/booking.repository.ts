@@ -49,8 +49,10 @@ export class BookingRepository implements IBookingRepository {
             bookingDate: { $gte: startOfDay, $lte: endOfDay },
             status: { $ne: BookingStatus.CANCELLED }
         });
-        return count > 0;
+        if(count >3){return true}
+        else return false
     }
+
 
     async isSlotAvailable(mentorId: string, date: Date, slot: string): Promise<boolean> {
         const count = await Booking.countDocuments({
@@ -84,7 +86,7 @@ export class BookingRepository implements IBookingRepository {
         const skip = (page - 1) * limit;
         const [docs, total] = await Promise.all([
             Booking.find(query)
-                .sort({ bookingDate: 1 }) // Closest dates first
+                .sort({ bookingDate: 1 }) 
                 .skip(skip)
                 .limit(limit),
             Booking.countDocuments(query),

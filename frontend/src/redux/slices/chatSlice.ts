@@ -25,7 +25,6 @@ const chatSlice = createSlice({
                 conversation.lastMessage = action.payload;
                 conversation.updatedAt = action.payload.createdAt;
                 
-                // Move this conversation to the top
                 state.conversations.splice(conversationIndex, 1);
                 state.conversations.unshift(conversation);
             }

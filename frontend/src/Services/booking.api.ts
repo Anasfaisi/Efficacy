@@ -41,5 +41,10 @@ export const bookingApi = {
     respondToReschedule: async (bookingId: string, approve: boolean): Promise<Booking> => {
         const res = await api.post('/booking/reschedule-respond', { bookingId, approve });
         return res.data;
+    },
+    
+    verifyAccess: async (bookingId: string): Promise<{ success: boolean }> => {
+        const res = await api.get(`/booking/verify/${bookingId}`);
+        return res.data;
     }
 };

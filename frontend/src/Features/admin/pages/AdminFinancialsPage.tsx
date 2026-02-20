@@ -29,7 +29,7 @@ const AdminFinancialsPage = () => {
             }
         };
 
-        // Only fetch revenue once on mount
+       
         const fetchRevenue = async () => {
             try {
                 const revData = await adminService.getRevenueDetails();

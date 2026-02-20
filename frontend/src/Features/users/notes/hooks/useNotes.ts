@@ -16,14 +16,12 @@ export const useNotes = () => {
         setIsLoading(true);
         try {
             const data = await getNotesApi();
-            // Sort by updatedAt descending
             const sortedData = [...data].sort((a, b) => 
                 new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
             );
             setNotes(sortedData);
         } catch (error) {
             console.error('Failed to load notes:', error);
-            // toast.error('Failed to load notes');
         } finally {
             setIsLoading(false);
         }
@@ -36,7 +34,6 @@ export const useNotes = () => {
                 content: '',
                 isSticky: false,
             });
-            // New notes already have updatedAt, but just to be safe
             setNotes((prev) => [newNote, ...prev]);
             setActiveNoteId(newNote._id);
             return newNote;
@@ -47,7 +44,6 @@ export const useNotes = () => {
     };
 
     const updateNote = async (id: string, updates: Partial<INote>) => {
-        // Optimistic update with sorting
         setNotes((prev) => {
             const updated = prev.map((note) =>
                 (note._id === id || note.id === id) 
@@ -55,7 +51,6 @@ export const useNotes = () => {
                     : note
             );
             
-            // Re-sort to bring the latest edited note to the top
             return [...updated].sort((a, b) => 
                 new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
             );
@@ -66,12 +61,10 @@ export const useNotes = () => {
         } catch (error) {
             console.error('Failed to update note:', error);
             toast.error('Failed to save changes');
-            // Revert changes if needed (not implemented here for simplicity)
         }
     };
 
     const deleteNote = async (id: string) => {
-         // Optimistic delete
          const previousNotes = [...notes];
          setNotes((prev) => prev.filter((note) => (note._id !== id && note.id !== id)));
          
@@ -85,7 +78,7 @@ export const useNotes = () => {
         } catch (error) {
             console.error('Failed to delete note:', error);
             toast.error('Failed to delete note');
-            setNotes(previousNotes); // Revert
+            setNotes(previousNotes); 
         }
     };
 

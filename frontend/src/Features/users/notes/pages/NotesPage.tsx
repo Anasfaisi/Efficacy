@@ -67,8 +67,7 @@ const NotesPage: React.FC = () => {
                                 content={activeNote.content}
                                 onChange={handleUpdateActiveNote}
                                 editable={true}
-                                // Pass a prop to hide complex toolbar or make it simpler? 
-                                // For now reusing the same editor.
+                         
                             />
                         </div>
                     </div>

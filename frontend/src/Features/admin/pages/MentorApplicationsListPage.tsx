@@ -53,9 +53,7 @@ export default function MentorApplicationsPage() {
         }
     };
 
-    const filteredApplications = applications; // Now handled by backend search
-    console.log(filteredApplications, 'filteredApplications=================');
-
+    const filteredApplications = applications; 
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'pending':

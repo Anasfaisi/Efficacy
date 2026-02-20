@@ -123,7 +123,7 @@ export class MentorshipController {
 
     async completeMentorship(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const { role } = req.body; // user or mentor
+        const { role } = req.body;
         const mentorship = await this._mentorshipService.completeMentorship(
             id,
             role

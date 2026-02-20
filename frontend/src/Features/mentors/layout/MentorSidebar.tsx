@@ -56,7 +56,6 @@ const MentorSidebar: React.FC = () => {
         {
             icon: <Calendar size={20} />,
             label: 'Mentorships',
-            // to: '/mentor/sessions', // Removed direct link
             subItems: [
                 { label: 'Active Mentees', to: '/mentor/sessions' },
                 { label: 'Booking Requests', to: '/mentor/booking-requests' },

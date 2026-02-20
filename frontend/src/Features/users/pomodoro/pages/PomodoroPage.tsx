@@ -13,14 +13,11 @@ import { logPomodoroSession } from '@/Services/pomodoro.api';
 const PomodoroPage: React.FC = () => {
     const dispatch = useDispatch();
     
-    // Select from Redux
     const { today, currentSessionCompleted, timerState } = useSelector((state: RootState) => state.pomodoro);
 
     const handleSessionComplete = async (duration: number, mode: TimerMode) => {
-        // Update Redux stats
         dispatch(updateSession({ duration, type: mode }));
 
-        // Log to Backend
         try {
             await logPomodoroSession({ duration, type: mode });
         } catch (error) {
@@ -59,7 +56,7 @@ const PomodoroPage: React.FC = () => {
                                 </h2>
                                 <PomodoroTimer 
                                     onSessionComplete={handleSessionComplete}
-                                    initialState={timerState as any} // Cast safely as types match structure
+                                    initialState={timerState as any} 
                                     onStateChange={handleTimerStateChange}
                                 />
                             </div>

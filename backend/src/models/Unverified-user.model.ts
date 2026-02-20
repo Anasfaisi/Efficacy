@@ -1,4 +1,3 @@
-// backend/src/models/unverifiedUser.model.ts
 import { Role } from '@/types/role.types';
 import { Schema, model, Document, ObjectId } from 'mongoose';
 

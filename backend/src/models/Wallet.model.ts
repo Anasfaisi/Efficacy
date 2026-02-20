@@ -18,7 +18,7 @@ interface ITransaction {
     status: TransactionStatus;
     description: string;
     date: Date;
-    referenceId?: string; // e.g., Mentorship ID or Withdrawal Request ID
+    referenceId?: string; 
 }
 
 interface IWallet extends Document {

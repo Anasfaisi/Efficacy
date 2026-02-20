@@ -141,7 +141,6 @@ export class MentorshipRepository
 
         const results = await this.model.aggregate(pipeline);
 
-        // Map back to expected structure (populating userId)
         const mentorships = results.map((m) => ({
             ...m,
             userId: m.userDetails,

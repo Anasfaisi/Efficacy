@@ -222,7 +222,6 @@ export class MentorshipService implements IMentorshipService {
         mentorship.startDate = start;
         mentorship.endDate = end;
 
-        // Distribute Funds
         const adminShare = mentorship.amount * 0.1;
         const mentorShare = mentorship.amount * 0.9;
 
@@ -343,7 +342,7 @@ export class MentorshipService implements IMentorshipService {
         ) {
             mentorship.status = MentorshipStatus.COMPLETED;
 
-            await this.checkAndReleaseFunds(mentorship); // Helper called here
+            await this.checkAndReleaseFunds(mentorship); 
 
             const userIdForNotif = mentorship.userId instanceof Types.ObjectId ? mentorship.userId.toString() : (mentorship.userId as any)?._id?.toString();
             if (userIdForNotif) {
@@ -390,7 +389,7 @@ export class MentorshipService implements IMentorshipService {
             mentorship.mentorFeedback = { rating, comment };
         }
 
-        await this.checkAndReleaseFunds(mentorship); // Helper called here
+        await this.checkAndReleaseFunds(mentorship); 
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
         return mentorship;
@@ -450,7 +449,6 @@ export class MentorshipService implements IMentorshipService {
             );
         }
 
-        // Credit refund to User Wallet
         if (refundAmount > 0) {
             await this._walletRepository.creditBalance(
                 userId,

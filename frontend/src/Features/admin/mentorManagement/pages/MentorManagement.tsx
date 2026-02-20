@@ -22,7 +22,7 @@ const MentorMangement = () => {
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit] = useState(6); // Show 6 per page for the grid layout
+    const [limit] = useState(6);
     const [filterStatus, setFilterStatus] = useState<
         'all' | 'active' | 'inactive'
     >('all');
@@ -33,7 +33,7 @@ const MentorMangement = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
-            setPage(1); // Reset to first page on search
+            setPage(1);
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm]);
@@ -70,7 +70,7 @@ const MentorMangement = () => {
         }
     };
 
-    const filteredMentors = mentors; // Fully handled by backend now
+    const filteredMentors = mentors; 
 
     return (
         <div className="p-6 space-y-6 max-w-7xl mx-auto">

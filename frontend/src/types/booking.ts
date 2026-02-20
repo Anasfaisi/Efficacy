@@ -38,5 +38,5 @@ export interface UpdateBookingStatusRequestDto {
 export interface RescheduleRequestDto {
     bookingId: string;
     proposedDate: string;
-    proposedSlot: string; // Specific hourly slot e.g., "10:00 AM - 11:00 AM"
+    proposedSlot: string; 
 }

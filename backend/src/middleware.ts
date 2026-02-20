@@ -9,6 +9,7 @@ import { PaymentController } from './controllers/payment.controller';
 import { TYPES } from './config/inversify-key.types';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { morganMiddleware } from './utils/logMiddlewares';
 export function applyMiddlewares(app: Express) {
     const corsOptions = {
         origin: [
@@ -29,7 +30,7 @@ export function applyMiddlewares(app: Express) {
     }
     app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
     app.use(cors(corsOptions));
-    app.use(morgan('dev'));
+    app.use(morganMiddleware);
     const paymentController = container.get<PaymentController>(
         TYPES.PaymentController
     );

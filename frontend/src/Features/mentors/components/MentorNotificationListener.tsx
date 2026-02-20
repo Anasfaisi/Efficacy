@@ -24,7 +24,6 @@ export const MentorNotificationListener: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    // Memoize the notification handler to prevent unnecessary re-registrations
     const handleNotification = useCallback(
         (notification: Notification) => {
            
@@ -170,7 +169,6 @@ export const MentorNotificationListener: React.FC = () => {
                     '🚀 MentorNotificationListener: Socket connected! Socket ID:',
                     socket.id
                 );
-                // joinRoleRoom('mentor');
                 if (currentUserId) joinUserRoom(currentUserId);
             });
         } else {

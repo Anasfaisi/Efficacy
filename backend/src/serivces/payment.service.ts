@@ -67,7 +67,7 @@ export class PaymentService implements IPaymentService {
                         currency: 'inr',
                         product_data: {
                             name: 'Mentorship Session',
-                            description: `1 Month Mentorship with ${((mentorship.mentorId as any)._id || mentorship.mentorId).toString()}`, // Ideally fetch mentor name but this is sufficient for now
+                            description: `1 Month Mentorship with ${((mentorship.mentorId as any)._id || mentorship.mentorId).toString()}`,
                         },
                         unit_amount: mentorship.amount * 100,
                     },

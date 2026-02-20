@@ -12,13 +12,13 @@ export interface IBooking extends Document {
     userId: ObjectId;
     mentorId: ObjectId;
     bookingDate: Date;
-    slot: string; // Specific hourly slot e.g., "10:00 AM - 11:00 AM"
+    slot: string; 
     status: BookingStatus;
     duration: number;
     topic?: string;
     rescheduleBy?: 'user' | 'mentor' | null;
     proposedDate?: Date;
-    proposedSlot?: string; // Specific hourly slot for rescheduling
+    proposedSlot?: string; 
     meetingLink?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -45,7 +45,6 @@ const bookingSchema = new Schema<IBooking>(
     { timestamps: true }
 );
 
-// Compound index to prevent double booking for mentor on same date and slot
 bookingSchema.index({ mentorId: 1, bookingDate: 1, slot: 1 }, { unique: true });
 
 export default model<IBooking>('Booking', bookingSchema);

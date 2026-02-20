@@ -14,13 +14,14 @@ import {
     connectSocket
 } from '@/Services/socket/socketService';
 import { useAppSelector } from '@/redux/hooks';
+import { bookingApi } from '@/Services/booking.api';
+import { toast } from 'react-toastify';
 
 const VideoCallPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
     const navigate = useNavigate();
     const { currentUser } = useAppSelector((state) => state.auth);
     
-    // Distinguish identity
     const isMentor = currentUser?.role === 'mentor'; 
     const currentUserId = currentUser?.id;
 
@@ -37,7 +38,6 @@ const VideoCallPage: React.FC = () => {
     const connectionRef = useRef<Peer.Instance | null>(null);
     const socketRef = useRef<any>(null);
 
-    // Sync streams to video elements
     useEffect(() => {
         if (remoteStream && userVideo.current) {
             console.log("LOG: [Common] Syncing remoteStream to userVideo element.");
@@ -53,32 +53,51 @@ const VideoCallPage: React.FC = () => {
     }, [stream]);
 
     useEffect(() => {
-        // Initialize Socket
-        socketRef.current = connectSocket();
+        const checkAccess = async () => {
+             if (!roomId) return;
+             try {
+                 const res = await bookingApi.verifyAccess(roomId);
+                 if (!res.success) {
+                     toast.error("You don't have access to this meeting.");
+                     navigate(isMentor ? '/mentor/dashboard' : '/home');
+                     return false;
+                 }
+                 return true;
+             } catch (err) {
+                 toast.error("Failed to verify meeting access.");
+                 navigate(isMentor ? '/mentor/dashboard' : '/home');
+                 return false;
+             }
+        };
 
-        // Get Permissions
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then((currentStream) => {
-                setStream(currentStream);
-                streamRef.current = currentStream;
-                
-                // Join Room ONLY after stream is ready
-                if (roomId && currentUserId) {
-                   setConnectionStatus('Waiting for other participant...');
-                   joinVideoRoom(roomId, currentUserId, isMentor ? 'mentor' : 'user');
-                }
-            })
-            .catch((err) => {
-                console.error("Failed to get media:", err);
-                setConnectionStatus('Camera/Microphone permission denied.');
-            });
+        const startSession = async () => {
+            const hasAccess = await checkAccess();
+            if(!hasAccess) return;
 
-        // Socket Listeners
+            socketRef.current = connectSocket();
+
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then((currentStream) => {
+                    setStream(currentStream);
+                    streamRef.current = currentStream;
+                    
+                    if (roomId && currentUserId) {
+                       setConnectionStatus('Waiting for other participant...');
+                       joinVideoRoom(roomId, currentUserId, isMentor ? 'mentor' : 'user');
+                    }
+                })
+                .catch((err) => {
+                    console.error("Failed to get media:", err);
+                    setConnectionStatus('Camera/Microphone permission denied.');
+                });
+        };
+
+        startSession();
+
         if(isMentor) {
             onUserConnected(({ userId, socketId }) => {
                 console.log("LOG: [Mentor] 'user-connected' received from:", userId, socketId);
                 
-                // Avoid double-calling the same socket if already connected
                 if (connectionRef.current && !connectionRef.current.destroyed && connectionRef.current.connected) {
                     console.log("LOG: [Mentor] Already connected to a peer. Skipping redundant call.");
                     return;
@@ -92,8 +111,6 @@ const VideoCallPage: React.FC = () => {
         onSignal(({ signal, from }) => {
             console.log("LOG: [Common] 'signal' received. Type:", signal.type || 'candidate/other');
             
-            // If we receive a new OFFER, it means the Mentor restarted the call.
-            // We MUST destroy the old peer and create a new one to accept the new offer.
             if (signal.type === 'offer') {
                  if (connectionRef.current) {
                     console.log("LOG: [User] Received NEW Offer. Destroying old peer to restart.");
@@ -112,9 +129,6 @@ const VideoCallPage: React.FC = () => {
                     console.error("Error signaling peer:", err);
                 }
             } else if (!isMentor) {
-                 // Users answer calls, Mentors initiate them.
-                 // If a Mentor receives a signal but has no peer, something is wrong, 
-                 // but if a User receives a signal (offer), they should answer.
                  console.log("LOG: [User] No peer yet, calling answerCall.");
                  answerCall(signal, from);
             }
@@ -132,7 +146,6 @@ const VideoCallPage: React.FC = () => {
         };
     }, [roomId]);
 
-    // Mentor initiates the call
     const callUser = (userSocketId: string) => {
         console.log("LOG: [Mentor] callUser() called. checking streamRef...", streamRef.current);
         if(!streamRef.current) {

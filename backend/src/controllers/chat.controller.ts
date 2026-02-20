@@ -47,16 +47,22 @@ export class ChatController {
         res.status(Code.OK).json(conversations);
     }
 
-    async getRoomMessages(req: Request, res: Response) {
-        const { roomId } = req.params;
-        const userId = (req.currentUser as any)._id;
-        const messages = await this._chatService.getRoomMessages(
-            roomId,
-            userId
-        );
+    // async getRoomMessages(req: Request, res: Response) {
+        // const { roomId } = req.params;
+        // const userId = req.currentUser?.id;
+        // if (!userId) {
+        //     res.status(Code.UNAUTHORIZED).json({
+        //         message: ErrorMessages.UserNotFound,
+        //     });
+        //     return;
+        // }
+        // const messages = await this._chatService.getRoomMessages(
+        //     roomId,
+        //     userId
+        // );
 
-        res.status(Code.OK).json(messages);
-    }
+        // res.status(Code.OK).json(messages);
+    // }
 
     async uploadFile(req: Request, res: Response) {
         if (!req.file) {

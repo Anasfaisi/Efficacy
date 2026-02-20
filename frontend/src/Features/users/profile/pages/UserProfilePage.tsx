@@ -77,7 +77,6 @@ const UserProfilePage = () => {
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = useState<string | null>(null);
 
-    // Local states for inputs
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [headline, setHeadline] = useState('');
@@ -110,7 +109,6 @@ const UserProfilePage = () => {
 
     const handleSavePartial = async (fields: Record<string, unknown>, sectionId: string) => {
         try {
-            // Validate with Zod
             userProfileUpdateSchema.parse(fields);
 
             setIsLoading(sectionId);
@@ -118,7 +116,6 @@ const UserProfilePage = () => {
 
             toast.success('Profile updated successfully');
 
-            // Update Redux state
             dispatch(updateCurrentUser(fields));
         } catch (error: unknown) {
             if (error instanceof ZodError) {
@@ -180,7 +177,6 @@ const UserProfilePage = () => {
             const res = await updateProfilePicture(
                 file,
                 'user'
-                // currentUser?.id,
             );
             toast.success('Profile picture updated');
 
@@ -197,6 +193,7 @@ const UserProfilePage = () => {
     };
 
     const user = currentUser as User;
+    console.log(user,"the user here now go ")
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
@@ -502,7 +499,7 @@ const UserProfilePage = () => {
                                         title="Account & Billing"
                                         description="Manage your account level settings and view your current balance."
                                         footer="Billing information is securely handled via Stripe."
-                                        onSave={() => Promise.resolve()} // Handled elsewhere or view only
+                                        onSave={() => Promise.resolve()}
                                         isLoading={false}
                                     >
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

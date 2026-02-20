@@ -12,7 +12,6 @@ export class ChatRepository implements IChatRepository {
             participants,
         });
 
-        // Populate to ensure frontend receives user details immediately
         await newConversation.populate(
             'participants._id',
             'name profilePic role email'
@@ -56,7 +55,6 @@ export class ChatRepository implements IChatRepository {
             .sort({ updatedAt: -1 })
             .lean();
 
-        // Transform stricture to match frontend expectation (flat array of participants)
         return conversations.map((conv: any) => ({
             ...conv,
             participants: conv.participants.map((p: any) => p._id),
@@ -70,7 +68,6 @@ export class ChatRepository implements IChatRepository {
 
         if (!conversation) return null;
 
-        // Transform for frontend
         return {
             ...conversation,
             participants: (conversation.participants as any[]).map(

@@ -340,7 +340,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                                     <div className="relative">
                                         <input
                                             type="number"
-                                            className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm" // pl-3
+                                            className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm" 
                                             placeholder="e.g. 7"
                                             value={reApplyValue}
                                             onChange={(e) =>

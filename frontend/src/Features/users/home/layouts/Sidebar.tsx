@@ -51,12 +51,7 @@ const Sidebar = () => {
             to: '/pomodoro',
             color: '#f87171',
         },
-        // {
-        // //     icon: <MessageSquare size={20} />,
-        // //     label: 'Chat',
-        // //     to: '#',
-        // //     color: '#009688',
-        // // },
+  
         {
             icon: <Users size={20} />,
             label: 'Mentor Pool',

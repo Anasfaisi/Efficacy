@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { AuthService } from '../serivces/auth.service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
@@ -9,7 +8,7 @@ import {
     ErrorMessages,
     SuccessMessages,
 } from '@/types/response-messages.types';
-import { LoginRequestDto, UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
@@ -38,7 +37,9 @@ export class AdminController {
     async markNotificationAsRead(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._notificationService.markAsRead(id);
-        res.status(code.OK).json({ message: SuccessMessages.NotificationMarkedRead });
+        res.status(code.OK).json({
+            message: SuccessMessages.NotificationMarkedRead,
+        });
     }
 
     async markAllNotificationsAsRead(
@@ -92,7 +93,9 @@ export class AdminController {
         const { id } = req.params;
         const { reason } = req.body;
         await this._adminService.rejectMentorApplication(id, reason);
-        res.status(code.OK).json({ message: SuccessMessages.ApplicationRejected });
+        res.status(code.OK).json({
+            message: SuccessMessages.ApplicationRejected,
+        });
     }
 
     async requestChangesMentorApplication(
@@ -193,12 +196,16 @@ export class AdminController {
     async getMentorById(req: Request, res: Response): Promise<void> {
         const id = req.currentUser?.id;
         if (!id) {
-            res.status(code.UNAUTHORIZED).json({ message: ErrorMessages.UserNotFound });
+            res.status(code.UNAUTHORIZED).json({
+                message: ErrorMessages.UserNotFound,
+            });
             return;
         }
         const mentor = await this._adminService.getMentorById(id);
         if (!mentor) {
-            res.status(code.NOT_FOUND).json({ message: ErrorMessages.MentorNotFound });
+            res.status(code.NOT_FOUND).json({
+                message: ErrorMessages.MentorNotFound,
+            });
             return;
         }
         res.status(code.OK).json(mentor);
@@ -208,10 +215,11 @@ export class AdminController {
         const { id } = req.params;
         const { status } = req.body;
         await this._adminService.updateMentorStatus(id, status);
-        res.status(code.OK).json({ message: SuccessMessages.MentorStatusUpdated });
+        res.status(code.OK).json({
+            message: SuccessMessages.MentorStatusUpdated,
+        });
     }
 
-    //user management
     async getAllUsers(req: Request, res: Response): Promise<void> {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;

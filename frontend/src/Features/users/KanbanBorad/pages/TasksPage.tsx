@@ -122,7 +122,6 @@ const TasksPage: React.FC = () => {
             return;
         }
 
-        // Default time: start of current hour to one hour later
         const start = new Date();
         start.setMinutes(0, 0, 0);
         const end = new Date(start);

@@ -43,7 +43,6 @@ const MentorApproved: React.FC = () => {
                 parseFloat(monthlyCharge)
             );
 
-            // Update local user state
             dispatch(updateCurrentUser(response.user));
 
             toast.success('Account activated successfully!');

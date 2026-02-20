@@ -47,7 +47,7 @@ const MentorListingPage: React.FC = () => {
             setDebouncedSearch(searchTerm);
             setDebouncedMinPrice(minPrice);
             setDebouncedMaxPrice(maxPrice);
-            setPage(1); // Reset to page 1 on search/filter change
+            setPage(1); 
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm, minPrice, maxPrice]);

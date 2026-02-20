@@ -129,7 +129,6 @@ const mentorSchema = new Schema<IMentor>(
         sessionsCompleted: { type: Number, default: 0 },
         applicationFeedback: { type: String },
     },
-    //handle the _id and id (for exposing that)
     {
         timestamps: true,
         toJSON: { virtuals: true },

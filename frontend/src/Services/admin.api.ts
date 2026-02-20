@@ -7,7 +7,6 @@ export const adminService = {
         const res = await api.post('/admin/login', credentials);
         return res.data;
     },
-    // Mentor Application Review
     getMentorApplications: async (
         page: number = 1,
         limit: number = 10,
@@ -53,7 +52,6 @@ export const adminService = {
         });
     },
 
-    // Mentor Management
     getAllMentors: async (
         page: number = 1,
         limit: number = 10,
@@ -81,7 +79,6 @@ export const adminService = {
         await api.put(`/admin/mentors/${id}/status`, { status });
     },
 
-    //User Management
     getAllUsers: async (
         page: number = 1,
         limit: number = 10,
@@ -102,7 +99,6 @@ export const adminService = {
         await api.patch(`/admin/users/${id}/status`, { isActive });
     },
 
-    //Notification
     getNotifications: async (): Promise<Notification[]> => {
         const response = await api.get('/admin/notifications');
         return response.data;

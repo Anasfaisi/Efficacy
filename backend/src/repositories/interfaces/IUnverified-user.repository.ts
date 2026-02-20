@@ -1,5 +1,3 @@
-// backend/src/interfaces/unverifiedUserRepository.interface.ts
-
 import { IUnverifiedUser } from '@/models/Unverified-user.model';
 import { UpdateWriteOpResult } from 'mongoose';
 

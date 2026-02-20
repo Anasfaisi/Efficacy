@@ -25,7 +25,6 @@ const UserMentorshipStatus: React.FC = () => {
             const data = await mentorshipApi.getActiveMentorship();
             setMentorship(data);
         } catch (error) {
-            // Probably no active mentorship
             console.error('Failed to fetch mentorship status:', error);
         } finally {
             setLoading(false);
@@ -293,7 +292,6 @@ const UserMentorshipStatus: React.FC = () => {
 
 export default UserMentorshipStatus;
 
-// Helper component for Users icon
 const Users = ({ className, size }: { className?: string; size?: number }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"

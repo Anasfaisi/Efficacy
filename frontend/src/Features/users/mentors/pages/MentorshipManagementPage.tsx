@@ -39,13 +39,12 @@ const MentorshipManagementPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser } = useAppSelector((state) => state.auth);
-    const isMentor = currentUser?.role === 'mentor'; // OR location.pathname.includes('/mentor/')
+    const isMentor = currentUser?.role === 'mentor';  
  
     const [mentorship, setMentorship] = useState<Mentorship | null>(null);
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // New Booking State
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -54,7 +53,6 @@ const MentorshipManagementPage: React.FC = () => {
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
     const [rescheduleData, setRescheduleData] = useState<{ id: string; date: string; slot: string } | null>(null);
 
-    // Session State
     const [nextSession, setNextSession] = useState<Booking | null>(null);
     const [isSessionActive, setIsSessionActive] = useState(false);
 
@@ -71,7 +69,6 @@ const MentorshipManagementPage: React.FC = () => {
             );
             setExistingBookings(relevantBookings);
 
-            // Find next session
             const upcoming = relevantBookings
                 .filter((b) => b.status === 'confirmed')
                 .sort(
@@ -106,7 +103,6 @@ const MentorshipManagementPage: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-        // Listen for User/Host online
         onHostOnline(() => {
             
             if (!isMentor) {
@@ -131,7 +127,6 @@ const MentorshipManagementPage: React.FC = () => {
 
     const isSessionStartable = () => {
         if (!nextSession) return false;
-        // If it's confirmed and NOT in the past
         return nextSession.status === 'confirmed' && !isBookingPast(nextSession.bookingDate, nextSession.slot);
     };
 
@@ -208,7 +203,7 @@ const MentorshipManagementPage: React.FC = () => {
                 (error as { response?: { data?: { message?: string } } })
                     ?.response?.data?.message || 'Failed to book session';
             toast.error(errorMessage);
-            throw error; // Re-throw for modal handling
+            throw error; 
         }
     };
 

@@ -4,7 +4,7 @@ import { BarChart3, Clock, Flame, Coffee } from 'lucide-react';
 interface TimerAnalyzerProps {
     stats: {
         cycles: number;
-        productiveTime: number; // in seconds
+        productiveTime: number; 
         shortBreaks: number;
         longBreaks: number;
         currentSessionCompleted: number;
@@ -13,7 +13,6 @@ interface TimerAnalyzerProps {
 
 const TimerAnalyzer: React.FC<TimerAnalyzerProps> = ({ stats }) => {
     
-    // Helpers to format time
     const formatProductiveTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);

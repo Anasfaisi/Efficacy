@@ -62,7 +62,6 @@ export default function mentorshipRoutes(
         )
     );
 
-    // Wallet Routes
     const walletController = container.get<WalletController>(
         TYPES.WalletController
     );

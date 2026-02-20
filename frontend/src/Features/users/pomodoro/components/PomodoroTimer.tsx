@@ -20,7 +20,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
     const [timeLeft, setTimeLeft] = useState(initialState?.timeLeft || 25 * 60);
     const [isActive, setIsActive] = useState(initialState?.isActive || false);
     
-    // Recovery Logic: If active, account for time lost during reload/unmount
     useEffect(() => {
         if (initialState?.isActive && initialState?.lastUpdated) {
             const now = Date.now();
@@ -30,11 +29,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
                 const newTimeLeft = Math.max(0, initialState.timeLeft - elapsedSeconds);
                 setTimeLeft(newTimeLeft);
                 
-                // If time already expired while away
                 if (newTimeLeft === 0) {
-                    // We can choose to autocomplete or just set to 0. 
-                    // Let's set it to 0 and let the next effect handle completion?
-                    // But isActive is true, so the interval effect will run and trigger completion immediately.
                 }
             }
         }
@@ -54,18 +49,15 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
     const timerRef = useRef<NodeJS.Timeout>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // Persist state changes
     useEffect(() => {
         onStateChange({
             mode,
             timeLeft,
             isActive,
-            // Only update timestamp if active
             lastUpdated: isActive ? Date.now() : null
         });
     }, [mode, timeLeft, isActive]);
 
-    // Initialize audio
     useEffect(() => {
         audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); // Simple bell sound
     }, []);
@@ -85,7 +77,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
                 setTimeLeft((prev) => prev - 1);
             }, 1000);
         } else if (timeLeft === 0 && isActive) {
-            // Timer finished
             handleTimerComplete();
         }
 
@@ -102,14 +93,12 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
         
         if (mode === 'pomodoro') {
             onSessionComplete(duration, mode);
-            // Suggest break or auto-switch
              setMode('shortBreak');
              setTimeLeft(settings.shortBreak * 60);
              if (settings.autoStartBreaks) {
                  setIsActive(true);
              }
         } else {
-             // Break over, back to work
              setMode('pomodoro');
              setTimeLeft(settings.pomodoro * 60);
              if (settings.autoStartPomodoros) {
@@ -133,13 +122,11 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
 
     const handleSettingChange = (key: keyof typeof settings, value: number | boolean) => {
         setSettings(prev => ({ ...prev, [key]: value }));
-        // If we're changing the time of the *current* mode, update timeLeft immediately if not active
         if (!isActive && key === mode) {
             setTimeLeft(Number(value) * 60);
         }
     };
 
-    // Circular Progress Calculation
     const totalTime = getDuration(mode);
     const progress = ((totalTime - timeLeft) / totalTime) * 100;
     const radius = 120;
@@ -154,9 +141,9 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onSessionComplete, initia
 
     const getColor = () => {
         switch (mode) {
-            case 'pomodoro': return '#f87171'; // Classic Pomodoro Red
-            case 'shortBreak': return '#00BCD4'; // Cyan
-            case 'longBreak': return '#2196F3'; // Blue
+            case 'pomodoro': return '#f87171'; 
+            case 'shortBreak': return '#00BCD4'; 
+            case 'longBreak': return '#2196F3'; 
             default: return '#f87171';
         }
     };

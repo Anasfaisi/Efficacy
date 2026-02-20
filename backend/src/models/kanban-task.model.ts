@@ -8,7 +8,6 @@ export interface IKanbanTask extends Document {
     priority: string;
     completed: boolean;
     approxTimeToFinish: string;
-    // position: number;
 }
 
 export const KanbanTaskSchema = new Schema({
@@ -19,7 +18,6 @@ export const KanbanTaskSchema = new Schema({
     priority: { type: String, default: 'Low' },
     completed: { type: Boolean, default: false },
     approxTimeToFinish: { type: String },
-    // position: { type: Number },
 });
 
 export default model<IKanbanTask>('KanbanTasks', KanbanTaskSchema);

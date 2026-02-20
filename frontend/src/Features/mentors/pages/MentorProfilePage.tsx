@@ -79,13 +79,11 @@ const ConfigSection = ({
 );
 
 const MentorProfilePage = () => {
-    // const { currentUser } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const [fullMentor, setFullMentor] = useState<Mentor | null>(null);
     const [isLoading, setIsLoading] = useState<string | null>(null);
     const [isPageLoading, setIsPageLoading] = useState(true);
 
-    // Local states for inputs
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [bio, setBio] = useState('');
@@ -110,7 +108,6 @@ const MentorProfilePage = () => {
     const [monthlyCharge, setMonthlyCharge] = useState<number | string>('');
     const [achievements, setAchievements] = useState<string[]>([]);
 
-    // Bank Details State
     const [bankDetails, setBankDetails] = useState({
         accountNumber: '',
         bankName: '',
@@ -129,7 +126,6 @@ const MentorProfilePage = () => {
             try {
                 const data = await mentorApi.getMentorProfile();
                 setFullMentor(data);
-                // Sync local states
                 setName(data.name || '');
                 setEmail(data.email || '');
                 setBio(data.bio || '');
@@ -154,7 +150,6 @@ const MentorProfilePage = () => {
                 setMonthlyCharge(data.monthlyCharge || '');
                 setAchievements(data.achievements || []);
 
-                // Fetch Bank Details
                 const walletData = await walletApi.getWallet();
                 if (walletData?.bankAccountDetails) {
                     setBankDetails({
@@ -189,7 +184,6 @@ const MentorProfilePage = () => {
         sectionId: string
     ) => {
         try {
-            // Validate with Zod
             mentorProfileUpdateSchema.parse(fields);
 
             setIsLoading(sectionId);
@@ -221,7 +215,6 @@ const MentorProfilePage = () => {
 
     const handlePasswordSave = async () => {
         try {
-            // Validate with Zod
             mentorProfileUpdateSchema.parse({ currentPassword, newPassword });
 
             if (!currentPassword || !newPassword) {
@@ -289,11 +282,9 @@ const MentorProfilePage = () => {
                 `${type === 'profilePic' ? 'Profile' : 'Cover'} picture updated`
             );
 
-            // Update local state
             const data = await mentorApi.getMentorProfile();
             setFullMentor(data);
 
-            // Update Redux state
             if (type === 'profilePic' && data.profilePic) {
                 dispatch(updateCurrentUser({ profilePic: data.profilePic }));
             } else if (type === 'coverPic' && data.coverPic) {

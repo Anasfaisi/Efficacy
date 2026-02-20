@@ -36,7 +36,7 @@ import { getAllSlots } from '@/utils/timeUtils';
 interface MentorCalendarProps {
     mentor: Mentor;
     allBookings: Booking[];
-    currentMenteeId?: string; // To highlight bookings of the current mentee
+    currentMenteeId?: string; 
     onSelectSlot?: (date: Date, slot: string) => void;
     selectable?: boolean;
 }
@@ -49,7 +49,6 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({ mentor, allBookings, cu
 
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    // Helper to check if a date has any bookings
     const getBookingsForDate = (date: Date) => {
         return allBookings.filter(b => isSameDay(new Date(b.bookingDate), date));
     };

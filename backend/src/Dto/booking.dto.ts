@@ -3,7 +3,7 @@ import { BookingStatus } from "@/models/Booking.model";
 export interface CreateBookingRequestDto {
     userId: string;
     mentorId: string;
-    bookingDate: string; // ISO string
+    bookingDate: string; 
     slot: string;
     topic?: string;
 }

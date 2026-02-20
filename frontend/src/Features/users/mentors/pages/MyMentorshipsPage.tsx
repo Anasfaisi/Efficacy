@@ -48,7 +48,6 @@ const MyMentorshipsPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await mentorshipApi.getUserRequests();
-                // Client-side sort by createdAt desc if available, assuming backend doesn't sort
                 const sortedData = Array.isArray(data) ? data.reverse() : [];
                 setMentorships(sortedData);
             } catch (error) {

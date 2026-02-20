@@ -96,7 +96,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
             const startDateTime = new Date(`${date}T${startTime}`);
             let endDateTime = new Date(`${date}T${endTime}`);
 
-            // If end time is before or equal to start time, it means it spans to the next day
             if (endDateTime <= startDateTime) {
                 endDateTime.setDate(endDateTime.getDate() + 1);
             }
@@ -235,7 +234,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                     onChange={(e) => {
                                         const newStart = e.target.value;
                                         setStartTime(newStart);
-                                        // If endTime is now earlier or same as newStart, bump it by 1 hour
                                         if (endTime <= newStart) {
                                             const [h, m] = newStart.split(':').map(Number);
                                             const endH = (h + 1) % 24;

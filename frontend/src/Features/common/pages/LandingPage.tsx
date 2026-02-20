@@ -10,7 +10,6 @@ import Footer from '../components/Landing/Footer';
 
 const LandingPage: React.FC = () => {
     useEffect(() => {
-        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
             anchor.addEventListener(
                 'click',

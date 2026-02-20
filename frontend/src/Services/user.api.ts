@@ -194,12 +194,12 @@ export const googleLoginApi = async (
     }
 };
 
-//profile
 export const updateProfilePicture = async (
     file: File | null,
     id?: string
 ): Promise<{ message: string; user: User }> => {
     try {
+        console.log(id,"yryrt")
         if (!file) {
             throw new Error('no file selected');
         }

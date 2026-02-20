@@ -13,11 +13,7 @@ export default function authRoutes(userController: UserController) {
     const router = Router();
     const _tokenService = container.get<TokenService>(TYPES.TokenService);
 
-    // router.get(
-    //     '/me/:id',
-    //     authenticateAndAuthorize(tokenService, Role.User),
-    //     userController.getCurrentUser.bind(userController) as RequestHandler
-    // );
+
 
     router.post('/login', userController.login.bind(userController));
 

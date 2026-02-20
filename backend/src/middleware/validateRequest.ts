@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodSchema, ZodError } from 'zod';
+import code from '@/types/http-status.enum';
 
 export const validateRequest = (schema: ZodSchema) => {
     return async (
@@ -15,7 +16,7 @@ export const validateRequest = (schema: ZodSchema) => {
                 const errorMessages = error.issues.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
-                res.status(400).json({
+                res.status(code.BAD_REQUEST).json({
                     error: 'Validation Error',
                     details: errorMessages,
                 });

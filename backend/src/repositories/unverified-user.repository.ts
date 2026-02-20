@@ -1,4 +1,3 @@
-// backend/src/repositories/unverifiedUser.repository.ts
 import UnverifiedUserModel, {
     IUnverifiedUser,
 } from '@/models/Unverified-user.model';

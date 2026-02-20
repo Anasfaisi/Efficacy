@@ -1,4 +1,3 @@
-// src/pages/ProfileSetupPage.tsx
 import React from 'react';
 import ProfileForm from '../components/profileForm';
 import Sidebar from '../../home/layouts/Sidebar';

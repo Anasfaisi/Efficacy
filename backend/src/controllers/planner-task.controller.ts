@@ -62,7 +62,7 @@ export class PlannerTaskController {
         const userId = req.currentUser?.id;
         const { taskId } = req.params;
         if (!userId) {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(code.UNAUTHORIZED).json({ message: 'Unauthorized' });
             return;
         }
 

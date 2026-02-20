@@ -76,4 +76,22 @@ export class BookingController {
         const booking = await this._bookingService.updateBookingStatus(req.body);
         res.status(code.OK).json(booking);
     }
+
+    async verifyAccess(req: Request, res: Response): Promise<void> {
+        const { bookingId } = req.params;
+        const userId = req.currentUser?.id;
+
+        if (!userId) {
+            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.NotAuthenticated });
+            return;
+        }
+
+        const hasAccess = await this._bookingService.verifyBookingAccess(bookingId, userId);
+        
+        if (hasAccess) {
+            res.status(code.OK).json({ success: true });
+        } else {
+            res.status(code.FORBIDDEN).json({ success: false, message: "Access denied to this meeting" });
+        }
+    }
 }

@@ -83,7 +83,6 @@ export default function MentorReviewPage() {
                     );
                 }
             } else {
-                // Find and mark any unread notification related to this mentor
                 const relatedNotification = notifications.find(
                     (n) => !n.isRead && n.metadata?.mentorId === id
                 );

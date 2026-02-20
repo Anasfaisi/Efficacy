@@ -42,7 +42,7 @@ export class VerifyPaymentDto {
 
 export class PaginatedMentorshipResponseDto {
     constructor(
-        public mentorships: any[], // Replacing any is better but let's see
+        public mentorships: any[], 
         public totalCount: number,
         public totalPages: number,
         public currentPage: number

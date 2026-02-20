@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { logger } from './logMiddlewares';
 
 export const asyncWrapper =
     (
@@ -10,7 +11,7 @@ export const asyncWrapper =
     ) =>
     (req: Request, res: Response, next: NextFunction) => {
         controller(req, res, next).catch((err) => {
-            console.error('AsyncWrapper Error:', err);
+            logger.error(err);
             if (err instanceof Error) {
                 res.status(500).json({
                     message: err.message,

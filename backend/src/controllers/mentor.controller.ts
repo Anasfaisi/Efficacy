@@ -12,6 +12,7 @@ import {
     CommonMessages,
 } from '@/types/response-messages.types';
 import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
+import { CodeChallengeMethod } from 'google-auth-library';
 
 export class MentorController {
     constructor(
@@ -46,7 +47,7 @@ export class MentorController {
             secure: true,
         });
 
-        res.status(200).json(user);
+        res.status(code.OK).json(user);
     }
 
     async login(req: Request, res: Response) {
@@ -61,7 +62,7 @@ export class MentorController {
             secure: true,
         });
 
-        res.json({ user: result.user });
+        res.status(code.OK).json({ user: result.user });
     }
 
     async logout(req: Request, res: Response) {
@@ -79,7 +80,7 @@ export class MentorController {
                 sameSite: 'strict',
             });
 
-            res.json(AuthMessages.LogoutSuccess);
+            res.status(code.OK).json(AuthMessages.LogoutSuccess);
         } catch (error: unknown) {
             const message =
                 error instanceof Error ? error.message : CommonMessages.UnexpectedError;

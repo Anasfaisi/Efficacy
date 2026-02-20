@@ -16,7 +16,7 @@ export class PomodoroController {
     }
 
     public logSession = async (req: Request, res: Response): Promise<void> => {
-        const userId = req.currentUser!.id; // Assumes auth middleware populates this
+        const userId = req.currentUser!.id;
         const { duration, type } = req.body;
 
         if (!duration || !type) {

@@ -14,7 +14,6 @@ export const useChatSocket = (roomId: string | undefined) => {
 
         const socket = connectSocket();
 
-        // Join the specific chat room
         const userId = currentUser.id 
         socket.emit('joinRoom', { roomId, userId });
 

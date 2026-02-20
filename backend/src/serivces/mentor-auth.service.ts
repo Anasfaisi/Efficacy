@@ -161,7 +161,7 @@ export class MentorAuthService implements IMentorAuthService {
             account = await this._mentorRepository.createUser({
                 email: payload.email,
                 name: payload.name || 'Google Mentor',
-                password: await bcrypt.hash(Math.random().toString(36), 10), // Random password
+                password: await bcrypt.hash(Math.random().toString(36), 10), 
                 role: Role.Mentor,
             });
         }
@@ -234,7 +234,7 @@ export class MentorAuthService implements IMentorAuthService {
         const resetToken = this._tokenService.generatePasswordResetToken(
             mentor.id
         );
-        // Pointing to mentor specific reset page
+      
         const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
         await this._otpService.sendEmail(
             mentor.email,

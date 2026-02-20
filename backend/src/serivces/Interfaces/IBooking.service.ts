@@ -13,4 +13,5 @@ export interface IBookingService {
     updateBookingStatus(data: UpdateBookingStatusRequestDto): Promise<BookingResponseDto>;
     requestReschedule(data: RescheduleRequestDto): Promise<BookingResponseDto>;
     handleRescheduleResponse(bookingId: string, approve: boolean): Promise<BookingResponseDto>;
+    verifyBookingAccess(bookingId: string, userId: string): Promise<boolean>;
 }

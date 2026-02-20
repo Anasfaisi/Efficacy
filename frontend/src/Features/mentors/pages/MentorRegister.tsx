@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GoogleLogin } from '@react-oauth/google';
-import type { CredentialResponse } from '@/types/auth'; // Ensure this type is available or import from Google package if wrapped
-import { googleLoginApi, registerInitApi } from '@/Services/user.api'; // Assuming generic google login handles roles
-import { setCredentials } from '@/redux/slices/authSlice'; // Already imported
+import type { CredentialResponse } from '@/types/auth';
+import { googleLoginApi, registerInitApi } from '@/Services/user.api';
+import { setCredentials } from '@/redux/slices/authSlice'; 
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';

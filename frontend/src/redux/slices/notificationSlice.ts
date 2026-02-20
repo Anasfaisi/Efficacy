@@ -31,17 +31,14 @@ const notificationSlice = createSlice({
                 newNotification._id = `auto-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             }
 
-            // Check if notification already exists to avoid duplicates
             const isDuplicate = state.notifications.some(
                 (n) => n._id === newNotification._id
             );
 
             if (isDuplicate) return;
 
-            // Add to the beginning of the array
             state.notifications = [newNotification, ...state.notifications];
 
-            // Increment unread count if applicable
             if (!newNotification.isRead) {
                 state.unreadCount += 1;
             }

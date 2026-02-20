@@ -80,7 +80,7 @@ export class UserController {
                 });
                 return;
             }
-            res.status(200).json({
+            res.status(code.OK).json({
                 message: SuccessMessages.ProfilePicUpdated,
                 user: updatedProfilePic,
             });
@@ -142,7 +142,7 @@ export class UserController {
             secure: true,
         });
 
-        res.status(200).json(user);
+        res.status(code.OK).json(user);
     }
 
     async resendOtp(req: Request, res: Response) {
@@ -159,12 +159,12 @@ export class UserController {
 
     async forgotPassword(req: Request, res: Response) {
         const result = await this._authService.forgotPassword(req.body);
-        res.status(200).json(result);
+        res.status(code.OK).json(result);
     }
 
     async resetPassword(req: Request, res: Response) {
         const result = await this._authService.resetPassword(req.body);
-        res.status(200).json(result);
+        res.status(code.OK).json(result);
     }
 
     async refreshTokenHandler(req: Request, res: Response) {
@@ -188,7 +188,7 @@ export class UserController {
                 sameSite: 'strict',
             });
 
-            res.json({ success: true });
+            res.status(code.OK).json({ success: true });
         } catch (error: unknown) {
             const message =
                 error instanceof Error ? error.message : ErrorMessages.TokenRefreshFailed;

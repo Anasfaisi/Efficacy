@@ -138,7 +138,6 @@ export const UserNotificationListener: React.FC = () => {
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'user') return;
 
-        // Fetch initial notifications
         userApi
             .getNotifications()
             .then((data) => {

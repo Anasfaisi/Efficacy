@@ -170,7 +170,6 @@ container.bind<IPomodoroService>(TYPES.PomodoroService).to(PomodoroService);
 container.bind<IPomodoroRepository>(TYPES.PomodoroRepository).to(PomodoroRepository);
 
 
-// Note Bindings
 container.bind<NoteController>(TYPES.NoteController).to(NoteController);
 container.bind<INoteService>(TYPES.NoteService).to(NoteService);
 container.bind<INoteRepository>(TYPES.NoteRepository).to(NoteRepository);

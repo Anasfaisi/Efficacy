@@ -241,7 +241,6 @@ export class AuthService implements IAuthService {
             user.id,
             user.role
         );
-        // await this._unverifiedUserRepository.deleteByEmail(unverifiedUser.email);
         return new OtpVerificationResponseDto(accessToken, refreshToken, {
             id: user._id.toString(),
             email: user.email,

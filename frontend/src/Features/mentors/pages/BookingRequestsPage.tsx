@@ -56,7 +56,7 @@ const BookingRequestsPage: React.FC = () => {
             toast.success(
                 `Booking ${status === BookingStatus.CONFIRMED ? 'accepted' : 'rejected'} successfully`
             );
-            fetchBookings(); // Refresh list
+            fetchBookings(); 
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })

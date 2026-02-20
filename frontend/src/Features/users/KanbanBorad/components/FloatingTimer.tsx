@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const FloatingTimer: React.FC = () => {
     const [isOpen, setIsOpen] = useState(true);
-    const [seconds, setSeconds] = useState(5445); // 01:30:45 from image
+    const [seconds, setSeconds] = useState(5445); 
     const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {

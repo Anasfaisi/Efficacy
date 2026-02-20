@@ -31,7 +31,6 @@ export class PomodoroRepository extends BaseRepository<IPomodoroLog> implements 
                 totalCycles: 1 
             };
         } else {
-             // We can track break times if we want, but schema focused on productive time
         }
 
         return this.model.findOneAndUpdate(

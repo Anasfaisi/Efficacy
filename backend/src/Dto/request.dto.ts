@@ -2,7 +2,6 @@ import { IUser } from '@/models/User.model';
 import { ColumnId } from '@/types/column-enum.types';
 import { MessageStatus, Role } from '@/types/role.types';
 
-//Login
 export class LoginRequestDto {
     constructor(
         public readonly email: string,
@@ -19,7 +18,6 @@ export class userGoogleLoginRequestDto {
     ) {}
 }
 
-//Register
 export class RegisterRequestDto {
     constructor(
         public readonly name: string,
@@ -29,7 +27,6 @@ export class RegisterRequestDto {
     ) {}
 }
 
-//otp verification
 export class OtpVerificationRequestDto {
     constructor(
         public readonly email: string,
@@ -37,12 +34,10 @@ export class OtpVerificationRequestDto {
     ) {}
 }
 
-//resend otp
 export class resendOtpRequestDto {
     constructor(public readonly email: string) {}
 }
 
-//forget password
 export class ForgotPasswordRequestDto {
     public email: string;
     constructor(email: string) {
@@ -50,7 +45,6 @@ export class ForgotPasswordRequestDto {
     }
 }
 
-//reset password
 export class ResetPasswordrequestDto {
     constructor(
         public readonly token: string,
@@ -58,10 +52,8 @@ export class ResetPasswordrequestDto {
     ) {}
 }
 
-//refreshing access token
 export class RefreshRequestDto {}
 
-//stripe checkout dto
 export class CreateCheckoutDto {
     constructor(
         public readonly priceId: string,
@@ -73,7 +65,6 @@ export class CreateCheckoutDto {
     }
 }
 
-//request payment dto
 export class RequestPaymentDto {
     constructor(
         public readonly userId: string,
@@ -83,7 +74,6 @@ export class RequestPaymentDto {
     ) {}
 }
 
-// DTO forincoming messages
 export class SendMessageDto {
     constructor(
         public readonly roomId: string,
@@ -94,7 +84,6 @@ export class SendMessageDto {
     ) {}
 }
 
-//DTO for joining Room
 export class JoinRoomDto {
     constructor(
         public readonly roomId: string,

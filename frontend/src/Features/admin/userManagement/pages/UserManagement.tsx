@@ -25,7 +25,6 @@ const UserManagement = () => {
     const [totalCount, setTotalCount] = useState(0);
     const limit = 10;
 
-    // Debounce search term
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -67,7 +66,6 @@ const UserManagement = () => {
             toast.success(
                 `User ${currentStatus ? 'blocked' : 'unblocked'} successfully`
             );
-            // Update local state
             setUsers(
                 users.map((user) =>
                     user.id === userId

@@ -41,7 +41,6 @@ export const connectSocket = () => {
         socket.on('disconnect', (reason) => {
             console.warn('socketService: Disconnected. Reason:', reason);
             if (reason === 'io server disconnect') {
-                // the disconnection was initiated by the server, you need to reconnect manually
                 socket?.connect();
             }
         });
@@ -73,9 +72,6 @@ export const disconnectSocket = () => {
 
 export const getSocket = () => socket;
 
-// export const joinRoleRoom = (role: string) => {
-//     socket?.emit('joinRoleRoom', role);
-// };
 
 export const joinUserRoom = (userId: string) => {
     console.log('socketService: Joining private user room:', userId);
@@ -138,7 +134,6 @@ export const offChatEvents = () => {
     socket.off('userJoined');
 };
 
-// --- Video Call Methods ---
 export const joinVideoRoom = (roomId: string, userId: string, role: 'mentor' | 'user') => {
     socket?.emit('joinVideoRoom', { roomId, userId, role });
 };
@@ -182,4 +177,3 @@ export const offVideoEvents = () => {
     socket.off('signal');
     socket.off('host-online');
 };
-// -------------------------

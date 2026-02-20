@@ -5,6 +5,8 @@ import { IChatService } from './Interfaces/IChat.service';
 import { ISocketService } from './Interfaces/ISocket.service';
 import { IMessage } from '@/models/Message.model';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
+import { BookingStatus } from '@/models/Booking.model';
 
 interface JoinRoomPayload {
     roomId: string;
@@ -16,7 +18,7 @@ interface SendMessagePayload {
     senderId: string;
     content: string;
     type?: 'text' | 'image' | 'audio' | 'file';
-    senderName?: string; // Optional, useful for UI optimization
+    senderName?: string;
 }
 
 @injectable()
@@ -24,7 +26,8 @@ export class SocketService implements ISocketService {
     private _io: Server | null = null;
 
     constructor(
-        @inject(TYPES.ChatService) private _chatService: IChatService
+        @inject(TYPES.ChatService) private _chatService: IChatService,
+        @inject(TYPES.BookingRepository) private _bookingRepository: IBookingRepository
     ) {}
 
     public register(io: Server) {
@@ -46,11 +49,22 @@ export class SocketService implements ISocketService {
                 this.handleSendMessage(io, socket, payload)
             );
 
-            // --- Video Call Events ---
-            socket.on('joinVideoRoom', ({ roomId, userId, role }: { roomId: string, userId: string, role: string }) => {
+
+            socket.on('joinVideoRoom', async ({ roomId, userId, role }: { roomId: string, userId: string, role: string }) => {
+                // Verify access using repository directly to avoid circular dependency
+                const booking = await this._bookingRepository.findById(roomId);
+                const hasAccess = booking && 
+                    (booking.userId.toString() === userId || booking.mentorId.toString() === userId) &&
+                    (booking.status === BookingStatus.CONFIRMED);
+
+                if (!hasAccess) {
+                    console.log(`Access denied for ${userId} to Room ${roomId}`);
+                    socket.emit('error', { message: "Unauthorized access to video room" });
+                    return;
+                }
+
                 console.log(`Socket ${socket.id} joined Video Room: ${roomId} as ${role}`);
                 socket.join(roomId);
-                console.log(roomId, userId, role, "from socket service")
                 
                 socket.to(roomId).emit('user-connected', { userId, role, socketId: socket.id });
                 
@@ -70,7 +84,6 @@ export class SocketService implements ISocketService {
                 console.log(isActive,"is active from the socket.service ===================================")
                 callback({ active: isActive });
             });
-            // -------------------------
 
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected:', socket.id);
@@ -147,5 +160,3 @@ export class SocketService implements ISocketService {
 }
 
 
-
-//lastnote : ippo user and mentor video call page ll connect avunund. baaki koode sheri akaan und

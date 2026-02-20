@@ -12,10 +12,26 @@ export default function noteRoutes(noteController: NoteController) {
     const tokenService = container.get<TokenService>(TYPES.TokenService);
     const authMiddleware = authenticateAndAuthorize(tokenService, Role.User);
 
-    router.post('/', authMiddleware, asyncWrapper(noteController.createNote.bind(noteController)));
-    router.get('/', authMiddleware, asyncWrapper(noteController.getNotes.bind(noteController)));
-    router.put('/:id', authMiddleware, asyncWrapper(noteController.updateNote.bind(noteController)));
-    router.delete('/:id', authMiddleware, asyncWrapper(noteController.deleteNote.bind(noteController)));
+    router.post(
+        '/',
+        authMiddleware,
+        asyncWrapper(noteController.createNote.bind(noteController))
+    );
+    router.get(
+        '/',
+        authMiddleware,
+        asyncWrapper(noteController.getNotes.bind(noteController))
+    );
+    router.put(
+        '/:id',
+        authMiddleware,
+        asyncWrapper(noteController.updateNote.bind(noteController))
+    );
+    router.delete(
+        '/:id',
+        authMiddleware,
+        asyncWrapper(noteController.deleteNote.bind(noteController))
+    );
 
     return router;
 }

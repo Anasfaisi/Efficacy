@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
-// import { updateToken } from '../redux/slices/authSlice';
 import UserRoutes from './UserRoutes';
 import AdminRoutes from './AdminRoutes';
 import AdminLogin from '../Features/admin/pages/AdminLogin';
@@ -20,14 +19,17 @@ import NotFound from '@/Features/common/pages/NotFound';
 import VideoCallPage from '@/Features/common/pages/VideoCallPage';
 
 const ProtectedRoute: React.FC<{
-    role: 'admin' | 'user' | 'mentor';
+    role: 'admin' | 'user' | 'mentor' | ('admin' | 'user' | 'mentor')[];
     children: React.ReactNode;
 }> = ({ role, children }) => {
     const { currentUser } = useSelector((state: RootState) => state.auth);
+    const allowedRoles = Array.isArray(role) ? role : [role];
+    
     let redirectTo = '/login';
-    if (role === 'admin') redirectTo = '/admin/login';
-    if (role === 'mentor') redirectTo = '/mentor/login';
-    return currentUser?.role === role ? (
+    if (allowedRoles.includes('admin') && allowedRoles.length === 1) redirectTo = '/admin/login';
+    if (allowedRoles.includes('mentor') && allowedRoles.length === 1) redirectTo = '/mentor/login';
+    
+    return currentUser?.role && allowedRoles.includes(currentUser.role as any) ? (
         <>{children}</>
     ) : (
         <Navigate to={redirectTo} replace />
@@ -144,7 +146,14 @@ const AppRoutes: React.FC = () => {
                     }
                 />
 
-                <Route path="/meet/:roomId" element={<VideoCallPage />} />
+                <Route
+                    path="/meet/:roomId"
+                    element={
+                        <ProtectedRoute role={['user', 'mentor']}>
+                            <VideoCallPage />
+                        </ProtectedRoute>
+                    }
+                />
 
                 <Route
                     path="/*"

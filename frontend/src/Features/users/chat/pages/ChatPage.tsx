@@ -6,13 +6,10 @@ import { useChatSocket } from '@/hooks/useChatSocket';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import MessageBubble from '../components/MessageBubble';
-// import { Conversation, Message } from '@/types/chat.types';
 
-// Icons
 import { Send, User, Menu, Image as ImageIcon, Mic, X } from 'lucide-react';
 
-import React, { useEffect } from 'react'; // Re-adding useEffect
-
+import React, { useEffect } from 'react';
 const ChatPage: React.FC = () => {
     const dispatch = useAppDispatch();
     const { conversations, currentConversation } = useAppSelector((state) => state.chat);
@@ -31,7 +28,6 @@ const ChatPage: React.FC = () => {
     const audioChunksRef = useRef<Blob[]>([]);
     const isCancelledRef = useRef<boolean>(false);
 
-    // Initial Load of Conversations
     useEffect(() => {
         const fetchChats = async () => {
             try {
