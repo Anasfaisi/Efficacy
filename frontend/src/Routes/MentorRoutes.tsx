@@ -20,6 +20,7 @@ import NotFound from '@/Features/common/pages/NotFound';
 import MentorMentorshipManagementPage from '@/Features/mentors/pages/MentorMentorshipManagementPage';
 import MentorChatPage from '@/Features/mentors/pages/MentorChatPage';
 import BookingRequestsPage from '@/Features/mentors/pages/BookingRequestsPage';
+import MentorMySessionsPage from '@/Features/mentors/pages/MentorMySessionsPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -50,7 +51,11 @@ const MentorRoutes: React.FC = () => {
                 />
                 <Route path="sessions" element={<MentorMentorshipList />} />
                 <Route path="requests" element={<MentorshipRequestsPage />} />
-                <Route path="booking-requests" element={<BookingRequestsPage />} />
+                <Route
+                    path="booking-requests"
+                    element={<BookingRequestsPage />}
+                />
+                <Route path="my-sessions" element={<MentorMySessionsPage />} />
                 <Route path="wallet" element={<MentorWalletPage />} />
                 <Route path="profile" element={<MentorProfilePage />} />
                 <Route path="guidelines" element={<MentorGuidelines />} />
