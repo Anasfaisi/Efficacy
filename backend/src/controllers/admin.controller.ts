@@ -259,4 +259,16 @@ export class AdminController {
         );
         res.status(code.OK).json(transactions);
     }
+
+    async getDashboardStats(req: Request, res: Response): Promise<void> {
+        const id = req.currentUser?.id;
+        if (!id) {
+            res.status(code.UNAUTHORIZED).json({
+                message: ErrorMessages.UserNotFound,
+            });
+            return;
+        }
+        const stats = await this._adminService.getDashboardStats(id);
+        res.status(code.OK).json(stats);
+    }
 }

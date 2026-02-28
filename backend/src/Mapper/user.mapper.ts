@@ -1,6 +1,6 @@
-import { IUser } from "@/models/User.model";
-import { UserEntity } from "@/entity/user.entity";
-import { Types } from "mongoose";
+import { IUser } from '@/models/User.model';
+import { UserEntity } from '@/entity/user.entity';
+import { Types } from 'mongoose';
 
 export class UserMapper {
     static toEntity(doc: IUser): UserEntity {

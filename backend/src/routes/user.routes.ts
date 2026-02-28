@@ -13,8 +13,6 @@ export default function authRoutes(userController: UserController) {
     const router = Router();
     const _tokenService = container.get<TokenService>(TYPES.TokenService);
 
-
-
     router.post('/login', userController.login.bind(userController));
 
     router.post(

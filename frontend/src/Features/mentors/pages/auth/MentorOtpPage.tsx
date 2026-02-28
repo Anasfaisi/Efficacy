@@ -55,7 +55,9 @@ export function MentorOtpPage() {
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || (error as Error).message || 'Verification failed';
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Verification failed';
             toast.error(errorMessage);
         }
     };
@@ -75,7 +77,9 @@ export function MentorOtpPage() {
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || (error as Error).message || 'Failed to resend OTP';
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Failed to resend OTP';
             toast.error(errorMessage);
         }
     };

@@ -22,17 +22,19 @@ export class NoteController {
     async createNote(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(HttpStatus.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(HttpStatus.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 
         const { title, content, isSticky } = req.body;
-        
+
         const note = await this.noteService.createNote({
             userId,
             title: title || 'Untitled Note',
             content: content || '',
-            isSticky: isSticky || false
+            isSticky: isSticky || false,
         });
 
         res.status(HttpStatus.CREATED).json(note);
@@ -41,7 +43,9 @@ export class NoteController {
     async getNotes(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(HttpStatus.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(HttpStatus.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 
@@ -55,7 +59,9 @@ export class NoteController {
 
         const updatedNote = await this.noteService.updateNote(id, updateData);
         if (!updatedNote) {
-            res.status(HttpStatus.NOT_FOUND).json({ message: ErrorMessages.NoteNotFound });
+            res.status(HttpStatus.NOT_FOUND).json({
+                message: ErrorMessages.NoteNotFound,
+            });
             return;
         }
 
@@ -65,6 +71,8 @@ export class NoteController {
     async deleteNote(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this.noteService.deleteNote(id);
-        res.status(HttpStatus.OK).json({ message: SuccessMessages.NoteDeleted });
+        res.status(HttpStatus.OK).json({
+            message: SuccessMessages.NoteDeleted,
+        });
     }
 }

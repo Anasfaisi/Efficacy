@@ -24,12 +24,15 @@ const ProtectedRoute: React.FC<{
 }> = ({ role, children }) => {
     const { currentUser } = useSelector((state: RootState) => state.auth);
     const allowedRoles = Array.isArray(role) ? role : [role];
-    
+
     let redirectTo = '/login';
-    if (allowedRoles.includes('admin') && allowedRoles.length === 1) redirectTo = '/admin/login';
-    if (allowedRoles.includes('mentor') && allowedRoles.length === 1) redirectTo = '/mentor/login';
-    
-    return currentUser?.role && allowedRoles.includes(currentUser.role as any) ? (
+    if (allowedRoles.includes('admin') && allowedRoles.length === 1)
+        redirectTo = '/admin/login';
+    if (allowedRoles.includes('mentor') && allowedRoles.length === 1)
+        redirectTo = '/mentor/login';
+
+    return currentUser?.role &&
+        allowedRoles.includes(currentUser.role as any) ? (
         <>{children}</>
     ) : (
         <Navigate to={redirectTo} replace />

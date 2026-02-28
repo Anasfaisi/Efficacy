@@ -157,8 +157,7 @@ export default function MentorReviewPage() {
         } catch (err: unknown) {
             const errorMessage =
                 (err as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message ||
-                'Failed to request changes.';
+                    ?.response?.data?.message || 'Failed to request changes.';
             toast.error(errorMessage);
         }
     };

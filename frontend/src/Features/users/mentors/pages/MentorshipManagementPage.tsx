@@ -7,6 +7,7 @@ import { MentorshipStatus } from '@/types/mentorship';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import Breadcrumbs from '@/Components/common/Breadcrumbs';
+import { requestWrapper } from '@/utils/apiHandler';
 import {
     Calendar,
     Clock,
@@ -16,11 +17,17 @@ import {
     Info,
     ArrowLeft,
     Video,
+    XCircle,
+    CheckCircle2,
+    Star,
 } from 'lucide-react';
+import ReviewModal from '../components/ReviewModal';
+import { reviewApi } from '@/Services/review.api';
 import { toast } from 'sonner';
 import BookingCalendar from '../components/BookingCalendar';
 import BookingModal from '../components/BookingModal';
 import RescheduleModal from '../components/RescheduleModal';
+import CancelMentorshipModal from '../components/CancelMentorshipModal';
 import { bookingApi } from '@/Services/booking.api';
 import type { Booking } from '@/types/booking';
 import {
@@ -39,8 +46,8 @@ const MentorshipManagementPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser } = useAppSelector((state) => state.auth);
-    const isMentor = currentUser?.role === 'mentor';  
- 
+    const isMentor = currentUser?.role === 'mentor';
+
     const [mentorship, setMentorship] = useState<Mentorship | null>(null);
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -51,62 +58,75 @@ const MentorshipManagementPage: React.FC = () => {
     const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
-    const [rescheduleData, setRescheduleData] = useState<{ id: string; date: string; slot: string } | null>(null);
+    const [rescheduleData, setRescheduleData] = useState<{
+        id: string;
+        date: string;
+        slot: string;
+    } | null>(null);
 
     const [nextSession, setNextSession] = useState<Booking | null>(null);
     const [isSessionActive, setIsSessionActive] = useState(false);
 
+    const [selectedBookingForReview, setSelectedBookingForReview] = useState<Booking | null>(null);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
     const fetchData = async () => {
         if (!id) return;
-        try {
-            const data = await mentorshipApi.getMentorshipById(id);
+        const data = await requestWrapper(mentorshipApi.getMentorshipById(id));
+        if (data) {
             setMentorship(data);
-            const bookings = await bookingApi.getUserBookings();
-
-            const mentor = data.mentorId as Mentor;
-            const relevantBookings = bookings.filter(
-                (b) => b.mentorId === (mentor?._id || mentor?.id)
+            const bookingData = await requestWrapper(
+                bookingApi.getUserBookings(1, 100)
             );
-            setExistingBookings(relevantBookings);
 
-            const upcoming = relevantBookings
-                .filter((b) => b.status === 'confirmed')
-                .sort(
-                    (a, b) =>
-                        new Date(a.bookingDate).getTime() -
-                        new Date(b.bookingDate).getTime()
-                )
-                .find((b) => {
-                    const sessionDate = new Date(b.bookingDate);
+            if (bookingData?.bookings) {
+                const bookings = bookingData.bookings;
+                console.log(bookings, 'bookings');
+                const mentor = data.mentorId as Mentor;
 
-                    return (
-                        sessionDate.getTime() > Date.now() - 24 * 60 * 60 * 1000
-                    );
-                });
+                const relevantBookings = bookings.filter(
+                    (b) =>
+                        (b.mentorId as unknown as Mentor)._id ===
+                        (mentor?._id || mentor?.id)
+                );
+                setExistingBookings(relevantBookings);
 
-            if (upcoming) {
-                setNextSession(upcoming);
-                const active = await checkVideoStatus(upcoming.id);
-                setIsSessionActive(active);
-                console.log(upcoming,isSessionActive,"upcoming,isSessionActive")
+                const upcoming = relevantBookings
+                    .filter((b: Booking) => b.status === 'confirmed')
+                    .sort(
+                        (a: Booking, b: Booking) =>
+                            new Date(a.bookingDate).getTime() -
+                            new Date(b.bookingDate).getTime()
+                    )
+                    .find((b: Booking) => {
+                        const sessionDate = new Date(b.bookingDate);
+                        return (
+                            sessionDate.getTime() >
+                            Date.now() - 24 * 60 * 60 * 1000
+                        );
+                    });
+
+                if (upcoming) {
+                    setNextSession(upcoming);
+                    const active = await checkVideoStatus(upcoming.id);
+                    setIsSessionActive(active);
+                }
             }
-        } catch (error) {
-            console.error('Failed to fetch mentorship:', error);
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to load mentorship details';
-            toast.error(errorMessage);
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchData();
         onHostOnline(() => {
-            
             if (!isMentor) {
-                console.log(isMentor,isSessionActive,"isMentor,isSessionActive")
+                console.log(
+                    isMentor,
+                    isSessionActive,
+                    'isMentor,isSessionActive'
+                );
                 setIsSessionActive(true);
                 toast.success(
                     'Mentor has started the session! You can join now.'
@@ -120,54 +140,45 @@ const MentorshipManagementPage: React.FC = () => {
     }, [id, isMentor]);
 
     const handleJoinSession = () => {
+        console.log("sdfkjdsfjkdj")
         if (!nextSession) return;
         navigate(`/meet/${nextSession.id}`);
     };
 
-
     const isSessionStartable = () => {
         if (!nextSession) return false;
-        return nextSession.status === 'confirmed' && !isBookingPast(nextSession.bookingDate, nextSession.slot);
+        return (
+            nextSession.status === 'confirmed' &&
+            !isBookingPast(nextSession.bookingDate, nextSession.slot)
+        );
     };
 
     const handleConfirm = async (confirm: boolean) => {
         if (!id) return;
         setIsProcessing(true);
-        try {
-            await mentorshipApi.confirmSuggestion(id, confirm);
-            toast.success(
-                confirm
-                    ? 'Mentorship confirmed! Proceed to payment.'
-                    : 'Mentorship request rejected.'
-            );
-            fetchData();
-        } catch (error) {
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to process request';
-            toast.error(errorMessage);
-        } finally {
-            setIsProcessing(false);
-        }
+        const data = await requestWrapper(
+            mentorshipApi.confirmSuggestion(id, confirm),
+            confirm
+                ? 'Mentorship confirmed! Proceed to payment.'
+                : 'Mentorship request rejected.'
+        );
+        if (data) fetchData();
+        setIsProcessing(false);
     };
 
     const handlePayment = async () => {
         if (!id) return;
         setIsProcessing(true);
-        try {
-            const { sessionUrl } =
-                await mentorshipApi.createMentorshipCheckoutSession(
-                    id,
-                    `${window.location.origin}/success`,
-                    `${window.location.origin}/failed`
-                );
-
-            if (sessionUrl) window.location.href = sessionUrl;
-        } catch (error) {
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to initiate payment';
-            toast.error(errorMessage);
+        const data = await requestWrapper(
+            mentorshipApi.createMentorshipCheckoutSession(
+                id,
+                `${window.location.origin}/success`,
+                `${window.location.origin}/failed`
+            )
+        );
+        if (data?.sessionUrl) {
+            window.location.href = data.sessionUrl;
+        } else {
             setIsProcessing(false);
         }
     };
@@ -178,59 +189,58 @@ const MentorshipManagementPage: React.FC = () => {
         setIsBookingModalOpen(true);
     };
 
-    const handleConfirmBooking = async (topic: string) => {
+    const handleConfirmBooking = async (topic: string): Promise<void> => {
         const mentor = mentorship?.mentorId as Mentor;
-        if (!mentor?._id && !mentor?.id) return;
-        if (!selectedDate || !selectedSlot) return;
+        if (!mentor?._id && !mentor?.id) {
+            toast.error('Mentor information is missing');
+            throw new Error('Mentor information missing');
+        }
+        if (!selectedDate || !selectedSlot) {
+            toast.error('Date or slot is not selected');
+            throw new Error('Date or slot not selected');
+        }
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (selectedDate < today) {
             toast.error('Cannot book sessions for past dates.');
-            return;
+            throw new Error('Cannot book sessions for past dates.');
         }
 
-        try {
-            await bookingApi.createBooking({
+        const data = await requestWrapper(
+            bookingApi.createBooking({
                 mentorId: (mentor._id || mentor.id) as string,
                 bookingDate: selectedDate.toISOString(),
                 slot: selectedSlot,
                 topic,
-            });
-            fetchData();
-        } catch (error) {
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to book session';
-            toast.error(errorMessage);
-            throw error; 
+            }),
+            'Session booked successfully'
+        );
+
+        if (!data) {
+            throw new Error('Booking failed');
         }
+
+        fetchData();
     };
 
     const handleComplete = async () => {
         if (!id) return;
-        try {
-            await mentorshipApi.completeMentorship(id, 'user');
-            toast.success(
-                'You have confirmed the completion of this mentorship!'
-            );
-            fetchData();
-        } catch (error) {
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message ||
-                (error as Error).message ||
-                'Failed to confirm completion';
-            toast.error(errorMessage);
-        }
+        const data = await requestWrapper(
+            mentorshipApi.completeMentorship(id, 'user'),
+            'You have confirmed the completion of this mentorship!'
+        );
+        if (data) fetchData();
     };
-    
+
     const handleRequestReschedule = (bookingId: string) => {
         const booking = existingBookings.find((b) => b.id === bookingId);
         if (booking) {
             setRescheduleData({
                 id: bookingId,
-                date: format(new Date(booking.bookingDate), 'MMM do, yyyy'),
+                date: booking.bookingDate
+                    ? format(new Date(booking.bookingDate), 'MMM do, yyyy')
+                    : 'N/A',
                 slot: booking.slot,
             });
             setIsRescheduleModalOpen(true);
@@ -238,23 +248,111 @@ const MentorshipManagementPage: React.FC = () => {
     };
 
     const confirmReschedule = async () => {
-        if (!rescheduleData) return;
-        try {
-            await bookingApi.updateStatus({
+        if (!rescheduleData) throw new Error('No reschedule data');
+        const data = await requestWrapper(
+            bookingApi.updateStatus({
                 bookingId: rescheduleData.id,
                 status: BookingStatus.RESCHEDULED,
+            }),
+            'Reschedule request sent to mentor. They will propose a new time.'
+        );
+        if (!data) throw new Error('Reschedule failed');
+        fetchData();
+    };
+
+    const handleRespondToReschedule = async (
+        bookingId: string,
+        approve: boolean
+    ) => {
+        const data = await requestWrapper(
+            bookingApi.respondToReschedule(bookingId, approve),
+            approve
+                ? 'New time accepted!'
+                : 'Reschedule rejected and session cancelled'
+        );
+        if (data) fetchData();
+    };
+
+    const handleCancelBooking = (bookingId: string) => {
+        toast.custom(
+            (t) => (
+                <div className="bg-white p-5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-col gap-4 min-w-[320px] animate-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex items-center gap-3 text-red-600">
+                        <div className="p-2 bg-red-50 rounded-xl">
+                            <AlertCircle size={20} />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-sm uppercase tracking-tight text-gray-900">
+                                Cancel Session
+                            </h4>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                Action cannot be undone
+                            </p>
+                        </div>
+                    </div>
+
+                    <p className="text-sm font-medium text-gray-600 ml-1">
+                        Are you sure you want to cancel this session?
+                    </p>
+
+                    <div className="flex gap-2 justify-end">
+                        <button
+                            onClick={() => toast.dismiss(t)}
+                            className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            Keep Session
+                        </button>
+                        <button
+                            onClick={async () => {
+                                toast.dismiss(t);
+                                const data = await requestWrapper(
+                                    bookingApi.updateStatus({
+                                        bookingId,
+                                        status: BookingStatus.CANCELLED,
+                                    }),
+                                    'Booking cancelled successfully'
+                                );
+                                if (data) fetchData();
+                            }}
+                            className="px-6 py-2 bg-black text-white text-[10px] font-black uppercase rounded-xl hover:bg-red-600 transition-all shadow-lg hover:shadow-red-200"
+                        >
+                            Yes, Cancel
+                        </button>
+                    </div>
+                </div>
+            ),
+            { duration: Infinity }
+        );
+    };
+
+    const handleReviewSubmit = async (rating: number, comment: string) => {
+        if (!selectedBookingForReview) return;
+        try {
+            const mentorData = mentorship?.mentorId as Mentor;
+            await reviewApi.submitReview({
+                bookingId: selectedBookingForReview.id,
+                mentorId: (mentorData as any)._id || (mentorData as any).id || String(mentorData),
+                userId: currentUser?.id || '',
+                rating,
+                comment,
             });
-            toast.success(
-                'Reschedule request sent to mentor. They will propose a new time.'
-            );
+            setIsReviewModalOpen(false);
             fetchData();
-        } catch (error) {
-            const errorMessage =
-                (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to request reschedule';
-            toast.error(errorMessage);
-            throw error;
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to submit review");
         }
+    };
+
+    const handleCancelMentorship = async () => {
+        if (!id) return;
+        setIsProcessing(true);
+        const data = await requestWrapper(
+            mentorshipApi.cancelMentorship(id),
+            'Mentorship cancelled successfully.'
+        );
+        if (data) fetchData();
+        setIsProcessing(false);
+        setIsCancelModalOpen(false);
     };
 
     if (loading)
@@ -347,12 +445,16 @@ const MentorshipManagementPage: React.FC = () => {
         mentorship.totalSessions - mentorship.usedSessions;
 
     return (
-        <div className="min-h-screen flex bg-gray-50">
+        <div className="h-screen flex bg-gray-50 overflow-hidden">
             <Sidebar />
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden">
                 <Navbar />
-                <main className="flex-1 p-8 overflow-y-auto">
-                    <div className="max-w-5xl mx-auto">
+                <main className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+                    <div className="max-w-[90rem] mx-auto">
+                        <div className="mb-6">
+                            <Breadcrumbs />
+                        </div>
+
                         <div className="flex items-center gap-4 mb-8">
                             <button
                                 onClick={() => navigate('/home')}
@@ -363,16 +465,23 @@ const MentorshipManagementPage: React.FC = () => {
                                     className="text-gray-600"
                                 />
                             </button>
-                            <div>
-                                <Breadcrumbs />
-                                <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-                                    Mentorship Dashboard
-                                </h1>
-                            </div>
+                            <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
+                                Mentorship Dashboard
+                                {mentorship.status === MentorshipStatus.COMPLETED && (
+                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-black rounded-lg uppercase tracking-wider">
+                                        Completed
+                                    </span>
+                                )}
+                                {mentorship.status === MentorshipStatus.CANCELLED && (
+                                    <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-black rounded-lg uppercase tracking-wider">
+                                        Cancelled
+                                    </span>
+                                )}
+                            </h1>
                         </div>
 
                         {/* LIVE SESSION CARD */}
-                        {nextSession && (
+                        {nextSession && mentorship.status !== MentorshipStatus.COMPLETED && mentorship.status !== MentorshipStatus.CANCELLED && (
                             <div className="mb-8 w-full bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-gray-900/20 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#7F00FF] opacity-10 blur-[80px] rounded-full group-hover:opacity-20 transition-opacity"></div>
                                 <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center gap-6">
@@ -397,21 +506,22 @@ const MentorshipManagementPage: React.FC = () => {
                                                 'Mentorship Session'}
                                         </h2>
                                         <p className="text-white/60 text-sm">
-                                            {format(
-                                                new Date(
-                                                    nextSession.bookingDate
-                                                ),
-                                                'MMMM d, yyyy'
-                                            )}{' '}
+                                            {nextSession.bookingDate
+                                                ? format(
+                                                      new Date(
+                                                          nextSession.bookingDate
+                                                      ),
+                                                      'MMMM d, yyyy'
+                                                  )
+                                                : 'Date TBD'}{' '}
                                             • {nextSession.slot}
                                         </p>
                                     </div>
-                                            
+
                                     <button
                                         onClick={handleJoinSession}
-                                        
                                         disabled={
-                                            isMentor 
+                                            isMentor
                                                 ? !isSessionStartable()
                                                 : !isSessionActive
                                         }
@@ -426,15 +536,17 @@ const MentorshipManagementPage: React.FC = () => {
                                                       : 'bg-white/10 text-white/40 cursor-not-allowed'
                                             }
                                         `}
-
                                     >
                                         <Video size={20} />
                                         {isMentor
-                                            ? isSessionStartable() 
+                                            ? isSessionStartable()
                                                 ? 'Start Session'
-                                                : isBookingPast(nextSession.bookingDate, nextSession.slot)
-                                                    ? 'Session Expired'
-                                                    : 'Start Session'
+                                                : isBookingPast(
+                                                        nextSession.bookingDate,
+                                                        nextSession.slot
+                                                    )
+                                                  ? 'Session Expired'
+                                                  : 'Start Session'
                                             : isSessionActive
                                               ? 'Join Session'
                                               : 'Waiting for Host...'}
@@ -443,9 +555,61 @@ const MentorshipManagementPage: React.FC = () => {
                             </div>
                         )}
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Left Column: Progress & Details */}
-                            <div className="lg:col-span-2 space-y-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            {/* Left Column: Progress & Profile */}
+                            <div className="lg:col-span-4 space-y-8">
+                                {/* Mentor Profile Mini & Actions */}
+                                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
+                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">
+                                        Your Mentor
+                                    </h3>
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <img
+                                            src={
+                                                (mentorship.mentorId as Mentor)
+                                                    ?.profilePic ||
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((mentorship.mentorId as Mentor)?.name || 'Mentor')}`
+                                            }
+                                            className="w-16 h-16 rounded-2xl object-cover"
+                                            alt=""
+                                        />
+                                        <div>
+                                            <h4 className="font-bold text-gray-900">
+                                                {
+                                                    (
+                                                        mentorship.mentorId as Mentor
+                                                    )?.name
+                                                }
+                                            </h4>
+                                            <p className="text-xs text-[#7F00FF] font-semibold">
+                                                {(mentorship.mentorId as Mentor)
+                                                    ?.expertise || 'Mentor'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3 pt-6 border-t border-gray-50">
+                                        <button 
+                                            onClick={() => navigate('/chat')}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-[#7F00FF] hover:text-white transition-all group"
+                                        >
+                                            <MessageSquare size={16} className="group-hover:scale-110 transition-transform" /> Chat
+                                        </button>
+                                        <button 
+                                            onClick={() => setIsPolicyModalOpen(true)}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-gray-900 hover:text-white transition-all group"
+                                        >
+                                            <Info size={16} className="group-hover:scale-110 transition-transform" /> Policy
+                                        </button>
+                                        {mentorship.status === MentorshipStatus.ACTIVE && !isMentor && (
+                                            <button 
+                                                onClick={() => setIsCancelModalOpen(true)}
+                                                className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all group"
+                                            >
+                                                <XCircle size={16} className="group-hover:scale-110 transition-transform" /> Cancel
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                                 {/* Session Usage Chart / Card */}
                                 <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 relative overflow-hidden">
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
@@ -509,214 +673,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Sessions List */}
-                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
-                                    <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-                                        <h3 className="text-lg font-bold text-gray-900">
-                                            My Booked Sessions
-                                        </h3>
-                                        <span className="px-3 py-1 bg-[#7F00FF]/10 text-[#7F00FF] text-[10px] font-black rounded-lg uppercase tracking-wider">
-                                            Booking Engine
-                                        </span>
-                                    </div>
-                                    <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
-                                        {existingBookings.length === 0 ? (
-                                            <div className="p-12 text-center">
-                                                <Calendar
-                                                    size={48}
-                                                    className="mx-auto text-gray-200 mb-4"
-                                                />
-                                                <p className="text-gray-500 font-medium">
-                                                    No sessions booked yet
-                                                </p>
-                                                <p className="text-gray-400 text-xs mt-1">
-                                                    Book your first session
-                                                    above
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            existingBookings.map(
-                                                (booking, idx) => {
-                                                    const isPast = isBookingPast(booking.bookingDate, booking.slot);
-                                                    return (
-                                                        <div
-                                                            key={booking.id}
-                                                            className={`p-6 hover:bg-gray-50 transition-colors flex flex-col gap-4 group ${isPast ? 'opacity-50 grayscale-[0.3]' : ''}`}
-                                                        >
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex items-center gap-4">
-                                                                <div className="w-12 h-12 bg-[#7F00FF]/5 rounded-2xl flex flex-col items-center justify-center text-[#7F00FF]">
-                                                                    <span className="text-[10px] font-black uppercase">
-                                                                        {format(
-                                                                            new Date(
-                                                                                booking.bookingDate
-                                                                            ),
-                                                                            'MMM'
-                                                                        )}
-                                                                    </span>
-                                                                    <span className="text-lg font-black leading-none">
-                                                                        {format(
-                                                                            new Date(
-                                                                                booking.bookingDate
-                                                                            ),
-                                                                            'd'
-                                                                        )}
-                                                                    </span>
-                                                                </div>
-                                                                <div>
-                                                                    <p className="font-bold text-gray-900">
-                                                                        {booking.topic ||
-                                                                            `Session #${idx + 1}`}
-                                                                    </p>
-                                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                                        <Clock
-                                                                            size={
-                                                                                12
-                                                                            }
-                                                                        />
-                                                                        <span>
-                                                                            {
-                                                                                booking.slot
-                                                                            }
-                                                                        </span>
-                                                                        <span className="mx-1">
-                                                                            •
-                                                                        </span>
-                                                                        <span
-                                                                            className={`capitalize font-bold 
-                                                                        ${
-                                                                            booking.status ===
-                                                                            'confirmed'
-                                                                                ? 'text-green-500'
-                                                                                : booking.status ===
-                                                                                    'rescheduled'
-                                                                                  ? 'text-orange-500'
-                                                                                  : booking.status ===
-                                                                                      'cancelled'
-                                                                                    ? 'text-red-500'
-                                                                                    : 'text-gray-400'
-                                                                        }`}
-                                                                        >
-                                                                            {
-                                                                                booking.status
-                                                                            }
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                {booking.status === 'confirmed' && !isPast && canReschedule(booking.bookingDate, booking.slot) && (
-                                                                    <button
-                                                                        onClick={() => handleRequestReschedule(booking.id)}
-                                                                        className="p-3 bg-white border border-gray-100 rounded-xl text-orange-500 hover:bg-orange-500 hover:text-white transition-all shadow-sm"
-                                                                        title="Request Reschedule"
-                                                                    >
-                                                                        <RefreshCw size={18} />
-                                                                    </button>
-                                                                )}
-                                                                {booking.status ===
-                                                                    'confirmed' &&
-                                                                    booking.meetingLink && (
-                                                                        <a
-                                                                            href={
-                                                                                booking.meetingLink
-                                                                            }
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="p-3 bg-white border border-gray-100 rounded-xl text-[#7F00FF] hover:bg-[#7F00FF] hover:text-white transition-all shadow-sm"
-                                                                        >
-                                                                            <ExternalLink
-                                                                                size={
-                                                                                    18
-                                                                                }
-                                                                            />
-                                                                        </a>
-                                                                    )}
-                                                            </div>
-                                                        </div>
-
-                                                        {booking.status ===
-                                                            'rescheduled' && (
-                                                            <div className="bg-orange-50/50 border border-orange-100 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                                                <div className="flex items-center gap-3">
-                                                                    <AlertCircle
-                                                                        size={
-                                                                            18
-                                                                        }
-                                                                        className="text-orange-500"
-                                                                    />
-                                                                    <div>
-                                                                        <p className="text-xs font-black text-orange-800 uppercase tracking-widest">
-                                                                            Reschedule
-                                                                            Requested
-                                                                        </p>
-                                                                        <p className="text-sm font-medium text-orange-900">
-                                                                            Proposed:{' '}
-                                                                            {format(
-                                                                                new Date(
-                                                                                    booking.proposedDate!
-                                                                                ),
-                                                                                'MMM d'
-                                                                            )}{' '}
-                                                                            at{' '}
-                                                                            {
-                                                                                booking.proposedSlot
-                                                                            }
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                {booking.rescheduleBy !==
-                                                                    (location.pathname.includes(
-                                                                        '/mentor/'
-                                                                    )
-                                                                        ? 'mentor'
-                                                                        : 'user') && (
-                                                                    <div className="flex gap-2">
-                                                                        <button
-                                                                            onClick={() =>
-                                                                                bookingApi
-                                                                                    .respondToReschedule(
-                                                                                        booking.id,
-                                                                                        true
-                                                                                    )
-                                                                                    .then(
-                                                                                        fetchData
-                                                                                    )
-                                                                            }
-                                                                            className="px-4 py-2 bg-orange-500 text-white text-xs font-black rounded-lg hover:bg-orange-600 transition-all"
-                                                                        >
-                                                                            Approve
-                                                                        </button>
-                                                                        <button
-                                                                            onClick={() =>
-                                                                                bookingApi
-                                                                                    .respondToReschedule(
-                                                                                        booking.id,
-                                                                                        false
-                                                                                    )
-                                                                                    .then(
-                                                                                        fetchData
-                                                                                    )
-                                                                            }
-                                                                            className="px-4 py-2 bg-white border border-orange-200 text-orange-500 text-xs font-black rounded-lg hover:bg-orange-50 transition-all"
-                                                                        >
-                                                                            Reject
-                                                                        </button>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                        </div>
-                                                    );
-                                                }
-                                            )
-                                        )}
-                                    </div>
-                                </div>
                             </div>
 
                             {/* Right Column: Book & Info */}
-                            <div className="space-y-8">
+                            <div className="lg:col-span-8 space-y-8">
                                 {/* Action Cards based on Status */}
                                 {mentorship.status ===
                                     MentorshipStatus.MENTOR_ACCEPTED && (
@@ -843,45 +803,7 @@ const MentorshipManagementPage: React.FC = () => {
                                     }
                                 />
 
-                                {/* Mentor Profile Mini */}
-                                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
-                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">
-                                        Your Mentor
-                                    </h3>
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <img
-                                            src={
-                                                (mentorship.mentorId as Mentor)
-                                                    ?.profilePic ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((mentorship.mentorId as Mentor)?.name || 'Mentor')}`
-                                            }
-                                            className="w-16 h-16 rounded-2xl object-cover"
-                                            alt=""
-                                        />
-                                        <div>
-                                            <h4 className="font-bold text-gray-900">
-                                                {
-                                                    (
-                                                        mentorship.mentorId as Mentor
-                                                    )?.name
-                                                }
-                                            </h4>
-                                            <p className="text-xs text-[#7F00FF] font-semibold">
-                                                {(mentorship.mentorId as Mentor)
-                                                    ?.expertise || 'Mentor'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-4 pt-6 border-t border-gray-50">
-                                        <button className="w-full flex items-center justify-center gap-2 py-3 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-gray-100 transition-colors">
-                                            <MessageSquare size={18} /> Chat
-                                            with Mentor
-                                        </button>
-                                        <button className="w-full flex items-center justify-center gap-2 py-3 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-gray-100 transition-colors">
-                                            <Info size={18} /> View Policy
-                                        </button>
-                                    </div>
-                                </div>
+                                {/* Completion Section */}
 
                                 {/* Completion Section */}
                                 {mentorship.status ===
@@ -909,18 +831,236 @@ const MentorshipManagementPage: React.FC = () => {
                                             </button>
                                         </div>
                                     )}
+                                {/* Sessions List */}
+                                <div className="mt-8 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+                                    <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+                                        <h3 className="text-lg font-bold text-gray-900">
+                                            Recent Sessions
+                                        </h3>
+                                        
+                                    </div>
+                                    <div className="divide-y divide-gray-50 max-h-[600px] overflow-y-auto custom-scrollbar">
+                                        {existingBookings.length === 0 ? (
+                                            <div className="p-12 text-center">
+                                                <Calendar
+                                                    size={48}
+                                                    className="mx-auto text-gray-200 mb-4"
+                                                />
+                                                <p className="text-gray-500 font-medium">
+                                                    No sessions booked yet
+                                                </p>
+                                                <p className="text-gray-400 text-xs mt-1">
+                                                    Book your first session
+                                                    above
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            existingBookings.map(
+                                                (booking, idx) => {
+                                                    const isPast =
+                                                        isBookingPast(
+                                                            booking.bookingDate,
+                                                            booking.slot
+                                                        );
+                                                    const isInactive = mentorship.status === MentorshipStatus.COMPLETED || mentorship.status === MentorshipStatus.CANCELLED;
+                                                    
+                                                    return (
+                                                        <div
+                                                            key={booking.id}
+                                                            className={`p-6 transition-colors flex flex-col gap-4 group ${(isPast || isInactive) ? 'opacity-60 grayscale-[0.6] bg-gray-100/50' : 'hover:bg-gray-50'}`}
+                                                        >
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-12 h-12 bg-[#7F00FF]/5 rounded-2xl flex flex-col items-center justify-center text-[#7F00FF]">
+                                                                        <span className="text-[10px] font-black uppercase">
+                                                                            {booking.bookingDate
+                                                                                ? format(
+                                                                                      new Date(
+                                                                                          booking.bookingDate
+                                                                                      ),
+                                                                                      'MMM'
+                                                                                  )
+                                                                                : '---'}
+                                                                        </span>
+                                                                        <span className="text-lg font-black leading-none">
+                                                                            {booking.bookingDate
+                                                                                ? format(
+                                                                                      new Date(
+                                                                                          booking.bookingDate
+                                                                                      ),
+                                                                                      'd'
+                                                                                  )
+                                                                                : '--'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="font-bold text-gray-900">
+                                                                            {booking.topic ||
+                                                                                `Session #${idx + 1}`}
+                                                                        </p>
+                                                                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                                            <Clock
+                                                                                size={
+                                                                                    12
+                                                                                }
+                                                                            />
+                                                                            <span>
+                                                                                {
+                                                                                    booking.slot
+                                                                                }
+                                                                            </span>
+                                                                            <span className="mx-1">
+                                                                                •
+                                                                            </span>
+                                                                            <span
+                                                                                className={`capitalize font-bold 
+                                                                        ${
+                                                                            booking.status ===
+                                                                            'confirmed'
+                                                                                ? 'text-green-500'
+                                                                                : booking.status ===
+                                                                                    'rescheduled'
+                                                                                  ? 'text-orange-500'
+                                                                                  : booking.status ===
+                                                                                      'cancelled'
+                                                                                    ? 'text-red-500'
+                                                                                    : 'text-gray-400'
+                                                                        }`}
+                                                                            >
+                                                                                {
+                                                                                    booking.status
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    {(booking.status ===
+                                                                        'confirmed' ||
+                                                                        booking.status ===
+                                                                            'pending' ||
+                                                                        booking.status ===
+                                                                            'rescheduled') &&
+                                                                        !isPast && (
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    handleCancelBooking(
+                                                                                        booking.id
+                                                                                    )
+                                                                                }
+                                                                                className="p-3 bg-white border border-gray-100 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-500 transition-all shadow-sm"
+                                                                                title="Cancel Booking"
+                                                                            >
+                                                                                <XCircle
+                                                                                    size={
+                                                                                        18
+                                                                                    }
+                                                                                />
+                                                                            </button>
+                                                                        )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                            )
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </main>
             </div>
-            
+
+            {selectedBookingForReview && (
+                <ReviewModal
+                    isOpen={isReviewModalOpen}
+                    onClose={() => setIsReviewModalOpen(false)}
+                    onSubmit={handleReviewSubmit}
+                    mentorName={
+                        (mentorship?.mentorId as Mentor)?.name || 'Mentor'
+                    }
+                    canSkip={true}
+                />
+            )}
             <RescheduleModal
                 isOpen={isRescheduleModalOpen}
                 onClose={() => setIsRescheduleModalOpen(false)}
                 onConfirm={confirmReschedule}
                 bookingDetails={rescheduleData}
             />
+            
+            <CancelMentorshipModal
+                isOpen={isCancelModalOpen}
+                onClose={() => setIsCancelModalOpen(false)}
+                onConfirm={handleCancelMentorship}
+                isLoading={isProcessing}
+            />
+
+            {/* Policy Modal */}
+            {isPolicyModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] p-8 text-white relative">
+                            <button 
+                                onClick={() => setIsPolicyModalOpen(false)}
+                                className="absolute top-6 right-6 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                            >
+                                <XCircle size={20} />
+                            </button>
+                            <h3 className="text-2xl font-black mb-2">Mentorship Policy</h3>
+                            <p className="text-white/80 font-medium italic">Terms and guidelines for your sessions</p>
+                        </div>
+                        <div className="p-8 space-y-6">
+                            <div className="space-y-4">
+                                <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                                    <div className="shrink-0 w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#7F00FF]">
+                                        <CheckCircle2 size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900">Personal Guidance</p>
+                                        <p className="text-xs text-gray-500 font-medium">Support for career, job applications, and emotional well-being.</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                                    <div className="shrink-0 w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#7F00FF]">
+                                        <Clock size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900">Schedule & Duration</p>
+                                        <p className="text-xs text-gray-500 font-medium">{mentorship.totalSessions} regular sessions on alternative days (30 mins each).</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                                    <div className="shrink-0 w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#7F00FF]">
+                                        <Video size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900">Communication Mode</p>
+                                        <p className="text-xs text-gray-500 font-medium">Session scheduling via tool with Video or Audio call preference.</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                                    <div className="shrink-0 w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#7F00FF]">
+                                        <XCircle size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900">Rescheduling Policy</p>
+                                        <p className="text-xs text-gray-500 font-medium">Must request at least 6 hours before. Missed sessions require alternative allocation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setIsPolicyModalOpen(false)}
+                                className="w-full py-4 bg-black text-white font-black rounded-2xl shadow-xl hover:bg-gray-800 transition-all"
+                            >
+                                Understood
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

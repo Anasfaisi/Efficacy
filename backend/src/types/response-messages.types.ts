@@ -92,12 +92,14 @@ export const ErrorMessages = {
     MentorIdNotFound: 'Mentor ID not found in session',
     MentorUpdateFailed: 'Could not update mentor documentation',
     MentorNotApproved: 'Mentor must be approved before activation',
-    MentorshipAlreadyExists: 'You already have an ongoing mentorship request or active session with this mentor.',
+    MentorshipAlreadyExists:
+        'You already have an ongoing mentorship request or active session with this mentor.',
     MentorshipNotFound: 'Mentorship not found',
     MentorshipNotActive: 'Mentorship is not active',
     NoSessionsRemaining: 'No sessions remaining',
     SessionNotFound: 'Session not found',
-    RescheduleTimeLimitMentorship: 'Rescheduling must be done at least 6 hours in advance',
+    RescheduleTimeLimitMentorship:
+        'Rescheduling must be done at least 6 hours in advance',
     CancelOnlyActive: 'Can only cancel active mentorships',
     CancellationExpired: 'Cancellation period (7 days) has expired',
     InvalidCheckoutSession: 'checkout session not valid or not paid',
@@ -116,15 +118,19 @@ export const ErrorMessages = {
     UserCreationFailed: 'Error occurred while creating user',
     NoEmailFromGoogle: 'Google login failed: No email found',
     PastDateBooking: 'Cannot book sessions for past dates.',
-    ExistingBookingDay: 'You already have a booking scheduled for this day. Only one session per day is allowed.',
+    ExistingBookingDay:
+        'You already have a booking scheduled for this day. Only one session per day is allowed.',
     SlotAlreadyBooked: 'This slot is already booked for the mentor.',
     MentorNotAvailableDay: 'Mentor is not available on this day.',
     MentorNotAvailableSlot: 'Mentor is not available at this slot.',
-    BookingLimitReached: 'You have reached the maximum limit of 10 bookings in a 30-day period.',
+    BookingLimitReached:
+        'You have reached the maximum limit of 10 bookings in a 30-day period.',
     BookingNotFound: 'Booking not found',
     BookingUpdateFailed: 'Failed to update booking',
+    BookingInvalidStatus: 'Booking is not in a valid state for review',
     PastDateReschedule: 'Cannot reschedule to a past date.',
-    RescheduleTimeLimit: 'Reschedule requests must be made at least 3 hours before the session. If not, the session is lost.',
+    RescheduleTimeLimit:
+        'Reschedule requests must be made at least 3 hours before the session. If not, the session is lost.',
     NoRescheduleRequest: 'No active reschedule request',
     ProposedSlotUnavailable: 'The proposed slot is no longer available.',
     IncorrectPassword: 'Current password is incorrect',
@@ -135,7 +141,8 @@ export const ErrorMessages = {
     InvalidEmail: 'Invalid email format',
     PasswordComplexity: 'Password must be at least 6 characters',
     InsufficientBalance: 'Insufficient balance',
-    ActiveMentorshipRequired: 'You must have an active mentorship to chat with this mentor.',
+    ActiveMentorshipRequired:
+        'You must have an active mentorship to chat with this mentor.',
     MentorshipNotActiveOrCompleted: 'Mentorship is not active or completed.',
     ChatRoomNotFound: 'Chat room not found',
     DeleteOwnMessagesOnly: 'You can only delete your own messages',
@@ -143,6 +150,10 @@ export const ErrorMessages = {
     MessageNotFound: 'Message not found',
     InvalidColumn: 'Invalid column',
     TaskNotFoundOrUnauthorized: 'Task not found or unauthorized',
+    WeeklyBookingLimitReached:
+        'You have reached the maximum limit of 3 bookings per week.',
+    BookingDateOutsideMentorship:
+        'Booking date must be within your active mentorship period.',
 };
 
 export interface joinRoomPayload {

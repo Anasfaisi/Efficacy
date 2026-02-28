@@ -7,7 +7,7 @@ import {
     Heading2,
     ListOrdered,
     CheckSquare,
-    Quote
+    Quote,
 } from 'lucide-react';
 import React from 'react';
 
@@ -36,13 +36,15 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
         {
             icon: <Heading1 size={18} />,
             title: 'H1 Headline',
-            action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+            action: () =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run(),
             isActive: () => editor.isActive('heading', { level: 1 }),
         },
         {
             icon: <Heading2 size={18} />,
             title: 'H2 Subheading',
-            action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+            action: () =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run(),
             isActive: () => editor.isActive('heading', { level: 2 }),
         },
         {
@@ -88,7 +90,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
                     </span>
                 </button>
             ))}
-            
+
             {/* Visual dividers or extra actions can be added here */}
             {/* <div className="h-8 w-px bg-white/20 mx-1"></div> */}
         </div>

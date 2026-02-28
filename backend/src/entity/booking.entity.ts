@@ -1,18 +1,25 @@
+import { UserEntity } from './user.entity';
+import { MentorEntity } from './mentor.entity';
+
 export class BookingEntity {
     constructor(
-        public readonly id: string,
-        public readonly userId: string,
-        public readonly mentorId: string,
-        public readonly bookingDate: Date,
-        public readonly slot: string,
-        public readonly status: string,
-        public readonly duration: number,
-        public readonly topic?: string,
-        public readonly rescheduleBy?: 'user' | 'mentor' | null,
-        public readonly proposedDate?: Date,
-        public readonly proposedSlot?: string,
-        public readonly meetingLink?: string,
-        public readonly createdAt?: Date,
-        public readonly updatedAt?: Date
+        public id: string,
+        public userId: string | UserEntity,
+        public mentorId: string | MentorEntity,
+        public bookingDate: Date,
+        public slot: string,
+        public status: string,
+        public duration: number,
+        public topic?: string,
+        public rescheduleBy?: 'user' | 'mentor' | null,
+        public proposedDate?: Date,
+        public proposedSlot?: string,
+        public meetingLink?: string,
+        public cancelReason?: string,
+        public actualStartTime?: Date,
+        public actualEndTime?: Date,
+        public sessionMinutes?: number,
+        public createdAt?: Date,
+        public updatedAt?: Date
     ) {}
 }

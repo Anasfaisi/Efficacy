@@ -54,9 +54,6 @@ export const connectSocket = () => {
             socket.connected ? 'Connected' : 'Disconnected'
         );
         if (!socket.connected) {
-            console.log(
-                'socketService: Attempting to reconnect existing socket...'
-            );
             socket.connect();
         }
     }
@@ -72,15 +69,11 @@ export const disconnectSocket = () => {
 
 export const getSocket = () => socket;
 
-
 export const joinUserRoom = (userId: string) => {
-    console.log('socketService: Joining private user room:', userId);
     socket?.emit('joinUserRoom', userId);
 };
 
 export const joinRoom = (roomId: string, user: currentUserType) => {
-    let count = 1;
-    console.log(count++);
     socket?.emit('joinRoom', { roomId, user });
 };
 
@@ -134,19 +127,27 @@ export const offChatEvents = () => {
     socket.off('userJoined');
 };
 
-export const joinVideoRoom = (roomId: string, userId: string, role: 'mentor' | 'user') => {
+export const joinVideoRoom = (
+    roomId: string,
+    userId: string,
+    role: 'mentor' | 'user'
+) => {
     socket?.emit('joinVideoRoom', { roomId, userId, role });
 };
 
-export const signalPeer = (data: { to: string, signal: any, from: string }) => {
+export const signalPeer = (data: { to: string; signal: any; from: string }) => {
     socket?.emit('signal', data);
 };
 
-export const onUserConnected = (callback: (data: { userId: string, role: string, socketId: string }) => void) => {
+export const onUserConnected = (
+    callback: (data: { userId: string; role: string; socketId: string }) => void
+) => {
     socket?.on('user-connected', callback);
 };
 
-export const onSignal = (callback: (data: { signal: any, from: string }) => void) => {
+export const onSignal = (
+    callback: (data: { signal: any; from: string }) => void
+) => {
     socket?.on('signal', callback);
 };
 
@@ -157,22 +158,25 @@ export const onHostOnline = (callback: () => void) => {
 export const checkVideoStatus = (roomId: string): Promise<boolean> => {
     return new Promise((resolve) => {
         if (!socket || !socket.connected) {
-            console.warn("Socket not connected, returning false for video status");
+            console.warn(
+                'Socket not connected, returning false for video status'
+            );
             resolve(false);
             return;
         }
-        
-        socket?.emit('check-video-status', roomId, (response: { active: boolean }) => {
-            console.log("Video status check response:", response);
-            resolve(response.active);
-        });
-        
-     
+
+        socket?.emit(
+            'check-video-status',
+            roomId,
+            (response: { active: boolean }) => {
+                resolve(response.active);
+            }
+        );
     });
 };
 
 export const offVideoEvents = () => {
-    if(!socket) return;
+    if (!socket) return;
     socket.off('user-connected');
     socket.off('signal');
     socket.off('host-online');

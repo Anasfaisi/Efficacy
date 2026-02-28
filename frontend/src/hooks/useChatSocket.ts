@@ -14,7 +14,7 @@ export const useChatSocket = (roomId: string | undefined) => {
 
         const socket = connectSocket();
 
-        const userId = currentUser.id 
+        const userId = currentUser.id;
         socket.emit('joinRoom', { roomId, userId });
 
         const handleHistory = (history: Message[]) => {
@@ -47,7 +47,10 @@ export const useChatSocket = (roomId: string | undefined) => {
         };
     }, [roomId, currentUser, dispatch]);
 
-    const sendMessage = (content: string, type: 'text' | 'image' | 'audio' | 'file' = 'text') => {
+    const sendMessage = (
+        content: string,
+        type: 'text' | 'image' | 'audio' | 'file' = 'text'
+    ) => {
         const socket = connectSocket();
         if (socket && roomId && currentUser) {
             socket.emit('sendMessage', {

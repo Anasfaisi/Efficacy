@@ -19,7 +19,12 @@ export class WalletRepository
     }
 
     async findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null> {
-        if (!mentorId || mentorId.toString() === 'null' || mentorId.toString() === 'undefined') return null;
+        if (
+            !mentorId ||
+            mentorId.toString() === 'null' ||
+            mentorId.toString() === 'undefined'
+        )
+            return null;
         return await Wallet.findOne({ mentorId });
     }
 
@@ -30,8 +35,14 @@ export class WalletRepository
     ): Promise<void> {
         let wallet = await this.findByMentorId(mentorId);
         if (!wallet) {
-            if (!mentorId || mentorId.toString() === 'null' || mentorId.toString() === 'undefined') {
-                console.error('Attempted to create mentor wallet with nullish ID');
+            if (
+                !mentorId ||
+                mentorId.toString() === 'null' ||
+                mentorId.toString() === 'undefined'
+            ) {
+                console.error(
+                    'Attempted to create mentor wallet with nullish ID'
+                );
                 return;
             }
             wallet = await this.create({
@@ -39,7 +50,7 @@ export class WalletRepository
                 balance: 0,
                 pendingBalance: 0,
                 transactions: [],
-            } as Partial<IWallet>);
+            } as any);
         }
 
         wallet.pendingBalance += amount;
@@ -97,7 +108,12 @@ export class WalletRepository
     }
 
     async findByUserId(userId: string | ObjectId): Promise<IWallet | null> {
-        if (!userId || userId.toString() === 'null' || userId.toString() === 'undefined') return null;
+        if (
+            !userId ||
+            userId.toString() === 'null' ||
+            userId.toString() === 'undefined'
+        )
+            return null;
         return await Wallet.findOne({ userId });
     }
 
@@ -106,10 +122,24 @@ export class WalletRepository
         amount: number,
         description: string
     ): Promise<void> {
+        if (
+            !userId ||
+            userId.toString() === 'null' ||
+            userId.toString() === 'undefined'
+        ) {
+            console.error('Attempted to credit wallet with nullish user ID');
+            return;
+        }
         let wallet = await this.findByUserId(userId);
         if (!wallet) {
-            if (!userId || userId.toString() === 'null' || userId.toString() === 'undefined') {
-                console.error('Attempted to create user wallet with nullish ID');
+            if (
+                !userId ||
+                userId.toString() === 'null' ||
+                userId.toString() === 'undefined'
+            ) {
+                console.error(
+                    'Attempted to create user wallet with nullish ID'
+                );
                 return;
             }
             wallet = await this.create({
@@ -117,7 +147,7 @@ export class WalletRepository
                 balance: 0,
                 pendingBalance: 0,
                 transactions: [],
-            } as Partial<IWallet>);
+            } as any);
         }
 
         wallet.balance += amount;
@@ -208,7 +238,11 @@ export class WalletRepository
         limit: number
     ): Promise<{ transactions: ITransaction[]; total: number }> {
         const pipeline: PipelineStage[] = [
-            { $match: { _id: new Wallet.base.Types.ObjectId(walletId.toString()) } },
+            {
+                $match: {
+                    _id: new Wallet.base.Types.ObjectId(walletId.toString()),
+                },
+            },
             { $unwind: '$transactions' },
             { $sort: { 'transactions.date': -1 } },
             {

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logMiddlewares';
 import mongoose from 'mongoose';
 
 const connectDB = async () => {
@@ -5,9 +6,9 @@ const connectDB = async () => {
         await mongoose.connect(
             process.env.MONGODB_URI || 'mongodb://localhost:27017/Efficacy'
         );
-        console.log('MongoDB connected');
+        logger.info('MongoDB connected');
     } catch (error) {
-        console.error('MongoDB connection error:', error);
+        logger.error('MongoDB connection error:', error);
         process.exit(1);
     }
 };

@@ -7,7 +7,9 @@ import { TYPES } from '@/config/inversify-key.types';
 
 @injectable()
 export class NoteService implements INoteService {
-    constructor(@inject(TYPES.NoteRepository) private noteRepository: INoteRepository) {}
+    constructor(
+        @inject(TYPES.NoteRepository) private noteRepository: INoteRepository
+    ) {}
 
     async createNote(data: CreateNoteDTO): Promise<INote> {
         return this.noteRepository.create(data as unknown as Partial<INote>);
@@ -17,8 +19,14 @@ export class NoteService implements INoteService {
         return this.noteRepository.findByUserId(userId);
     }
 
-    async updateNote(id: string, updateData: UpdateNoteDTO): Promise<INote | null> {
-        return this.noteRepository.update(id, updateData as unknown as Partial<INote>);
+    async updateNote(
+        id: string,
+        updateData: UpdateNoteDTO
+    ): Promise<INote | null> {
+        return this.noteRepository.update(
+            id,
+            updateData as unknown as Partial<INote>
+        );
     }
 
     async deleteNote(id: string): Promise<void> {

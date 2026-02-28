@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { mentorApi } from '@/Services/mentor.api';
 import type { Mentor } from '@/types/auth';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import Breadcrumbs from '@/Components/common/Breadcrumbs';
 import {
-    IndianRupee,
     Star,
-    MessageSquare,
-    ShieldCheck,
     Search,
     Filter,
     ChevronLeft,
     ChevronRight,
+    ShieldCheck,
 } from 'lucide-react';
 import MentorDetailsModal from '../components/MentorDetailsModal';
 
 const MentorListingPage: React.FC = () => {
+    const navigate = useNavigate();
     const [mentors, setMentors] = useState<Mentor[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -47,7 +47,7 @@ const MentorListingPage: React.FC = () => {
             setDebouncedSearch(searchTerm);
             setDebouncedMinPrice(minPrice);
             setDebouncedMaxPrice(maxPrice);
-            setPage(1); 
+            setPage(1);
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm, minPrice, maxPrice]);
@@ -85,9 +85,9 @@ const MentorListingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-gray-50">
+        <div className="h-screen flex bg-gray-50 overflow-hidden">
             <Sidebar />
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-hidden">
                 <Navbar />
                 <main className="flex-1 p-8 overflow-y-auto">
                     <div className="max-w-7xl mx-auto">
@@ -246,9 +246,20 @@ const MentorListingPage: React.FC = () => {
                                 {mentors.map((mentor) => (
                                     <div
                                         key={mentor.id || mentor._id}
-                                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group"
+                                        onClick={() =>
+                                            navigate(
+                                                `/mentors/${mentor.id || mentor._id}`
+                                            )
+                                        }
+                                        className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
                                     >
-                                        <div className="h-32 bg-gradient-to-r from-[#7F00FF] to-[#E100FF] opacity-10 group-hover:opacity-20 transition-opacity" />
+                                        <div className="h-32 bg-gradient-to-r from-[#7F00FF] to-[#E100FF] opacity-10 group-hover:opacity-20 transition-opacity relative">
+                                            {mentor.reviewCount === 0 && (
+                                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-[#7F00FF] uppercase tracking-widest shadow-sm">
+                                                    ✨ New
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="px-6 pb-6 -mt-16 relative">
                                             <div className="flex items-end justify-between mb-4">
                                                 <img
@@ -257,39 +268,46 @@ const MentorListingPage: React.FC = () => {
                                                         `https://ui-avatars.com/api/?name=${encodeURIComponent(mentor.name)}&background=7F00FF&color=fff`
                                                     }
                                                     alt={mentor.name}
-                                                    className="w-24 h-24 rounded-2xl border-4 border-white object-cover bg-white shadow-sm"
+                                                    className="w-24 h-24 rounded-2xl border-4 border-white object-cover bg-white shadow-lg group-hover:scale-105 transition-transform"
                                                 />
-                                                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-lg text-yellow-700 font-medium text-sm">
+                                                <div className="flex items-center bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
                                                     <Star
                                                         size={14}
-                                                        className="fill-yellow-400 text-yellow-400 mr-1"
+                                                        className={`mr-1 ${mentor.reviewCount && mentor.reviewCount > 0 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                                                     />
-                                                    {mentor.rating || '5.0'}
+                                                    <span className="font-black text-gray-900 text-sm">
+                                                        {mentor.reviewCount &&
+                                                        mentor.reviewCount > 0
+                                                            ? mentor.rating?.toFixed(
+                                                                  1
+                                                              )
+                                                            : 'No reviews'}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#7F00FF] transition-colors">
+                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#7F00FF] transition-colors line-clamp-1">
                                                 {mentor.name}
                                             </h3>
-                                            <p className="text-[#7F00FF] font-medium text-sm mb-2">
+                                            <p className="text-[#7F00FF] font-bold text-xs mb-3 uppercase tracking-wider">
                                                 {mentor.currentRole ||
                                                     mentor.domain ||
                                                     'Expert'}
                                             </p>
 
-                                            <p className="text-gray-600 text-sm line-clamp-2 mb-4 h-10">
+                                            <p className="text-gray-500 text-sm line-clamp-2 mb-6 h-10 leading-relaxed font-medium">
                                                 {mentor.bio ||
-                                                    `Experienced ${mentor.expertise || 'professional'} ready to help you achieve your goals.`}
+                                                    `Experienced ${mentor.expertise || 'professional'} ready to help you achieve your goal.`}
                                             </p>
 
                                             <div className="flex flex-wrap gap-2 mb-6">
                                                 {(mentor.skills || '')
                                                     .split(',')
-                                                    .slice(0, 3)
+                                                    .slice(0, 2)
                                                     .map((skill, idx) => (
                                                         <span
                                                             key={idx}
-                                                            className="px-2 py-1 bg-gray-50 text-gray-600 text-xs rounded-md"
+                                                            className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black rounded-lg border border-gray-100 uppercase tracking-tight"
                                                         >
                                                             {skill.trim()}
                                                         </span>
@@ -298,31 +316,35 @@ const MentorListingPage: React.FC = () => {
 
                                             <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs text-gray-500">
+                                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                                         Starts from
                                                     </span>
-                                                    <span className="text-lg font-bold text-gray-900 flex items-center">
-                                                        <IndianRupee
-                                                            size={16}
-                                                            className="mr-0.5"
-                                                        />
-                                                        {mentor.monthlyCharge ||
-                                                            '0'}
-                                                        <span className="text-xs text-gray-400 font-normal ml-1">
+                                                    <div className="flex items-center text-[#7F00FF]">
+                                                        <span className="text-lg font-black mr-0.5">
+                                                            ₹
+                                                            {
+                                                                mentor.monthlyCharge
+                                                            }
+                                                        </span>
+                                                        <span className="text-[10px] font-bold text-gray-400">
                                                             /mo
                                                         </span>
-                                                    </span>
+                                                    </div>
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <button
-                                                        onClick={() =>
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
                                                             setSelectedMentor(
                                                                 mentor
-                                                            )
-                                                        }
-                                                        className="px-4 py-2 bg-[#7F00FF] text-white rounded-xl hover:bg-[#6c00db] transition-colors font-medium text-sm shadow-sm shadow-[#7F00FF]/25"
+                                                            );
+                                                        }}
+                                                        className="px-4 py-2 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-colors font-black text-[10px] uppercase tracking-widest border border-gray-100"
                                                     >
-                                                        View
+                                                        Quick View
+                                                    </button>
+                                                    <button className="p-2 bg-[#7F00FF]/5 text-[#7F00FF] rounded-xl group-hover:bg-[#7F00FF] group-hover:text-white transition-all duration-300">
+                                                        <ChevronRight size={18} />
                                                     </button>
                                                 </div>
                                             </div>

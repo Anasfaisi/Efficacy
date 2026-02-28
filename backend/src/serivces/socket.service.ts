@@ -6,7 +6,8 @@ import { ISocketService } from './Interfaces/ISocket.service';
 import { IMessage } from '@/models/Message.model';
 import { ErrorMessages } from '@/types/response-messages.types';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
-import { BookingStatus } from '@/models/Booking.model';
+import { BookingStatus } from '@/types/booking-status.types';
+import { logger } from '@/utils/logMiddlewares';
 
 interface JoinRoomPayload {
     roomId: string;
@@ -27,17 +28,16 @@ export class SocketService implements ISocketService {
 
     constructor(
         @inject(TYPES.ChatService) private _chatService: IChatService,
-        @inject(TYPES.BookingRepository) private _bookingRepository: IBookingRepository
+        @inject(TYPES.BookingRepository)
+        private _bookingRepository: IBookingRepository
     ) {}
 
     public register(io: Server) {
         this._io = io;
         io.on('connection', (socket: Socket) => {
-            console.log('Socket Connected:', socket.id);
-
             socket.on('joinUserRoom', (userId: string) => {
                 socket.join(userId);
-                console.log(
+                logger.info(
                     `Socket ${socket.id} joined notification room: ${userId}`
                 );
             });
@@ -49,41 +49,73 @@ export class SocketService implements ISocketService {
                 this.handleSendMessage(io, socket, payload)
             );
 
+            socket.on(
+                'joinVideoRoom',
+                async ({
+                    roomId,
+                    userId,
+                    role,
+                }: {
+                    roomId: string;
+                    userId: string;
+                    role: string;
+                }) => {
+                    const booking =
+                        await this._bookingRepository.findById(roomId);
+                    const hasAccess =
+                        booking &&
+                        (booking.userId.toString() === userId ||
+                            booking.mentorId.toString() === userId) &&
+                        booking.status === BookingStatus.CONFIRMED;
 
-            socket.on('joinVideoRoom', async ({ roomId, userId, role }: { roomId: string, userId: string, role: string }) => {
-                // Verify access using repository directly to avoid circular dependency
-                const booking = await this._bookingRepository.findById(roomId);
-                const hasAccess = booking && 
-                    (booking.userId.toString() === userId || booking.mentorId.toString() === userId) &&
-                    (booking.status === BookingStatus.CONFIRMED);
+                    if (!hasAccess) {
+                        console.log(
+                            `Access denied for ${userId} to Room ${roomId}`
+                        );
+                        socket.emit('error', {
+                            message: 'Unauthorized access to video room',
+                        });
+                        return;
+                    }
 
-                if (!hasAccess) {
-                    console.log(`Access denied for ${userId} to Room ${roomId}`);
-                    socket.emit('error', { message: "Unauthorized access to video room" });
-                    return;
+                    logger.info(
+                        `Socket ${socket.id} joined Video Room: ${roomId} as ${role}`
+                    );
+                    socket.join(roomId);
+
+                    socket.to(roomId).emit('user-connected', {
+                        userId,
+                        role,
+                        socketId: socket.id,
+                    });
+
+                    if (role === 'mentor') {
+                        io.to(roomId).emit('host-online');
+                    }
                 }
+            );
 
-                console.log(`Socket ${socket.id} joined Video Room: ${roomId} as ${role}`);
-                socket.join(roomId);
-                
-                socket.to(roomId).emit('user-connected', { userId, role, socketId: socket.id });
-                
-                if (role === 'mentor') {
-                    io.to(roomId).emit('host-online'); 
+            socket.on(
+                'signal',
+                (data: { to: string; signal: any; from: string }) => {
+                    io.to(data.to).emit('signal', {
+                        signal: data.signal,
+                        from: data.from,
+                    });
                 }
-            });
+            );
 
-            socket.on('signal', (data: { to: string, signal: any, from: string }) => {
-                io.to(data.to).emit('signal', { signal: data.signal, from: data.from });
-            });
-
-             socket.on('check-video-status', (roomId: string, callback: (response: { active: boolean }) => void) => {
-                const room = io.sockets.adapter.rooms.get(roomId);
-                console.log(room,"room from the socket.service")
-                const isActive = room ? room.size > 0 : false;
-                console.log(isActive,"is active from the socket.service ===================================")
-                callback({ active: isActive });
-            });
+            socket.on(
+                'check-video-status',
+                (
+                    roomId: string,
+                    callback: (response: { active: boolean }) => void
+                ) => {
+                    const room = io.sockets.adapter.rooms.get(roomId);
+                    const isActive = room ? room.size > 0 : false;
+                    callback({ active: isActive });
+                }
+            );
 
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected:', socket.id);
@@ -116,7 +148,7 @@ export class SocketService implements ISocketService {
                 socket.emit('error', { message: ErrorMessages.AccessDenied });
                 return;
             }
-           
+
             socket.join(roomId);
 
             const history = await this._chatService.getRoomMessages(
@@ -158,5 +190,3 @@ export class SocketService implements ISocketService {
         }
     }
 }
-
-

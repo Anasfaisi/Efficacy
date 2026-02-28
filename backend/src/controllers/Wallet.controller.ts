@@ -24,7 +24,6 @@ export class WalletController {
             wallet = await this._walletRepository.findByUserId(userId);
         }
 
-        console.log(wallet,"wallet loggin in the controller");
         if (!wallet) {
             res.status(code.OK).json({
                 balance: 0,
@@ -67,7 +66,9 @@ export class WalletController {
     }
 
     async requestWithdrawal(req: Request, res: Response): Promise<void> {
-        res.status(code.OK).json({ message: SuccessMessages.WithdrawalRequested });
+        res.status(code.OK).json({
+            message: SuccessMessages.WithdrawalRequested,
+        });
     }
 
     async getTransactions(req: Request, res: Response): Promise<void> {

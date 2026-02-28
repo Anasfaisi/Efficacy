@@ -115,7 +115,9 @@ export class UserController {
             res.status(code.OK).json({ user });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.LoginFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.LoginFailed;
             res.status(code.BAD_REQUEST).json({ message });
             console.log(error);
         }
@@ -191,7 +193,9 @@ export class UserController {
             res.status(code.OK).json({ success: true });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.TokenRefreshFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.TokenRefreshFailed;
             res.status(code.UNAUTHORIZED).json({ message });
         }
     }
@@ -234,7 +238,9 @@ export class UserController {
 
     async getNotifications(req: Request, res: Response): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
         const notifications =
@@ -247,7 +253,9 @@ export class UserController {
     async markNotificationAsRead(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._notificationService.markAsRead(id);
-        res.status(code.OK).json({ message: SuccessMessages.NotificationMarkedRead });
+        res.status(code.OK).json({
+            message: SuccessMessages.NotificationMarkedRead,
+        });
     }
 
     async markAllNotificationsAsRead(
@@ -255,7 +263,9 @@ export class UserController {
         res: Response
     ): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
         await this._notificationService.markAllAsRead(req.currentUser.id);

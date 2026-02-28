@@ -1,4 +1,4 @@
-import { Schema, model, Document, ObjectId } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export enum TransactionType {
     EARNING = 'earning',
@@ -18,12 +18,12 @@ interface ITransaction {
     status: TransactionStatus;
     description: string;
     date: Date;
-    referenceId?: string; 
+    referenceId?: string;
 }
 
 interface IWallet extends Document {
-    mentorId?: ObjectId;
-    userId?: ObjectId;
+    mentorId?: Types.ObjectId;
+    userId?: Types.ObjectId;
     balance: number;
     pendingBalance: number;
     transactions: ITransaction[];
@@ -75,8 +75,7 @@ const walletSchema = new Schema<IWallet>(
     { timestamps: true }
 );
 
-walletSchema.index({ mentorId: 1 }, { unique: true, sparse: true });
-walletSchema.index({ userId: 1 }, { unique: true, sparse: true });
+
 
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

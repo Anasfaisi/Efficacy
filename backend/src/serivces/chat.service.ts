@@ -27,9 +27,7 @@ export class ChatService implements IChatService {
                 userId
             );
         if (!activeMentorship) {
-            throw new Error(
-                ErrorMessages.ActiveMentorshipRequired
-            );
+            throw new Error(ErrorMessages.ActiveMentorshipRequired);
         }
 
         const allowedStatuses = ['active', 'completed'];

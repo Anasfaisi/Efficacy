@@ -48,25 +48,27 @@ export class ChatController {
     }
 
     // async getRoomMessages(req: Request, res: Response) {
-        // const { roomId } = req.params;
-        // const userId = req.currentUser?.id;
-        // if (!userId) {
-        //     res.status(Code.UNAUTHORIZED).json({
-        //         message: ErrorMessages.UserNotFound,
-        //     });
-        //     return;
-        // }
-        // const messages = await this._chatService.getRoomMessages(
-        //     roomId,
-        //     userId
-        // );
+    // const { roomId } = req.params;
+    // const userId = req.currentUser?.id;
+    // if (!userId) {
+    //     res.status(Code.UNAUTHORIZED).json({
+    //         message: ErrorMessages.UserNotFound,
+    //     });
+    //     return;
+    // }
+    // const messages = await this._chatService.getRoomMessages(
+    //     roomId,
+    //     userId
+    // );
 
-        // res.status(Code.OK).json(messages);
+    // res.status(Code.OK).json(messages);
     // }
 
     async uploadFile(req: Request, res: Response) {
         if (!req.file) {
-            res.status(Code.BAD_REQUEST).json({ message: ErrorMessages.NoFileUploaded });
+            res.status(Code.BAD_REQUEST).json({
+                message: ErrorMessages.NoFileUploaded,
+            });
             return;
         }
 
@@ -82,7 +84,9 @@ export class ChatController {
         const userId = req.currentUser?.id;
 
         if (!userId) {
-            res.status(Code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(Code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 

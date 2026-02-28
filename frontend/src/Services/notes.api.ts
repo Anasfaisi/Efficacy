@@ -11,7 +11,10 @@ export const createNoteApi = async (data: CreateNoteDTO): Promise<INote> => {
     return response.data;
 };
 
-export const updateNoteApi = async (id: string, data: Partial<INote>): Promise<INote> => {
+export const updateNoteApi = async (
+    id: string,
+    data: Partial<INote>
+): Promise<INote> => {
     const response = await api.put(`/notes/${id}`, data);
     return response.data;
 };

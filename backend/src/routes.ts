@@ -21,6 +21,10 @@ import { PomodoroController } from './controllers/pomodoro.controller';
 import { NoteController } from './controllers/note.controller';
 import noteRoutes from './routes/note.routes';
 import { bookingRoutes } from './routes/booking.routes';
+import { ReviewController } from './controllers/review.controller';
+import reviewRoutes from './routes/review.routes';
+import { GamificationController } from './controllers/gamification.controller';
+import gamificationRoutes from './routes/gamification.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -49,6 +53,12 @@ export function applyRoutes(app: Express) {
         TYPES.PomodoroController
     );
     const noteController = container.get<NoteController>(TYPES.NoteController);
+    const reviewController = container.get<ReviewController>(
+        TYPES.ReviewController
+    );
+    const gamificationController = container.get<GamificationController>(
+        TYPES.GamificationController
+    );
 
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
@@ -63,4 +73,6 @@ export function applyRoutes(app: Express) {
     app.use('/api/pomodoro', pomodoroRouter(pomodoroController));
     app.use('/api/notes', noteRoutes(noteController));
     app.use('/api/booking', bookingRoutes(container));
+    app.use('/api/reviews', reviewRoutes(reviewController));
+    app.use('/api/gamification', gamificationRoutes(gamificationController));
 }

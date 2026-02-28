@@ -3,22 +3,23 @@ export enum BookingStatus {
     CONFIRMED = 'confirmed',
     RESCHEDULED = 'rescheduled',
     CANCELLED = 'cancelled',
-    COMPLETED = 'completed'
+    COMPLETED = 'completed',
 }
 
 export interface Booking {
     id: string;
     userId: string;
     mentorId: string;
-    bookingDate: string; 
-    slot: string; 
+    bookingDate: string;
+    slot: string;
     status: BookingStatus;
     duration: number;
     topic?: string;
     rescheduleBy?: 'user' | 'mentor' | null;
     proposedDate?: string;
-    proposedSlot?: string; 
+    proposedSlot?: string;
     meetingLink?: string;
+    cancelReason?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -26,17 +27,18 @@ export interface Booking {
 export interface CreateBookingRequestDto {
     mentorId: string;
     bookingDate: string;
-    slot: string; 
+    slot: string;
     topic: string;
 }
 
 export interface UpdateBookingStatusRequestDto {
     bookingId: string;
     status: BookingStatus;
+    cancelReason?: string;
 }
 
 export interface RescheduleRequestDto {
     bookingId: string;
     proposedDate: string;
-    proposedSlot: string; 
+    proposedSlot: string;
 }

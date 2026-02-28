@@ -32,7 +32,11 @@ import {
     userGoogleLoginRequestDto,
 } from '@/Dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
-import { ErrorMessages, SuccessMessages, AuthMessages } from '@/types/response-messages.types';
+import {
+    ErrorMessages,
+    SuccessMessages,
+    AuthMessages,
+} from '@/types/response-messages.types';
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
@@ -184,8 +188,7 @@ export class AuthService implements IAuthService {
 
         const existingUnverified =
             await this._unverifiedUserRepository.findByEmail(dto.email);
-        if (existingUnverified)
-            throw new Error(ErrorMessages.OtpAlreadySent);
+        if (existingUnverified) throw new Error(ErrorMessages.OtpAlreadySent);
 
         const hashedPassword = await bcrypt.hash(dto.password, 10);
         const otp = await this._otpService.generateOtp();
@@ -215,7 +218,8 @@ export class AuthService implements IAuthService {
         if (!unverifiedUser)
             throw new Error(ErrorMessages.RegistrationReinitRequired);
 
-        if (unverifiedUser.otp !== dto.otp) throw new Error(AuthMessages.OtpFailed);
+        if (unverifiedUser.otp !== dto.otp)
+            throw new Error(AuthMessages.OtpFailed);
         if (unverifiedUser.otpExpiresAt < new Date())
             throw new Error(ErrorMessages.OtpExpired);
         let _repository: IUserRepository;

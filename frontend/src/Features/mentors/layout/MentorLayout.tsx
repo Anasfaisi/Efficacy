@@ -30,31 +30,22 @@ const MentorLayout: React.FC = () => {
             <div className="flex-1 flex flex-col min-h-screen transition-all duration-300 overflow-hidden">
                 {/* Navbar */}
                 <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4 lg:hidden">
-                        {/* Mobile Menu Trigger Placeholder */}
-                        <div className="w-8 h-8 bg-gray-200 rounded-md"></div>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-4 flex-1 max-w-md">
-                        <div className="relative w-full group">
-                            <Search
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors"
-                                size={18}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Search mentees, sessions..."
-                                className="w-full bg-gray-50 border border-transparent focus:border-indigo-100 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 rounded-xl py-2.5 pl-10 pr-4 outline-none transition-all text-sm font-medium"
-                            />
-                        </div>
+                    <div className="flex items-center gap-3">
+                        <img
+                            src="/Title logo.png"
+                            alt="Efficacy Logo"
+                            className="w-10 h-10 rounded-xl object-cover shadow-sm"
+                        />
+                        <h1 className="text-2xl font-black text-gray-900 tracking-tighter">
+                            Efficacy<span className="text-indigo-600">.</span>
+                        </h1>
                     </div>
 
                     <div className="flex items-center gap-6 ml-auto">
                         <div className="relative group/bell">
                             <button
                                 className="relative p-2.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 active:scale-95"
-                                onClick={() => {
-                                }}
+                                onClick={() => {}}
                             >
                                 <Bell
                                     size={22}

@@ -53,7 +53,7 @@ export default function MentorApplicationsPage() {
         }
     };
 
-    const filteredApplications = applications; 
+    const filteredApplications = applications;
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'pending':

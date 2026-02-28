@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { GoogleLogin } from '@react-oauth/google';
 import type { CredentialResponse } from '@/types/auth';
 import { googleLoginApi, registerInitApi } from '@/Services/user.api';
-import { setCredentials } from '@/redux/slices/authSlice'; 
+import { setCredentials } from '@/redux/slices/authSlice';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';

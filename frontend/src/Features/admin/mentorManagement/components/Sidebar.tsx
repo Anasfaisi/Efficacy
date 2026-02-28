@@ -6,6 +6,7 @@ import {
     LogOut,
     Banknote,
 } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
@@ -32,17 +33,17 @@ export default function Sidebar() {
             label: 'Financials',
             icon: Banknote,
         },
+        {
+            to: '/admin/gamification',
+            label: 'Gamification Engine',
+            icon: Icons.Award,
+        },
     ];
 
     return (
         <aside className="h-screen w-64 bg-[#0c2d48] text-gray-300 flex flex-col sticky top-0 border-r border-white/10 shadow-xl">
-            <div className="p-6 flex items-center gap-3 border-b border-white/10 mb-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
-                    E
-                </div>
-                <span className="text-xl font-bold text-white tracking-tight">
-                    Efficacy Admin
-                </span>
+            <div className="p-4 border-b border-white/10 mb-2">
+                <div className="h-4" />
             </div>
 
             <nav className="flex-1 flex flex-col px-3 py-4 gap-1">

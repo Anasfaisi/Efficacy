@@ -12,8 +12,9 @@ import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsLis
 import MentorDetailsPage from '@/Features/admin/mentorManagement/pages/MentorDetailsPage';
 import UserManagement from '@/Features/admin/userManagement/pages/UserManagement';
 import NotFound from '@/Features/common/pages/NotFound';
-
 import AdminFinancialsPage from '@/Features/admin/pages/AdminFinancialsPage';
+import AdminGamificationPage from '@/Features/admin/gamification/pages/AdminGamificationPage';
+import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -53,7 +54,9 @@ const AdminRoutes: React.FC = () => {
                     element={<MentorReviewPage />}
                 />
                 <Route path="financials" element={<AdminFinancialsPage />} />
+                <Route path="gamification" element={<AdminGamificationPage />} />
                 <Route path="userManagement" element={<UserManagement />} />
+                <Route path="profile" element={<AdminProfilePage />} />
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

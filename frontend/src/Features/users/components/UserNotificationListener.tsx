@@ -133,7 +133,12 @@ export const UserNotificationListener: React.FC = () => {
         [dispatch, navigate]
     );
 
-    const currentUserId = currentUser ? (('id' in currentUser ? currentUser.id : undefined) || ('_id' in currentUser ? (currentUser as { _id?: string })._id : undefined)) : undefined;
+    const currentUserId = currentUser
+        ? ('id' in currentUser ? currentUser.id : undefined) ||
+          ('_id' in currentUser
+              ? (currentUser as { _id?: string })._id
+              : undefined)
+        : undefined;
 
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'user') return;

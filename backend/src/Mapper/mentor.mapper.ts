@@ -1,6 +1,6 @@
-import { IMentor } from "@/models/Mentor.model";
-import { MentorEntity } from "@/entity/mentor.entity";
-import { Types } from "mongoose";
+import { IMentor } from '@/models/Mentor.model';
+import { MentorEntity } from '@/entity/mentor.entity';
+import { Types } from 'mongoose';
 
 export class MentorMapper {
     static toEntity(doc: IMentor): MentorEntity {

@@ -8,9 +8,9 @@ import {
     Music,
     User,
     Trophy,
-    Layout,
     ChevronRight,
     Wallet,
+    LogOut,
 } from 'lucide-react';
 import SidebarButton from '../components/SidebarButton';
 import { useLocation, Link } from 'react-router-dom';
@@ -51,7 +51,7 @@ const Sidebar = () => {
             to: '/pomodoro',
             color: '#f87171',
         },
-  
+
         {
             icon: <Users size={20} />,
             label: 'Mentor Pool',
@@ -59,20 +59,13 @@ const Sidebar = () => {
             subItems: [
                 { label: 'Find Mentors', to: '/mentors' },
                 { label: 'My Mentorships', to: '/my-mentorships' },
+                {
+                    label: 'Booking History',
+                    to: '/booking-history',
+                    color: '#7F00FF',
+                },
                 { label: 'Chat', to: '/chat' },
             ],
-        },
-        {
-            icon: <Music size={20} />,
-            label: 'Music',
-            to: '#',
-            color: '#00897B',
-        },
-        {
-            icon: <User size={20} />,
-            label: 'Profile',
-            to: '/profile',
-            color: '#7F00FF',
         },
         {
             icon: <Wallet size={20} />,
@@ -80,9 +73,17 @@ const Sidebar = () => {
             to: '/profile/wallet',
             color: '#7F00FF',
         },
+      
+        {
+            icon: <User size={20} />,
+            label: 'Profile',
+            to: '/profile',
+            color: '#7F00FF',
+        },
+        
         {
             icon: <Trophy size={20} />,
-            label: 'Leaderboard',
+            label: 'Conqueror',
             to: '#',
             color: '#FFC107',
         },
@@ -102,9 +103,9 @@ const Sidebar = () => {
 
     const toggleExpand = (label: string) => {
         if (collapsed) {
-             setCollapsed(false);
-             setExpandedItems([label]);
-             return;
+            setCollapsed(false);
+            setExpandedItems([label]);
+            return;
         }
 
         if (expandedItems.includes(label)) {
@@ -115,25 +116,23 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`${collapsed ? 'w-24' : 'w-64'} h-screen bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 relative z-20 transition-all duration-300`}>
+        <div
+            className={`${collapsed ? 'w-24' : 'w-64'} h-screen bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 relative z-20 transition-all duration-300`}
+        >
             {/* Toggle Button */}
-            <button 
+            <button
                 onClick={() => setCollapsed(!collapsed)}
                 className="absolute -right-3 top-10 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:text-[#7F00FF] shadow-sm z-50"
             >
-                {collapsed ? <ChevronRight size={14} /> : <ChevronRight size={14} className="rotate-180" />}
+                {collapsed ? (
+                    <ChevronRight size={14} />
+                ) : (
+                    <ChevronRight size={14} className="rotate-180" />
+                )}
             </button>
 
-            <div className={`px-6 py-8 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
-                <div className="bg-gradient-to-tr from-[#7F00FF] to-[#E100FF] p-2 rounded-xl text-white shadow-lg shadow-[#7F00FF]/30 shrink-0">
-                    <Layout size={24} strokeWidth={3} />
-                </div>
-                {!collapsed && (
-                    <div className="text-2xl font-black text-gray-900 tracking-tighter whitespace-nowrap overflow-hidden">
-                        Efficacy<span className="text-[#7F00FF]">.</span>
-                    </div>
-                )}
-            </div>
+            {/* Sidebar toggle and logo space cleared */}
+            <div className="h-10" /> 
 
             <nav className="flex-1 px-4 py-2 flex flex-col gap-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
                 {navItems.map((item) => (
@@ -175,23 +174,16 @@ const Sidebar = () => {
                 ))}
             </nav>
 
-            {!collapsed && (
-                <div className="p-6 border-t border-gray-50">
-                    <div className="bg-gray-50 rounded-2xl p-4 flex items-center gap-3 border border-gray-100">
-                        <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 font-black">
-                            7
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                Daily Streak
-                            </p>
-                            <p className="text-xs font-bold text-gray-900">
-                                Keep it up!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <div className="mt-auto p-6 border-t border-gray-50">
+                <Link
+                    to="/logout"
+                    className={`flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 font-medium ${collapsed ? 'justify-center' : ''}`}
+                    title={collapsed ? 'Logout' : ''}
+                >
+                    <LogOut size={20} />
+                    {!collapsed && <span>Logout</span>}
+                </Link>
+            </div>
         </div>
     );
 };

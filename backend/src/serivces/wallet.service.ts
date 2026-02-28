@@ -57,7 +57,8 @@ export class WalletService implements IWalletService {
         amount: number
     ): Promise<IWallet> {
         const wallet = await this.getWallet(mentorId);
-        if (wallet.balance < amount) throw new Error(ErrorMessages.InsufficientBalance);
+        if (wallet.balance < amount)
+            throw new Error(ErrorMessages.InsufficientBalance);
 
         wallet.balance -= amount;
         wallet.transactions.push({

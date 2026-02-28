@@ -98,7 +98,8 @@ export class KanbanService implements IKanbanService {
             (c) => c.columnId === dto.destColumnId
         );
 
-        if (!sourceCol || !destCol) throw new Error(ErrorMessages.InvalidColumn);
+        if (!sourceCol || !destCol)
+            throw new Error(ErrorMessages.InvalidColumn);
 
         const [task] = sourceCol.tasks.splice(dto.sourceTaskIndex, 1);
         destCol.tasks.splice(dto.destTaskIndex, 0, task);

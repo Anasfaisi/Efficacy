@@ -107,7 +107,10 @@ const UserProfilePage = () => {
         }
     }, [currentUser]);
 
-    const handleSavePartial = async (fields: Record<string, unknown>, sectionId: string) => {
+    const handleSavePartial = async (
+        fields: Record<string, unknown>,
+        sectionId: string
+    ) => {
         try {
             userProfileUpdateSchema.parse(fields);
 
@@ -174,10 +177,7 @@ const UserProfilePage = () => {
     const handleMediaChange = async (file: File) => {
         setIsLoading('profilePic');
         try {
-            const res = await updateProfilePicture(
-                file,
-                'user'
-            );
+            const res = await updateProfilePicture(file, 'user');
             toast.success('Profile picture updated');
 
             if (res.user.profilePic) {
@@ -193,7 +193,7 @@ const UserProfilePage = () => {
     };
 
     const user = currentUser as User;
-    console.log(user,"the user here now go ")
+    console.log(user, 'the user here now go ');
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
@@ -271,6 +271,10 @@ const UserProfilePage = () => {
                                     {user?.headline ||
                                         'No professional headline set'}
                                 </p>
+                                <div className="mt-2 text-white/80 font-medium flex items-center justify-center md:justify-start gap-2">
+                                     <Mail className="w-4 h-4 text-purple-200" />
+                                     {user?.email}
+                                </div>
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
                                     <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border border-white/10">
                                         <ShieldCheck className="w-3.5 h-3.5" />{' '}
@@ -532,7 +536,9 @@ const UserProfilePage = () => {
                                                         </span>
                                                         <button
                                                             onClick={() =>
-                                                                navigate('/profile/wallet')
+                                                                navigate(
+                                                                    '/profile/wallet'
+                                                                )
                                                             }
                                                             className="text-purple-600 text-xs hover:underline flex items-center gap-1 font-bold uppercase"
                                                         >
@@ -609,7 +615,6 @@ const UserProfilePage = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };

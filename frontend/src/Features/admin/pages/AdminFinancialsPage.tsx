@@ -29,7 +29,6 @@ const AdminFinancialsPage = () => {
             }
         };
 
-       
         const fetchRevenue = async () => {
             try {
                 const revData = await adminService.getRevenueDetails();

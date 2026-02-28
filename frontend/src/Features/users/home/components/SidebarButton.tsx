@@ -16,7 +16,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
     active,
     onClick,
     to,
-    collapsed
+    collapsed,
 }) => {
     const baseClass = `
     flex items-center ${collapsed ? 'justify-center px-2' : 'gap-4 px-5'} py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm

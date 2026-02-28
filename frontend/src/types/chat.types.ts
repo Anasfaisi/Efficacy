@@ -2,17 +2,17 @@ import type { User, Mentor } from './auth';
 export interface Message {
     _id: string;
     conversationId: string;
-    senderId: string; 
+    senderId: string;
     content: string;
     type: 'text' | 'image' | 'audio' | 'file';
     isRead: boolean;
-    createdAt: string; 
+    createdAt: string;
     senderName?: string;
 }
 
 export interface Conversation {
     _id: string;
-    participants: (User | Mentor)[]; 
+    participants: (User | Mentor)[];
     lastMessage?: Message;
     isActive: boolean;
     createdAt: string;

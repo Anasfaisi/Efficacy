@@ -124,21 +124,21 @@ const UserDashboard: React.FC = () => {
                                 label="Focus Timer"
                                 btnLabel="Start"
                                 color="bg-pink-500"
-                                to="#"
+                                to="/pomodoro"
                             />
                             <QuickActionCard
                                 icon={<Music size={26} strokeWidth={3} />}
-                                label="Play Music"
-                                btnLabel="Play"
+                                label="Journal"
+                                btnLabel="Notes"
                                 color="bg-[#00897B]"
-                                to="#"
+                                to="/notes"
                             />
                             <QuickActionCard
                                 icon={<Users size={26} strokeWidth={3} />}
-                                label="Mentor Support"
-                                btnLabel="Join"
+                                label="Add Planner"
+                                btnLabel="Plan"
                                 color="bg-teal-500"
-                                to="/mentors"
+                                to="/planner"
                             />
                         </div>
                     </section>

@@ -1,4 +1,3 @@
-
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import Mentorship, {
@@ -26,7 +25,10 @@ export class MentorshipRepository
     async findByMentorId(mentorId: string | ObjectId): Promise<IMentorship[]> {
         return await this.model
             .find({ mentorId })
-            .populate('userId', 'name profilePic expertise availableDays preferredTime');
+            .populate(
+                'userId',
+                'name profilePic expertise availableDays preferredTime'
+            );
     }
 
     async findActiveByUserId(
@@ -46,7 +48,10 @@ export class MentorshipRepository
                 },
             })
             .sort({ createdAt: -1 })
-            .populate('mentorId', 'name profilePic expertise availableDays preferredTime');
+            .populate(
+                'mentorId',
+                'name profilePic expertise availableDays preferredTime'
+            );
     }
 
     async findActiveByMentorId(

@@ -3,7 +3,7 @@ import type {
     Booking,
     CreateBookingRequestDto,
     UpdateBookingStatusRequestDto,
-    RescheduleRequestDto
+    RescheduleRequestDto,
 } from '@/types/booking';
 
 export const bookingApi = {
@@ -12,23 +12,45 @@ export const bookingApi = {
         return res.data;
     },
 
-    getUserBookings: async (): Promise<Booking[]> => {
-        const res = await api.get('/booking/user');
+    getUserBookings: async (
+        page: number = 1,
+        limit: number = 10,
+        status?: string,
+        startDate?: string,
+        endDate?: string
+    ): Promise<{
+        bookings: Booking[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+    }> => {
+        const res = await api.get(
+            `/booking/user?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
+        );
         return res.data;
     },
 
     getMentorBookings: async (
         page: number = 1,
         limit: number = 10,
-        status?: string
-    ): Promise<{ bookings: Booking[]; totalCount: number; totalPages: number; currentPage: number }> => {
+        status?: string,
+        startDate?: string,
+        endDate?: string
+    ): Promise<{
+        bookings: Booking[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+    }> => {
         const res = await api.get(
-            `/booking/mentor?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}`
+            `/booking/mentor?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
         );
         return res.data;
     },
 
-    updateStatus: async (data: UpdateBookingStatusRequestDto): Promise<Booking> => {
+    updateStatus: async (
+        data: UpdateBookingStatusRequestDto
+    ): Promise<Booking> => {
         const res = await api.patch('/booking/status', data);
         return res.data;
     },
@@ -38,13 +60,35 @@ export const bookingApi = {
         return res.data;
     },
 
-    respondToReschedule: async (bookingId: string, approve: boolean): Promise<Booking> => {
-        const res = await api.post('/booking/reschedule-respond', { bookingId, approve });
+    respondToReschedule: async (
+        bookingId: string,
+        approve: boolean
+    ): Promise<Booking> => {
+        const res = await api.post('/booking/reschedule-respond', {
+            bookingId,
+            approve,
+        });
         return res.data;
     },
-    
+
     verifyAccess: async (bookingId: string): Promise<{ success: boolean }> => {
         const res = await api.get(`/booking/verify/${bookingId}`);
         return res.data;
-    }
+    },
+
+    getBookingById: async (bookingId: string): Promise<Booking> => {
+        const res = await api.get(`/booking/${bookingId}`);
+        console.log(res,"res")
+        return res.data;
+    },
+
+    startSession: async (bookingId: string): Promise<Booking> => {
+        const res = await api.post('/booking/start-session', { bookingId });
+        return res.data;
+    },
+
+    endSession: async (bookingId: string): Promise<Booking> => {
+        const res = await api.post('/booking/end-session', { bookingId });
+        return res.data;
+    },
 };

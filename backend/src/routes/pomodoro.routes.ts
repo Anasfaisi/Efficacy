@@ -7,12 +7,20 @@ import { TYPES } from '@/config/inversify-key.types';
 import { TokenService } from '@/serivces/token.service';
 import { Role } from '@/types/role.types';
 
-export default function pomodoroRouter (pomodoroController: PomodoroController) {
+export default function pomodoroRouter(pomodoroController: PomodoroController) {
     const router = Router();
-const tokenService = container.get<TokenService>(TYPES.TokenService);
+    const tokenService = container.get<TokenService>(TYPES.TokenService);
 
-router.post('/log', authenticateAndAuthorize(tokenService, Role.User), asyncWrapper(pomodoroController.logSession.bind(pomodoroController)));
-router.get('/stats', authenticateAndAuthorize(tokenService, Role.User), asyncWrapper(pomodoroController.getDailyStats.bind(pomodoroController)));
+    router.post(
+        '/log',
+        authenticateAndAuthorize(tokenService, Role.User),
+        asyncWrapper(pomodoroController.logSession.bind(pomodoroController))
+    );
+    router.get(
+        '/stats',
+        authenticateAndAuthorize(tokenService, Role.User),
+        asyncWrapper(pomodoroController.getDailyStats.bind(pomodoroController))
+    );
 
-return router;
-};
+    return router;
+}

@@ -12,7 +12,14 @@ import type { IPlannerTask } from '@/Features/users/planner/types';
 import { Priority } from '@/Features/users/planner/types';
 import TaskItem from '../components/TaskItem';
 import TaskModal from '@/Features/users/planner/components/TaskModal';
-import { ListTodo, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+    ListTodo,
+    Plus,
+    Check,
+    X,
+    ChevronLeft,
+    ChevronRight,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isToday, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
 
@@ -330,23 +337,32 @@ const TasksPage: React.FC = () => {
                             {totalPages > 1 && (
                                 <div className="flex items-center justify-center gap-2 mt-8">
                                     <button
-                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        onClick={() =>
+                                            setCurrentPage((prev) =>
+                                                Math.max(prev - 1, 1)
+                                            )
+                                        }
                                         disabled={currentPage === 1}
                                         className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm text-gray-400 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     >
                                         <ChevronLeft size={20} />
                                     </button>
-                                    
+
                                     <div className="flex items-center gap-1">
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        {Array.from(
+                                            { length: totalPages },
+                                            (_, i) => i + 1
+                                        ).map((page) => (
                                             <button
                                                 key={page}
-                                                onClick={() => setCurrentPage(page)}
+                                                onClick={() =>
+                                                    setCurrentPage(page)
+                                                }
                                                 className={cn(
-                                                    "w-10 h-10 rounded-xl text-xs font-black transition-all",
+                                                    'w-10 h-10 rounded-xl text-xs font-black transition-all',
                                                     currentPage === page
-                                                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                                        : "bg-white text-gray-400 border border-gray-100 hover:border-primary/20 hover:text-primary"
+                                                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                        : 'bg-white text-gray-400 border border-gray-100 hover:border-primary/20 hover:text-primary'
                                                 )}
                                             >
                                                 {page}
@@ -355,7 +371,11 @@ const TasksPage: React.FC = () => {
                                     </div>
 
                                     <button
-                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        onClick={() =>
+                                            setCurrentPage((prev) =>
+                                                Math.min(prev + 1, totalPages)
+                                            )
+                                        }
                                         disabled={currentPage === totalPages}
                                         className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm text-gray-400 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     >

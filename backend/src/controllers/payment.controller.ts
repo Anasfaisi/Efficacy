@@ -11,7 +11,6 @@ export class PaymentController {
         @inject(TYPES.PaymentService) private _paymentService: IPaymentService
     ) {}
 
-
     async createMentorshipSession(req: Request, res: Response) {
         const { mentorshipId, successUrl, cancelUrl } = req.body;
         const sessionUrl =
@@ -34,7 +33,6 @@ export class PaymentController {
 
     async handleWebhook(req: Request, res: Response) {
         try {
-       
             const sig = req.headers['stripe-signature'] as string;
             const rawBody = req.body;
 
@@ -43,7 +41,9 @@ export class PaymentController {
             res.status(code.OK).send({ received: true });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.WebhookError;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.WebhookError;
             res.status(code.BAD_REQUEST).send(`Webhook Error: ${message}`);
             console.error(error);
         }

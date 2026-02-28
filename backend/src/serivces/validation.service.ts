@@ -55,7 +55,9 @@ export class ValidationService implements IValidationService {
                 (endpoint === 'user' && role !== 'user') ||
                 (endpoint === 'mentor' && role !== 'mentor'))
         ) {
-            throw new Error(`${ErrorMessages.InvalidRoleGoogleLogin} for ${endpoint}`);
+            throw new Error(
+                `${ErrorMessages.InvalidRoleGoogleLogin} for ${endpoint}`
+            );
         }
         console.log('Successfully validated Google login at backend');
     }

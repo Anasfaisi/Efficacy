@@ -1,21 +1,21 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface DayStats {
-    date: string; 
+    date: string;
     cycles: number;
-    productiveTime: number; 
-    shortBreaks: number; 
-    longBreaks: number; 
+    productiveTime: number;
+    shortBreaks: number;
+    longBreaks: number;
 }
 
 interface PomodoroState {
     today: DayStats;
-    currentSessionCompleted: number; 
+    currentSessionCompleted: number;
     timerState: {
         mode: 'pomodoro' | 'shortBreak' | 'longBreak';
         timeLeft: number;
         isActive: boolean;
-        lastUpdated: number | null; 
+        lastUpdated: number | null;
     };
 }
 
@@ -42,9 +42,15 @@ const pomodoroSlice = createSlice({
     name: 'pomodoro',
     initialState,
     reducers: {
-        updateSession: (state, action: PayloadAction<{ duration: number; type: 'pomodoro' | 'shortBreak' | 'longBreak' }>) => {
+        updateSession: (
+            state,
+            action: PayloadAction<{
+                duration: number;
+                type: 'pomodoro' | 'shortBreak' | 'longBreak';
+            }>
+        ) => {
             const todayDate = getTodayDate();
-            
+
             if (state.today.date !== todayDate) {
                 state.today = {
                     date: todayDate,
@@ -61,7 +67,8 @@ const pomodoroSlice = createSlice({
             if (type === 'pomodoro') {
                 state.today.productiveTime += duration;
                 state.today.cycles += 1;
-                state.currentSessionCompleted = (state.currentSessionCompleted + 1) % 4;
+                state.currentSessionCompleted =
+                    (state.currentSessionCompleted + 1) % 4;
             } else if (type === 'shortBreak') {
                 state.today.shortBreaks += 1;
             } else if (type === 'longBreak') {
@@ -69,8 +76,8 @@ const pomodoroSlice = createSlice({
             }
         },
         resetStats: (state) => {
-             const todayDate = getTodayDate();
-             state.today = {
+            const todayDate = getTodayDate();
+            state.today = {
                 date: todayDate,
                 cycles: 0,
                 productiveTime: 0,
@@ -79,11 +86,15 @@ const pomodoroSlice = createSlice({
             };
             state.currentSessionCompleted = 0;
         },
-        updateTimerState: (state, action: PayloadAction<Partial<PomodoroState['timerState']>>) => {
+        updateTimerState: (
+            state,
+            action: PayloadAction<Partial<PomodoroState['timerState']>>
+        ) => {
             state.timerState = { ...state.timerState, ...action.payload };
-        }
+        },
     },
 });
 
-export const { updateSession, resetStats, updateTimerState } = pomodoroSlice.actions;
+export const { updateSession, resetStats, updateTimerState } =
+    pomodoroSlice.actions;
 export default pomodoroSlice.reducer;

@@ -2,9 +2,10 @@ import multer, { StorageEngine } from 'multer';
 import path from 'path';
 import { Request } from 'express';
 import fs from 'fs';
+import { logger } from '@/utils/logMiddlewares';
 
 const uploadPath = path.join(__dirname, '../../uploads');
-console.log(uploadPath);
+logger.info(uploadPath);
 
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });

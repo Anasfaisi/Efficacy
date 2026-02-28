@@ -3,7 +3,7 @@ import { Schema, model, Document, ObjectId } from 'mongoose';
 export enum MentorshipStatus {
     PENDING = 'pending',
     MENTOR_ACCEPTED = 'mentor_accepted',
-    USER_CONFIRMED = 'user_confirmed', 
+    USER_CONFIRMED = 'user_confirmed',
     PAYMENT_PENDING = 'payment_pending',
     ACTIVE = 'active',
     COMPLETED = 'completed',
@@ -65,7 +65,7 @@ interface IMentorship extends Document {
 
 const sessionSchema = new Schema<ISession>({
     date: { type: Date, required: true },
-    slot: { type: String }, 
+    slot: { type: String },
     status: {
         type: String,
         enum: Object.values(SessionStatus),

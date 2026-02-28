@@ -31,8 +31,8 @@ export interface ISession {
 export interface Mentorship {
     id?: string;
     _id?: string;
-    userId: User | string; 
-    mentorId: Mentor | string; 
+    userId: User | string;
+    mentorId: Mentor | string;
     status: MentorshipStatus;
     startDate?: Date | string;
     endDate?: Date | string;

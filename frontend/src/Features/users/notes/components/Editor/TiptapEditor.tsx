@@ -43,10 +43,10 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
             forceUpdate((prev) => prev + 1);
         },
         onSelectionUpdate: () => {
-             forceUpdate((prev) => prev + 1);
+            forceUpdate((prev) => prev + 1);
         },
         onTransaction: () => {
-             forceUpdate((prev) => prev + 1);
+            forceUpdate((prev) => prev + 1);
         },
         editorProps: {
             attributes: {
@@ -57,18 +57,16 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
 
     useEffect(() => {
         if (editor && content !== editor.getHTML()) {
-           
         }
     }, [content, editor]);
 
- 
     useEffect(() => {
         if (editor && content) {
-             const currentContent = editor.getHTML();
-         
-             if (currentContent === '<p></p>' && content !== '<p></p>') {
-                 editor.commands.setContent(content);
-             }
+            const currentContent = editor.getHTML();
+
+            if (currentContent === '<p></p>' && content !== '<p></p>') {
+                editor.commands.setContent(content);
+            }
         }
     }, []);
 

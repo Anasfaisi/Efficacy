@@ -247,6 +247,16 @@ export const mentorProfileUpdateSchema = z
                 'Must contain at least one special character'
             )
             .optional(),
+        qualification: z.string().optional(),
+        university: z.string().optional(),
+        graduationYear: z.coerce.string().optional(),
+        academicSpan: z.string().optional(),
+        currentRole: z.string().optional(),
+        industryCategory: z.string().optional(),
+        skills: z.string().optional(),
+        expertise: z.string().optional(),
+        availableDays: z.string().optional(),
+        preferredTime: z.array(z.string()).optional(),
     })
     .partial();
 

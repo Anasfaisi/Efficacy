@@ -17,6 +17,7 @@ import { MentorshipStatus } from '@/types/mentorship';
 import { chatApi } from '@/Services/chat.api';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
+import CancelMentorshipModal from '../components/CancelMentorshipModal';
 
 const MyMentorshipsPage: React.FC = () => {
     const [mentorships, setMentorships] = useState<any[]>([]);
@@ -24,6 +25,10 @@ const MyMentorshipsPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+
+    const [cancelModalOpen, setCancelModalOpen] = useState(false);
+    const [mentorshipToCancel, setMentorshipToCancel] = useState<string | null>(null);
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const handleChat = async (mentorId: string) => {
         try {
@@ -34,7 +39,8 @@ const MyMentorshipsPage: React.FC = () => {
             console.error('Failed to initiate chat', error);
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 'Failed to start chat. Ensure mentorship is active.';
+                    ?.response?.data?.message ||
+                'Failed to start chat. Ensure mentorship is active.';
             toast.error(errorMessage);
         }
     };
@@ -54,7 +60,8 @@ const MyMentorshipsPage: React.FC = () => {
                 console.error('Failed to fetch mentorships:', error);
                 const errorMessage =
                     (error as { response?: { data?: { message?: string } } })
-                        ?.response?.data?.message || 'Failed to fetch mentorships';
+                        ?.response?.data?.message ||
+                    'Failed to fetch mentorships';
                 toast.error(errorMessage);
             } finally {
                 setLoading(false);
@@ -114,29 +121,34 @@ const MyMentorshipsPage: React.FC = () => {
         }
     };
 
-    const handleCancel = async (e: React.MouseEvent, mentorshipId: string) => {
+    const handleCancel = (e: React.MouseEvent, mentorshipId: string) => {
         e.stopPropagation();
-        if (
-            confirm(
-                'Are you sure you want to cancel this mentorship? Refund policies apply.'
-            )
-        ) {
-            try {
-                await mentorshipApi.cancelMentorship(mentorshipId);
-                toast.success('Mentorship cancelled successfully');
-                setMentorships((prev) =>
-                    prev.map((m) =>
-                        m._id === mentorshipId
-                            ? { ...m, status: MentorshipStatus.CANCELLED }
-                            : m
-                    )
-                );
-            } catch (error) {
-                const errorMessage =
-                    (error as { response?: { data?: { message?: string } } })
-                        ?.response?.data?.message || 'Failed to cancel';
-                toast.error(errorMessage);
-            }
+        setMentorshipToCancel(mentorshipId);
+        setCancelModalOpen(true);
+    };
+
+    const confirmCancel = async () => {
+        if (!mentorshipToCancel) return;
+        setIsCancelling(true);
+        try {
+            await mentorshipApi.cancelMentorship(mentorshipToCancel);
+            toast.success('Mentorship cancelled successfully');
+            setMentorships((prev) =>
+                prev.map((m) =>
+                    m._id === mentorshipToCancel
+                        ? { ...m, status: MentorshipStatus.CANCELLED }
+                        : m
+                )
+            );
+            setCancelModalOpen(false);
+        } catch (error) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to cancel';
+            toast.error(errorMessage);
+        } finally {
+            setIsCancelling(false);
+            setMentorshipToCancel(null);
         }
     };
 
@@ -334,17 +346,29 @@ const MyMentorshipsPage: React.FC = () => {
                                                             MentorshipStatus.ACTIVE && (
                                                             <>
                                                                 <button
-                                                                    onClick={(e) => {
+                                                                    onClick={(
+                                                                        e
+                                                                    ) => {
                                                                         e.stopPropagation();
-                                                                        handleChat(mentorship.mentorId._id);
+                                                                        handleChat(
+                                                                            mentorship
+                                                                                .mentorId
+                                                                                ._id
+                                                                        );
                                                                     }}
                                                                     className="flex items-center gap-1 text-[#7F00FF] hover:text-[#6000c0] font-medium text-sm transition-colors z-10 mr-4"
                                                                 >
-                                                                    <MessageSquare size={16} />
+                                                                    <MessageSquare
+                                                                        size={
+                                                                            16
+                                                                        }
+                                                                    />
                                                                     Chat
                                                                 </button>
                                                                 <button
-                                                                    onClick={(e) =>
+                                                                    onClick={(
+                                                                        e
+                                                                    ) =>
                                                                         handleCancel(
                                                                             e,
                                                                             mentorship._id
@@ -353,7 +377,9 @@ const MyMentorshipsPage: React.FC = () => {
                                                                     className="flex items-center gap-1 text-red-500 hover:text-red-700 font-medium text-sm transition-colors z-10"
                                                                 >
                                                                     <XCircle
-                                                                        size={16}
+                                                                        size={
+                                                                            16
+                                                                        }
                                                                     />
                                                                     Cancel
                                                                 </button>
@@ -400,6 +426,18 @@ const MyMentorshipsPage: React.FC = () => {
                     </div>
                 </main>
             </div>
+
+            <CancelMentorshipModal
+                isOpen={cancelModalOpen}
+                onClose={() => {
+                    if (!isCancelling) {
+                        setCancelModalOpen(false);
+                        setMentorshipToCancel(null);
+                    }
+                }}
+                onConfirm={confirmCancel}
+                isLoading={isCancelling}
+            />
         </div>
     );
 };

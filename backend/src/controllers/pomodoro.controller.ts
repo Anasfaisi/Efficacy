@@ -20,29 +20,41 @@ export class PomodoroController {
         const { duration, type } = req.body;
 
         if (!duration || !type) {
-                res.status(code.BAD_REQUEST).json({ message: ErrorMessages.PomodoroRequiredFields });
-                return;
+            res.status(code.BAD_REQUEST).json({
+                message: ErrorMessages.PomodoroRequiredFields,
+            });
+            return;
         }
 
-        const updatedLog = await this.pomodoroService.logSession(userId, { duration, type });
+        const updatedLog = await this.pomodoroService.logSession(userId, {
+            duration,
+            type,
+        });
         res.status(code.OK).json(updatedLog);
     };
 
-    public getDailyStats = async (req: Request, res: Response): Promise<void> => {
-            const userId = req.currentUser!.id;
-            const { date } = req.query;
+    public getDailyStats = async (
+        req: Request,
+        res: Response
+    ): Promise<void> => {
+        const userId = req.currentUser!.id;
+        const { date } = req.query;
 
-            if (!date || typeof date !== 'string') {
-                res.status(code.BAD_REQUEST).json({ message: ErrorMessages.DateRequired });
-                return;
-            }
+        if (!date || typeof date !== 'string') {
+            res.status(code.BAD_REQUEST).json({
+                message: ErrorMessages.DateRequired,
+            });
+            return;
+        }
 
-            const stats = await this.pomodoroService.getStats(userId, date);
-            res.status(code.OK).json(stats || {
+        const stats = await this.pomodoroService.getStats(userId, date);
+        res.status(code.OK).json(
+            stats || {
                 date,
                 totalFocusTime: 0,
                 totalCycles: 0,
-                sessions: []
-            });
+                sessions: [],
+            }
+        );
     };
 }

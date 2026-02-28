@@ -70,7 +70,7 @@ const MentorMangement = () => {
         }
     };
 
-    const filteredMentors = mentors; 
+    const filteredMentors = mentors;
 
     return (
         <div className="p-6 space-y-6 max-w-7xl mx-auto">

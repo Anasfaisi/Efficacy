@@ -1,14 +1,29 @@
+import { BaseRepository } from './base.repository';
 import { IChatRepository } from './interfaces/IChat.repository';
 import { ConversationModel, IConversation } from '@/models/Conversation.model';
-import { MessageModel, IMessage } from '@/models/Message.model';
-import { injectable } from 'inversify';
+import { IMessage } from '@/models/Message.model';
+import { injectable, inject } from 'inversify';
+import { IMessageRepository } from './interfaces/IMessage.repository';
+import { TYPES } from '@/config/inversify-key.types';
 
 @injectable()
-export class ChatRepository implements IChatRepository {
+export class ChatRepository
+    extends BaseRepository<IConversation>
+    implements IChatRepository
+{
+    private messageRepository: IMessageRepository;
+
+    constructor(
+        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository
+    ) {
+        super(ConversationModel);
+        this.messageRepository = messageRepository;
+    }
+
     async createConversation(
         participants: { _id: string; onModel: string }[]
     ): Promise<IConversation> {
-        const newConversation = await ConversationModel.create({
+        const newConversation = await this.model.create({
             participants,
         });
 
@@ -29,7 +44,7 @@ export class ChatRepository implements IChatRepository {
     ): Promise<IConversation | null> {
         const participantIds = participants.map((p) => p._id);
 
-        const conversation = await ConversationModel.findOne({
+        const conversation = await this.model.findOne({
             participants: { $size: participantIds.length },
             'participants._id': { $all: participantIds },
         })
@@ -47,7 +62,7 @@ export class ChatRepository implements IChatRepository {
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
-        const conversations = await ConversationModel.find({
+        const conversations = await this.model.find({
             'participants._id': userId,
         })
             .populate('participants._id', 'name profilePic role email')
@@ -62,7 +77,7 @@ export class ChatRepository implements IChatRepository {
     }
 
     async getConversationById(id: string): Promise<IConversation | null> {
-        const conversation = await ConversationModel.findById(id)
+        const conversation = await this.model.findById(id)
             .populate('participants._id', 'name profilePic role email')
             .lean();
 
@@ -77,10 +92,11 @@ export class ChatRepository implements IChatRepository {
     }
 
     async createMessage(data: Partial<IMessage>): Promise<IMessage> {
-        let message = await MessageModel.create(data);
-        message = await message.populate('senderId', 'name');
-        
-        const msgObject = message.toObject();
+        let message = await this.messageRepository.create(data);
+    
+        message = await (message as any).populate('senderId', 'name');
+
+        const msgObject = (message as any).toObject ? (message as any).toObject() : message;
         return {
             ...msgObject,
             senderName: (msgObject.senderId as any)?.name,
@@ -93,15 +109,13 @@ export class ChatRepository implements IChatRepository {
         limit: number = 50,
         skip: number = 0
     ): Promise<IMessage[]> {
-        const messages = await MessageModel.find({ conversationId })
-            .populate('senderId', 'name')
-            .sort({ createdAt: 1 })
-            .skip(skip)
-            .limit(limit)
-            .lean();
+       
+        const messages = await (this.messageRepository as any).findByChat(conversationId);
         
-        return messages.map((msg: any) => ({
-            ...msg,
+        const paginatedMessages = messages.slice(skip, skip + limit);
+
+        return paginatedMessages.map((msg: any) => ({
+            ...(msg.toObject ? msg.toObject() : msg),
             senderName: msg.senderId?.name,
             senderId: msg.senderId?._id,
         }));
@@ -111,26 +125,27 @@ export class ChatRepository implements IChatRepository {
         conversationId: string,
         userId: string
     ): Promise<void> {
-        await MessageModel.updateMany(
+        await this.messageRepository.updateMany(
             { conversationId, senderId: { $ne: userId }, isRead: false },
-            { $set: { isRead: true } }
-        );
+            { isRead: true } 
+        ) as void;
     }
 
     async updateLastMessage(
         conversationId: string,
         messageId: string
     ): Promise<void> {
-        await ConversationModel.findByIdAndUpdate(conversationId, {
-            lastMessage: messageId,
+        await this.updateOne(conversationId, {
+            lastMessage: messageId as any,
         });
     }
 
     async deleteMessage(messageId: string): Promise<IMessage | null> {
-        return MessageModel.findByIdAndDelete(messageId);
+        await this.messageRepository.deleteOne(messageId);
+        return null; // Return type compatibility, technically findByIdAndDelete returns the doc.
     }
 
     async getMessageById(messageId: string): Promise<IMessage | null> {
-        return MessageModel.findById(messageId);
+        return this.messageRepository.findById(messageId);
     }
 }

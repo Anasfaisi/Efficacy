@@ -83,7 +83,9 @@ export class MentorController {
             res.status(code.OK).json(AuthMessages.LogoutSuccess);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : CommonMessages.UnexpectedError;
+                error instanceof Error
+                    ? error.message
+                    : CommonMessages.UnexpectedError;
             console.error('Logout error:', message);
             res.status(code.INTERNAL_SERVER_ERROR).json(
                 AuthMessages.LogoutFailed
@@ -92,19 +94,23 @@ export class MentorController {
     }
     async getProfile(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
+            if (!req.currentUser)
+                throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const mentor = await this._mentorService.getMentorProfile(userId);
             res.status(code.OK).json({ mentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : CommonMessages.UnexpectedError;
+                error instanceof Error
+                    ? error.message
+                    : CommonMessages.UnexpectedError;
             res.status(code.NOT_FOUND).json({ message });
         }
     }
     async updateProfileBasicInfo(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
+            if (!req.currentUser)
+                throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
 
             const updateDto = new UpdateMentorProfileDto();
@@ -118,14 +124,17 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.GeneralUpdateFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.GeneralUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async updateProfileMedia(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
+            if (!req.currentUser)
+                throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const updatedMentor =
                 await this._mentorService.updateMentorProfileMedia(
@@ -135,14 +144,17 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.MediaUpdateFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.MediaUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async updateProfileArray(req: Request, res: Response) {
         try {
-            if (!req.currentUser) throw new Error(ErrorMessages.UserContextMissing);
+            if (!req.currentUser)
+                throw new Error(ErrorMessages.UserContextMissing);
             const userId = req.currentUser.id;
             const { field, data } = req.body;
 
@@ -158,7 +170,9 @@ export class MentorController {
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.ArrayUpdateFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.ArrayUpdateFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -211,7 +225,29 @@ export class MentorController {
                 error instanceof Error
                     ? error.message
                     : 'Failed to fetch mentors';
-            res.status(code.INTERNAL_SERVER_ERROR).json({ message: ErrorMessages.FetchMentorsFailed });
+            res.status(code.INTERNAL_SERVER_ERROR).json({
+                message: ErrorMessages.FetchMentorsFailed,
+            });
+        }
+    }
+
+    async getMentorById(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const mentor = await this._mentorService.getMentorById(id);
+            if (!mentor) {
+                res.status(code.NOT_FOUND).json({
+                    message: ErrorMessages.MentorNotFound,
+                });
+                return;
+            }
+            res.status(code.OK).json({ mentor });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to fetch mentor';
+            res.status(code.INTERNAL_SERVER_ERROR).json({ message });
         }
     }
 
@@ -223,7 +259,9 @@ export class MentorController {
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.ResendOtpFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.ResendOtpFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
@@ -278,14 +316,18 @@ export class MentorController {
             res.status(code.OK).json(result);
         } catch (error: unknown) {
             const message =
-                error instanceof Error ? error.message : ErrorMessages.GoogleLoginFailed;
+                error instanceof Error
+                    ? error.message
+                    : ErrorMessages.GoogleLoginFailed;
             res.status(code.BAD_REQUEST).json({ message });
         }
     }
 
     async getNotifications(req: Request, res: Response): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
         const notifications =
@@ -298,7 +340,9 @@ export class MentorController {
     async markNotificationAsRead(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._notificationService.markAsRead(id);
-        res.status(code.OK).json({ message: SuccessMessages.NotificationMarkedRead });
+        res.status(code.OK).json({
+            message: SuccessMessages.NotificationMarkedRead,
+        });
     }
 
     async markAllNotificationsAsRead(
@@ -306,7 +350,9 @@ export class MentorController {
         res: Response
     ): Promise<void> {
         if (!req.currentUser) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
         await this._notificationService.markAllAsRead(req.currentUser.id);

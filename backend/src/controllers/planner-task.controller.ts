@@ -3,10 +3,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTaskService } from '@/serivces/Interfaces/IPlannerTask.service';
 import code from '@/types/http-status.enum';
-import {
-    ErrorMessages,
-    CommonMessages,
-} from '@/types/response-messages.types';
+import { ErrorMessages, CommonMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PlannerTaskController {
@@ -18,7 +15,9 @@ export class PlannerTaskController {
     async createTask(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 
@@ -30,7 +29,9 @@ export class PlannerTaskController {
     async getTasks(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 
@@ -42,7 +43,9 @@ export class PlannerTaskController {
         const userId = req.currentUser?.id;
         const { taskId } = req.params;
         if (!userId) {
-            res.status(code.UNAUTHORIZED).json({ message: CommonMessages.Unauthorized });
+            res.status(code.UNAUTHORIZED).json({
+                message: CommonMessages.Unauthorized,
+            });
             return;
         }
 
@@ -52,7 +55,9 @@ export class PlannerTaskController {
             req.body
         );
         if (!task) {
-            res.status(code.NOT_FOUND).json({ message: ErrorMessages.TaskNotFound });
+            res.status(code.NOT_FOUND).json({
+                message: ErrorMessages.TaskNotFound,
+            });
             return;
         }
         res.status(code.OK).json(task);

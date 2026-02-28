@@ -46,7 +46,9 @@ const UserMentorshipStatus: React.FC = () => {
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || (error as Error).message || 'Failed to confirm suggestion';
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Failed to confirm suggestion';
             toast.error(errorMessage);
         }
     };
@@ -68,7 +70,9 @@ const UserMentorshipStatus: React.FC = () => {
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || (error as Error).message || 'Payment initiation failed';
+                    ?.response?.data?.message ||
+                (error as Error).message ||
+                'Payment initiation failed';
             toast.error(errorMessage);
         }
     };
@@ -108,8 +112,7 @@ const UserMentorshipStatus: React.FC = () => {
                                 {mentor?.name}
                             </h3>
                             <p className="text-sm text-gray-500 font-medium">
-                                {mentor?.currentRole ||
-                                    'Expert Mentor'}
+                                {mentor?.currentRole || 'Expert Mentor'}
                             </p>
                         </div>
                     </div>

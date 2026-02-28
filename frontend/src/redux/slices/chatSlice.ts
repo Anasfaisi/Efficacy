@@ -1,4 +1,4 @@
-import { createSlice,type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { ChatState, Conversation, Message } from '@/types/chat.types';
 
 const initialState: ChatState = {
@@ -15,16 +15,21 @@ const chatSlice = createSlice({
         setConversations(state, action: PayloadAction<Conversation[]>) {
             state.conversations = action.payload;
         },
-        setCurrentConversation(state, action: PayloadAction<Conversation | null>) {
+        setCurrentConversation(
+            state,
+            action: PayloadAction<Conversation | null>
+        ) {
             state.currentConversation = action.payload;
         },
         updateConversationPreview(state, action: PayloadAction<Message>) {
-            const conversationIndex = state.conversations.findIndex(c => c._id === action.payload.conversationId);
+            const conversationIndex = state.conversations.findIndex(
+                (c) => c._id === action.payload.conversationId
+            );
             if (conversationIndex !== -1) {
                 const conversation = state.conversations[conversationIndex];
                 conversation.lastMessage = action.payload;
                 conversation.updatedAt = action.payload.createdAt;
-                
+
                 state.conversations.splice(conversationIndex, 1);
                 state.conversations.unshift(conversation);
             }
@@ -34,16 +39,16 @@ const chatSlice = createSlice({
         },
         setError(state, action: PayloadAction<string | null>) {
             state.error = action.payload;
-        }
+        },
     },
 });
 
-export const { 
-    setConversations, 
-    setCurrentConversation, 
+export const {
+    setConversations,
+    setCurrentConversation,
     updateConversationPreview,
-    setLoading, 
-    setError 
+    setLoading,
+    setError,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

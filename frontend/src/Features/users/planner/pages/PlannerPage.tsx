@@ -20,7 +20,8 @@ const PlannerPage: React.FC = () => {
     >(undefined);
 
     const [summaryModalOpen, setSummaryModalOpen] = useState(false);
-    const [selectedDateForSummary, setSelectedDateForSummary] = useState<Date | null>(null);
+    const [selectedDateForSummary, setSelectedDateForSummary] =
+        useState<Date | null>(null);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
 
     const fetchTasks = async () => {
@@ -124,7 +125,7 @@ const PlannerPage: React.FC = () => {
             {summaryModalOpen && selectedDateForSummary && (
                 <DailySummaryModal
                     date={selectedDateForSummary}
-                    tasks={tasks.filter(task => {
+                    tasks={tasks.filter((task) => {
                         const taskStart = new Date(task.startDate);
                         const taskEnd = new Date(task.endDate);
                         const dayStart = startOfDay(selectedDateForSummary);

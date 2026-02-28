@@ -26,7 +26,6 @@ export const MentorNotificationListener: React.FC = () => {
 
     const handleNotification = useCallback(
         (notification: Notification) => {
-           
             const processedNotification: Notification = {
                 ...notification,
                 _id: notification._id || `temp-${Date.now()}`,
@@ -144,7 +143,7 @@ export const MentorNotificationListener: React.FC = () => {
     const currentUserId = (currentUser as any)?.id || (currentUser as any)?._id;
 
     useEffect(() => {
-            mentorApi
+        mentorApi
             .getNotifications()
             .then((data) => {
                 if (Array.isArray(data)) {
@@ -155,11 +154,9 @@ export const MentorNotificationListener: React.FC = () => {
                 console.error('Failed to fetch mentor notifications', err);
             });
 
-
         const socket = connectSocket();
 
         if (socket) {
-           
             if (currentUserId) joinUserRoom(currentUserId);
 
             onNewNotification(handleNotification);
@@ -178,11 +175,9 @@ export const MentorNotificationListener: React.FC = () => {
         }
 
         return () => {
-           
             offNotificationEvents();
         };
     }, [currentUserId, currentUser?.role, handleNotification]);
-
 
     return (
         <div

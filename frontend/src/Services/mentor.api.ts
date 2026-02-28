@@ -64,6 +64,11 @@ export const mentorApi = {
         console.log(res.data, 'approved mentors');
         return res.data;
     },
+    getMentorById: async (id: string): Promise<Mentor> => {
+        const res = await api.get(`/mentor/${id}`);
+        console.log(res,"form mentor api'")
+        return res.data.mentor;
+    },
     verifyOtp: async (data: { email: string; otp: string; role: string }) => {
         const res = await api.post('/mentor/register/verify', data);
         return res.data;

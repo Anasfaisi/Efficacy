@@ -26,7 +26,7 @@ const MentorWalletPage: React.FC = () => {
             setLoading(true);
             const [walletData, txData] = await Promise.all([
                 walletApi.getWallet(),
-                walletApi.getTransactions(page, limit)
+                walletApi.getTransactions(page, limit),
             ]);
             setWallet(walletData);
             setTransactions(txData.transactions);
@@ -219,69 +219,81 @@ const MentorWalletPage: React.FC = () => {
                             </div>
                         ) : (
                             <>
-                            {transactions.map((tx: any, idx: number) => (
-                                <div
-                                    key={tx._id || idx}
-                                    className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div
-                                            className={`p-3 rounded-2xl ${tx.type === 'earning' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}
-                                        >
-                                            {tx.type === 'earning' ? (
-                                                <ArrowDownCircle size={20} />
-                                            ) : (
-                                                <ArrowUpCircle size={20} />
-                                            )}
+                                {transactions.map((tx: any, idx: number) => (
+                                    <div
+                                        key={tx._id || idx}
+                                        className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div
+                                                className={`p-3 rounded-2xl ${tx.type === 'earning' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}
+                                            >
+                                                {tx.type === 'earning' ? (
+                                                    <ArrowDownCircle
+                                                        size={20}
+                                                    />
+                                                ) : (
+                                                    <ArrowUpCircle size={20} />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-gray-900">
+                                                    {tx.description}
+                                                </p>
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                    {new Date(
+                                                        tx.date
+                                                    ).toLocaleDateString()}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-gray-900">
-                                                {tx.description}
+                                        <div className="text-right">
+                                            <p
+                                                className={`font-black ${tx.type === 'earning' ? 'text-green-600' : 'text-orange-600'}`}
+                                            >
+                                                {tx.type === 'earning'
+                                                    ? '+'
+                                                    : '-'}{' '}
+                                                ₹{tx.amount}
                                             </p>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                {new Date(
-                                                    tx.date
-                                                ).toLocaleDateString()}
-                                            </p>
+                                            <span
+                                                className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${tx.status === 'completed' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}
+                                            >
+                                                {tx.status}
+                                            </span>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p
-                                            className={`font-black ${tx.type === 'earning' ? 'text-green-600' : 'text-orange-600'}`}
-                                        >
-                                            {tx.type === 'earning' ? '+' : '-'}{' '}
-                                            ₹{tx.amount}
-                                        </p>
-                                        <span
-                                            className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${tx.status === 'completed' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}
-                                        >
-                                            {tx.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
 
-                            {totalPages > 1 && (
-                                <div className="p-6 border-t border-gray-50 flex items-center justify-center gap-4">
-                                    <button
-                                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                                        disabled={page === 1}
-                                        className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-                                    >
-                                        <ChevronLeft size={20} />
-                                    </button>
-                                    <span className="text-sm font-bold text-gray-600">
-                                        Page {page} of {totalPages}
-                                    </span>
-                                    <button
-                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                        disabled={page === totalPages}
-                                        className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-                                    >
-                                        <ChevronRight size={20} />
-                                    </button>
-                                </div>
-                            )}
+                                {totalPages > 1 && (
+                                    <div className="p-6 border-t border-gray-50 flex items-center justify-center gap-4">
+                                        <button
+                                            onClick={() =>
+                                                setPage((p) =>
+                                                    Math.max(1, p - 1)
+                                                )
+                                            }
+                                            disabled={page === 1}
+                                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <ChevronLeft size={20} />
+                                        </button>
+                                        <span className="text-sm font-bold text-gray-600">
+                                            Page {page} of {totalPages}
+                                        </span>
+                                        <button
+                                            onClick={() =>
+                                                setPage((p) =>
+                                                    Math.min(totalPages, p + 1)
+                                                )
+                                            }
+                                            disabled={page === totalPages}
+                                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <ChevronRight size={20} />
+                                        </button>
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>

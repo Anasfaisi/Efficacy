@@ -1,4 +1,4 @@
-import api from './axiosConfig'; 
+import api from './axiosConfig';
 import type { Conversation, Message } from '@/types/chat.types';
 
 export const chatApi = {
@@ -29,5 +29,5 @@ export const chatApi = {
 
     deleteMessage: async (messageId: string): Promise<void> => {
         await api.delete(`/chat/messages/${messageId}`);
-    }
+    },
 };

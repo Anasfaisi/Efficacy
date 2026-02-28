@@ -55,9 +55,14 @@ const RescheduleModal: React.FC<RescheduleModalProps> = ({
                         <div className="flex justify-between items-center mb-8">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-purple-100 rounded-xl">
-                                    <RefreshCw size={20} className="text-[#7F00FF]" />
+                                    <RefreshCw
+                                        size={20}
+                                        className="text-[#7F00FF]"
+                                    />
                                 </div>
-                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Request Reschedule</h2>
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                                    Request Reschedule
+                                </h2>
                             </div>
                             <button
                                 onClick={onClose}
@@ -69,21 +74,48 @@ const RescheduleModal: React.FC<RescheduleModalProps> = ({
 
                         <div className="space-y-6 mb-8">
                             <div className="p-6 bg-gray-50/50 rounded-3xl border border-gray-100 italic text-gray-600 text-sm">
-                                "Are you sure you want to request a reschedule for your session on <span className="font-bold text-gray-900">{bookingDetails.date}</span> at <span className="font-bold text-gray-900">{bookingDetails.slot}</span>?"
+                                "Are you sure you want to request a reschedule
+                                for your session on{' '}
+                                <span className="font-bold text-gray-900">
+                                    {bookingDetails.date}
+                                </span>{' '}
+                                at{' '}
+                                <span className="font-bold text-gray-900">
+                                    {bookingDetails.slot}
+                                </span>
+                                ?"
                             </div>
 
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3 bg-[#7F00FF]/5 p-4 rounded-2xl border border-[#7F00FF]/10">
-                                    <Info size={18} className="text-[#7F00FF] mt-0.5" />
+                                    <Info
+                                        size={18}
+                                        className="text-[#7F00FF] mt-0.5"
+                                    />
                                     <p className="text-xs text-slate-600 leading-relaxed">
-                                        Once requested, the mentor will be notified. They will propose a new date and time for your approval.
+                                        Once requested, the mentor will be
+                                        notified. They will propose a new date
+                                        and time for your approval.
                                     </p>
                                 </div>
 
                                 <div className="flex items-start gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                                    <AlertCircle size={18} className="text-amber-500 mt-0.5" />
+                                    <AlertCircle
+                                        size={18}
+                                        className="text-amber-500 mt-0.5"
+                                    />
                                     <p className="text-xs text-amber-700 leading-relaxed font-medium">
-                                        Please note: The session status will only be updated to <span className="font-bold underline">Scheduled</span> or <span className="font-bold underline">Cancelled</span> after the mentor's approval of the new time.
+                                        Please note: The session status will
+                                        only be updated to{' '}
+                                        <span className="font-bold underline">
+                                            Scheduled
+                                        </span>{' '}
+                                        or{' '}
+                                        <span className="font-bold underline">
+                                            Cancelled
+                                        </span>{' '}
+                                        after the mentor's approval of the new
+                                        time.
                                     </p>
                                 </div>
                             </div>
@@ -97,7 +129,10 @@ const RescheduleModal: React.FC<RescheduleModalProps> = ({
                             >
                                 {isSubmitting ? (
                                     <>
-                                        <RefreshCw size={18} className="animate-spin" />
+                                        <RefreshCw
+                                            size={18}
+                                            className="animate-spin"
+                                        />
                                         Sending Request...
                                     </>
                                 ) : (
@@ -119,15 +154,15 @@ const RescheduleModal: React.FC<RescheduleModalProps> = ({
 };
 
 const Info = ({ size, className }: { size: number; className?: string }) => (
-    <svg 
-        width={size} 
-        height={size} 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         className={className}
     >
         <circle cx="12" cy="12" r="10" />

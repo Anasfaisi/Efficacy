@@ -12,8 +12,10 @@ import { logPomodoroSession } from '@/Services/pomodoro.api';
 
 const PomodoroPage: React.FC = () => {
     const dispatch = useDispatch();
-    
-    const { today, currentSessionCompleted, timerState } = useSelector((state: RootState) => state.pomodoro);
+
+    const { today, currentSessionCompleted, timerState } = useSelector(
+        (state: RootState) => state.pomodoro
+    );
 
     const handleSessionComplete = async (duration: number, mode: TimerMode) => {
         dispatch(updateSession({ duration, type: mode }));
@@ -25,7 +27,12 @@ const PomodoroPage: React.FC = () => {
         }
     };
 
-    const handleTimerStateChange = (state: { mode: TimerMode; timeLeft: number; isActive: boolean; lastUpdated: number | null }) => {
+    const handleTimerStateChange = (state: {
+        mode: TimerMode;
+        timeLeft: number;
+        isActive: boolean;
+        lastUpdated: number | null;
+    }) => {
         dispatch(updateTimerState(state));
     };
 
@@ -51,12 +58,15 @@ const PomodoroPage: React.FC = () => {
                             {/* Left Column: Timer */}
                             <div className="flex flex-col gap-4">
                                 <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
-                                    <Timer className="text-[#f87171]" size={20} />
+                                    <Timer
+                                        className="text-[#f87171]"
+                                        size={20}
+                                    />
                                     Pomodoro Timer
                                 </h2>
-                                <PomodoroTimer 
+                                <PomodoroTimer
                                     onSessionComplete={handleSessionComplete}
-                                    initialState={timerState as any} 
+                                    initialState={timerState as any}
                                     onStateChange={handleTimerStateChange}
                                 />
                             </div>
@@ -64,13 +74,19 @@ const PomodoroPage: React.FC = () => {
                             {/* Right Column: Analyzer */}
                             <div className="flex flex-col gap-4">
                                 <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
-                                    <BarChart3 className="text-[#2196F3]" size={20} />
+                                    <BarChart3
+                                        className="text-[#2196F3]"
+                                        size={20}
+                                    />
                                     Timer Analyzer
                                 </h2>
-                                <TimerAnalyzer stats={{
-                                    ...today,
-                                    currentSessionCompleted: currentSessionCompleted
-                                }} />
+                                <TimerAnalyzer
+                                    stats={{
+                                        ...today,
+                                        currentSessionCompleted:
+                                            currentSessionCompleted,
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>

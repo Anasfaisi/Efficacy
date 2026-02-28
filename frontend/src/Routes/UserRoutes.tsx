@@ -1,27 +1,28 @@
-import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-
-import Home from '../Features/users/home/pages/Home';
-import { Navigate } from 'react-router-dom';
-import { logout } from '@/redux/slices/authSlice';
+import React, { useEffect, Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAppDispatch } from '@/redux/hooks';
+import { logout } from '@/redux/slices/authSlice';
 import { logoutApi } from '@/Services/user.api';
-import SuccessPage from '@/Features/users/payment/pages/SuccessPage';
-import CancelPage from '@/Features/users/payment/pages/CancelPage';
-import ChatPage from '@/Features/users/chat/pages/ChatPage';
-import SubscriptionForm from '@/Features/users/payment/pages/CheckoutForm';
-import UserProfilePage from '@/Features/users/profile/pages/UserProfilePage';
-import TasksPage from '@/Features/users/KanbanBorad/pages/TasksPage';
-import MentorListingPage from '@/Features/users/mentors/pages/MentorListingPage';
-import PlannerPage from '@/Features/users/planner/pages/PlannerPage';
-import MentorshipManagementPage from '../Features/users/mentors/pages/MentorshipManagementPage';
-import MyMentorshipsPage from '@/Features/users/mentors/pages/MyMentorshipsPage';
-import NotFound from '@/Features/common/pages/NotFound';
-import PomodoroPage from '@/Features/users/pomodoro/pages/PomodoroPage';
-import NotesPage from '@/Features/users/notes/pages/NotesPage';
-import UserWalletPage from '@/Features/users/profile/pages/UserWalletPage';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
 
+// Lazy load components
+const Home = lazy(() => import('../Features/users/home/pages/Home'));
+const SuccessPage = lazy(() => import('@/Features/users/payment/pages/SuccessPage'));
+const CancelPage = lazy(() => import('@/Features/users/payment/pages/CancelPage'));
+const ChatPage = lazy(() => import('@/Features/users/chat/pages/ChatPage'));
+const SubscriptionForm = lazy(() => import('@/Features/users/payment/pages/CheckoutForm'));
+const UserProfilePage = lazy(() => import('@/Features/users/profile/pages/UserProfilePage'));
+const TasksPage = lazy(() => import('@/Features/users/KanbanBorad/pages/TasksPage'));
+const MentorListingPage = lazy(() => import('@/Features/users/mentors/pages/MentorListingPage'));
+const MentorDetailPage = lazy(() => import('@/Features/users/mentors/pages/MentorDetailPage'));
+const PlannerPage = lazy(() => import('@/Features/users/planner/pages/PlannerPage'));
+const MentorshipManagementPage = lazy(() => import('../Features/users/mentors/pages/MentorshipManagementPage'));
+const MyMentorshipsPage = lazy(() => import('@/Features/users/mentors/pages/MyMentorshipsPage'));
+const NotFound = lazy(() => import('@/Features/common/pages/NotFound'));
+const PomodoroPage = lazy(() => import('@/Features/users/pomodoro/pages/PomodoroPage'));
+const NotesPage = lazy(() => import('@/Features/users/notes/pages/NotesPage'));
+const UserWalletPage = lazy(() => import('@/Features/users/profile/pages/UserWalletPage'));
+const BookingHistoryPage = lazy(() => import('@/Features/users/mentors/pages/BookingHistoryPage'));
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -45,31 +46,37 @@ const UserRoutes: React.FC = () => {
     return (
         <>
             <UserNotificationListener />
-            <Routes>
-                <Route path="home" element={<Home />} />
-            <Route path="logout" element={<Logout />} />
+            <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+                <Routes>
+                    <Route path="home" element={<Home />} />
+                    <Route path="logout" element={<Logout />} />
 
-            <Route path="success" element={<SuccessPage />} />
-            <Route path="failed" element={<CancelPage />} />
-            <Route path="subscription" element={<SubscriptionForm />} />
+                    <Route path="success" element={<SuccessPage />} />
+                    <Route path="failed" element={<CancelPage />} />
+                    <Route path="subscription" element={<SubscriptionForm />} />
 
-            <Route path="chat" element={<ChatPage />} />
-            <Route path="profile" element={<UserProfilePage />} />
-            <Route path="profile/wallet" element={<UserWalletPage />} />
+                    <Route path="chat" element={<ChatPage />} />
+                    <Route path="profile" element={<UserProfilePage />} />
+                    <Route path="profile/wallet" element={<UserWalletPage />} />
 
-
-            <Route path="tasks" element={<TasksPage />} />
-            <Route path="mentors" element={<MentorListingPage />} />
-            <Route path="my-mentorships" element={<MyMentorshipsPage />} />
-            <Route
-                path="mentorship/:id"
-                element={<MentorshipManagementPage />}
-            />
-            <Route path="planner" element={<PlannerPage />} />
-            <Route path="pomodoro" element={<PomodoroPage />} />
-            <Route path="notes" element={<NotesPage />} />
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+                    <Route path="tasks" element={<TasksPage />} />
+                    <Route path="mentors" element={<MentorListingPage />} />
+                    <Route path="mentors/:id" element={<MentorDetailPage />} />
+                    <Route path="my-mentorships" element={<MyMentorshipsPage />} />
+                    <Route
+                        path="mentorship/:id"
+                        element={<MentorshipManagementPage />}
+                    />
+                    <Route
+                        path="booking-history"
+                        element={<BookingHistoryPage />}
+                    />
+                    <Route path="planner" element={<PlannerPage />} />
+                    <Route path="pomodoro" element={<PomodoroPage />} />
+                    <Route path="notes" element={<NotesPage />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </Suspense>
         </>
     );
 };

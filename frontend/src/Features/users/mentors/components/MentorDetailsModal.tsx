@@ -54,8 +54,8 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({
         } catch (error) {
             const errorMessage =
                 (error as { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || 
-                (error as Error).message || 
+                    ?.response?.data?.message ||
+                (error as Error).message ||
                 'Failed to send mentorship request';
             toast.error(errorMessage);
         } finally {

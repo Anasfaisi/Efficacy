@@ -7,10 +7,9 @@ export const walletApi = {
     },
 
     requestWithdrawal: async (amount: number) => {
-        const response = await api.post(
-            '/mentorship/wallet/withdraw',
-            { amount }
-        );
+        const response = await api.post('/mentorship/wallet/withdraw', {
+            amount,
+        });
         return response.data;
     },
 

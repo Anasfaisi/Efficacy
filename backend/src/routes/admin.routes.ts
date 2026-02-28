@@ -130,5 +130,11 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.getTransactions.bind(adminController))
     );
 
+    router.get(
+        '/dashboard-stats',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(adminController.getDashboardStats.bind(adminController))
+    );
+
     return router;
 }

@@ -25,7 +25,10 @@ const pomodoroPersistConfig = {
 };
 
 const persistedChatReducer = persistReducer(chatPersistConfig, chatReducer);
-const persistedPomodoroReducer = persistReducer(pomodoroPersistConfig, pomodoroReducer);
+const persistedPomodoroReducer = persistReducer(
+    pomodoroPersistConfig,
+    pomodoroReducer
+);
 
 export const store = configureStore({
     reducer: {

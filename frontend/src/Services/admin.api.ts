@@ -128,4 +128,9 @@ export const adminService = {
         );
         return response.data;
     },
+
+    getDashboardStats: async (): Promise<{ totalUsers: number, totalMentors: number, totalRevenue: number }> => {
+        const response = await api.get('/admin/dashboard-stats');
+        return response.data;
+    }
 };

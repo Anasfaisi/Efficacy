@@ -478,7 +478,11 @@ export default function MentorDetailsPage() {
                                         Resume
                                     </span>
                                     <a
-                                        href={typeof mentor.resume === 'string' ? mentor.resume : '#'}
+                                        href={
+                                            typeof mentor.resume === 'string'
+                                                ? mentor.resume
+                                                : '#'
+                                        }
                                         target="_blank"
                                         rel="noreferrer"
                                         className="text-xs text-blue-600 font-bold hover:underline"

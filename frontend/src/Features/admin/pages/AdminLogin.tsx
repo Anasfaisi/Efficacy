@@ -9,7 +9,7 @@ import type { RootState, AppDispatch } from '@/redux/store';
 import { cn } from '@/lib/utils';
 import { loginFormSchema } from '@/types/zodSchemas';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
+import { Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { adminService } from '@/Services/admin.api';
@@ -67,8 +67,8 @@ const AdminLogin = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
             >
-                <div className="w-20 h-20 bg-blue-900 rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl">
-                    <ShieldCheck size={40} />
+                <div className="mx-auto mb-8 flex justify-center">
+                    <img src="/Title logo.png" alt="Efficacy Admin" className="h-20 object-contain drop-shadow-md" />
                 </div>
 
                 <h2 className="text-3xl font-black text-blue-900 text-center mb-3">
@@ -143,7 +143,7 @@ const AdminLogin = () => {
                             <Loader2 className="animate-spin" />
                         ) : (
                             <>
-                                <LogIn size={20} /> Authorize
+                                <LogIn size={20} /> Login
                             </>
                         )}
                     </button>

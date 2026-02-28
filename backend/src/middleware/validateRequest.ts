@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 import code from '@/types/http-status.enum';
+import { logger } from '@/utils/logMiddlewares';
 
 export const validateRequest = (schema: ZodSchema) => {
     return async (
@@ -12,6 +13,7 @@ export const validateRequest = (schema: ZodSchema) => {
             req.body = await schema.parseAsync(req.body);
             next();
         } catch (error) {
+            logger.error(error);
             if (error instanceof ZodError) {
                 const errorMessages = error.issues.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,

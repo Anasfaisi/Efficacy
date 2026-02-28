@@ -43,10 +43,9 @@ export const mentorshipApi = {
     },
 
     confirmSuggestion: async (id: string, confirm: boolean) => {
-        const response = await api.patch(
-            `/mentorship/request/${id}/confirm`,
-            { confirm }
-        );
+        const response = await api.patch(`/mentorship/request/${id}/confirm`, {
+            confirm,
+        });
         return response.data;
     },
 
@@ -63,14 +62,11 @@ export const mentorshipApi = {
         successUrl: string,
         cancelUrl: string
     ) => {
-        const response = await api.post(
-            `/payments/checkout-mentorship`,
-            {
-                mentorshipId,
-                successUrl,
-                cancelUrl,
-            }
-        );
+        const response = await api.post(`/payments/checkout-mentorship`, {
+            mentorshipId,
+            successUrl,
+            cancelUrl,
+        });
         console.log(response.data, 'response data mentorship api');
         return response.data;
     },
@@ -87,10 +83,10 @@ export const mentorshipApi = {
     },
 
     bookSession: async (id: string, date: Date, slot: string) => {
-        const response = await api.post(
-            `/mentorship/${id}/book-session`,
-            { date, slot }
-        );
+        const response = await api.post(`/mentorship/${id}/book-session`, {
+            date,
+            slot,
+        });
         return response.data;
     },
 
@@ -106,10 +102,12 @@ export const mentorshipApi = {
     },
 
     completeMentorship: async (id: string, role: 'user' | 'mentor') => {
-        const response = await api.post(
-            `/mentorship/${id}/complete`,
-            { role }
-        );
+        const response = await api.post(`/mentorship/${id}/complete`, { role });
+        return response.data;
+    },
+
+    updateUsedSession: async(mentorshipId:string)=>{
+        const response = await api.patch(`/mentorship/${mentorshipId}`)
         return response.data;
     },
 
@@ -117,10 +115,7 @@ export const mentorshipApi = {
         id: string,
         data: { role: 'user' | 'mentor'; rating: number; comment: string }
     ) => {
-        const response = await api.post(
-            `/mentorship/${id}/feedback`,
-            data
-        );
+        const response = await api.post(`/mentorship/${id}/feedback`, data);
         return response.data;
     },
 

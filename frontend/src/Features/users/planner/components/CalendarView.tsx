@@ -98,16 +98,22 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         const taskEnd = new Date(task.endDate);
         const dayStart = startOfDay(day);
         const dayEnd = addDays(dayStart, 1);
-        
-        const displayStart = new Date(Math.max(taskStart.getTime(), dayStart.getTime()));
-        const displayEnd = new Date(Math.min(taskEnd.getTime(), dayEnd.getTime()));
-        
-        const startHour = (displayStart.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
-        const endHour = (displayEnd.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
+
+        const displayStart = new Date(
+            Math.max(taskStart.getTime(), dayStart.getTime())
+        );
+        const displayEnd = new Date(
+            Math.min(taskEnd.getTime(), dayEnd.getTime())
+        );
+
+        const startHour =
+            (displayStart.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
+        const endHour =
+            (displayEnd.getTime() - dayStart.getTime()) / (1000 * 60 * 60);
         const durationInHours = endHour - startHour;
-        
-        const top = `${startHour * 64}px`; 
-        const height = `${Math.max(durationInHours * 64, 28)}px`; 
+
+        const top = `${startHour * 64}px`;
+        const height = `${Math.max(durationInHours * 64, 28)}px`;
 
         let colorClasses =
             'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20';
@@ -131,42 +137,52 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
     const getMonthViewTaskStyle = (task: IPlannerTask) => {
         let colorClasses = 'bg-primary/10 text-primary';
-        if (task.priority === Priority.HIGH) colorClasses = 'bg-rose-100 text-rose-800';
-        else if (task.priority === Priority.MEDIUM) colorClasses = 'bg-amber-100 text-amber-800';
-        else if (task.priority === Priority.LOW) colorClasses = 'bg-emerald-100 text-emerald-800';
-        
-        if (task.completed) colorClasses = 'bg-gray-100 text-gray-500 line-through';
-        
+        if (task.priority === Priority.HIGH)
+            colorClasses = 'bg-rose-100 text-rose-800';
+        else if (task.priority === Priority.MEDIUM)
+            colorClasses = 'bg-amber-100 text-amber-800';
+        else if (task.priority === Priority.LOW)
+            colorClasses = 'bg-emerald-100 text-emerald-800';
+
+        if (task.completed)
+            colorClasses = 'bg-gray-100 text-gray-500 line-through';
+
         return colorClasses;
-    }
+    };
 
     const renderTimeGridView = () => (
         <div className="flex-1 overflow-auto custom-scrollbar relative bg-white">
             <div className="min-w-[800px] relative">
                 {/* Header (Dates) */}
                 <div className="sticky top-0 z-20 flex bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-                     <div className="w-20 flex-shrink-0 border-r border-gray-100 flex items-end justify-end pb-2 pr-2">
+                    <div className="w-20 flex-shrink-0 border-r border-gray-100 flex items-end justify-end pb-2 pr-2">
                         <span className="text-[10px] font-bold text-gray-400">
-                             GMT{format(new Date(), 'x')}
+                            GMT{format(new Date(), 'x')}
                         </span>
                     </div>
                     {daysToRender.map((day) => {
-                         const today = isToday(day);
+                        const today = isToday(day);
                         return (
                             <div
                                 key={day.toISOString()}
                                 className="flex-1 border-r border-gray-100 py-4 flex flex-col items-center justify-center min-w-[120px]"
                             >
-                                <p className={cn(
-                                    "text-xs font-semibold uppercase tracking-wider mb-1",
-                                    today ? "text-primary" : "text-gray-500"
-                                )}>
+                                <p
+                                    className={cn(
+                                        'text-xs font-semibold uppercase tracking-wider mb-1',
+                                        today ? 'text-primary' : 'text-gray-500'
+                                    )}
+                                >
                                     {format(day, 'EEE')}
                                 </p>
-                                <div className={cn(
-                                    "w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition-all",
-                                    today ? "bg-primary text-white shadow-md shadow-primary/30" : "text-gray-900"
-                                )}>
+                                <div
+                                    className={cn(
+                                        'w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition-all',
+                                        today
+                                            ? 'bg-primary text-white shadow-md shadow-primary/30'
+                                            : 'text-gray-900'
+                                    )}
+                                >
                                     {format(day, 'd')}
                                 </div>
                             </div>
@@ -177,30 +193,35 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {/* Body (Time grid) */}
                 <div className="flex relative">
                     {/* Time labels */}
-                     <div className="w-20 flex-shrink-0 border-r border-gray-100 bg-white z-10">
+                    <div className="w-20 flex-shrink-0 border-r border-gray-100 bg-white z-10">
                         {HOURS.map((hour) => (
                             <div key={hour} className="h-16 relative">
                                 <span className="absolute -top-3 right-2 text-xs font-medium text-gray-400">
-                                    {hour === 0 ? '' : format(new Date().setHours(hour), 'h a')}
+                                    {hour === 0
+                                        ? ''
+                                        : format(
+                                              new Date().setHours(hour),
+                                              'h a'
+                                          )}
                                 </span>
                             </div>
                         ))}
                     </div>
-                    
+
                     {/* Columns */}
                     {daysToRender.map((day) => (
                         <div
                             key={day.toISOString()}
-                             className="flex-1 border-r border-gray-100 relative min-w-[120px] bg-white"
+                            className="flex-1 border-r border-gray-100 relative min-w-[120px] bg-white"
                         >
-                             {/* Grid Lines */}
-                             {HOURS.map((hour) => (
+                            {/* Grid Lines */}
+                            {HOURS.map((hour) => (
                                 <div
                                     key={hour}
                                     className="h-16 border-b border-gray-100 hover:bg-gray-50/50 transition-colors group cursor-pointer"
-                                     onClick={() => onSlotClick(day, hour)}
+                                    onClick={() => onSlotClick(day, hour)}
                                 />
-                             ))}
+                            ))}
 
                             {/* Tasks */}
                             {tasks
@@ -209,7 +230,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                     const taskEnd = new Date(task.endDate);
                                     const dayStart = startOfDay(day);
                                     const dayEnd = addDays(dayStart, 1);
-                                    return taskStart < dayEnd && taskEnd > dayStart;
+                                    return (
+                                        taskStart < dayEnd && taskEnd > dayStart
+                                    );
                                 })
                                 .map((task) => {
                                     const style = getTaskStyle(task, day);
@@ -231,17 +254,22 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                         >
                                             <div className="flex flex-col h-full">
                                                 <span className="text-xs font-bold leading-tight line-clamp-1">
-                                                     {task.title || '(No title)'}
+                                                    {task.title || '(No title)'}
                                                 </span>
-                                                 <span className="text-[10px] font-medium opacity-80 mt-0.5">
-                                                     {format(new Date(task.startDate), 'h:mm a')}
-                                                 </span>
+                                                <span className="text-[10px] font-medium opacity-80 mt-0.5">
+                                                    {format(
+                                                        new Date(
+                                                            task.startDate
+                                                        ),
+                                                        'h:mm a'
+                                                    )}
+                                                </span>
                                             </div>
                                         </div>
                                     );
                                 })}
 
-                             {/* Current Time Indicator logic could go here */}
+                            {/* Current Time Indicator logic could go here */}
                         </div>
                     ))}
                 </div>
@@ -251,15 +279,20 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
     const renderMonthView = () => (
         <div className="flex-1 flex flex-col h-full bg-white overflow-y-auto">
-             {/* Days Header */}
+            {/* Days Header */}
             <div className="flex border-b border-gray-200">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName) => (
-                    <div key={dayName} className="flex-1 py-2 text-center text-sm font-semibold text-gray-400 uppercase tracking-widest">
-                        {dayName}
-                    </div>
-                ))}
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
+                    (dayName) => (
+                        <div
+                            key={dayName}
+                            className="flex-1 py-2 text-center text-sm font-semibold text-gray-400 uppercase tracking-widest"
+                        >
+                            {dayName}
+                        </div>
+                    )
+                )}
             </div>
-            
+
             {/* Grid */}
             <div className="flex-1 grid grid-cols-7 grid-rows-5 auto-rows-fr">
                 {daysToRender.map((day, idx) => {
@@ -272,28 +305,32 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         const dayEnd = addDays(dayStart, 1);
                         return taskStart < dayEnd && taskEnd > dayStart;
                     });
-                    
+
                     return (
                         <div
                             key={day.toISOString()}
                             className={cn(
-                                "border-b border-r border-gray-100 min-h-[120px] p-2 flex flex-col transition-colors hover:bg-gray-50/30",
-                                !isCurrentMonth && "bg-gray-50/50 text-gray-400"
+                                'border-b border-r border-gray-100 min-h-[120px] p-2 flex flex-col transition-colors hover:bg-gray-50/30',
+                                !isCurrentMonth && 'bg-gray-50/50 text-gray-400'
                             )}
-                            onClick={() => onSlotClick(day, 9)} 
+                            onClick={() => onSlotClick(day, 9)}
                             onContextMenu={(e) => onDayContextMenu(day, e)}
                         >
                             <div className="flex items-center justify-center mb-1">
-                                 <span className={cn(
-                                     "text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full",
-                                     isDayToday ? "bg-primary text-white" : "text-gray-700"
-                                 )}>
-                                     {format(day, 'd')}
-                                 </span>
+                                <span
+                                    className={cn(
+                                        'text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full',
+                                        isDayToday
+                                            ? 'bg-primary text-white'
+                                            : 'text-gray-700'
+                                    )}
+                                >
+                                    {format(day, 'd')}
+                                </span>
                             </div>
 
                             <div className="flex-1 flex flex-col gap-1 overflow-y-auto custom-scrollbar-hidden">
-                                {dayTasks.map(task => (
+                                {dayTasks.map((task) => (
                                     <div
                                         key={task._id}
                                         onClick={(e) => {
@@ -301,13 +338,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                             onTaskClick(task);
                                         }}
                                         className={cn(
-                                            "text-[10px] px-1.5 py-1 rounded truncate font-medium cursor-pointer transition-opacity hover:opacity-80",
+                                            'text-[10px] px-1.5 py-1 rounded truncate font-medium cursor-pointer transition-opacity hover:opacity-80',
                                             getMonthViewTaskStyle(task)
                                         )}
                                         title={task.title}
                                     >
                                         <span className="opacity-75 mr-1 text-[9px]">
-                                            {format(new Date(task.startDate), 'HH:mm')}
+                                            {format(
+                                                new Date(task.startDate),
+                                                'HH:mm'
+                                            )}
                                         </span>
                                         {task.title}
                                     </div>
@@ -325,15 +365,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             {/* Toolbar */}
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shadow-[0_1px_3px_rgb(0,0,0,0.02)] z-30">
                 <div className="flex items-center gap-6">
-                     <div className="flex items-center gap-2">
-                         <span className="text-2xl font-bold text-gray-900 tracking-tight">
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-gray-900 tracking-tight">
                             {format(currentDate, 'MMMM')}
                         </span>
                         <span className="text-2xl font-light text-gray-500">
-                             {format(currentDate, 'yyyy')}
+                            {format(currentDate, 'yyyy')}
                         </span>
-                     </div>
-                     
+                    </div>
+
                     <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-md p-0.5 shadow-sm">
                         <button
                             onClick={handlePrev}
@@ -343,7 +383,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         </button>
                         <button
                             onClick={handleToday}
-                             className="px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                            className="px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded transition-colors"
                         >
                             Today
                         </button>
@@ -375,10 +415,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
 
             {/* Content */}
-             {view === 'month' ? renderMonthView() : renderTimeGridView()}
+            {view === 'month' ? renderMonthView() : renderTimeGridView()}
         </div>
     );
 };
 
 export default CalendarView;
-

@@ -27,7 +27,11 @@ import {
 } from '@/Dto/mentorRequest.dto';
 import { userGoogleLoginResponseDto } from '@/Dto/response.dto';
 import { mentorStatus } from '@/types/mentor-status.types';
-import { ErrorMessages, SuccessMessages, AuthMessages } from '@/types/response-messages.types';
+import {
+    ErrorMessages,
+    SuccessMessages,
+    AuthMessages,
+} from '@/types/response-messages.types';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -86,8 +90,7 @@ export class MentorAuthService implements IMentorAuthService {
 
         const existingUnverified =
             await this._unverifiedUserRepository.findByEmail(dto.email);
-        if (existingUnverified)
-            throw new Error(ErrorMessages.OtpAlreadySent);
+        if (existingUnverified) throw new Error(ErrorMessages.OtpAlreadySent);
 
         const hashedPassword = await bcrypt.hash(dto.password, 10);
         const otp = await this._otpService.generateOtp();
@@ -117,7 +120,8 @@ export class MentorAuthService implements IMentorAuthService {
         if (!unverifiedUser)
             throw new Error(ErrorMessages.RegistrationReinitRequired);
 
-        if (unverifiedUser.otp !== dto.otp) throw new Error(AuthMessages.OtpFailed);
+        if (unverifiedUser.otp !== dto.otp)
+            throw new Error(AuthMessages.OtpFailed);
         if (unverifiedUser.otpExpiresAt < new Date())
             throw new Error(ErrorMessages.OtpExpired);
 
@@ -161,7 +165,7 @@ export class MentorAuthService implements IMentorAuthService {
             account = await this._mentorRepository.createUser({
                 email: payload.email,
                 name: payload.name || 'Google Mentor',
-                password: await bcrypt.hash(Math.random().toString(36), 10), 
+                password: await bcrypt.hash(Math.random().toString(36), 10),
                 role: Role.Mentor,
             });
         }
@@ -234,7 +238,7 @@ export class MentorAuthService implements IMentorAuthService {
         const resetToken = this._tokenService.generatePasswordResetToken(
             mentor.id
         );
-      
+
         const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
         await this._otpService.sendEmail(
             mentor.email,

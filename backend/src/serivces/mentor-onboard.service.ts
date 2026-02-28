@@ -7,7 +7,10 @@ import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository'
 import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
 import { INotificationService } from './Interfaces/INotification.service';
 import { NotificationType } from '@/types/notification.enum';
-import { ErrorMessages, NotificationMessages } from '@/types/response-messages.types';
+import {
+    ErrorMessages,
+    NotificationMessages,
+} from '@/types/response-messages.types';
 
 @injectable()
 export class MentorOnboardService implements IMentorOnboardService {

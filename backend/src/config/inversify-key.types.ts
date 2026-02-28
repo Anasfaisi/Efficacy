@@ -19,7 +19,7 @@ export const TYPES = {
     MentorshipService: Symbol('MentorshipService'),
     WalletService: Symbol('WalletService'),
     KanbanService: Symbol('KanbanService'),
-    
+    GamificationService: Symbol('GamificationService'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -32,6 +32,7 @@ export const TYPES = {
     MentorshipRepository: Symbol('MentorshipRepository'),
     WalletRepository: Symbol('WalletRepository'),
     KanbanRepository: Symbol('KanbanRepository'),
+    BadgeRepository: Symbol('BadgeRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -49,8 +50,13 @@ export const TYPES = {
     NoteRepository: Symbol('NoteRepository'),
     NoteController: Symbol('NoteController'),
 
-
     BookingRepository: Symbol('BookingRepository'),
     BookingService: Symbol('BookingService'),
     BookingController: Symbol('BookingController'),
+
+    GamificationController: Symbol('GamificationController'),
+
+    ReviewService: Symbol('ReviewService'),
+    ReviewRepository: Symbol('ReviewRepository'),
+    ReviewController: Symbol('ReviewController'),
 };

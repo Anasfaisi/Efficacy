@@ -26,9 +26,9 @@ const MentorMentorshipList: React.FC = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [limit] = useState(6);
-    const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'pending' | 'all'>(
-        'active'
-    );
+    const [activeTab, setActiveTab] = useState<
+        'active' | 'completed' | 'pending' | 'all'
+    >('active');
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -155,202 +155,230 @@ const MentorMentorshipList: React.FC = () => {
                                 : `No ${activeTab} mentorships found`}
                         </h3>
                         <p className="text-gray-500">
-                            Mentorships will appear here once you accept requests.
+                            Mentorships will appear here once you accept
+                            requests.
                         </p>
                     </div>
                 ) : (
                     <>
-                    {mentorships.map((m) => {
-                        const student = m.userId as User;
-                        return (
-                            <div
-                                key={m._id}
-                                className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
-                            >
-                                <div className="p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                                    <div className="flex items-center gap-5">
-                                        <img
-                                            src={
-                                                student?.profilePic ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || 'User')}`
-                                            }
-                                            className="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-50"
-                                            alt=""
-                                        />
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                                    {student?.name}
-                                                </h3>
-                                                <span
-                                                    className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${
-                                                        m.status === MentorshipStatus.ACTIVE
-                                                            ? 'bg-green-100 text-green-700'
-                                                            : m.status === MentorshipStatus.PENDING
-                                                              ? 'bg-yellow-100 text-yellow-700'
-                                                              : 'bg-gray-100 text-gray-600'
-                                                    }`}
-                                                >
-                                                    {m.status}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-gray-500 font-medium mb-1">
-                                                {student?.email}
-                                            </p>
-
-                                            <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
-                                                ID: {m._id?.substring(0, 6)}...
-                                            </div>
-
-                                            <div className="flex flex-wrap gap-4">
-                                                <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                                    <Calendar
-                                                        size={14}
-                                                        className="text-indigo-500"
-                                                    />
-                                                    <span>
-                                                        Starts:{' '}
-                                                        {new Date(
-                                                            m.startDate!
-                                                        ).toLocaleDateString()}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                                    <Clock
-                                                        size={14}
-                                                        className="text-indigo-500"
-                                                    />
-                                                    <span>
-                                                        {m.usedSessions}/
-                                                        {m.totalSessions} Sessions
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row items-center gap-4">
-                                        <div className="w-full sm:w-auto flex -space-x-2">
-                                            {[...Array(3)].map((_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="w-8 h-8 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-[10px] font-black text-indigo-600"
-                                                >
-                                                    S{i + 1}
-                                                </div>
-                                            ))}
-                                            <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
-                                                +{m.totalSessions - 3}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-2 w-full sm:w-auto">
-                                            <button 
-                                                onClick={() => student && (student._id || student.id) && handleChat((student._id || student.id)!)}
-                                                className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2"
-                                            >
-                                                <MessageSquare size={16} /> Chat
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/mentor/mentorship/${m._id}`
-                                                    )
+                        {mentorships.map((m) => {
+                            const student = m.userId as User;
+                            return (
+                                <div
+                                    key={m._id}
+                                    className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+                                >
+                                    <div className="p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                                        <div className="flex items-center gap-5">
+                                            <img
+                                                src={
+                                                    student?.profilePic ||
+                                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || 'User')}`
                                                 }
-                                                className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
-                                            >
-                                                Manage <ArrowRight size={16} />
-                                            </button>
+                                                className="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-50"
+                                                alt=""
+                                            />
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                                        {student?.name}
+                                                    </h3>
+                                                    <span
+                                                        className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${
+                                                            m.status ===
+                                                            MentorshipStatus.ACTIVE
+                                                                ? 'bg-green-100 text-green-700'
+                                                                : m.status ===
+                                                                    MentorshipStatus.PENDING
+                                                                  ? 'bg-yellow-100 text-yellow-700'
+                                                                  : 'bg-gray-100 text-gray-600'
+                                                        }`}
+                                                    >
+                                                        {m.status}
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-gray-500 font-medium mb-1">
+                                                    {student?.email}
+                                                </p>
+
+                                                <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
+                                                    ID: {m._id?.substring(0, 6)}
+                                                    ...
+                                                </div>
+
+                                                <div className="flex flex-wrap gap-4">
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                                        <Calendar
+                                                            size={14}
+                                                            className="text-indigo-500"
+                                                        />
+                                                        <span>
+                                                            Starts:{' '}
+                                                            {new Date(
+                                                                m.startDate!
+                                                            ).toLocaleDateString()}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                                        <Clock
+                                                            size={14}
+                                                            className="text-indigo-500"
+                                                        />
+                                                        <span>
+                                                            {m.usedSessions}/
+                                                            {m.totalSessions}{' '}
+                                                            Sessions
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                                            <div className="w-full sm:w-auto flex -space-x-2">
+                                                {[...Array(3)].map((_, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className="w-8 h-8 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-[10px] font-black text-indigo-600"
+                                                    >
+                                                        S{i + 1}
+                                                    </div>
+                                                ))}
+                                                <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
+                                                    +{m.totalSessions - 3}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-2 w-full sm:w-auto">
+                                                <button
+                                                    onClick={() =>
+                                                        student &&
+                                                        (student._id ||
+                                                            student.id) &&
+                                                        handleChat(
+                                                            (student._id ||
+                                                                student.id)!
+                                                        )
+                                                    }
+                                                    className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors font-bold text-sm flex items-center justify-center gap-2"
+                                                >
+                                                    <MessageSquare size={16} />{' '}
+                                                    Chat
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/mentor/mentorship/${m._id}`
+                                                        )
+                                                    }
+                                                    className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
+                                                >
+                                                    Manage{' '}
+                                                    <ArrowRight size={16} />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                {/* Expandable Session List */}
-                                <div className="px-8 pb-8 pt-4 border-t border-gray-50 bg-gray-50/30">
-                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
-                                        Upcoming Sessions
-                                    </h4>
-                                    <div className="flex flex-wrap gap-3">
-                                        {m.sessions
-                                            .filter(
+
+                                    {/* Expandable Session List */}
+                                    <div className="px-8 pb-8 pt-4 border-t border-gray-50 bg-gray-50/30">
+                                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
+                                            Upcoming Sessions
+                                        </h4>
+                                        <div className="flex flex-wrap gap-3">
+                                            {m.sessions
+                                                .filter(
+                                                    (s) =>
+                                                        s.status ===
+                                                            SessionStatus.BOOKED &&
+                                                        new Date(
+                                                            s.date
+                                                        ).getTime() > Date.now()
+                                                )
+                                                .slice(0, 2)
+                                                .map((session) => (
+                                                    <div
+                                                        key={session._id}
+                                                        className="px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4"
+                                                    >
+                                                        <div className="text-center border-r border-gray-100 pr-4">
+                                                            <p className="text-[10px] font-black text-indigo-400 uppercase leading-none mb-1">
+                                                                {new Date(
+                                                                    session.date
+                                                                ).toLocaleString(
+                                                                    'default',
+                                                                    {
+                                                                        month: 'short',
+                                                                    }
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm font-black text-gray-900 leading-none">
+                                                                {new Date(
+                                                                    session.date
+                                                                ).getDate()}
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs font-bold text-gray-900">
+                                                                {new Date(
+                                                                    session.date
+                                                                ).toLocaleTimeString(
+                                                                    [],
+                                                                    {
+                                                                        hour: '2-digit',
+                                                                        minute: '2-digit',
+                                                                    }
+                                                                )}
+                                                            </p>
+                                                            <button className="text-[10px] font-black text-[#7F00FF] hover:underline">
+                                                                Mark Complete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            {m.sessions.filter(
                                                 (s) =>
                                                     s.status ===
                                                     SessionStatus.BOOKED
-                                            )
-                                            .slice(0, 2)
-                                            .map((session) => (
-                                                <div
-                                                    key={session._id}
-                                                    className="px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4"
-                                                >
-                                                    <div className="text-center border-r border-gray-100 pr-4">
-                                                        <p className="text-[10px] font-black text-indigo-400 uppercase leading-none mb-1">
-                                                            {new Date(
-                                                                session.date
-                                                            ).toLocaleString(
-                                                                'default',
-                                                                { month: 'short' }
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm font-black text-gray-900 leading-none">
-                                                            {new Date(
-                                                                session.date
-                                                            ).getDate()}
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs font-bold text-gray-900">
-                                                            {new Date(
-                                                                session.date
-                                                            ).toLocaleTimeString(
-                                                                [],
-                                                                {
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit',
-                                                                }
-                                                            )}
-                                                        </p>
-                                                        <button className="text-[10px] font-black text-[#7F00FF] hover:underline">
-                                                            Mark Complete
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        {m.sessions.filter(
-                                            (s) => s.status === SessionStatus.BOOKED
-                                        ).length === 0 && (
-                                            <p className="text-xs text-gray-400 font-medium italic">
-                                                No sessions scheduled by student
-                                                yet.
-                                            </p>
-                                        )}
+                                            ).length === 0 && (
+                                                <p className="text-xs text-gray-400 font-medium italic">
+                                                    No sessions scheduled by
+                                                    student yet.
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
 
-                    {totalPages > 1 && (
-                        <div className="flex items-center justify-center gap-4 mt-8">
-                            <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors bg-white"
-                            >
-                                <ChevronLeft size={20} />
-                            </button>
-                            <span className="text-sm font-bold text-gray-600">
-                                Page {page} of {totalPages}
-                            </span>
-                            <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors bg-white"
-                            >
-                                <ChevronRight size={20} />
-                            </button>
-                        </div>
-                    )}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-center gap-4 mt-8">
+                                <button
+                                    onClick={() =>
+                                        setPage((p) => Math.max(1, p - 1))
+                                    }
+                                    disabled={page === 1}
+                                    className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors bg-white"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <span className="text-sm font-bold text-gray-600">
+                                    Page {page} of {totalPages}
+                                </span>
+                                <button
+                                    onClick={() =>
+                                        setPage((p) =>
+                                            Math.min(totalPages, p + 1)
+                                        )
+                                    }
+                                    disabled={page === totalPages}
+                                    className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors bg-white"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

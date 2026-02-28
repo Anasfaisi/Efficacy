@@ -143,6 +143,11 @@ export default function mentorRoutes(
             mentorController.markAllNotificationsAsRead.bind(mentorController)
         )
     );
+    router.get(
+        '/:id',
+        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+        asyncWrapper(mentorController.getMentorById.bind(mentorController))
+    );
 
     return router;
 }

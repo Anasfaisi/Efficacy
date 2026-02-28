@@ -199,7 +199,7 @@ export const updateProfilePicture = async (
     id?: string
 ): Promise<{ message: string; user: User }> => {
     try {
-        console.log(id,"yryrt")
+        console.log(id, 'yryrt');
         if (!file) {
             throw new Error('no file selected');
         }
@@ -208,13 +208,9 @@ export const updateProfilePicture = async (
         }
         const formData = new FormData();
         formData.append('image', file);
-        const response = await api.patch(
-            `/profile/picture/${id}`,
-            formData,
-            {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            }
-        );
+        const response = await api.patch(`/profile/picture/${id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof AxiosError) {

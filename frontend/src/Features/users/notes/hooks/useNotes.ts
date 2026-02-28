@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { INote } from '../types';
 import { toast } from 'sonner';
-import { getNotesApi, createNoteApi, updateNoteApi, deleteNoteApi } from '@/Services/notes.api';
+import {
+    getNotesApi,
+    createNoteApi,
+    updateNoteApi,
+    deleteNoteApi,
+} from '@/Services/notes.api';
 
 export const useNotes = () => {
     const [notes, setNotes] = useState<INote[]>([]);
@@ -16,8 +21,10 @@ export const useNotes = () => {
         setIsLoading(true);
         try {
             const data = await getNotesApi();
-            const sortedData = [...data].sort((a, b) => 
-                new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            const sortedData = [...data].sort(
+                (a, b) =>
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
             );
             setNotes(sortedData);
         } catch (error) {
@@ -46,13 +53,19 @@ export const useNotes = () => {
     const updateNote = async (id: string, updates: Partial<INote>) => {
         setNotes((prev) => {
             const updated = prev.map((note) =>
-                (note._id === id || note.id === id) 
-                    ? { ...note, ...updates, updatedAt: new Date().toISOString() } 
+                note._id === id || note.id === id
+                    ? {
+                          ...note,
+                          ...updates,
+                          updatedAt: new Date().toISOString(),
+                      }
                     : note
             );
-            
-            return [...updated].sort((a, b) => 
-                new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+
+            return [...updated].sort(
+                (a, b) =>
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
             );
         });
 
@@ -65,12 +78,14 @@ export const useNotes = () => {
     };
 
     const deleteNote = async (id: string) => {
-         const previousNotes = [...notes];
-         setNotes((prev) => prev.filter((note) => (note._id !== id && note.id !== id)));
-         
-         if (activeNoteId === id) {
-             setActiveNoteId(null);
-         }
+        const previousNotes = [...notes];
+        setNotes((prev) =>
+            prev.filter((note) => note._id !== id && note.id !== id)
+        );
+
+        if (activeNoteId === id) {
+            setActiveNoteId(null);
+        }
 
         try {
             await deleteNoteApi(id);
@@ -78,7 +93,7 @@ export const useNotes = () => {
         } catch (error) {
             console.error('Failed to delete note:', error);
             toast.error('Failed to delete note');
-            setNotes(previousNotes); 
+            setNotes(previousNotes);
         }
     };
 
@@ -89,6 +104,6 @@ export const useNotes = () => {
         createNote,
         updateNote,
         deleteNote,
-        isLoading
+        isLoading,
     };
 };

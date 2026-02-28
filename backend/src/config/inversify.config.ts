@@ -53,6 +53,7 @@ import { PlannerTaskService } from '@/serivces/planner-task.service';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { PlannerTaskRepository } from '@/repositories/planner-task.repository';
 
+
 import { IMentorshipService } from '@/serivces/Interfaces/IMentorship.service';
 import { MentorshipService } from '@/serivces/mentorship.service';
 import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
@@ -62,7 +63,7 @@ import { MentorshipRepository } from '@/repositories/mentorship.repository';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
-import { WalletController} from '@/controllers/Wallet.controller';
+import { WalletController } from '@/controllers/Wallet.controller';
 import { PomodoroController } from '@/controllers/pomodoro.controller';
 import { IPomodoroService } from '@/serivces/Interfaces/IPomodoro.service';
 import { PomodoroService } from '@/serivces/pomodoro.service';
@@ -80,7 +81,20 @@ import { BookingService } from '@/serivces/booking.service';
 import { BookingController } from '@/controllers/booking.controller';
 import { IBookingService } from '@/serivces/Interfaces/IBooking.service';
 
+import { IReviewRepository } from '@/repositories/interfaces/IReview.repository';
+import { ReviewRepository } from '@/repositories/review.repository';
+import { IReviewService} from '@/serivces/Interfaces/IReview.service';
+import { ReviewService } from '@/serivces/review.service';
+import { ReviewController } from '@/controllers/review.controller';
+import { GamificationService } from '@/serivces/gamification.service';
+import { IGamificationService } from '@/serivces/Interfaces/IGamification.service';
+import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
+import { BadgeRepository } from '@/repositories/badge.repository';
+import { GamificationController } from '@/controllers/gamification.controller';
+
 export const container = new Container();
+
+container.bind<IBadgeRepository>(TYPES.BadgeRepository).to(BadgeRepository);
 
 container.bind<AdminController>(TYPES.AdminController).to(AdminController);
 container.bind<UserController>(TYPES.UserController).to(UserController);
@@ -100,10 +114,16 @@ container
     .bind<MentorshipController>(TYPES.MentorshipController)
     .to(MentorshipController);
 container.bind<WalletController>(TYPES.WalletController).to(WalletController);
-container.bind<PomodoroController>(TYPES.PomodoroController).to(PomodoroController);
+container
+    .bind<PomodoroController>(TYPES.PomodoroController)
+    .to(PomodoroController);
 container
     .bind<BookingController>(TYPES.BookingController)
     .to(BookingController);
+container.bind<ReviewController>(TYPES.ReviewController).to(ReviewController);
+container
+    .bind<GamificationController>(TYPES.GamificationController)
+    .to(GamificationController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -141,6 +161,8 @@ container
     .to(MentorshipService);
 container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
 container.bind<IBookingService>(TYPES.BookingService).to(BookingService);
+container.bind<IReviewService>(TYPES.ReviewService).to(ReviewService);
+container.bind<IGamificationService>(TYPES.GamificationService).to(GamificationService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -165,10 +187,10 @@ container
     .to(MentorshipRepository);
 container.bind<IWalletRepository>(TYPES.WalletRepository).to(WalletRepository);
 
-
 container.bind<IPomodoroService>(TYPES.PomodoroService).to(PomodoroService);
-container.bind<IPomodoroRepository>(TYPES.PomodoroRepository).to(PomodoroRepository);
-
+container
+    .bind<IPomodoroRepository>(TYPES.PomodoroRepository)
+    .to(PomodoroRepository);
 
 container.bind<NoteController>(TYPES.NoteController).to(NoteController);
 container.bind<INoteService>(TYPES.NoteService).to(NoteService);
@@ -176,3 +198,4 @@ container.bind<INoteRepository>(TYPES.NoteRepository).to(NoteRepository);
 container
     .bind<IBookingRepository>(TYPES.BookingRepository)
     .to(BookingRepository);
+container.bind<IReviewRepository>(TYPES.ReviewRepository).to(ReviewRepository);

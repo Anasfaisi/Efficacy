@@ -11,7 +11,7 @@ import {
     CheckCircle,
     Loader2,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { mentorApi } from '@/Services/mentor.api';
 import { setCredentials } from '@/redux/slices/authSlice';
@@ -20,8 +20,11 @@ import { type Mentor } from '@/types/auth';
 
 const MentorGuidelines: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useAppDispatch();
     const { currentUser } = useAppSelector((state) => state.auth);
+
+    const isMentorSide = location.pathname === '/mentor/guidelines';
 
     const isApproved =
         currentUser?.role === 'mentor' &&
@@ -107,8 +110,18 @@ const MentorGuidelines: React.FC = () => {
     ];
 
     return (
-        <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="py-12 px-4 sm:px-6 lg:px-8 overflow-y-auto custom-scrollbar h-full">
             <div className="max-w-4xl mx-auto">
+                {!isMentorSide && (
+                    <div className="flex justify-center mb-8">
+                        <img
+                            src="/Title logo.png"
+                            alt="Efficacy Logo"
+                            className="w-16 h-16 rounded-2xl object-cover shadow-xl shadow-blue-500/20"
+                        />
+                    </div>
+                )}
+                
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
                         Mentor <span className="text-blue-600">Guidelines</span>
@@ -213,7 +226,7 @@ const MentorGuidelines: React.FC = () => {
                     </div>
                 </div>
 
-                {isApproved && (
+                {isApproved && !isMentorSide && (
                     <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 mb-8 shadow-sm">
                         <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
                             <Currency className="w-6 h-6" />
@@ -246,44 +259,48 @@ const MentorGuidelines: React.FC = () => {
                     </div>
                 )}
 
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 flex gap-4">
-                    <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
-                    <p className="text-amber-800 text-sm font-medium">
-                        Important: Ensure you update your achievements and extra
-                        skills once onboarded. High ratings and positive reviews
-                        are the primary drivers of your professional growth and
-                        earning potential on Efficacy.
-                    </p>
-                </div>
+                {!isMentorSide && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 flex gap-4">
+                        <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                        <p className="text-amber-800 text-sm font-medium">
+                            Important: Ensure you update your achievements and extra
+                            skills once onboarded. High ratings and positive reviews
+                            are the primary drivers of your professional growth and
+                            earning potential on Efficacy.
+                        </p>
+                    </div>
+                )}
 
-                <div className="flex justify-center gap-4 mt-8">
-                    {isApproved ? (
-                        <button
-                            onClick={handleActivate}
-                            disabled={isActivating}
-                            className="px-10 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 flex items-center gap-2 disabled:opacity-70"
-                        >
-                            {isActivating ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    Activating...
-                                </>
-                            ) : (
-                                <>
-                                    <CheckCircle className="w-5 h-5" />
-                                    Activate & Start Mentoring
-                                </>
-                            )}
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => navigate('/mentor/onboarding')}
-                            className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200"
-                        >
-                            I Understand, Proceed to Onboarding
-                        </button>
-                    )}
-                </div>
+                {!isMentorSide && (
+                    <div className="flex justify-center gap-4 mt-8">
+                        {isApproved ? (
+                            <button
+                                onClick={handleActivate}
+                                disabled={isActivating}
+                                className="px-10 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 flex items-center gap-2 disabled:opacity-70"
+                            >
+                                {isActivating ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Activating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CheckCircle className="w-5 h-5" />
+                                        Activate & Start Mentoring
+                                    </>
+                                )}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate('/mentor/onboarding')}
+                                className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200"
+                            >
+                                I Understand, Proceed to Onboarding
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -20,4 +20,5 @@ export interface IMentorService {
         sort: string,
         filter: any
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }>;
+    getMentorById(id: string): Promise<IMentor | null>;
 }

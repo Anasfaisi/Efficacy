@@ -82,7 +82,9 @@ export class PaymentService implements IPaymentService {
             cancel_url: cancelUrl,
             customer_email: (
                 await this._userRepository.findById(
-                    ((mentorship.userId as any)._id || mentorship.userId).toString()
+                    (
+                        (mentorship.userId as any)._id || mentorship.userId
+                    ).toString()
                 )
             )?.email,
         });
@@ -104,7 +106,9 @@ export class PaymentService implements IPaymentService {
             );
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
-            console.error(`${ErrorMessages.WebhookSignatureFailed}: ${message}`);
+            console.error(
+                `${ErrorMessages.WebhookSignatureFailed}: ${message}`
+            );
             throw new Error(
                 `${ErrorMessages.WebhookSignatureFailed}: ${message}`
             );

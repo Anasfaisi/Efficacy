@@ -94,7 +94,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
         try {
             setIsSaving(true);
             const startDateTime = new Date(`${date}T${startTime}`);
-            let endDateTime = new Date(`${date}T${endTime}`);
+            const endDateTime = new Date(`${date}T${endTime}`);
 
             if (endDateTime <= startDateTime) {
                 endDateTime.setDate(endDateTime.getDate() + 1);
@@ -230,14 +230,22 @@ const TaskModal: React.FC<TaskModalProps> = ({
                                 <input
                                     type="time"
                                     value={startTime}
-                                    min={isToday(new Date(date)) ? format(new Date(), 'HH:mm') : undefined}
+                                    min={
+                                        isToday(new Date(date))
+                                            ? format(new Date(), 'HH:mm')
+                                            : undefined
+                                    }
                                     onChange={(e) => {
                                         const newStart = e.target.value;
                                         setStartTime(newStart);
                                         if (endTime <= newStart) {
-                                            const [h, m] = newStart.split(':').map(Number);
+                                            const [h, m] = newStart
+                                                .split(':')
+                                                .map(Number);
                                             const endH = (h + 1) % 24;
-                                            setEndTime(`${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                                            setEndTime(
+                                                `${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+                                            );
                                         }
                                     }}
                                     className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"

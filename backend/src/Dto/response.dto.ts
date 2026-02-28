@@ -94,7 +94,6 @@ export class RefreshResponseDto {
     constructor(public readonly success: string) {}
 }
 
-
 export class ResponsePaymentDto {
     constructor(
         public readonly sessionId: string,

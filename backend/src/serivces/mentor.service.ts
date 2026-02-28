@@ -47,7 +47,6 @@ export class MentorService implements IMentorService {
             );
         }
 
-       
         delete updateData.currentPassword;
         delete updateData.newPassword;
 
@@ -115,5 +114,9 @@ export class MentorService implements IMentorService {
             filter
         );
         return mentorsList;
+    }
+
+    async getMentorById(id: string): Promise<IMentor | null> {
+        return await this._mentorRepository.findById(id);
     }
 }

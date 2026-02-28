@@ -42,10 +42,12 @@ const NotesPage: React.FC = () => {
                 <div className="bg-yellow-100 p-2 flex justify-between items-center border-b border-yellow-200">
                     <div className="flex items-center gap-2">
                         <StickyNote size={16} className="text-yellow-600" />
-                        <span className="text-xs font-bold text-yellow-800 uppercase tracking-wider">Sticky Note</span>
+                        <span className="text-xs font-bold text-yellow-800 uppercase tracking-wider">
+                            Sticky Note
+                        </span>
                     </div>
                     <div className="flex gap-1">
-                         <button 
+                        <button
                             onClick={() => setIsStickyMode(false)}
                             className="p-1 hover:bg-yellow-200 rounded text-yellow-700"
                         >
@@ -67,14 +69,18 @@ const NotesPage: React.FC = () => {
                                 content={activeNote.content}
                                 onChange={handleUpdateActiveNote}
                                 editable={true}
-                         
                             />
                         </div>
                     </div>
                 ) : (
                     <div className="flex-1 flex flex-col justify-center items-center text-yellow-700/50 p-4 text-center">
                         <p>No active note.</p>
-                        <button onClick={handleCreateNote} className="text-sm underline mt-2">Create one</button>
+                        <button
+                            onClick={handleCreateNote}
+                            className="text-sm underline mt-2"
+                        >
+                            Create one
+                        </button>
                     </div>
                 )}
             </div>
@@ -93,7 +99,9 @@ const NotesPage: React.FC = () => {
                     <div className="w-80 bg-white border-r border-gray-100 flex flex-col">
                         <div className="p-6 border-b border-gray-100">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Notes</h2>
+                                <h2 className="text-2xl font-bold text-gray-900">
+                                    Notes
+                                </h2>
                                 <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
                                     {notes.length}
                                 </span>
@@ -110,7 +118,8 @@ const NotesPage: React.FC = () => {
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                             {notes.length === 0 && (
                                 <div className="text-center py-10 text-gray-400 text-sm">
-                                    No notes yet. <br/> Click "New Note" to start.
+                                    No notes yet. <br /> Click "New Note" to
+                                    start.
                                 </div>
                             )}
                             {notes.map((note) => (
@@ -124,11 +133,13 @@ const NotesPage: React.FC = () => {
                                     }`}
                                 >
                                     <div className="flex justify-between items-start mb-1">
-                                        <h3 className={`font-semibold truncate pr-2 ${activeNoteId === note._id ? 'text-[#7F00FF]' : 'text-gray-900'}`}>
+                                        <h3
+                                            className={`font-semibold truncate pr-2 ${activeNoteId === note._id ? 'text-[#7F00FF]' : 'text-gray-900'}`}
+                                        >
                                             {note.title || 'Untitled Note'}
                                         </h3>
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                             <button
+                                            <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     deleteNote(note._id);
@@ -140,7 +151,10 @@ const NotesPage: React.FC = () => {
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-400 flex items-center gap-2">
-                                        {format(new Date(note.updatedAt), 'MMM d, h:mm a')}
+                                        {format(
+                                            new Date(note.updatedAt),
+                                            'MMM d, h:mm a'
+                                        )}
                                     </p>
                                 </div>
                             ))}
@@ -159,7 +173,7 @@ const NotesPage: React.FC = () => {
                                         placeholder="Note Title"
                                         className="bg-transparent text-4xl font-black text-gray-900 placeholder:text-gray-300 outline-none w-full"
                                     />
-                                    
+
                                     <button
                                         onClick={() => setIsStickyMode(true)}
                                         className="ml-4 flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors font-medium text-sm"
@@ -172,8 +186,11 @@ const NotesPage: React.FC = () => {
 
                                 <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden flex flex-col">
                                     {/* Recreate editor key when switching active note to force remount/reset */}
-                                    <div className="flex-1 overflow-hidden" key={activeNote._id}>
-                                         <TiptapEditor
+                                    <div
+                                        className="flex-1 overflow-hidden"
+                                        key={activeNote._id}
+                                    >
+                                        <TiptapEditor
                                             content={activeNote.content}
                                             onChange={handleUpdateActiveNote}
                                         />
@@ -183,9 +200,14 @@ const NotesPage: React.FC = () => {
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
                                 <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                    <StickyNote size={40} className="text-gray-300" />
+                                    <StickyNote
+                                        size={40}
+                                        className="text-gray-300"
+                                    />
                                 </div>
-                                <p className="text-lg font-medium">Select a note to view</p>
+                                <p className="text-lg font-medium">
+                                    Select a note to view
+                                </p>
                                 <p className="text-sm">or create a new one</p>
                             </div>
                         )}
