@@ -4,6 +4,9 @@ import { IPomodoroService } from './Interfaces/IPomodoro.service';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPomodoroRepository } from '@/repositories/interfaces/IPomodoro.repository';
+import { UserStats } from '@/models/UserStats.model';
+import { emitGamificationEvent } from '@/utils/eventBus';
+import { GamificationEvent } from '@/types/gamification.types';
 
 @injectable()
 export class PomodoroService implements IPomodoroService {
@@ -26,12 +29,41 @@ export class PomodoroService implements IPomodoroService {
 
         const startTime = new Date(now.getTime() - duration * 1000);
 
-        return this.pomodoroRepository.addSession(userId, date, {
+        const log = await this.pomodoroRepository.addSession(userId, date, {
             duration,
             type: type as 'pomodoro' | 'shortBreak' | 'longBreak',
             startTime,
             endTime: now,
         });
+
+        if (type === 'pomodoro') {
+            this.handlePomodoroCompletionGamification(userId, Math.floor(duration / 60)).catch(err => 
+                console.error('Gamification pomodoro hook failed:', err)
+            );
+        }
+
+        return log;
+    }
+
+    private async handlePomodoroCompletionGamification(userId: string, minutes: number) {
+        let stats = await UserStats.findOne({ userId });
+        if (!stats) {
+            stats = await UserStats.create({
+                userId,
+                tasksCompleted: 0,
+                pomodorosCompleted: 0,
+                focusMinutes: 0,
+                sessionsCompleted: 0,
+                taskStreakDays: 0,
+            });
+        }
+
+        stats.pomodorosCompleted += 1;
+        stats.focusMinutes += minutes;
+        await stats.save();
+
+        emitGamificationEvent(GamificationEvent.POMODORO_COMPLETED, { userId });
+        emitGamificationEvent(GamificationEvent.FOCUS_TIME_UPDATED, { userId });
     }
 
     async getStats(userId: string, date: string): Promise<IPomodoroLog | null> {

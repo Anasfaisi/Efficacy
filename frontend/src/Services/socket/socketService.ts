@@ -118,6 +118,13 @@ export const onNewNotification = (
 
 export const offNotificationEvents = () => {
     socket?.off('newNotification');
+    socket?.off('BADGE_UNLOCKED');
+};
+
+export const onBadgeUnlocked = (
+    callback: (payload: { badge: any }) => void
+) => {
+    socket?.on('BADGE_UNLOCKED', callback);
 };
 
 export const offChatEvents = () => {

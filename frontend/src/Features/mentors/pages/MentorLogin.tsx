@@ -78,36 +78,34 @@ const MentorLogin: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-5xl bg-white shadow-2xl rounded-[40px] flex flex-col md:flex-row overflow-hidden border border-slate-100"
             >
-                {/* Left Side - Mascot & Branding */}
-                <div className="md:w-[45%] p-12 bg-sky-600 text-white flex flex-col items-center justify-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
-                    <div className="absolute bottom-0 right-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
+                {/* Left Side */}
+                <div className="hidden md:flex md:w-[45%] bg-[#0284c7] p-12 text-white flex-col relative overflow-hidden">
+                    {/* Brand Name Top Left */}
+                    <div className="absolute top-8 left-8">
+                        <h2 className="text-3xl font-black tracking-tight text-white cursor-default">
+                            Efficacy Mentors
+                        </h2>
+                    </div>
 
-                    <div className="relative z-10 flex flex-col items-center gap-8 text-center">
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
+                    {/* Centered Content */}
+                    <div className="relative z-10 flex-1 flex flex-col justify-center">
+                        <motion.h1
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-sky-600 backdrop-blur-md border border-white/30 px-6 py-2 rounded-full text-sm font-bold tracking-widest uppercase"
+                            className="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight"
                         >
-                            Mentor Portal
-                        </motion.div>
+                            Empower the Next.
+                        </motion.h1>
 
-                        <motion.img
-                            src="/mascot.png"
-                            alt="Efficacy Mascot"
-                            className="w-48 h-48 drop-shadow-2xl animate-float "
-                        />
-
-                        <div className="space-y-4 max-w-sm">
-                            <h3 className="text-2xl font-bold ">
-                                Guide the Next Generation
-                            </h3>
-                            <p className="leading-relaxed text-sm ">
-                                Access your dashboard to manage sessions, chats,
-                                and student progress. Your impact starts here.
-                            </p>
-                        </div>
+                        <motion.p
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-lg text-white/90 leading-relaxed max-w-sm"
+                        >
+                            Your platform to guide, inspire, and foster continuous growth.
+                        </motion.p>
                     </div>
                 </div>
 
