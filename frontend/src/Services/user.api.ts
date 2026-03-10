@@ -72,17 +72,8 @@ export const verifyOtpApi = async (
 export const resendOtpApi = async (
     email: string | null
 ): Promise<ResendOtpResponse> => {
-    try {
-        const response = await api.post(UserRoutes.RESEND_OTP, { email });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-            throw error.response?.data.message;
-        } else if (error instanceof Error) {
-            throw new Error(error.message);
-        }
-        throw new Error('something went wrong');
-    }
+    const response = await api.post(UserRoutes.RESEND_OTP, { email });
+    return response.data;
 };
 
 export const forgotPasswordApi = async (
