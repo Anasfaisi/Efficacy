@@ -24,6 +24,6 @@ export const chatApi = {
     },
 
     deleteMessage: async (messageId: string): Promise<void> => {
-        await api.delete(`${ChatRoutes.DELETE_MESSAGE}/${messageId}`);
+        await api.delete(ChatRoutes.DELETE_MESSAGE(messageId));
     },
 };

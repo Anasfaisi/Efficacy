@@ -1,5 +1,10 @@
 export type Role = 'admin' | 'mentor' | 'user';
 export type currentUserType = User | Mentor | Admin;
+export const ENDPOINTS: Record<Role, string> = {
+    admin: '/admin/login',
+    mentor: '/mentor/login',
+    user: '/login',
+};
 
 export interface Subscription {
     id: string;

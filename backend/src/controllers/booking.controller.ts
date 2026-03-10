@@ -148,13 +148,13 @@ export class BookingController {
     }
 
     async startSession(req: Request, res: Response): Promise<void> {
-        const { bookingId } = req.body;
+        const { bookingId } = req.params;
         const result = await this._bookingService.startSession(bookingId);
         res.status(code.OK).json(result);
     }
 
     async endSession(req: Request, res: Response): Promise<void> {
-        const { bookingId } = req.body;
+        const { bookingId } = req.params;
         const result = await this._bookingService.endSession(bookingId);
         res.status(code.OK).json(result);
     }
