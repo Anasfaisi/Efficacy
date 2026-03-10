@@ -204,7 +204,7 @@ const Login: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-accent text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-accent/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                className="w-full bg-[#7C3AED] text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-accent/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                             >
                                 {isLoading ? (
                                     <Loader2 className="animate-spin" />

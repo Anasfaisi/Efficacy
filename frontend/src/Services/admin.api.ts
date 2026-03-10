@@ -1,10 +1,12 @@
 import api from './axiosConfig';
 import type { MentorApplication, Notification } from '../Features/admin/types';
 import type { LoginCredentials, Mentor, User } from '../types/auth';
+import type { Transaction } from '@/types/wallet';
+import { AdminRoutes } from './constant.routes';
 
 export const adminService = {
     adminLoginApi: async (credentials: LoginCredentials) => {
-        const res = await api.post('/admin/login', credentials);
+        const res = await api.post(AdminRoutes.ADMINLOGIN, credentials);
         return res.data;
     },
     getMentorApplications: async (
@@ -19,37 +21,50 @@ export const adminService = {
         currentPage: number;
     }> => {
         const { status = 'all', mentorType = 'all' } = filters;
-        const response = await api.get(
-            `/admin/mentors/applications?page=${page}&limit=${limit}&search=${search}&status=${status}&mentorType=${mentorType}`
-        );
+        const response = await api.get(AdminRoutes.MENTOR_APPLICATIONS, {
+            params: {
+                page,
+                limit,
+                search,
+                status,
+                mentorType,
+            },
+        });
         return response.data;
     },
 
     getMentorApplicationById: async (
-        id: string
+        applicationId: string
     ): Promise<MentorApplication> => {
-        const response = await api.get(`/admin/mentors/applications/${id}`);
+        const response = await api.get(
+            AdminRoutes.MENTOR_APPLICATION_BY_ID(applicationId)
+        );
         return response.data;
     },
 
-    approveMentorApplication: async (id: string): Promise<void> => {
-        await api.post(`/admin/mentors/applications/${id}/approve`);
+    approveMentorApplication: async (applicationId: string): Promise<void> => {
+        await api.post(AdminRoutes.MENTOR_APPLICATION_APPROVE(applicationId));
     },
 
     rejectMentorApplication: async (
-        id: string,
+        applicationId: string,
         reason: string
     ): Promise<void> => {
-        await api.post(`/admin/mentors/applications/${id}/reject`, { reason });
+        await api.post(AdminRoutes.MENTOR_APPLICATION_REJECT(applicationId), {
+            reason,
+        });
     },
 
     requestChangesMentorApplication: async (
-        id: string,
+        applicationId: string,
         reason: string
     ): Promise<void> => {
-        await api.post(`/admin/mentors/applications/${id}/request-changes`, {
-            reason,
-        });
+        await api.post(
+            AdminRoutes.MENTOR_APPLICATIONS_REQUEST_CHANGES(applicationId),
+            {
+                reason,
+            }
+        );
     },
 
     getAllMentors: async (
@@ -64,19 +79,28 @@ export const adminService = {
         currentPage: number;
     }> => {
         const { status = 'all', mentorType = 'all' } = filters;
-        const response = await api.get(
-            `/admin/mentors?page=${page}&limit=${limit}&search=${search}&status=${status}&mentorType=${mentorType}`
-        );
+        const response = await api.get(AdminRoutes.MENTORS, {
+            params: {
+                page,
+                limit,
+                search,
+                status,
+                mentorType,
+            },
+        });
         return response.data;
     },
 
-    getMentorById: async (id: string): Promise<Mentor> => {
-        const response = await api.get(`/admin/mentors/${id}`);
+    getMentorById: async (mentorId: string): Promise<Mentor> => {
+        const response = await api.get(AdminRoutes.MENTORS_ID(mentorId));
         return response.data;
     },
 
-    updateMentorStatus: async (id: string, status: string): Promise<void> => {
-        await api.put(`/admin/mentors/${id}/status`, { status });
+    updateMentorStatus: async (
+        mentorId: string,
+        status: string
+    ): Promise<void> => {
+        await api.put(AdminRoutes.MENTORS_STATUS(mentorId), { status });
     },
 
     getAllUsers: async (
@@ -89,32 +113,38 @@ export const adminService = {
         totalPages: number;
         currentPage: number;
     }> => {
-        const response = await api.get(
-            `/admin/users?page=${page}&limit=${limit}&search=${search}`
-        );
+        const response = await api.get(AdminRoutes.USERS, {
+            params: {
+                page,
+                limit,
+                search,
+            },
+        });
         return response.data;
     },
 
-    updateUserStatus: async (id: string, isActive: boolean): Promise<void> => {
-        await api.patch(`/admin/users/${id}/status`, { isActive });
+    updateUserStatus: async (
+        userId: string,
+        isActive: boolean
+    ): Promise<void> => {
+        await api.patch(AdminRoutes.USERS_STATUS(userId), { isActive });
     },
 
     getNotifications: async (): Promise<Notification[]> => {
-        const response = await api.get('/admin/notifications');
+        const response = await api.get(AdminRoutes.NOTIFICATIONS);
         return response.data;
     },
 
-    markNotificationAsRead: async (id: string): Promise<void> => {
-        const result = await api.patch(`/admin/notifications/${id}/mark-read`);
-        console.log(result);
+    markNotificationAsRead: async (notificationId: string): Promise<void> => {
+        await api.patch(AdminRoutes.NOTIFICATION_MARK_READ(notificationId));
     },
 
     markAllNotificationsAsRead: async (): Promise<void> => {
-        await api.patch('/admin/notifications/mark-all-read');
+        await api.patch(AdminRoutes.NOTIFICATIONS_MARK_ALL_READ);
     },
 
     getRevenueDetails: async (): Promise<{ totalRevenue: number }> => {
-        const response = await api.get('/admin/revenue');
+        const response = await api.get(AdminRoutes.REVENUE);
         return response.data;
     },
 
@@ -122,15 +152,23 @@ export const adminService = {
         page: number = 1,
         limit: number = 10,
         filter: string = 'all'
-    ): Promise<{ transactions: any[]; total: number }> => {
-        const response = await api.get(
-            `/admin/transactions?page=${page}&limit=${limit}&filter=${filter}`
-        );
+    ): Promise<{ transactions: Transaction[]; total: number }> => {
+        const response = await api.get(AdminRoutes.TRANSACTIONS, {
+            params: {
+                page,
+                limit,
+                filter,
+            },
+        });
         return response.data;
     },
 
-    getDashboardStats: async (): Promise<{ totalUsers: number, totalMentors: number, totalRevenue: number }> => {
-        const response = await api.get('/admin/dashboard-stats');
+    getDashboardStats: async (): Promise<{
+        totalUsers: number;
+        totalMentors: number;
+        totalRevenue: number;
+    }> => {
+        const response = await api.get(AdminRoutes.DASHBOARD_STATS)
         return response.data;
-    }
+    },
 };

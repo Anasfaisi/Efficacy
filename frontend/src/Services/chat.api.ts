@@ -1,25 +1,21 @@
 import api from './axiosConfig';
-import type { Conversation, Message } from '@/types/chat.types';
+import type { Conversation } from '@/types/chat.types';
+import { ChatRoutes } from './constant.routes';
 
 export const chatApi = {
     initiateChat: async (mentorId: string): Promise<Conversation> => {
-        const response = await api.post('/chat/initiate', { mentorId });
+        const response = await api.post(ChatRoutes.INITIATE, { mentorId });
         return response.data;
     },
     getConversations: async (): Promise<Conversation[]> => {
-        const response = await api.get('/chat/my-conversations');
+        const response = await api.get(ChatRoutes.MY_CONVERSATION);
         return response.data;
     },
-
-    // getMessages: async (roomId: string): Promise<Message[]> => {
-    //     const response = await api.get(`/chat/${roomId}/messages`);
-    //     return response.data;
-    // },
 
     uploadFile: async (file: File): Promise<{ url: string }> => {
         const formData = new FormData();
         formData.append('file', file);
-        const response = await api.post('/chat/upload', formData, {
+        const response = await api.post(ChatRoutes.UPLOAD, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -28,6 +24,6 @@ export const chatApi = {
     },
 
     deleteMessage: async (messageId: string): Promise<void> => {
-        await api.delete(`/chat/messages/${messageId}`);
+        await api.delete(`${ChatRoutes.DELETE_MESSAGE}/${messageId}`);
     },
 };

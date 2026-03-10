@@ -16,7 +16,7 @@ import {
 } from '@/redux/slices/notificationSlice';
 import { useNavigate } from 'react-router-dom';
 import type { Notification } from '@/Features/admin/types';
-import { userApi } from '@/Services/user.api';
+import { getNotifications } from '@/Services/user.api';
 
 export const UserNotificationListener: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -144,8 +144,8 @@ export const UserNotificationListener: React.FC = () => {
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'user') return;
 
-        userApi
-            .getNotifications()
+        
+            getNotifications()
             .then((data) => {
                 if (Array.isArray(data)) {
                     dispatch(setNotifications(data));

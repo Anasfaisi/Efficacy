@@ -40,12 +40,7 @@ import {
     bankDetailsSchema,
 } from '@/types/zodSchemas';
 import { ZodError } from 'zod';
-import {
-    mentorApi,
-    updateMentorProfileBasicInfo,
-    updateMentorProfileMedia,
-    updateMentorProfileArray,
-} from '@/Services/mentor.api';
+import { mentorApi } from '@/Services/mentor.api';
 import { walletApi } from '@/Services/wallet.api';
 
 interface ConfigSectionProps {
@@ -260,7 +255,7 @@ const MentorProfilePage = () => {
             mentorProfileUpdateSchema.parse(fields);
 
             setIsLoading(sectionId);
-            await updateMentorProfileBasicInfo(fields);
+            await mentorApi.updateMentorProfileBasicInfo(fields);
             toast.success('Section updated successfully');
             setFullMentor((prev) => (prev ? { ...prev, ...fields } : null));
             dispatch(updateCurrentUser(fields));
@@ -296,10 +291,10 @@ const MentorProfilePage = () => {
             }
 
             setIsLoading('security');
-            await updateMentorProfileBasicInfo({
+            await mentorApi.updateMentorProfileBasicInfo({
                 currentPassword,
                 newPassword,
-            } as any);
+            }as any);
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
@@ -329,7 +324,10 @@ const MentorProfilePage = () => {
     const handleSaveAchievements = async () => {
         setIsLoading('achievements');
         try {
-            await updateMentorProfileArray('achievements', achievements);
+            await mentorApi.updateMentorProfileArray(
+                'achievements',
+                achievements
+            );
             toast.success('Achievements updated');
         } catch (error) {
             toast.error('Update failed');
@@ -344,7 +342,7 @@ const MentorProfilePage = () => {
     ) => {
         setIsLoading(type);
         try {
-            await updateMentorProfileMedia({
+            await mentorApi.updateMentorProfileMedia({
                 profilePic: type === 'profilePic' ? file : null,
                 coverPic: type === 'coverPic' ? file : null,
                 resume: null,
@@ -361,7 +359,7 @@ const MentorProfilePage = () => {
             if (type === 'profilePic' && data.profilePic) {
                 dispatch(updateCurrentUser({ profilePic: data.profilePic }));
             } else if (type === 'coverPic' && data.coverPic) {
-                dispatch(updateCurrentUser({ coverPic: data.coverPic } as any));
+                dispatch(updateCurrentUser({ coverPic: data.coverPic }));
             }
         } catch (error) {
             toast.error('Upload failed');
@@ -390,7 +388,7 @@ const MentorProfilePage = () => {
     const handleSaveAvailability = async () => {
         setIsLoading('availability');
         try {
-            await updateMentorProfileBasicInfo({
+            await mentorApi.updateMentorProfileBasicInfo({
                 availableDays: availableDays,
                 preferredTime: preferredTime,
             });

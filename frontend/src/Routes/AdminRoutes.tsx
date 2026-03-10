@@ -15,6 +15,7 @@ import NotFound from '@/Features/common/pages/NotFound';
 import AdminFinancialsPage from '@/Features/admin/pages/AdminFinancialsPage';
 import AdminGamificationPage from '@/Features/admin/gamification/pages/AdminGamificationPage';
 import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
+import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -47,7 +48,7 @@ const AdminRoutes: React.FC = () => {
                 />
                 <Route
                     path="mentors/details/:id"
-                    element={<MentorDetailsPage />}
+                    element={<MentorDetailPage />}
                 />
                 <Route
                     path="mentors/review/:id"

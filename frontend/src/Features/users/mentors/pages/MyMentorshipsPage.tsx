@@ -54,6 +54,7 @@ const MyMentorshipsPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await mentorshipApi.getUserRequests();
+                console.log(data,"my mentorshp")
                 const sortedData = Array.isArray(data) ? data.reverse() : [];
                 setMentorships(sortedData);
             } catch (error) {

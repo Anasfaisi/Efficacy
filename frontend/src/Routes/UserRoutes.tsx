@@ -7,22 +7,48 @@ import { UserNotificationListener } from '@/Features/users/components/UserNotifi
 
 // Lazy load components
 const Home = lazy(() => import('../Features/users/home/pages/Home'));
-const SuccessPage = lazy(() => import('@/Features/users/payment/pages/SuccessPage'));
-const CancelPage = lazy(() => import('@/Features/users/payment/pages/CancelPage'));
+const SuccessPage = lazy(
+    () => import('@/Features/users/payment/pages/SuccessPage')
+);
+const CancelPage = lazy(
+    () => import('@/Features/users/payment/pages/CancelPage')
+);
 const ChatPage = lazy(() => import('@/Features/users/chat/pages/ChatPage'));
-const SubscriptionForm = lazy(() => import('@/Features/users/payment/pages/CheckoutForm'));
-const UserProfilePage = lazy(() => import('@/Features/users/profile/pages/UserProfilePage'));
-const TasksPage = lazy(() => import('@/Features/users/KanbanBorad/pages/TasksPage'));
-const MentorListingPage = lazy(() => import('@/Features/users/mentors/pages/MentorListingPage'));
-const MentorDetailPage = lazy(() => import('@/Features/users/mentors/pages/MentorDetailPage'));
-const PlannerPage = lazy(() => import('@/Features/users/planner/pages/PlannerPage'));
-const MentorshipManagementPage = lazy(() => import('../Features/users/mentors/pages/MentorshipManagementPage'));
-const MyMentorshipsPage = lazy(() => import('@/Features/users/mentors/pages/MyMentorshipsPage'));
+const SubscriptionForm = lazy(
+    () => import('@/Features/users/payment/pages/CheckoutForm')
+);
+const UserProfilePage = lazy(
+    () => import('@/Features/users/profile/pages/UserProfilePage')
+);
+const TasksPage = lazy(
+    () => import('@/Features/users/KanbanBorad/pages/TasksPage')
+);
+const MentorListingPage = lazy(
+    () => import('@/Features/users/mentors/pages/MentorListingPage')
+);
+const MentorDetailPage = lazy(
+    () => import('@/Features/users/mentors/pages/MentorDetailPage')
+);
+const PlannerPage = lazy(
+    () => import('@/Features/users/planner/pages/PlannerPage')
+);
+const MentorshipManagementPage = lazy(
+    () => import('../Features/users/mentors/pages/MentorshipManagementPage')
+);
+const MyMentorshipsPage = lazy(
+    () => import('@/Features/users/mentors/pages/MyMentorshipsPage')
+);
 const NotFound = lazy(() => import('@/Features/common/pages/NotFound'));
-const PomodoroPage = lazy(() => import('@/Features/users/pomodoro/pages/PomodoroPage'));
+const PomodoroPage = lazy(
+    () => import('@/Features/users/pomodoro/pages/PomodoroPage')
+);
 const NotesPage = lazy(() => import('@/Features/users/notes/pages/NotesPage'));
-const UserWalletPage = lazy(() => import('@/Features/users/profile/pages/UserWalletPage'));
-const BookingHistoryPage = lazy(() => import('@/Features/users/mentors/pages/BookingHistoryPage'));
+const UserWalletPage = lazy(
+    () => import('@/Features/users/profile/pages/UserWalletPage')
+);
+const BookingHistoryPage = lazy(
+    () => import('@/Features/users/mentors/pages/BookingHistoryPage')
+);
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -46,7 +72,13 @@ const UserRoutes: React.FC = () => {
     return (
         <>
             <UserNotificationListener />
-            <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+            <Suspense
+                fallback={
+                    <div className="flex h-screen items-center justify-center">
+                        Loading...
+                    </div>
+                }
+            >
                 <Routes>
                     <Route path="home" element={<Home />} />
                     <Route path="logout" element={<Logout />} />
@@ -62,7 +94,10 @@ const UserRoutes: React.FC = () => {
                     <Route path="tasks" element={<TasksPage />} />
                     <Route path="mentors" element={<MentorListingPage />} />
                     <Route path="mentors/:id" element={<MentorDetailPage />} />
-                    <Route path="my-mentorships" element={<MyMentorshipsPage />} />
+                    <Route
+                        path="my-mentorships"
+                        element={<MyMentorshipsPage />}
+                    />
                     <Route
                         path="mentorship/:id"
                         element={<MentorshipManagementPage />}

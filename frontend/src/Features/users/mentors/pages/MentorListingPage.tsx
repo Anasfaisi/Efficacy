@@ -14,6 +14,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import MentorDetailsModal from '../components/MentorDetailsModal';
+import type { price } from '@/types/mentor';
 
 const MentorListingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ const MentorListingPage: React.FC = () => {
         setDebouncedMinPrice('');
         setDebouncedMaxPrice('');
     };
-
+  
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -51,12 +52,12 @@ const MentorListingPage: React.FC = () => {
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm, minPrice, maxPrice]);
-
+        
     useEffect(() => {
         const fetchMentors = async () => {
             setLoading(true);
             try {
-                const filters: any = {};
+                const filters= {} as price;
                 if (debouncedMinPrice) filters.minPrice = debouncedMinPrice;
                 if (debouncedMaxPrice) filters.maxPrice = debouncedMaxPrice;
 

@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { userApi } from '@/Services/user.api';
+import { markAllNotificationsAsRead, markNotificationAsRead} from '@/Services/user.api';
 
 const BellButton: React.FC = () => {
     const { notifications, unreadCount } = useAppSelector(
@@ -31,7 +31,7 @@ const BellButton: React.FC = () => {
     const handleMarkAllAsRead = async () => {
         dispatch(markAllAsRead());
         try {
-            await userApi.markAllNotificationsAsRead();
+            await markAllNotificationsAsRead();
         } catch (error) {
             console.error('Failed to mark all as read:', error);
         }
@@ -41,7 +41,7 @@ const BellButton: React.FC = () => {
         e?.stopPropagation();
         dispatch(markAsRead(id));
         try {
-            await userApi.markNotificationAsRead(id);
+            await markNotificationAsRead(id);
         } catch (error) {
             console.error('Failed to mark as read:', error);
         }

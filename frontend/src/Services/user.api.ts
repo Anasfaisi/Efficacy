@@ -12,57 +12,23 @@ import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
 import type { Notification } from '@/Features/admin/types';
+import { UserRoutes } from './constant.routes';
 
-const ENDPOINTS: Record<Role, string> = {
-    admin: '/admin/login',
-    mentor: '/mentor/login',
-    user: '/login',
-};
-
-export const fetchCurrentUser = async (
-    id: string | undefined
-): Promise<User> => {
-    try {
-        const res = await api.get(`/me/${id}`);
-        console.log(res);
-        return res.data.user as User;
-    } catch (error) {
-        console.error('Failed to fetch the current user', error);
-        throw new Error('unable to fetch user data');
-    }
+export const fetchCurrentUser = async (userId: string): Promise<User> => {
+    const res = await api.get(UserRoutes.FETCH_CURRENT_USER(userId));
+    return res.data.user as User;
 };
 
 export const loginApi = async (
     credentials: LoginCredentials
 ): Promise<LoginResponse> => {
-    const role: Role = (credentials.role ?? 'user') as Role;
-    const endpoint = ENDPOINTS[role];
-
-    try {
-        console.log(credentials, 'auth api');
-        const res = await api.post(endpoint, credentials);
-        console.log(res.data, 'from aut');
-
-        return res.data;
-    } catch (error) {
-        if (error instanceof AxiosError) {
-            return { message: error.response?.data?.message || 'Login failed' };
-        }
-        console.log(error);
-        return { message: 'Login failed' };
-    }
+    const res = await api.post(UserRoutes.LOGIN, credentials);
+    return res.data;
 };
 
 export const logoutApi = async (): Promise<{ message: string }> => {
-    try {
-        const response = await api.post('/logout');
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-            throw error.response?.data.message || ' logout failed';
-        }
-        throw AuthMessages.LogoutFailed;
-    }
+    const response = await api.post(UserRoutes.LOGOUT);
+    return response.data;
 };
 
 export const registerInitApi = async (
@@ -73,21 +39,8 @@ export const registerInitApi = async (
     role: string;
     resendAvailableAt: string;
 }> => {
-    try {
-        const endpoint =
-            credentials?.role === 'mentor'
-                ? '/mentor/register/init'
-                : '/register/init';
-        const response = await api.post(endpoint, credentials);
-        console.log(response, 'from auth api');
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-            throw error.response?.data.message;
-        }
-        throw error;
-    }
+    const response = await api.post(UserRoutes.REGISTER, credentials);
+    return response.data;
 };
 
 export const verifyOtpApi = async (
@@ -96,10 +49,7 @@ export const verifyOtpApi = async (
     role: string | null
 ): Promise<VerifyOtpResponse> => {
     try {
-        const endpoint =
-            role === 'mentor' ? '/mentor/register/verify' : '/register/verify';
-
-        const response = await api.post(endpoint, { email, otp });
+        const response = await api.post(UserRoutes.VERIFY_OTP, { email, otp });
         return {
             success: true,
             user: response.data,
@@ -123,8 +73,7 @@ export const resendOtpApi = async (
     email: string | null
 ): Promise<ResendOtpResponse> => {
     try {
-        const response = await api.post('/register/resend-otp', { email });
-        console.log(response.data, 'response from auth api ');
+        const response = await api.post(UserRoutes.RESEND_OTP, { email });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -140,8 +89,7 @@ export const forgotPasswordApi = async (
     email: string
 ): Promise<{ message: string }> => {
     try {
-        const response = await api.post('/forgot-password/init', { email });
-
+        const response = await api.post(UserRoutes.FORGET_PASSWORD, { email });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -157,7 +105,7 @@ export const resetPasswordApi = async (
     newPassword: string
 ): Promise<{ message: string }> => {
     try {
-        const response = await api.post(`/forgot-password/verify`, {
+        const response = await api.post(UserRoutes.RESET_PASSWORD, {
             token,
             newPassword,
         });
@@ -199,7 +147,6 @@ export const updateProfilePicture = async (
     id?: string
 ): Promise<{ message: string; user: User }> => {
     try {
-        console.log(id, 'yryrt');
         if (!file) {
             throw new Error('no file selected');
         }
@@ -208,9 +155,13 @@ export const updateProfilePicture = async (
         }
         const formData = new FormData();
         formData.append('image', file);
-        const response = await api.patch(`/profile/picture/${id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        const response = await api.patch(
+            UserRoutes.UPDATE_PROFILE_PICTURE(id),
+            formData,
+            {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            }
+        );
         return response.data;
     } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -227,33 +178,23 @@ export const updateProfilePicture = async (
     }
 };
 
-export const updateProfile = async (form: ProfileForm, id?: string) => {
-    try {
-        if (!id) {
-            throw new Error('no user id was given');
-        }
-        const response = await api.patch(`/profile/${id}`, form);
-        return response;
-    } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-            throw error.response?.data?.message || 'profile update failed';
-        }
-        if (error instanceof Error) {
-            throw error.message;
-        }
-        throw new Error('Unknown error during profile update');
-    }
+export const updateProfile = async (form: ProfileForm, userId: string) => {
+    const response = await api.patch(
+        UserRoutes.UPDATE_PROFILE_BASIC(userId),
+        form
+    );
+    return response;
 };
 
-export const userApi = {
-    getNotifications: async (): Promise<Notification[]> => {
-        const res = await api.get('/notifications');
-        return res.data;
-    },
-    markNotificationAsRead: async (id: string): Promise<void> => {
-        await api.patch(`/notifications/${id}/mark-read`);
-    },
-    markAllNotificationsAsRead: async (): Promise<void> => {
-        await api.patch('/notifications/mark-all-read');
-    },
+export const getNotifications = async (): Promise<Notification[]> => {
+    const res = await api.get(UserRoutes.NOTIFICATIONS);
+    return res.data;
+};
+
+export const markNotificationAsRead = async (id: string): Promise<void> => {
+    await api.patch(UserRoutes.MARK_NOTIFICATION_AS_READ(id));
+};
+
+export const markAllNotificationsAsRead = async (): Promise<void> => {
+    await api.patch(UserRoutes.MARK_ALL_NOTIFICATIONS_AS_READ);
 };
