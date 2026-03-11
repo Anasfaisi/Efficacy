@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { type Mentor } from '@/types/auth';
 import { logout } from '@/redux/slices/authSlice';
 import { motion } from 'framer-motion';
-import { CheckCircle, Home, Mail, LogOut } from 'lucide-react';
+import { CheckCircle, Mail, LogOut } from 'lucide-react';
 
 export default function ApplicationReceived() {
     const navigate = useNavigate();

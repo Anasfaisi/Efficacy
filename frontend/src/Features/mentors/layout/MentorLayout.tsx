@@ -1,6 +1,5 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Search, Bell } from 'lucide-react';
 import { type Mentor } from '@/types/auth';
 import MentorSidebar from './MentorSidebar';
 import { MentorNotificationListener } from '../components/MentorNotificationListener';

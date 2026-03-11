@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IMentorOnboardService } from '@/serivces/Interfaces/IMentor-onboard.service';
-import { MentorApplicationRequestDto } from '@/Dto/mentorRequest.dto';
 import code from '@/types/http-status.enum';
 import {
     ErrorMessages,

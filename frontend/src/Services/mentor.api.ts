@@ -146,7 +146,7 @@ export const mentorApi = {
         return res.data;
     },
 
-    updateMentorProfileArray: async (field: string, elements: unknown[]) => {  
+    updateMentorProfileArray: async (field: string, elements: unknown[]) => {
         const formData = new FormData();
         formData.append('field', field);
         formData.append('data', JSON.stringify(elements));
@@ -159,6 +159,5 @@ export const mentorApi = {
             }
         );
         return res.data;
-        
     },
 };

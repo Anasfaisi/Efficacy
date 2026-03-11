@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IGamificationService } from '@/serivces/Interfaces/IGamification.service';
 import { GamificationEvent, BadgeTemplate } from '@/types/gamification.types';
-import Code from "@/types/http-status.enum"
+import Code from '@/types/http-status.enum';
 
 @injectable()
 export class GamificationController {
@@ -66,7 +66,7 @@ export class GamificationController {
         req: Request,
         res: Response
     ): Promise<void> {
-        console.log("jajajjd")
+        console.log('jajajjd');
         res.status(Code.OK).json({
             success: true,
             templates: Object.values(BadgeTemplate),

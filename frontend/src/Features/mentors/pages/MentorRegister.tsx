@@ -56,6 +56,7 @@ const MentorRegister: React.FC = () => {
                 navigate('/mentor/verify-otp');
             }
         } catch (error: unknown) {
+            console.log(error);
             toast.error('Registration failed. Please check your details.');
         }
     };
@@ -72,6 +73,7 @@ const MentorRegister: React.FC = () => {
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
+                console.log(err);
                 toast.error('Google login failed');
             }
         }
@@ -110,7 +112,8 @@ const MentorRegister: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="text-lg text-white/90 leading-relaxed max-w-sm"
                         >
-                            Your platform to guide, inspire, and foster continuous growth.
+                            Your platform to guide, inspire, and foster
+                            continuous growth.
                         </motion.p>
                     </div>
                 </div>

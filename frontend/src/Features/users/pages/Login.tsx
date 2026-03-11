@@ -73,6 +73,7 @@ const Login: React.FC = () => {
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
+                console.log(err);
                 setGoogleError('Google login failed');
             }
         }
@@ -111,7 +112,8 @@ const Login: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="text-lg text-white/90 leading-relaxed max-w-sm"
                         >
-                            Your structured learning system for consistent growth.
+                            Your structured learning system for consistent
+                            growth.
                         </motion.p>
                     </div>
                 </div>

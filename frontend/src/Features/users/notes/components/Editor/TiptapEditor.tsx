@@ -20,7 +20,7 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
     onChange,
     editable = true,
 }) => {
-    const [_, forceUpdate] = useState(0);
+    const [forceUpdate] = useState(0);
 
     const editor = useEditor({
         extensions: [
@@ -54,11 +54,6 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
             },
         },
     });
-
-    useEffect(() => {
-        if (editor && content !== editor.getHTML()) {
-        }
-    }, [content, editor]);
 
     useEffect(() => {
         if (editor && content) {

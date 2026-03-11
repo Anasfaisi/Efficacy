@@ -21,7 +21,7 @@ import {
     ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { isToday, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
+import { isToday, isAfter, isBefore, endOfDay } from 'date-fns';
 
 const TasksPage: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);

@@ -8,7 +8,6 @@ import {
     VideoOff,
     PhoneOff,
     Monitor,
-    Settings,
     Users,
 } from 'lucide-react';
 import {
@@ -24,7 +23,6 @@ import { bookingApi } from '@/Services/booking.api';
 import { toast } from 'react-toastify';
 import SessionCompletionModal from '../../users/mentors/components/SessionCompletionModal';
 import type { Booking } from '@/types/booking';
-import { mentorshipApi } from '@/Services/mentorship.api';
 
 const VideoCallPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -78,13 +76,15 @@ const VideoCallPage: React.FC = () => {
                     navigate(isMentor ? '/mentor/dashboard' : '/home');
                     return;
                 }
-                
+
                 // Fetch booking details to get mentor name and track start
                 const [bookingData] = await Promise.all([
-                    bookingApi.getBookingById ? bookingApi.getBookingById(roomId) : Promise.resolve(null),
-                    bookingApi.startSession(roomId)
+                    bookingApi.getBookingById
+                        ? bookingApi.getBookingById(roomId)
+                        : Promise.resolve(null),
+                    bookingApi.startSession(roomId),
                 ]);
-                
+
                 if (bookingData) setBooking(bookingData);
 
                 socketRef.current = connectSocket();
@@ -298,7 +298,7 @@ const VideoCallPage: React.FC = () => {
 
     const leaveCall = async () => {
         if (!roomId) return;
-        
+
         try {
             const updatedBooking = await bookingApi.endSession(roomId);
             setBooking(updatedBooking);
@@ -448,9 +448,11 @@ const VideoCallPage: React.FC = () => {
                 </div>
             </div>
 
-            <SessionCompletionModal 
+            <SessionCompletionModal
                 isOpen={showCompletionModal}
-                onClose={() => navigate(isMentor ? '/mentor/dashboard' : '/home')}
+                onClose={() =>
+                    navigate(isMentor ? '/mentor/dashboard' : '/home')
+                }
                 booking={booking}
                 mentorName={(booking?.mentorId as any)?.name || 'your mentor'}
             />

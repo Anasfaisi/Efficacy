@@ -254,9 +254,15 @@ export class AdminService implements IAdminService {
         );
     }
 
-    async getDashboardStats(adminId: string): Promise<{ totalUsers: number, totalMentors: number, totalRevenue: number }> {
-        const { totalCount: totalUsers } = await this._userRepository.getAllUsers(1, 1);
-        const { total: totalMentors } = await this._mentorRepository.getAllMentors(1, 1);
+    async getDashboardStats(adminId: string): Promise<{
+        totalUsers: number;
+        totalMentors: number;
+        totalRevenue: number;
+    }> {
+        const { totalCount: totalUsers } =
+            await this._userRepository.getAllUsers(1, 1);
+        const { total: totalMentors } =
+            await this._mentorRepository.getAllMentors(1, 1);
         const { totalRevenue } = await this.getRevenueDetails(adminId);
 
         return { totalUsers, totalMentors, totalRevenue };

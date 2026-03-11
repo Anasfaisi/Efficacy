@@ -44,10 +44,11 @@ export class ChatRepository
     ): Promise<IConversation | null> {
         const participantIds = participants.map((p) => p._id);
 
-        const conversation = await this.model.findOne({
-            participants: { $size: participantIds.length },
-            'participants._id': { $all: participantIds },
-        })
+        const conversation = await this.model
+            .findOne({
+                participants: { $size: participantIds.length },
+                'participants._id': { $all: participantIds },
+            })
             .populate('participants._id', 'name profilePic role email')
             .lean();
 
@@ -62,9 +63,10 @@ export class ChatRepository
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
-        const conversations = await this.model.find({
-            'participants._id': userId,
-        })
+        const conversations = await this.model
+            .find({
+                'participants._id': userId,
+            })
             .populate('participants._id', 'name profilePic role email')
             .populate('lastMessage')
             .sort({ updatedAt: -1 })
@@ -77,7 +79,8 @@ export class ChatRepository
     }
 
     async getConversationById(id: string): Promise<IConversation | null> {
-        const conversation = await this.model.findById(id)
+        const conversation = await this.model
+            .findById(id)
             .populate('participants._id', 'name profilePic role email')
             .lean();
 
@@ -93,10 +96,12 @@ export class ChatRepository
 
     async createMessage(data: Partial<IMessage>): Promise<IMessage> {
         let message = await this.messageRepository.create(data);
-    
+
         message = await (message as any).populate('senderId', 'name');
 
-        const msgObject = (message as any).toObject ? (message as any).toObject() : message;
+        const msgObject = (message as any).toObject
+            ? (message as any).toObject()
+            : message;
         return {
             ...msgObject,
             senderName: (msgObject.senderId as any)?.name,
@@ -109,9 +114,10 @@ export class ChatRepository
         limit: number = 50,
         skip: number = 0
     ): Promise<IMessage[]> {
-       
-        const messages = await (this.messageRepository as any).findByChat(conversationId);
-        
+        const messages = await (this.messageRepository as any).findByChat(
+            conversationId
+        );
+
         const paginatedMessages = messages.slice(skip, skip + limit);
 
         return paginatedMessages.map((msg: any) => ({
@@ -125,10 +131,10 @@ export class ChatRepository
         conversationId: string,
         userId: string
     ): Promise<void> {
-        await this.messageRepository.updateMany(
+        (await this.messageRepository.updateMany(
             { conversationId, senderId: { $ne: userId }, isRead: false },
-            { isRead: true } 
-        ) as void;
+            { isRead: true }
+        )) as void;
     }
 
     async updateLastMessage(

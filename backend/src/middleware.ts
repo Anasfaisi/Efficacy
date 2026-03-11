@@ -2,7 +2,6 @@ import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
 
 import cors from 'cors';
-import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import { container } from './config/inversify.config';
 import { PaymentController } from './controllers/payment.controller';

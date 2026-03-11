@@ -11,7 +11,6 @@ import { requestWrapper } from '@/utils/apiHandler';
 import {
     Calendar,
     Clock,
-    ExternalLink,
     AlertCircle,
     MessageSquare,
     Info,
@@ -19,7 +18,6 @@ import {
     Video,
     XCircle,
     CheckCircle2,
-    Star,
 } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import { reviewApi } from '@/Services/review.api';
@@ -38,13 +36,11 @@ import {
 import { useAppSelector } from '@/redux/hooks';
 import type { Mentor } from '@/types/auth';
 import { isBookingPast, canReschedule } from '@/utils/timeUtils';
-import { RefreshCw } from 'lucide-react';
 import { BookingStatus } from '@/types/booking';
 
 const MentorshipManagementPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const location = useLocation();
     const { currentUser } = useAppSelector((state) => state.auth);
     const isMentor = currentUser?.role === 'mentor';
 
@@ -67,7 +63,8 @@ const MentorshipManagementPage: React.FC = () => {
     const [nextSession, setNextSession] = useState<Booking | null>(null);
     const [isSessionActive, setIsSessionActive] = useState(false);
 
-    const [selectedBookingForReview, setSelectedBookingForReview] = useState<Booking | null>(null);
+    const [selectedBookingForReview, setSelectedBookingForReview] =
+        useState<Booking | null>(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -140,7 +137,7 @@ const MentorshipManagementPage: React.FC = () => {
     }, [id, isMentor]);
 
     const handleJoinSession = () => {
-        console.log("sdfkjdsfjkdj")
+        console.log('sdfkjdsfjkdj');
         if (!nextSession) return;
         navigate(`/meet/${nextSession.id}`);
     };
@@ -331,7 +328,10 @@ const MentorshipManagementPage: React.FC = () => {
             const mentorData = mentorship?.mentorId as Mentor;
             await reviewApi.submitReview({
                 bookingId: selectedBookingForReview.id,
-                mentorId: (mentorData as any)._id || (mentorData as any).id || String(mentorData),
+                mentorId:
+                    (mentorData as any)._id ||
+                    (mentorData as any).id ||
+                    String(mentorData),
                 userId: currentUser?.id || '',
                 rating,
                 comment,
@@ -339,7 +339,9 @@ const MentorshipManagementPage: React.FC = () => {
             setIsReviewModalOpen(false);
             fetchData();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to submit review");
+            toast.error(
+                error.response?.data?.message || 'Failed to submit review'
+            );
         }
     };
 
@@ -467,12 +469,14 @@ const MentorshipManagementPage: React.FC = () => {
                             </button>
                             <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
                                 Mentorship Dashboard
-                                {mentorship.status === MentorshipStatus.COMPLETED && (
+                                {mentorship.status ===
+                                    MentorshipStatus.COMPLETED && (
                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-black rounded-lg uppercase tracking-wider">
                                         Completed
                                     </span>
                                 )}
-                                {mentorship.status === MentorshipStatus.CANCELLED && (
+                                {mentorship.status ===
+                                    MentorshipStatus.CANCELLED && (
                                     <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-black rounded-lg uppercase tracking-wider">
                                         Cancelled
                                     </span>
@@ -481,51 +485,54 @@ const MentorshipManagementPage: React.FC = () => {
                         </div>
 
                         {/* LIVE SESSION CARD */}
-                        {nextSession && mentorship.status !== MentorshipStatus.COMPLETED && mentorship.status !== MentorshipStatus.CANCELLED && (
-                            <div className="mb-8 w-full bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-gray-900/20 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#7F00FF] opacity-10 blur-[80px] rounded-full group-hover:opacity-20 transition-opacity"></div>
-                                <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center gap-6">
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="flex h-3 w-3 relative">
-                                                <span
-                                                    className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isSessionActive ? 'bg-green-400' : 'bg-yellow-400'}`}
-                                                ></span>
-                                                <span
-                                                    className={`relative inline-flex rounded-full h-3 w-3 ${isSessionActive ? 'bg-green-500' : 'bg-yellow-500'}`}
-                                                ></span>
-                                            </span>
-                                            <span className="text-xs font-black uppercase tracking-widest text-white/60">
-                                                {isSessionActive
-                                                    ? 'Happening Now'
-                                                    : 'Upcoming Session'}
-                                            </span>
+                        {nextSession &&
+                            mentorship.status !== MentorshipStatus.COMPLETED &&
+                            mentorship.status !==
+                                MentorshipStatus.CANCELLED && (
+                                <div className="mb-8 w-full bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-gray-900/20 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#7F00FF] opacity-10 blur-[80px] rounded-full group-hover:opacity-20 transition-opacity"></div>
+                                    <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center gap-6">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="flex h-3 w-3 relative">
+                                                    <span
+                                                        className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isSessionActive ? 'bg-green-400' : 'bg-yellow-400'}`}
+                                                    ></span>
+                                                    <span
+                                                        className={`relative inline-flex rounded-full h-3 w-3 ${isSessionActive ? 'bg-green-500' : 'bg-yellow-500'}`}
+                                                    ></span>
+                                                </span>
+                                                <span className="text-xs font-black uppercase tracking-widest text-white/60">
+                                                    {isSessionActive
+                                                        ? 'Happening Now'
+                                                        : 'Upcoming Session'}
+                                                </span>
+                                            </div>
+                                            <h2 className="text-2xl font-black mb-1">
+                                                {nextSession.topic ||
+                                                    'Mentorship Session'}
+                                            </h2>
+                                            <p className="text-white/60 text-sm">
+                                                {nextSession.bookingDate
+                                                    ? format(
+                                                          new Date(
+                                                              nextSession.bookingDate
+                                                          ),
+                                                          'MMMM d, yyyy'
+                                                      )
+                                                    : 'Date TBD'}{' '}
+                                                • {nextSession.slot}
+                                            </p>
                                         </div>
-                                        <h2 className="text-2xl font-black mb-1">
-                                            {nextSession.topic ||
-                                                'Mentorship Session'}
-                                        </h2>
-                                        <p className="text-white/60 text-sm">
-                                            {nextSession.bookingDate
-                                                ? format(
-                                                      new Date(
-                                                          nextSession.bookingDate
-                                                      ),
-                                                      'MMMM d, yyyy'
-                                                  )
-                                                : 'Date TBD'}{' '}
-                                            • {nextSession.slot}
-                                        </p>
-                                    </div>
 
-                                    <button
-                                        onClick={handleJoinSession}
-                                        disabled={
-                                            isMentor
-                                                ? !isSessionStartable()
-                                                : !isSessionActive
-                                        }
-                                        className={`px-8 py-4 rounded-xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-lg
+                                        <button
+                                            onClick={handleJoinSession}
+                                            disabled={
+                                                isMentor
+                                                    ? !isSessionStartable()
+                                                    : !isSessionActive
+                                            }
+                                            className={`px-8 py-4 rounded-xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-lg
                                             ${
                                                 isMentor
                                                     ? isSessionStartable()
@@ -536,24 +543,24 @@ const MentorshipManagementPage: React.FC = () => {
                                                       : 'bg-white/10 text-white/40 cursor-not-allowed'
                                             }
                                         `}
-                                    >
-                                        <Video size={20} />
-                                        {isMentor
-                                            ? isSessionStartable()
-                                                ? 'Start Session'
-                                                : isBookingPast(
-                                                        nextSession.bookingDate,
-                                                        nextSession.slot
-                                                    )
-                                                  ? 'Session Expired'
-                                                  : 'Start Session'
-                                            : isSessionActive
-                                              ? 'Join Session'
-                                              : 'Waiting for Host...'}
-                                    </button>
+                                        >
+                                            <Video size={20} />
+                                            {isMentor
+                                                ? isSessionStartable()
+                                                    ? 'Start Session'
+                                                    : isBookingPast(
+                                                            nextSession.bookingDate,
+                                                            nextSession.slot
+                                                        )
+                                                      ? 'Session Expired'
+                                                      : 'Start Session'
+                                                : isSessionActive
+                                                  ? 'Join Session'
+                                                  : 'Waiting for Host...'}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Left Column: Progress & Profile */}
@@ -588,26 +595,46 @@ const MentorshipManagementPage: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex gap-3 pt-6 border-t border-gray-50">
-                                        <button 
+                                        <button
                                             onClick={() => navigate('/chat')}
                                             className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-[#7F00FF] hover:text-white transition-all group"
                                         >
-                                            <MessageSquare size={16} className="group-hover:scale-110 transition-transform" /> Chat
+                                            <MessageSquare
+                                                size={16}
+                                                className="group-hover:scale-110 transition-transform"
+                                            />{' '}
+                                            Chat
                                         </button>
-                                        <button 
-                                            onClick={() => setIsPolicyModalOpen(true)}
+                                        <button
+                                            onClick={() =>
+                                                setIsPolicyModalOpen(true)
+                                            }
                                             className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-gray-900 hover:text-white transition-all group"
                                         >
-                                            <Info size={16} className="group-hover:scale-110 transition-transform" /> Policy
+                                            <Info
+                                                size={16}
+                                                className="group-hover:scale-110 transition-transform"
+                                            />{' '}
+                                            Policy
                                         </button>
-                                        {mentorship.status === MentorshipStatus.ACTIVE && !isMentor && (
-                                            <button 
-                                                onClick={() => setIsCancelModalOpen(true)}
-                                                className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all group"
-                                            >
-                                                <XCircle size={16} className="group-hover:scale-110 transition-transform" /> Cancel
-                                            </button>
-                                        )}
+                                        {mentorship.status ===
+                                            MentorshipStatus.ACTIVE &&
+                                            !isMentor && (
+                                                <button
+                                                    onClick={() =>
+                                                        setIsCancelModalOpen(
+                                                            true
+                                                        )
+                                                    }
+                                                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all group"
+                                                >
+                                                    <XCircle
+                                                        size={16}
+                                                        className="group-hover:scale-110 transition-transform"
+                                                    />{' '}
+                                                    Cancel
+                                                </button>
+                                            )}
                                     </div>
                                 </div>
                                 {/* Session Usage Chart / Card */}
@@ -672,7 +699,6 @@ const MentorshipManagementPage: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
 
                             {/* Right Column: Book & Info */}
@@ -837,7 +863,6 @@ const MentorshipManagementPage: React.FC = () => {
                                         <h3 className="text-lg font-bold text-gray-900">
                                             Recent Sessions
                                         </h3>
-                                        
                                     </div>
                                     <div className="divide-y divide-gray-50 max-h-[600px] overflow-y-auto custom-scrollbar">
                                         {existingBookings.length === 0 ? (
@@ -862,12 +887,16 @@ const MentorshipManagementPage: React.FC = () => {
                                                             booking.bookingDate,
                                                             booking.slot
                                                         );
-                                                    const isInactive = mentorship.status === MentorshipStatus.COMPLETED || mentorship.status === MentorshipStatus.CANCELLED;
-                                                    
+                                                    const isInactive =
+                                                        mentorship.status ===
+                                                            MentorshipStatus.COMPLETED ||
+                                                        mentorship.status ===
+                                                            MentorshipStatus.CANCELLED;
+
                                                     return (
                                                         <div
                                                             key={booking.id}
-                                                            className={`p-6 transition-colors flex flex-col gap-4 group ${(isPast || isInactive) ? 'opacity-60 grayscale-[0.6] bg-gray-100/50' : 'hover:bg-gray-50'}`}
+                                                            className={`p-6 transition-colors flex flex-col gap-4 group ${isPast || isInactive ? 'opacity-60 grayscale-[0.6] bg-gray-100/50' : 'hover:bg-gray-50'}`}
                                                         >
                                                             <div className="flex items-center justify-between">
                                                                 <div className="flex items-center gap-4">
@@ -990,7 +1019,7 @@ const MentorshipManagementPage: React.FC = () => {
                 onConfirm={confirmReschedule}
                 bookingDetails={rescheduleData}
             />
-            
+
             <CancelMentorshipModal
                 isOpen={isCancelModalOpen}
                 onClose={() => setIsCancelModalOpen(false)}
@@ -1003,14 +1032,18 @@ const MentorshipManagementPage: React.FC = () => {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] p-8 text-white relative">
-                            <button 
+                            <button
                                 onClick={() => setIsPolicyModalOpen(false)}
                                 className="absolute top-6 right-6 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
                             >
                                 <XCircle size={20} />
                             </button>
-                            <h3 className="text-2xl font-black mb-2">Mentorship Policy</h3>
-                            <p className="text-white/80 font-medium italic">Terms and guidelines for your sessions</p>
+                            <h3 className="text-2xl font-black mb-2">
+                                Mentorship Policy
+                            </h3>
+                            <p className="text-white/80 font-medium italic">
+                                Terms and guidelines for your sessions
+                            </p>
                         </div>
                         <div className="p-8 space-y-6">
                             <div className="space-y-4">
@@ -1019,8 +1052,14 @@ const MentorshipManagementPage: React.FC = () => {
                                         <CheckCircle2 size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900">Personal Guidance</p>
-                                        <p className="text-xs text-gray-500 font-medium">Support for career, job applications, and emotional well-being.</p>
+                                        <p className="font-bold text-gray-900">
+                                            Personal Guidance
+                                        </p>
+                                        <p className="text-xs text-gray-500 font-medium">
+                                            Support for career, job
+                                            applications, and emotional
+                                            well-being.
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
@@ -1028,8 +1067,14 @@ const MentorshipManagementPage: React.FC = () => {
                                         <Clock size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900">Schedule & Duration</p>
-                                        <p className="text-xs text-gray-500 font-medium">{mentorship.totalSessions} regular sessions on alternative days (30 mins each).</p>
+                                        <p className="font-bold text-gray-900">
+                                            Schedule & Duration
+                                        </p>
+                                        <p className="text-xs text-gray-500 font-medium">
+                                            {mentorship.totalSessions} regular
+                                            sessions on alternative days (30
+                                            mins each).
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
@@ -1037,8 +1082,13 @@ const MentorshipManagementPage: React.FC = () => {
                                         <Video size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900">Communication Mode</p>
-                                        <p className="text-xs text-gray-500 font-medium">Session scheduling via tool with Video or Audio call preference.</p>
+                                        <p className="font-bold text-gray-900">
+                                            Communication Mode
+                                        </p>
+                                        <p className="text-xs text-gray-500 font-medium">
+                                            Session scheduling via tool with
+                                            Video or Audio call preference.
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl">
@@ -1046,12 +1096,18 @@ const MentorshipManagementPage: React.FC = () => {
                                         <XCircle size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900">Rescheduling Policy</p>
-                                        <p className="text-xs text-gray-500 font-medium">Must request at least 6 hours before. Missed sessions require alternative allocation.</p>
+                                        <p className="font-bold text-gray-900">
+                                            Rescheduling Policy
+                                        </p>
+                                        <p className="text-xs text-gray-500 font-medium">
+                                            Must request at least 6 hours
+                                            before. Missed sessions require
+                                            alternative allocation.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setIsPolicyModalOpen(false)}
                                 className="w-full py-4 bg-black text-white font-black rounded-2xl shadow-xl hover:bg-gray-800 transition-all"
                             >

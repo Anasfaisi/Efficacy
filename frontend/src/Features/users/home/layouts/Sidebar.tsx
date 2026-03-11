@@ -5,7 +5,6 @@ import {
     Calendar,
     Timer,
     Users,
-    Music,
     User,
     Trophy,
     ChevronRight,
@@ -73,14 +72,14 @@ const Sidebar = () => {
             to: '/profile/wallet',
             color: '#7F00FF',
         },
-      
+
         {
             icon: <User size={20} />,
             label: 'Profile',
             to: '/profile',
             color: '#7F00FF',
         },
-        
+
         {
             icon: <Trophy size={20} />,
             label: 'Conqueror',
@@ -132,7 +131,7 @@ const Sidebar = () => {
             </button>
 
             {/* Sidebar toggle and logo space cleared */}
-            <div className="h-10" /> 
+            <div className="h-10" />
 
             <nav className="flex-1 px-4 py-2 flex flex-col gap-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
                 {navItems.map((item) => (

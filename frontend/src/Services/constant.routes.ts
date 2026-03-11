@@ -5,15 +5,16 @@ export const UserRoutes = {
     REGISTER: '/register/init',
     VERIFY_OTP: '/register/verify',
     RESEND_OTP: '/register/resend-otp',
-    FORGET_PASSWORD :'/forgot-password/init',
-    RESET_PASSWORD :'/forgot-password/verify',
+    FORGET_PASSWORD: '/forgot-password/init',
+    RESET_PASSWORD: '/forgot-password/verify',
     NOTIFICATIONS: '/notifications',
     MARK_ALL_NOTIFICATIONS_AS_READ: '/notifications/mark-all-read',
-    MARK_NOTIFICATION_AS_READ: (notificationId:string) => `/notifications/${notificationId}/mark-read`,
-    UPDATE_PROFILE_BASIC: (userId:string)=>`/profile/${userId}`,
-    UPDATE_PROFILE_PICTURE :(userId:string)=>`/profile/picture/${userId}`,
-    FETCH_CURRENT_USER: (userId : string)=>`/me/${userId}`,    
-}
+    MARK_NOTIFICATION_AS_READ: (notificationId: string) =>
+        `/notifications/${notificationId}/mark-read`,
+    UPDATE_PROFILE_BASIC: (userId: string) => `/profile/${userId}`,
+    UPDATE_PROFILE_PICTURE: (userId: string) => `/profile/picture/${userId}`,
+    FETCH_CURRENT_USER: (userId: string) => `/me/${userId}`,
+};
 
 const MENTOR_BASE = '/mentor';
 export const MentorRoutes = {
@@ -55,7 +56,8 @@ export const AdminRoutes = {
     NOTIFICATION_MARK_READ: (notificationId: string) =>
         `${ADMIN_BASE}/notification/${notificationId}/mark-read`,
     MENTORS_ID: (mentorId: string) => `${ADMIN_BASE}/mentors/${mentorId}`,
-    MENTORS_STATUS: (mentorId: string) => `${ADMIN_BASE}/mentors/${mentorId}/status`,
+    MENTORS_STATUS: (mentorId: string) =>
+        `${ADMIN_BASE}/mentors/${mentorId}/status`,
     MENTOR_APPLICATION_APPROVE: (applicationId: string) =>
         `${ADMIN_BASE}/mentors/applications/${applicationId}`,
     MENTOR_APPLICATION_REJECT: (applicationId: string) =>
@@ -82,19 +84,27 @@ export const MentorshipRoutes = {
     CREATE_REQUEST: `${MENTORSHIP_BASE}/request`,
     GET_MENTOR_REQUESTS: `${MENTORSHIP_BASE}/requests/mentor`,
     GET_USER_REQUESTS: `${MENTORSHIP_BASE}/requests/user`,
-    RESPOND_TO_REQUEST: (requestId: string) => `${MENTORSHIP_BASE}/request/${requestId}/respond`,
-    CONFIRM_SUGGESTION: (requestId: string) => `${MENTORSHIP_BASE}/request/${requestId}/confirm`,
-    VERIFY_PAYMENT: (requestId: string) => `${MENTORSHIP_BASE}/request/${requestId}/verify-payment`,
+    RESPOND_TO_REQUEST: (requestId: string) =>
+        `${MENTORSHIP_BASE}/request/${requestId}/respond`,
+    CONFIRM_SUGGESTION: (requestId: string) =>
+        `${MENTORSHIP_BASE}/request/${requestId}/confirm`,
+    VERIFY_PAYMENT: (requestId: string) =>
+        `${MENTORSHIP_BASE}/request/${requestId}/verify-payment`,
     CREATE_CHECKOUT_SESSION: '/payments/checkout-mentorship',
     GET_ACTIVE_MENTORSHIP: `${MENTORSHIP_BASE}/active`,
-    GET_MENTORSHIP_DETAIL: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}`,
-    BOOK_SESSION: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}/book-session`,
-    RESCHEDULE_SESSION: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}/reschedule-session`,
-    COMPLETE_MENTORSHIP: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}/complete`,
-    SUBMIT_FEEDBACK: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}/feedback`,
-    CANCEL_MENTORSHIP: (mentorshipId: string) => `${MENTORSHIP_BASE}/${mentorshipId}/cancel`,
+    GET_MENTORSHIP_DETAIL: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}`,
+    BOOK_SESSION: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}/book-session`,
+    RESCHEDULE_SESSION: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}/reschedule-session`,
+    COMPLETE_MENTORSHIP: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}/complete`,
+    SUBMIT_FEEDBACK: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}/feedback`,
+    CANCEL_MENTORSHIP: (mentorshipId: string) =>
+        `${MENTORSHIP_BASE}/${mentorshipId}/cancel`,
 };
-
 
 const BOOKING_BASE = '/booking';
 export const BookingRoutes = {
@@ -106,20 +116,21 @@ export const BookingRoutes = {
     REQUEST_RESCHEDULE: `${BOOKING_BASE}/reschedule-request`,
     RESPOND_TO_RESCHEDULE: `${BOOKING_BASE}/reschedule-respond`,
     VERIFY_ACCESS: (bookingId: string) => `${BOOKING_BASE}/verify/${bookingId}`,
-    START_SESSION: (bookingId: string) => `${BOOKING_BASE}/start-session/${bookingId}`,
-    END_SESSION: (bookingId: string) => `${BOOKING_BASE}/end-session/${bookingId}`,
+    START_SESSION: (bookingId: string) =>
+        `${BOOKING_BASE}/start-session/${bookingId}`,
+    END_SESSION: (bookingId: string) =>
+        `${BOOKING_BASE}/end-session/${bookingId}`,
     GET_BOOKING_BY_ID: (bookingId: string) => `${BOOKING_BASE}/${bookingId}`,
 };
 
-
-const GAMIFICATION_BASE = '/gamification'
-export const GamificationRoutes ={
+const GAMIFICATION_BASE = '/gamification';
+export const GamificationRoutes = {
     CONSTANTS: `${GAMIFICATION_BASE}/constants`,
     BADGES: `${GAMIFICATION_BASE}/badges`,
     CREATE_BADGE: `${GAMIFICATION_BASE}/badges`,
     UPDATE_BADGE: (badgeId: string) => `${GAMIFICATION_BASE}/badges/${badgeId}`,
     DELETE_BADGE: (badgeId: string) => `${GAMIFICATION_BASE}/badges/${badgeId}`,
-}
+};
 
 const KANBAN_BASE = '/kanban';
 export const KanbanRoutes = {
@@ -130,8 +141,7 @@ export const KanbanRoutes = {
     UPDATE_TASK: `${KANBAN_BASE}/task`,
     DELETE_TASK: (id: string) => `${KANBAN_BASE}/task/${id}`,
     REORDER_TASK: `${KANBAN_BASE}/task/reorder`,
-}
-
+};
 
 const NOTE_BASE = '/notes';
 export const NoteRoutes = {
@@ -139,17 +149,16 @@ export const NoteRoutes = {
     GET_NOTES: `${NOTE_BASE}`,
     UPDATE_NOTE: (noteId: string) => `${NOTE_BASE}/${noteId}`,
     DELETE_NOTE: (noteId: string) => `${NOTE_BASE}/${noteId}`,
-}
+};
 
 const PLANNER_BASE = '/planner';
 export const PlannerRoutes = {
     BASE: PLANNER_BASE,
     CREATE_TASK: `${PLANNER_BASE}/task/add`,
-    UPDATE_TASK: (taskId:string)=>`${PLANNER_BASE}/${taskId}`,
+    UPDATE_TASK: (taskId: string) => `${PLANNER_BASE}/${taskId}`,
     DELETE_TASK: (taskId: string) => `${PLANNER_BASE}/${taskId}`,
     REORDER_TASK: `${PLANNER_BASE}/task/reorder`,
-}
-
+};
 
 const POMODORO_BASE = '/pomodoro';
 export const PomodoroRoutes = {
@@ -157,7 +166,7 @@ export const PomodoroRoutes = {
     CREATE_SESSION: `${POMODORO_BASE}/session`,
     GET_STATS: `${POMODORO_BASE}/stats`,
     LOG_SESSION: `${POMODORO_BASE}/log`,
-}
+};
 
 const REVIEWS_BASE = '/reviews';
 export const ReviewRoutes = {
@@ -174,4 +183,4 @@ export const WalletRoutes = {
     CREATE_WITHDRAWAL: `${WALLET_BASE}/withdraw`,
     UPDATE_BANK_DETAILS: `${WALLET_BASE}/bank-details`,
     GET_TRANSACTIONS: `${WALLET_BASE}/transactions`,
-}
+};

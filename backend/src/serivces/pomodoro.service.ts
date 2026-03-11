@@ -1,4 +1,3 @@
-import { PomodoroRepository } from '../repositories/pomodoro.repository';
 import { IPomodoroLog } from '../models/PomodoroLog.model';
 import { IPomodoroService } from './Interfaces/IPomodoro.service';
 import { inject, injectable } from 'inversify';
@@ -37,7 +36,10 @@ export class PomodoroService implements IPomodoroService {
         });
 
         if (type === 'pomodoro') {
-            this.handlePomodoroCompletionGamification(userId, Math.floor(duration / 60)).catch(err => 
+            this.handlePomodoroCompletionGamification(
+                userId,
+                Math.floor(duration / 60)
+            ).catch((err) =>
                 console.error('Gamification pomodoro hook failed:', err)
             );
         }
@@ -45,7 +47,10 @@ export class PomodoroService implements IPomodoroService {
         return log;
     }
 
-    private async handlePomodoroCompletionGamification(userId: string, minutes: number) {
+    private async handlePomodoroCompletionGamification(
+        userId: string,
+        minutes: number
+    ) {
         let stats = await UserStats.findOne({ userId });
         if (!stats) {
             stats = await UserStats.create({

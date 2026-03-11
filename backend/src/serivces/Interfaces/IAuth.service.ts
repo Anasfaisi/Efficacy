@@ -1,4 +1,3 @@
-import { IMentor } from '@/models/Mentor.model';
 import {
     ForgotPasswordRequestDto,
     LoginRequestDto,

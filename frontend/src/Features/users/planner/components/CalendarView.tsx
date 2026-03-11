@@ -295,7 +295,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
             {/* Grid */}
             <div className="flex-1 grid grid-cols-7 grid-rows-5 auto-rows-fr">
-                {daysToRender.map((day, idx) => {
+                {daysToRender.map((day) => {
                     const isCurrentMonth = isSameMonth(day, currentDate);
                     const isDayToday = isToday(day);
                     const dayTasks = tasks.filter((task) => {

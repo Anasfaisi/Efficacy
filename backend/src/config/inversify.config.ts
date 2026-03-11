@@ -53,7 +53,6 @@ import { PlannerTaskService } from '@/serivces/planner-task.service';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { PlannerTaskRepository } from '@/repositories/planner-task.repository';
 
-
 import { IMentorshipService } from '@/serivces/Interfaces/IMentorship.service';
 import { MentorshipService } from '@/serivces/mentorship.service';
 import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
@@ -83,7 +82,7 @@ import { IBookingService } from '@/serivces/Interfaces/IBooking.service';
 
 import { IReviewRepository } from '@/repositories/interfaces/IReview.repository';
 import { ReviewRepository } from '@/repositories/review.repository';
-import { IReviewService} from '@/serivces/Interfaces/IReview.service';
+import { IReviewService } from '@/serivces/Interfaces/IReview.service';
 import { ReviewService } from '@/serivces/review.service';
 import { ReviewController } from '@/controllers/review.controller';
 import { GamificationService } from '@/serivces/gamification.service';
@@ -162,7 +161,9 @@ container
 container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
 container.bind<IBookingService>(TYPES.BookingService).to(BookingService);
 container.bind<IReviewService>(TYPES.ReviewService).to(ReviewService);
-container.bind<IGamificationService>(TYPES.GamificationService).to(GamificationService);
+container
+    .bind<IGamificationService>(TYPES.GamificationService)
+    .to(GamificationService);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container

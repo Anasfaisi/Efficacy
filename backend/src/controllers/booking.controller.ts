@@ -86,7 +86,6 @@ export class BookingController {
         res.status(code.OK).json(booking);
     }
 
-
     async respondToReschedule(req: Request, res: Response): Promise<void> {
         const { bookingId, approve } = req.body;
         const updatedBooking =

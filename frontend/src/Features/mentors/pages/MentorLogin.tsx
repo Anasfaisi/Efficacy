@@ -50,6 +50,7 @@ const MentorLogin: React.FC = () => {
             }
         } catch (err: unknown) {
             toast.error('Login failed. Please check your credentials.');
+            console.log(err);
         }
     };
 
@@ -66,6 +67,7 @@ const MentorLogin: React.FC = () => {
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
+                console.log(err);
                 setGoogleError('Google login failed');
             }
         }
@@ -104,7 +106,8 @@ const MentorLogin: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="text-lg text-white/90 leading-relaxed max-w-sm"
                         >
-                            Your platform to guide, inspire, and foster continuous growth.
+                            Your platform to guide, inspire, and foster
+                            continuous growth.
                         </motion.p>
                     </div>
                 </div>

@@ -3,7 +3,6 @@ import { TYPES } from '@/config/inversify-key.types';
 import { Server, Socket } from 'socket.io';
 import { IChatService } from './Interfaces/IChat.service';
 import { ISocketService } from './Interfaces/ISocket.service';
-import { IMessage } from '@/models/Message.model';
 import { ErrorMessages } from '@/types/response-messages.types';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
 import { BookingStatus } from '@/types/booking-status.types';

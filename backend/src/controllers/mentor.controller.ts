@@ -12,7 +12,6 @@ import {
     CommonMessages,
 } from '@/types/response-messages.types';
 import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
-import { CodeChallengeMethod } from 'google-auth-library';
 
 export class MentorController {
     constructor(

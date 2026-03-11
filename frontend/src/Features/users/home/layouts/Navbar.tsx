@@ -1,7 +1,7 @@
 import React from 'react';
 import BellButton from '../components/BellButton';
 import AvatarMenu from '../components/AvatarMenu';
-import { } from 'react-router-dom';
+import {} from 'react-router-dom';
 
 const Navbar: React.FC = () => {
     return (

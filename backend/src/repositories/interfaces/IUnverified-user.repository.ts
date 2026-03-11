@@ -1,5 +1,4 @@
 import { IUnverifiedUser } from '@/models/Unverified-user.model';
-import { UpdateWriteOpResult } from 'mongoose';
 
 export interface IUnverifiedUserRepository {
     findByEmail(email: string): Promise<IUnverifiedUser | null>;

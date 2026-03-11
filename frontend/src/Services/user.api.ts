@@ -23,8 +23,8 @@ export const fetchCurrentUser = async (userId: string): Promise<User> => {
 export const loginApi = async (
     credentials: LoginCredentials
 ): Promise<LoginResponse> => {
-    const role:Role = (credentials.role??"user")
-    const endPoint = ENDPOINTS[role]  
+    const role: Role = credentials.role ?? 'user';
+    const endPoint = ENDPOINTS[role];
     const res = await api.post(endPoint, credentials);
     return res.data;
 };
@@ -42,10 +42,10 @@ export const registerInitApi = async (
     role: string;
     resendAvailableAt: string;
 }> => {
-
-    const endpoint = credentials.role =="mentor"
-    ? MentorRoutes.REGISTER
-    : UserRoutes.REGISTER;
+    const endpoint =
+        credentials.role == 'mentor'
+            ? MentorRoutes.REGISTER
+            : UserRoutes.REGISTER;
     const response = await api.post(endpoint, credentials);
     return response.data;
 };

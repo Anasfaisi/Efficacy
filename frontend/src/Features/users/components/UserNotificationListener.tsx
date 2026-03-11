@@ -144,8 +144,7 @@ export const UserNotificationListener: React.FC = () => {
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'user') return;
 
-        
-            getNotifications()
+        getNotifications()
             .then((data) => {
                 if (Array.isArray(data)) {
                     dispatch(setNotifications(data));
@@ -164,26 +163,44 @@ export const UserNotificationListener: React.FC = () => {
 
             onBadgeUnlocked((payload) => {
                 const badge = payload.badge;
-                toast.custom((id) => (
-                    <div className="w-full max-w-sm bg-gradient-to-br from-indigo-900 to-black shadow-2xl rounded-2xl pointer-events-auto overflow-hidden p-5 border border-indigo-500/50 relative">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                             <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg>
-                        </div>
-                        <div className="flex flex-col items-center gap-3 relative z-10 text-center">
-                            <div className="animate-bounce">
-                                <span className="text-4xl">🏆</span>
+                toast.custom(
+                    (id) => (
+                        <div className="w-full max-w-sm bg-gradient-to-br from-indigo-900 to-black shadow-2xl rounded-2xl pointer-events-auto overflow-hidden p-5 border border-indigo-500/50 relative">
+                            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                                <svg
+                                    className="w-24 h-24"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                                </svg>
                             </div>
-                            <div>
-                                <h3 className="text-lg font-black text-white uppercase tracking-wider mb-1">Badge Unlocked!</h3>
-                                <p className="text-indigo-200 font-bold text-xl">{badge.name}</p>
-                                <p className="text-sm text-indigo-300/80 mt-2 italic">"{badge.story}"</p>
+                            <div className="flex flex-col items-center gap-3 relative z-10 text-center">
+                                <div className="animate-bounce">
+                                    <span className="text-4xl">🏆</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white uppercase tracking-wider mb-1">
+                                        Badge Unlocked!
+                                    </h3>
+                                    <p className="text-indigo-200 font-bold text-xl">
+                                        {badge.name}
+                                    </p>
+                                    <p className="text-sm text-indigo-300/80 mt-2 italic">
+                                        "{badge.story}"
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => toast.dismiss(id)}
+                                    className="mt-2 w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-xl transition-colors"
+                                >
+                                    Awesome
+                                </button>
                             </div>
-                            <button onClick={() => toast.dismiss(id)} className="mt-2 w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-xl transition-colors">
-                                Awesome
-                            </button>
                         </div>
-                    </div>
-                ), { duration: 8000, position: 'top-center' });
+                    ),
+                    { duration: 8000, position: 'top-center' }
+                );
             });
 
             socket.on('connect', () => {

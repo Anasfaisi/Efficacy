@@ -42,7 +42,10 @@ const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-red-100/50 rounded-2xl">
-                                    <AlertTriangle className="text-red-500" size={24} />
+                                    <AlertTriangle
+                                        className="text-red-500"
+                                        size={24}
+                                    />
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-black text-gray-900 tracking-tight">
@@ -61,7 +64,9 @@ const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
                         </div>
 
                         <div className="mb-8 pl-1">
-                            <p className="text-gray-600 font-medium">{message}</p>
+                            <p className="text-gray-600 font-medium">
+                                {message}
+                            </p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-3">

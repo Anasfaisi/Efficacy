@@ -272,8 +272,8 @@ const UserProfilePage = () => {
                                         'No professional headline set'}
                                 </p>
                                 <div className="mt-2 text-white/80 font-medium flex items-center justify-center md:justify-start gap-2">
-                                     <Mail className="w-4 h-4 text-purple-200" />
-                                     {user?.email}
+                                    <Mail className="w-4 h-4 text-purple-200" />
+                                    {user?.email}
                                 </div>
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
                                     <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border border-white/10">

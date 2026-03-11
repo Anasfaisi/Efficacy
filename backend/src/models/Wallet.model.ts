@@ -75,7 +75,5 @@ const walletSchema = new Schema<IWallet>(
     { timestamps: true }
 );
 
-
-
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

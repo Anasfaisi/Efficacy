@@ -1,7 +1,6 @@
 import { Role } from '@/types/role.types';
 import { Schema, model, Document, ObjectId } from 'mongoose';
 import { ISubscription } from './subscription.model';
-import subscriptionSchema from './subscription.model';
 
 interface IUser extends Document<ObjectId> {
     name: string;

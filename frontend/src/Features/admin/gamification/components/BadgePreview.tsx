@@ -4,14 +4,24 @@ import { motion } from 'framer-motion';
 
 // Maps backend string to a reliable CSS Tailwind configuration for colors
 const RarityColors = {
-    COMMON: { bg: 'bg-zinc-800', hex: '#27272a', ring: 'ring-zinc-600', text: 'text-zinc-300' },
+    COMMON: {
+        bg: 'bg-zinc-800',
+        hex: '#27272a',
+        ring: 'ring-zinc-600',
+        text: 'text-zinc-300',
+    },
     UNCOMMON: {
         bg: 'bg-green-900',
         hex: '#14532d',
         ring: 'ring-green-500',
         text: 'text-green-300',
     },
-    RARE: { bg: 'bg-blue-900', hex: '#1e3a8a', ring: 'ring-blue-500', text: 'text-blue-300' },
+    RARE: {
+        bg: 'bg-blue-900',
+        hex: '#1e3a8a',
+        ring: 'ring-blue-500',
+        text: 'text-blue-300',
+    },
     EPIC: {
         bg: 'bg-purple-900',
         hex: '#581c87',
@@ -44,10 +54,16 @@ export default function BadgePreview({
         lg: { container: 'w-36 h-44', icon: 48, text: 'text-sm' },
     };
 
-
     const iconName = badge.design?.iconName || 'Trophy';
 
-    const UnknownIcons = Icons as unknown as Record<string, React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>>;
+    const UnknownIcons = Icons as unknown as Record<
+        string,
+        React.ComponentType<{
+            size?: number;
+            strokeWidth?: number;
+            className?: string;
+        }>
+    >;
     const LucideIcon = UnknownIcons[iconName] || Icons.Trophy;
 
     return (

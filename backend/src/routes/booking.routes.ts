@@ -76,4 +76,4 @@ export const bookingRoutes = (container: Container) => {
     );
 
     return router;
-}
+};

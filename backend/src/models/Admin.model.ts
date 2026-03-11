@@ -1,5 +1,4 @@
 import { Role } from '@/types/role.types';
-import mongoose from 'mongoose';
 import { Document, Schema, model } from 'mongoose';
 
 export interface IAdmin extends Document {

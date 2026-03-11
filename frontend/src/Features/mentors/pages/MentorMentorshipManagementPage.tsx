@@ -40,8 +40,12 @@ const MentorMentorshipManagementPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [allMentorBookings, setAllMentorBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sessionFilter, setSessionFilter] = useState<'Upcoming' | 'Recent' | 'All'>('Upcoming');
-    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [sessionFilter, setSessionFilter] = useState<
+        'Upcoming' | 'Recent' | 'All'
+    >('Upcoming');
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(
+        null
+    );
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
     const fetchData = async () => {
@@ -141,11 +145,15 @@ const MentorMentorshipManagementPage: React.FC = () => {
 
     const student = mentorship.userId as UserType;
     let filteredBookings = bookings;
-    
+
     if (sessionFilter === 'Upcoming') {
-        filteredBookings = bookings.filter((b) => b.status === BookingStatus.CONFIRMED);
+        filteredBookings = bookings.filter(
+            (b) => b.status === BookingStatus.CONFIRMED
+        );
     } else if (sessionFilter === 'Recent') {
-        filteredBookings = bookings.filter((b) => b.status === BookingStatus.COMPLETED);
+        filteredBookings = bookings.filter(
+            (b) => b.status === BookingStatus.COMPLETED
+        );
     }
 
     return (
@@ -280,218 +288,218 @@ const MentorMentorshipManagementPage: React.FC = () => {
                     </div>
 
                     {/* Booked Sessions List */}
-                        <div className="flex items-center justify-between px-2">
-                            <h3 className="text-lg font-black text-gray-900">
-                                {sessionFilter} Sessions
-                            </h3>
-                            <div className="flex bg-gray-100 p-1 rounded-xl">
-                                {['Upcoming', 'Recent', 'All'].map((sf) => (
-                                    <button
-                                        key={sf}
-                                        onClick={() => setSessionFilter(sf as any)}
-                                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sessionFilter === sf ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                                    >
-                                        {sf}
-                                    </button>
-                                ))}
-                            </div>
+                    <div className="flex items-center justify-between px-2">
+                        <h3 className="text-lg font-black text-gray-900">
+                            {sessionFilter} Sessions
+                        </h3>
+                        <div className="flex bg-gray-100 p-1 rounded-xl">
+                            {['Upcoming', 'Recent', 'All'].map((sf) => (
+                                <button
+                                    key={sf}
+                                    onClick={() => setSessionFilter(sf as any)}
+                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sessionFilter === sf ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    {sf}
+                                </button>
+                            ))}
                         </div>
+                    </div>
 
-                        <div className="bg-white rounded-[40px] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
-                            <div className="divide-y divide-gray-50">
-                                {filteredBookings.length === 0 ? (
-                                    <div className="p-20 text-center">
-                                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-dashed border-gray-200 text-gray-300">
-                                            <Calendar size={24} />
-                                        </div>
-                                        <p className="text-gray-500 font-bold">
-                                            No sessions scheduled for this
-                                            student
-                                        </p>
-                                        <p className="text-xs text-gray-400 mt-1 uppercase font-black tracking-widest">
-                                            Awaiting student selection
-                                        </p>
+                    <div className="bg-white rounded-[40px] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
+                        <div className="divide-y divide-gray-50">
+                            {filteredBookings.length === 0 ? (
+                                <div className="p-20 text-center">
+                                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-dashed border-gray-200 text-gray-300">
+                                        <Calendar size={24} />
                                     </div>
-                                ) : (
-                                    filteredBookings.map((booking) => (
-                                        <div
-                                            key={booking.id}
-                                            className="p-8 hover:bg-gray-50/80 transition-all group relative"
-                                        >
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                                                <div className="flex items-center gap-6">
-                                                    <div className="w-16 h-16 bg-white rounded-3xl flex flex-col items-center justify-center text-gray-900 group-hover:scale-110 transition-transform border border-gray-100 shadow-sm relative">
-                                                        <span className="text-[10px] font-black uppercase text-indigo-500 leading-none mb-1">
-                                                            {format(
-                                                                new Date(
-                                                                    booking.bookingDate
-                                                                ),
-                                                                'MMM'
+                                    <p className="text-gray-500 font-bold">
+                                        No sessions scheduled for this student
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1 uppercase font-black tracking-widest">
+                                        Awaiting student selection
+                                    </p>
+                                </div>
+                            ) : (
+                                filteredBookings.map((booking) => (
+                                    <div
+                                        key={booking.id}
+                                        className="p-8 hover:bg-gray-50/80 transition-all group relative"
+                                    >
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-16 h-16 bg-white rounded-3xl flex flex-col items-center justify-center text-gray-900 group-hover:scale-110 transition-transform border border-gray-100 shadow-sm relative">
+                                                    <span className="text-[10px] font-black uppercase text-indigo-500 leading-none mb-1">
+                                                        {format(
+                                                            new Date(
+                                                                booking.bookingDate
+                                                            ),
+                                                            'MMM'
+                                                        )}
+                                                    </span>
+                                                    <span className="text-2xl font-black leading-none">
+                                                        {format(
+                                                            new Date(
+                                                                booking.bookingDate
+                                                            ),
+                                                            'd'
+                                                        )}
+                                                    </span>
+                                                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-lg font-black text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
+                                                        {booking.topic ||
+                                                            'Mentorship Session'}
+                                                    </h4>
+                                                    <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
+                                                        <div className="flex items-center gap-2">
+                                                            <Clock
+                                                                size={14}
+                                                                className="text-indigo-400"
+                                                            />
+                                                            {booking.slot}
+                                                        </div>
+                                                        <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
+                                                        <div className="flex items-center gap-2">
+                                                            {isBookingPast(
+                                                                booking.bookingDate,
+                                                                booking.slot
+                                                            ) ? (
+                                                                <>
+                                                                    <AlertCircle
+                                                                        size={
+                                                                            14
+                                                                        }
+                                                                        className="text-orange-500"
+                                                                    />
+                                                                    <span className="text-orange-600">
+                                                                        PASSED
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <CheckCircle2
+                                                                        size={
+                                                                            14
+                                                                        }
+                                                                        className="text-green-500"
+                                                                    />
+                                                                    CONFIRMED
+                                                                </>
                                                             )}
-                                                        </span>
-                                                        <span className="text-2xl font-black leading-none">
-                                                            {format(
-                                                                new Date(
-                                                                    booking.bookingDate
-                                                                ),
-                                                                'd'
-                                                            )}
-                                                        </span>
-                                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm" />
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="text-lg font-black text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
-                                                            {booking.topic ||
-                                                                'Mentorship Session'}
-                                                        </h4>
-                                                        <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
-                                                            <div className="flex items-center gap-2">
-                                                                <Clock
-                                                                    size={14}
-                                                                    className="text-indigo-400"
-                                                                />
-                                                                {booking.slot}
-                                                            </div>
-                                                            <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
-                                                            <div className="flex items-center gap-2">
-                                                                {isBookingPast(
-                                                                    booking.bookingDate,
-                                                                    booking.slot
-                                                                ) ? (
-                                                                    <>
-                                                                        <AlertCircle
-                                                                            size={
-                                                                                14
-                                                                            }
-                                                                            className="text-orange-500"
-                                                                        />
-                                                                        <span className="text-orange-600">
-                                                                            PASSED
-                                                                        </span>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <CheckCircle2
-                                                                            size={
-                                                                                14
-                                                                            }
-                                                                            className="text-green-500"
-                                                                        />
-                                                                        CONFIRMED
-                                                                    </>
-                                                                )}
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                <div className="flex items-center gap-3">
-                                                    {booking.status ===
-                                                        BookingStatus.CONFIRMED && (
+                                            <div className="flex items-center gap-3">
+                                                {booking.status ===
+                                                    BookingStatus.CONFIRMED && (
+                                                    <button
+                                                        onClick={() =>
+                                                            handleUpdateBookingStatus(
+                                                                booking.id,
+                                                                BookingStatus.COMPLETED
+                                                            )
+                                                        }
+                                                        className="flex items-center gap-2 px-4 py-3 bg-green-50 text-green-600 text-xs font-black rounded-2xl hover:bg-green-600 hover:text-white transition-all border border-green-100"
+                                                    >
+                                                        <Check size={14} />
+                                                        DONE
+                                                    </button>
+                                                )}
+                                                {booking.status ===
+                                                    BookingStatus.CONFIRMED &&
+                                                    !isBookingPast(
+                                                        booking.bookingDate,
+                                                        booking.slot
+                                                    ) && (
                                                         <button
                                                             onClick={() =>
-                                                                handleUpdateBookingStatus(
-                                                                    booking.id,
-                                                                    BookingStatus.COMPLETED
+                                                                navigate(
+                                                                    `/meet/${booking.id}`
                                                                 )
                                                             }
-                                                            className="flex items-center gap-2 px-4 py-3 bg-green-50 text-green-600 text-xs font-black rounded-2xl hover:bg-green-600 hover:text-white transition-all border border-green-100"
+                                                            className="flex items-center gap-2 px-6 py-3 bg-sky-700 text-white text-xs font-black rounded-2xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95"
                                                         >
-                                                            <Check size={14} />
-                                                            DONE
+                                                            <ExternalLink
+                                                                size={14}
+                                                            />
+                                                            START CALL
                                                         </button>
                                                     )}
-                                                    {booking.status ===
-                                                        BookingStatus.CONFIRMED &&
-                                                        !isBookingPast(
-                                                            booking.bookingDate,
-                                                            booking.slot
-                                                        ) && (
-                                                            <button
-                                                                onClick={() =>
-                                                                    navigate(
-                                                                        `/meet/${booking.id}`
-                                                                    )
-                                                                }
-                                                                className="flex items-center gap-2 px-6 py-3 bg-sky-700 text-white text-xs font-black rounded-2xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95"
-                                                            >
-                                                                <ExternalLink
-                                                                    size={14}
-                                                                />
-                                                                START CALL
-                                                            </button>
-                                                        )}
-                                                    <button 
-                                                        onClick={() => {
-                                                            setSelectedBooking(booking);
-                                                            setIsDetailsModalOpen(true);
-                                                        }}
-                                                        className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 text-xs font-black uppercase tracking-widest"
-                                                    >
-                                                        View Detail
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedBooking(
+                                                            booking
+                                                        );
+                                                        setIsDetailsModalOpen(
+                                                            true
+                                                        );
+                                                    }}
+                                                    className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 text-xs font-black uppercase tracking-widest"
+                                                >
+                                                    View Detail
+                                                </button>
                                             </div>
                                         </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Side: Schedule & Calendar */}
-                <div className="lg:col-span-4 space-y-8">
-                    {/* Mentor's Calendar View for this Mentee */}
-                    <div className="bg-white rounded-[40px] p-5 border border-gray-100 shadow-2xl shadow-gray-200/50">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-2">
-                                <Calendar
-                                    size={20}
-                                    className="text-indigo-600"
-                                />
-                                Schedule View
-                            </h3>
-                            <Info
-                                size={18}
-                                className="text-gray-300 cursor-help"
-                            />
-                        </div>
-
-                        <div className="mb-6">
-                            {mentorship.mentorId && (
-                                <MentorCalendar
-                                    mentor={mentorship.mentorId as MentorType}
-                                    allBookings={allMentorBookings}
-                                    currentMenteeId={
-                                        (mentorship.userId as any)?._id ||
-                                        (mentorship.userId as any)?.id ||
-                                        mentorship.userId
-                                    }
-                                    selectable={false}
-                                />
+                                    </div>
+                                ))
                             )}
                         </div>
-
-                        <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50 mt-6">
-                            <p className="text-[11px] font-bold text-indigo-700 leading-relaxed">
-                                <span className="font-black uppercase tracking-widest mr-1">
-                                    Note:
-                                </span>
-                                Only sessions for this mentee are highlighted
-                                here. Approved sessions are locked
-                                automatically.
-                            </p>
-                        </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Right Side: Schedule & Calendar */}
+            <div className="lg:col-span-4 space-y-8">
+                {/* Mentor's Calendar View for this Mentee */}
+                <div className="bg-white rounded-[40px] p-5 border border-gray-100 shadow-2xl shadow-gray-200/50">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-2">
+                            <Calendar size={20} className="text-indigo-600" />
+                            Schedule View
+                        </h3>
+                        <Info size={18} className="text-gray-300 cursor-help" />
+                    </div>
+
+                    <div className="mb-6">
+                        {mentorship.mentorId && (
+                            <MentorCalendar
+                                mentor={mentorship.mentorId as MentorType}
+                                allBookings={allMentorBookings}
+                                currentMenteeId={
+                                    (mentorship.userId as any)?._id ||
+                                    (mentorship.userId as any)?.id ||
+                                    mentorship.userId
+                                }
+                                selectable={false}
+                            />
+                        )}
+                    </div>
+
+                    <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50 mt-6">
+                        <p className="text-[11px] font-bold text-indigo-700 leading-relaxed">
+                            <span className="font-black uppercase tracking-widest mr-1">
+                                Note:
+                            </span>
+                            Only sessions for this mentee are highlighted here.
+                            Approved sessions are locked automatically.
+                        </p>
+                    </div>
+                </div>
+            </div>
             {selectedBooking && mentorship.mentorId && (
                 <SessionDetailsModal
                     isOpen={isDetailsModalOpen}
                     onClose={() => setIsDetailsModalOpen(false)}
                     booking={selectedBooking}
-                    menteeName={student?.name || "Student"}
-                    mentorId={(mentorship.mentorId as any)?._id || (mentorship.mentorId as any)?.id || mentorship.mentorId}
+                    menteeName={student?.name || 'Student'}
+                    mentorId={
+                        (mentorship.mentorId as any)?._id ||
+                        (mentorship.mentorId as any)?.id ||
+                        mentorship.mentorId
+                    }
                 />
             )}
         </motion.div>

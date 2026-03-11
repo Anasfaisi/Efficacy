@@ -25,17 +25,15 @@ export const bookingApi = {
         totalPages: number;
         currentPage: number;
     }> => {
-        const res = await api.get(
-            BookingRoutes.USER_SPECIFIC_BOOKING,{
-                params:{
-                    page,
-                    limit,
-                    status,
-                    startDate,
-                    endDate
-                }
-            }
-        );
+        const res = await api.get(BookingRoutes.USER_SPECIFIC_BOOKING, {
+            params: {
+                page,
+                limit,
+                status,
+                startDate,
+                endDate,
+            },
+        });
         return res.data;
     },
 
@@ -51,17 +49,15 @@ export const bookingApi = {
         totalPages: number;
         currentPage: number;
     }> => {
-        const res = await api.get(
-            BookingRoutes.MENTOR_SPECIFIC_BOOKING,{
-                params:{
-                    page,
-                    limit,
-                    status,
-                    startDate,
-                    endDate
-                }
-            }
-        );
+        const res = await api.get(BookingRoutes.MENTOR_SPECIFIC_BOOKING, {
+            params: {
+                page,
+                limit,
+                status,
+                startDate,
+                endDate,
+            },
+        });
         return res.data;
     },
 
@@ -95,7 +91,7 @@ export const bookingApi = {
 
     getBookingById: async (bookingId: string): Promise<Booking> => {
         const res = await api.get(BookingRoutes.GET_BOOKING_BY_ID(bookingId));
-        console.log(res,"res")
+        console.log(res, 'res');
         return res.data;
     },
 

@@ -70,13 +70,17 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                 transition={{ type: 'spring', damping: 12 }}
                                 className="w-24 h-24 bg-gradient-to-tr from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl shadow-green-200"
                             >
-                                <CheckCircle2 size={48} className="text-white" />
+                                <CheckCircle2
+                                    size={48}
+                                    className="text-white"
+                                />
                             </motion.div>
                             <h2 className="text-2xl font-black text-gray-900 mb-2">
                                 Thank You!
                             </h2>
                             <p className="text-gray-500">
-                                Your feedback helps {mentorName} and the community grow.
+                                Your feedback helps {mentorName} and the
+                                community grow.
                             </p>
                         </div>
                     ) : (
@@ -86,7 +90,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                     <h2 className="text-2xl font-black text-gray-900 tracking-tight">
                                         Rate your session
                                     </h2>
-                                    <p className="text-sm text-gray-500">How was your time with {mentorName}?</p>
+                                    <p className="text-sm text-gray-500">
+                                        How was your time with {mentorName}?
+                                    </p>
                                 </div>
                                 {canSkip && (
                                     <button
@@ -104,7 +110,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                         key={star}
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.9 }}
-                                        onMouseEnter={() => setHoveredRating(star)}
+                                        onMouseEnter={() =>
+                                            setHoveredRating(star)
+                                        }
                                         onMouseLeave={() => setHoveredRating(0)}
                                         onClick={() => setRating(star)}
                                         className="p-1"
@@ -112,7 +120,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                         <Star
                                             size={40}
                                             className={`transition-all duration-200 ${
-                                                star <= (hoveredRating || rating)
+                                                star <=
+                                                (hoveredRating || rating)
                                                     ? 'fill-yellow-400 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]'
                                                     : 'text-gray-200 fill-transparent'
                                             }`}
@@ -129,7 +138,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                     </label>
                                     <textarea
                                         value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
+                                        onChange={(e) =>
+                                            setComment(e.target.value)
+                                        }
                                         placeholder="What did you learn? What did you like?"
                                         className="w-full px-5 py-4 bg-gray-50/50 border border-gray-100 rounded-3xl focus:ring-2 focus:ring-[#7F00FF]/20 focus:border-[#7F00FF]/30 focus:outline-none transition-all resize-none min-h-[120px] text-gray-700 font-medium"
                                     />
@@ -139,7 +150,11 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                             <div className="flex flex-col gap-3">
                                 <button
                                     onClick={handleSubmit}
-                                    disabled={isSubmitting || rating === 0 || !comment.trim()}
+                                    disabled={
+                                        isSubmitting ||
+                                        rating === 0 ||
+                                        !comment.trim()
+                                    }
                                     className="w-full py-4 bg-gradient-to-r from-[#7F00FF] to-[#E100FF] text-white font-black rounded-2xl shadow-xl shadow-[#7F00FF]/30 hover:shadow-[#7F00FF]/50 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {isSubmitting ? (

@@ -1,9 +1,7 @@
-import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import { IReviewRepository } from './interfaces/IReview.repository';
 import Review, { IReview } from '@/models/Review.model';
 import { ReviewStatus } from '@/types/review-status.types';
-import { ObjectId, Types } from 'mongoose';
 import { ReviewEntity } from '@/entity/review.entity';
 import { ReviewMapper } from '@/Mapper/review.mapper';
 
