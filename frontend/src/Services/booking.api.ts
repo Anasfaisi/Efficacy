@@ -5,10 +5,11 @@ import type {
     UpdateBookingStatusRequestDto,
     RescheduleRequestDto,
 } from '@/types/booking';
+import { BookingRoutes } from './constant.routes';
 
 export const bookingApi = {
     createBooking: async (data: CreateBookingRequestDto): Promise<Booking> => {
-        const res = await api.post('/booking', data);
+        const res = await api.post(BookingRoutes.CREATE_BOOKING, data);
         return res.data;
     },
 
@@ -25,7 +26,15 @@ export const bookingApi = {
         currentPage: number;
     }> => {
         const res = await api.get(
-            `/booking/user?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
+            BookingRoutes.USER_SPECIFIC_BOOKING,{
+                params:{
+                    page,
+                    limit,
+                    status,
+                    startDate,
+                    endDate
+                }
+            }
         );
         return res.data;
     },
@@ -43,7 +52,15 @@ export const bookingApi = {
         currentPage: number;
     }> => {
         const res = await api.get(
-            `/booking/mentor?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
+            BookingRoutes.MENTOR_SPECIFIC_BOOKING,{
+                params:{
+                    page,
+                    limit,
+                    status,
+                    startDate,
+                    endDate
+                }
+            }
         );
         return res.data;
     },
@@ -51,12 +68,12 @@ export const bookingApi = {
     updateStatus: async (
         data: UpdateBookingStatusRequestDto
     ): Promise<Booking> => {
-        const res = await api.patch('/booking/status', data);
+        const res = await api.patch(BookingRoutes.UPDATE_BOOKING_STATUS, data);
         return res.data;
     },
 
     requestReschedule: async (data: RescheduleRequestDto): Promise<Booking> => {
-        const res = await api.post('/booking/reschedule-request', data);
+        const res = await api.post(BookingRoutes.REQUEST_RESCHEDULE, data);
         return res.data;
     },
 
@@ -64,7 +81,7 @@ export const bookingApi = {
         bookingId: string,
         approve: boolean
     ): Promise<Booking> => {
-        const res = await api.post('/booking/reschedule-respond', {
+        const res = await api.post(BookingRoutes.RESPOND_TO_RESCHEDULE, {
             bookingId,
             approve,
         });
@@ -72,23 +89,23 @@ export const bookingApi = {
     },
 
     verifyAccess: async (bookingId: string): Promise<{ success: boolean }> => {
-        const res = await api.get(`/booking/verify/${bookingId}`);
+        const res = await api.get(BookingRoutes.VERIFY_ACCESS(bookingId));
         return res.data;
     },
 
     getBookingById: async (bookingId: string): Promise<Booking> => {
-        const res = await api.get(`/booking/${bookingId}`);
+        const res = await api.get(BookingRoutes.GET_BOOKING_BY_ID(bookingId));
         console.log(res,"res")
         return res.data;
     },
 
     startSession: async (bookingId: string): Promise<Booking> => {
-        const res = await api.post('/booking/start-session', { bookingId });
+        const res = await api.post(BookingRoutes.START_SESSION(bookingId));
         return res.data;
     },
 
     endSession: async (bookingId: string): Promise<Booking> => {
-        const res = await api.post('/booking/end-session', { bookingId });
+        const res = await api.post(BookingRoutes.END_SESSION(bookingId));
         return res.data;
     },
 };

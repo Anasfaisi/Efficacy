@@ -1,10 +1,11 @@
 import api from './axiosConfig';
 import type { IPlannerTask } from '@/Features/users/planner/types';
+import { PlannerRoutes } from './constant.routes';
 
 export const createPlannerTask = async (
     taskData: Partial<IPlannerTask>
 ): Promise<IPlannerTask> => {
-    const response = await api.post('/planner', taskData);
+    const response = await api.post(PlannerRoutes.BASE, taskData);
     return response.data;
 };
 
@@ -17,10 +18,10 @@ export const updatePlannerTask = async (
     taskId: string,
     taskData: Partial<IPlannerTask>
 ): Promise<IPlannerTask> => {
-    const response = await api.put(`/planner/${taskId}`, taskData);
+    const response = await api.put(PlannerRoutes.UPDATE_TASK(taskId), taskData);
     return response.data;
 };
 
 export const deletePlannerTask = async (taskId: string): Promise<void> => {
-    await api.delete(`/planner/${taskId}`);
+    await api.delete(PlannerRoutes.DELETE_TASK(taskId));
 };

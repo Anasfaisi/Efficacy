@@ -60,12 +60,12 @@ export const bookingRoutes = (container: Container) => {
         asyncWrapper(controller.verifyAccess.bind(controller))
     );
     router.post(
-        '/start-session',
+        '/start-session/:bookingId',
         auth([Role.Mentor, Role.User]),
         asyncWrapper(controller.startSession.bind(controller))
     );
     router.post(
-        '/end-session',
+        '/end-session/:bookingId',
         auth([Role.Mentor, Role.User]),
         asyncWrapper(controller.endSession.bind(controller))
     );

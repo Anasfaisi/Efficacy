@@ -1,18 +1,19 @@
 import api from '@/Services/axiosConfig';
-import type {
-    LoginCredentials,
-    User,
-    Role,
-    RegisterCredentials,
-    LoginResponse,
-    VerifyOtpResponse,
-    ResendOtpResponse,
+import {
+    type LoginCredentials,
+    type User,
+    type Role,
+    type RegisterCredentials,
+    type LoginResponse,
+    type VerifyOtpResponse,
+    type ResendOtpResponse,
+    ENDPOINTS,
 } from '@/types/auth';
 import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
 import type { Notification } from '@/Features/admin/types';
-import { UserRoutes } from './constant.routes';
+import { MentorRoutes, UserRoutes } from './constant.routes';
 
 export const fetchCurrentUser = async (userId: string): Promise<User> => {
     const res = await api.get(UserRoutes.FETCH_CURRENT_USER(userId));
@@ -22,7 +23,9 @@ export const fetchCurrentUser = async (userId: string): Promise<User> => {
 export const loginApi = async (
     credentials: LoginCredentials
 ): Promise<LoginResponse> => {
-    const res = await api.post(UserRoutes.LOGIN, credentials);
+    const role:Role = (credentials.role??"user")
+    const endPoint = ENDPOINTS[role]  
+    const res = await api.post(endPoint, credentials);
     return res.data;
 };
 
@@ -39,7 +42,11 @@ export const registerInitApi = async (
     role: string;
     resendAvailableAt: string;
 }> => {
-    const response = await api.post(UserRoutes.REGISTER, credentials);
+
+    const endpoint = credentials.role =="mentor"
+    ? MentorRoutes.REGISTER
+    : UserRoutes.REGISTER;
+    const response = await api.post(endpoint, credentials);
     return response.data;
 };
 
@@ -72,17 +79,8 @@ export const verifyOtpApi = async (
 export const resendOtpApi = async (
     email: string | null
 ): Promise<ResendOtpResponse> => {
-    try {
-        const response = await api.post(UserRoutes.RESEND_OTP, { email });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-            throw error.response?.data.message;
-        } else if (error instanceof Error) {
-            throw new Error(error.message);
-        }
-        throw new Error('something went wrong');
-    }
+    const response = await api.post(UserRoutes.RESEND_OTP, { email });
+    return response.data;
 };
 
 export const forgotPasswordApi = async (

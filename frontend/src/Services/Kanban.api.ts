@@ -1,9 +1,10 @@
 import type { Task } from '@/Features/users/KanbanBorad/types';
 import api from './axiosConfig';
+import { KanbanRoutes } from './constant.routes';
 
 export const getKanbanBoardApi = async (id: string | null) => {
     try {
-        const result = await api.post('/kanban/board', { id });
+        const result = await api.post(KanbanRoutes.CREATE_BOARD, { id });
         return result?.data.kanbanBoard.columns;
     } catch (error) {
         console.error(error);
@@ -15,7 +16,7 @@ export const createTaskAPI = async (
     columnId: string,
     task: Task
 ) => {
-    const res = await api.post('/kanban/task/add', {
+    const res = await api.post(KanbanRoutes.CREATE_TASK, {
         id,
         columnId,
         task,
@@ -30,13 +31,12 @@ export const updateTaskAPI = async (
     taskId: string,
     data: Partial<Task>
 ) => {
-    const res = await api.put('/kanban/task', {
+    const res = await api.put(KanbanRoutes.UPDATE_TASK, {
         id,
         columnId,
         taskId,
         data,
     });
-    console.log(res.data.kanbanBoard);
     return res.data.kanbanBoard;
 };
 
@@ -45,7 +45,7 @@ export const deleteKanbanTask = async (
     taskId: string,
     id: string
 ) => {
-    const res = await api.delete(`/kanban/task/${id}`, {
+    const res = await api.delete(KanbanRoutes.DELETE_TASK(id), {
         data: { columnId, taskId },
     });
 
@@ -60,7 +60,7 @@ export const reorderTaskAPI = async (
     sourceTaskIndex: number,
     destTaskIndex: number
 ) => {
-    const res = await api.put('/kanban/task/reorder', {
+    const res = await api.put(KanbanRoutes.REORDER_TASK, {
         id,
         taskId,
         sourceColumnId,
@@ -68,6 +68,5 @@ export const reorderTaskAPI = async (
         sourceTaskIndex,
         destTaskIndex,
     });
-    console.log(res.data, 'fxgxfgxfgx');
     return res.data.kanbanBoard;
 };
