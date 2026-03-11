@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import PomodoroTimer from '../components/PomodoroTimer';

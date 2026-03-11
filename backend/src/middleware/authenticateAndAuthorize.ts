@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { Role } from '@/types/role.types';
 import { TokenService } from '@/serivces/token.service';
 const authenticateAndAuthorize = (

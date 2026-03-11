@@ -25,6 +25,8 @@ const AdminFinancialsPage = () => {
                 setTransactions(txData.transactions || []);
                 setTotalTransactions(txData.total || 0);
             } catch (error) {
+                console.log(error);
+
                 toast.error('Failed to load transactions');
             }
         };

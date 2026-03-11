@@ -20,7 +20,6 @@ import {
     userGoogleLoginResponseDto,
 } from '@/Dto/response.dto';
 import {
-    CurrentUserReqDto,
     ForgotPasswordRequestDto,
     LoginRequestDto,
     OtpVerificationRequestDto,
@@ -37,18 +36,6 @@ import {
     SuccessMessages,
     AuthMessages,
 } from '@/types/response-messages.types';
-import {
-    MentorOtpVerificationRequestDto,
-    MentorRegisterRequestDto,
-    UpdateMentorProfileDto,
-} from '@/Dto/mentorRequest.dto';
-import {
-    MentorLoginResponseDTO,
-    MentorOtpVerificationResponseDto,
-    MentorRegisterInitResponseDto,
-} from '@/Dto/mentorResponse.dto';
-import { mentorStatus } from '@/types/mentor-status.types';
-import { IMentor } from '@/models/Mentor.model';
 
 @injectable()
 export class AuthService implements IAuthService {

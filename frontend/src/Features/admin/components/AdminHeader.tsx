@@ -26,7 +26,7 @@ export const AdminHeader = () => {
                         <p className="text-xs text-gray-500">Super Admin</p>
                     </div>
                     <Link
-                        to="/admin/profile" 
+                        to="/admin/profile"
                         className="w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 font-bold border-2 border-white shadow-sm hover:scale-105 transition-transform"
                     >
                         AD

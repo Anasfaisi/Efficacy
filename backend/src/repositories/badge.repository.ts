@@ -5,11 +5,14 @@ import { Badge } from '@/models/Badge.model';
 import { IBadge } from '@/types/gamification.types';
 
 @injectable()
-export class BadgeRepository extends BaseRepository<IBadge> implements IBadgeRepository {
+export class BadgeRepository
+    extends BaseRepository<IBadge>
+    implements IBadgeRepository
+{
     constructor() {
         super(Badge);
     }
-    
+
     async getAllBadgesAdmin(): Promise<IBadge[]> {
         return this.model.find().sort({ createdAt: -1 }).exec();
     }

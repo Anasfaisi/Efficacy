@@ -2,7 +2,6 @@ import UnverifiedUserModel, {
     IUnverifiedUser,
 } from '@/models/Unverified-user.model';
 import { IUnverifiedUserRepository } from './interfaces/IUnverified-user.repository';
-import { UpdateWriteOpResult } from 'mongoose';
 
 export class UnverifiedUserRepository implements IUnverifiedUserRepository {
     async findByEmail(email: string) {

@@ -21,9 +21,10 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
     mentorName,
 }) => {
     const [step, setStep] = useState<'confirm' | 'review'>('confirm');
-    
+
     const minutes = booking?.sessionMinutes || 0;
-    const isCompletedByDefault = minutes >= 50 || booking?.status === BookingStatus.COMPLETED;
+    const isCompletedByDefault =
+        minutes >= 50 || booking?.status === BookingStatus.COMPLETED;
 
     const handleConfirmSuccess = async (isSuccess: boolean) => {
         if (isSuccess) {
@@ -31,11 +32,11 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                 if (booking?.status !== BookingStatus.COMPLETED) {
                     await bookingApi.updateStatus({
                         bookingId: booking.id,
-                        status: BookingStatus.COMPLETED
+                        status: BookingStatus.COMPLETED,
                     });
                 }
             } catch (error) {
-                console.error("Failed to mark session as completed:", error);
+                console.error('Failed to mark session as completed:', error);
             }
             setStep('review');
         } else {
@@ -48,14 +49,19 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
         try {
             await reviewApi.submitReview({
                 bookingId: booking.id,
-                mentorId: booking.mentorId?.[0]?._id || booking.mentorId?._id || booking.mentorId,
+                mentorId:
+                    booking.mentorId?.[0]?._id ||
+                    booking.mentorId?._id ||
+                    booking.mentorId,
                 userId: booking.userId,
                 rating,
                 comment,
             });
             onClose();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to submit review");
+            toast.error(
+                error.response?.data?.message || 'Failed to submit review'
+            );
         }
     };
 
@@ -82,11 +88,17 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                             <div className="mb-6 flex justify-center">
                                 {isCompletedByDefault ? (
                                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-                                        <CheckCircle2 size={40} className="text-green-600" />
+                                        <CheckCircle2
+                                            size={40}
+                                            className="text-green-600"
+                                        />
                                     </div>
                                 ) : (
                                     <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center">
-                                        <AlertTriangle size={40} className="text-amber-600" />
+                                        <AlertTriangle
+                                            size={40}
+                                            className="text-amber-600"
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -100,7 +112,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                             </div>
 
                             <p className="text-gray-600 mb-8 font-medium">
-                                {isCompletedByDefault 
+                                {isCompletedByDefault
                                     ? `It looks like your session with ${mentorName} went well! Would you like to leave a review?`
                                     : `Your session was shorter than expected. Did it complete successfully?`}
                             </p>
@@ -110,13 +122,17 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                                     onClick={() => handleConfirmSuccess(true)}
                                     className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl shadow-xl hover:bg-black transition-all active:scale-[0.98]"
                                 >
-                                    {isCompletedByDefault ? "Yes, rate it!" : "Yes, it was great"}
+                                    {isCompletedByDefault
+                                        ? 'Yes, rate it!'
+                                        : 'Yes, it was great'}
                                 </button>
                                 <button
                                     onClick={() => handleConfirmSuccess(false)}
                                     className="w-full py-4 bg-gray-50 text-gray-500 font-black rounded-2xl hover:bg-gray-100 transition-all active:scale-[0.98]"
                                 >
-                                    {isCompletedByDefault ? "Maybe later" : "No, there was an issue"}
+                                    {isCompletedByDefault
+                                        ? 'Maybe later'
+                                        : 'No, there was an issue'}
                                 </button>
                             </div>
                         </motion.div>
@@ -124,7 +140,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                 )}
             </AnimatePresence>
 
-            <ReviewModal 
+            <ReviewModal
                 isOpen={step === 'review'}
                 onClose={onClose}
                 onSubmit={handleReviewSubmit}

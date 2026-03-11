@@ -42,7 +42,7 @@ const MentorListingPage: React.FC = () => {
         setDebouncedMinPrice('');
         setDebouncedMaxPrice('');
     };
-  
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -52,12 +52,12 @@ const MentorListingPage: React.FC = () => {
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm, minPrice, maxPrice]);
-        
+
     useEffect(() => {
         const fetchMentors = async () => {
             setLoading(true);
             try {
-                const filters= {} as price;
+                const filters = {} as price;
                 if (debouncedMinPrice) filters.minPrice = debouncedMinPrice;
                 if (debouncedMaxPrice) filters.maxPrice = debouncedMaxPrice;
 
@@ -345,7 +345,9 @@ const MentorListingPage: React.FC = () => {
                                                         Quick View
                                                     </button>
                                                     <button className="p-2 bg-[#7F00FF]/5 text-[#7F00FF] rounded-xl group-hover:bg-[#7F00FF] group-hover:text-white transition-all duration-300">
-                                                        <ChevronRight size={18} />
+                                                        <ChevronRight
+                                                            size={18}
+                                                        />
                                                     </button>
                                                 </div>
                                             </div>

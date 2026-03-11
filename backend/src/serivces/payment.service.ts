@@ -6,8 +6,6 @@ import { RequestPaymentDto } from '@/Dto/request.dto';
 import { ResponsePaymentDto } from '@/Dto/response.dto';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { IMentorshipService } from './Interfaces/IMentorship.service';
-import { IMentor } from '@/models/Mentor.model';
-import { IUser } from '@/models/User.model';
 import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()

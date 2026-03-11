@@ -231,6 +231,7 @@ const MentorProfilePage = () => {
                     });
                 }
             } catch (error) {
+                console.log(error);
                 toast.error('Failed to fetch profile details');
             } finally {
                 setIsPageLoading(false);
@@ -294,7 +295,7 @@ const MentorProfilePage = () => {
             await mentorApi.updateMentorProfileBasicInfo({
                 currentPassword,
                 newPassword,
-            }as any);
+            } as any);
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
@@ -331,6 +332,7 @@ const MentorProfilePage = () => {
             toast.success('Achievements updated');
         } catch (error) {
             toast.error('Update failed');
+            console.log(error);
         } finally {
             setIsLoading(null);
         }
@@ -363,6 +365,7 @@ const MentorProfilePage = () => {
             }
         } catch (error) {
             toast.error('Upload failed');
+            console.log(error);
         } finally {
             setIsLoading(null);
         }
@@ -398,6 +401,7 @@ const MentorProfilePage = () => {
             );
         } catch (error) {
             toast.error('Failed to update availability');
+            console.log(error);
         } finally {
             setIsLoading(null);
         }

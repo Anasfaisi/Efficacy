@@ -41,5 +41,9 @@ export interface IAdminService {
         limit: number,
         filter: 'all' | 'mentor' | 'user'
     ): Promise<{ transactions: ITransaction[]; total: number }>;
-    getDashboardStats(adminId: string): Promise<{ totalUsers: number, totalMentors: number, totalRevenue: number }>;
+    getDashboardStats(adminId: string): Promise<{
+        totalUsers: number;
+        totalMentors: number;
+        totalRevenue: number;
+    }>;
 }

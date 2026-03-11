@@ -16,13 +16,9 @@ import {
 import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { ObjectId, Types } from 'mongoose';
-import { IMentor } from '@/models/Mentor.model';
-import { IUser } from '@/models/User.model';
 import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
 import {
     ErrorMessages,
-    SuccessMessages,
-    AuthMessages,
     CommonMessages,
     NotificationMessages,
 } from '@/types/response-messages.types';

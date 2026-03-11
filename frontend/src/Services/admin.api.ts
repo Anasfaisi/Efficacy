@@ -168,7 +168,7 @@ export const adminService = {
         totalMentors: number;
         totalRevenue: number;
     }> => {
-        const response = await api.get(AdminRoutes.DASHBOARD_STATS)
+        const response = await api.get(AdminRoutes.DASHBOARD_STATS);
         return response.data;
     },
 };

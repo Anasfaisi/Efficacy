@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import {
-    Calendar,
-    Clock,
-    User,
-    ChevronLeft,
-    ChevronRight,
-} from 'lucide-react';
+import { Calendar, Clock, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { requestWrapper } from '@/utils/apiHandler';
 import { bookingApi } from '@/Services/booking.api';
@@ -22,9 +16,13 @@ const MentorMySessionsPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const limit = 10;
-    const [activeTab, setActiveTab] = useState<'upcoming' | 'completed' | 'all'>('all');
+    const [activeTab, setActiveTab] = useState<
+        'upcoming' | 'completed' | 'all'
+    >('all');
 
-    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(
+        null
+    );
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [mentorId, setMentorId] = useState<string>('');
 
@@ -48,7 +46,10 @@ const MentorMySessionsPage: React.FC = () => {
             // Hacky way to get the mentorId from one of the bookings to pass to modal
             if (response.bookings.length > 0) {
                 const b = response.bookings[0];
-                const mId = (b.mentorId as any)?._id || (b.mentorId as any)?.id || b.mentorId;
+                const mId =
+                    (b.mentorId as any)?._id ||
+                    (b.mentorId as any)?.id ||
+                    b.mentorId;
                 if (mId) setMentorId(mId as string);
             }
         }
@@ -127,7 +128,10 @@ const MentorMySessionsPage: React.FC = () => {
                     </div>
                 ) : bookings.length === 0 ? (
                     <div className="text-center py-20 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed">
-                        <Calendar size={48} className="mx-auto text-gray-300 mb-4" />
+                        <Calendar
+                            size={48}
+                            className="mx-auto text-gray-300 mb-4"
+                        />
                         <h3 className="text-xl font-bold text-gray-900 mb-2">
                             No {activeTab} sessions found
                         </h3>
@@ -138,7 +142,8 @@ const MentorMySessionsPage: React.FC = () => {
                 ) : (
                     <div className="grid gap-6">
                         {bookings.map((booking) => {
-                            const student = booking.userId as unknown as UserType;
+                            const student =
+                                booking.userId as unknown as UserType;
                             return (
                                 <motion.div
                                     key={booking.id}
@@ -153,37 +158,62 @@ const MentorMySessionsPage: React.FC = () => {
                                     <div className="flex items-center gap-6">
                                         <div className="w-16 h-16 bg-gray-50 rounded-2xl flex flex-col items-center justify-center border border-gray-100">
                                             <span className="text-[10px] font-black uppercase text-indigo-500 leading-none mb-1">
-                                                {format(new Date(booking.bookingDate), 'MMM')}
+                                                {format(
+                                                    new Date(
+                                                        booking.bookingDate
+                                                    ),
+                                                    'MMM'
+                                                )}
                                             </span>
                                             <span className="text-2xl font-black text-gray-900 leading-none">
-                                                {format(new Date(booking.bookingDate), 'd')}
+                                                {format(
+                                                    new Date(
+                                                        booking.bookingDate
+                                                    ),
+                                                    'd'
+                                                )}
                                             </span>
                                         </div>
-                                        
+
                                         <div>
                                             <div className="flex items-center gap-3 mb-1">
                                                 <h4 className="text-lg font-black text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                                    {student?.name || "Student"}
+                                                    {student?.name || 'Student'}
                                                 </h4>
-                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-black tracking-widest uppercase ${
-                                                    booking.status === BookingStatus.COMPLETED
-                                                        ? 'bg-green-100 text-green-700'
-                                                        : booking.status === BookingStatus.CONFIRMED && !isBookingPast(booking.bookingDate, booking.slot)
-                                                        ? 'bg-blue-100 text-blue-700'
-                                                        : 'bg-gray-100 text-gray-600'
-                                                }`}>
+                                                <span
+                                                    className={`px-2 py-0.5 rounded-md text-[10px] font-black tracking-widest uppercase ${
+                                                        booking.status ===
+                                                        BookingStatus.COMPLETED
+                                                            ? 'bg-green-100 text-green-700'
+                                                            : booking.status ===
+                                                                    BookingStatus.CONFIRMED &&
+                                                                !isBookingPast(
+                                                                    booking.bookingDate,
+                                                                    booking.slot
+                                                                )
+                                                              ? 'bg-blue-100 text-blue-700'
+                                                              : 'bg-gray-100 text-gray-600'
+                                                    }`}
+                                                >
                                                     {booking.status}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-widest">
                                                 <span className="flex items-center gap-1.5">
-                                                    <Clock size={14} className="text-indigo-400" />
+                                                    <Clock
+                                                        size={14}
+                                                        className="text-indigo-400"
+                                                    />
                                                     {booking.slot}
                                                 </span>
                                                 <span className="flex items-center gap-1.5">
-                                                    <User size={14} className="text-indigo-400" />
-                                                    Mentorship Topic: {booking.topic || "N/A"}
+                                                    <User
+                                                        size={14}
+                                                        className="text-indigo-400"
+                                                    />
+                                                    Mentorship Topic:{' '}
+                                                    {booking.topic || 'N/A'}
                                                 </span>
                                             </div>
                                         </div>
@@ -213,7 +243,9 @@ const MentorMySessionsPage: React.FC = () => {
                             Page {page} of {totalPages}
                         </span>
                         <button
-                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            onClick={() =>
+                                setPage((p) => Math.min(totalPages, p + 1))
+                            }
                             disabled={page === totalPages}
                             className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 hover:bg-gray-50 transition-colors bg-white"
                         >
@@ -228,7 +260,10 @@ const MentorMySessionsPage: React.FC = () => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     booking={selectedBooking}
-                    menteeName={(selectedBooking.userId as unknown as UserType)?.name || "Student"}
+                    menteeName={
+                        (selectedBooking.userId as unknown as UserType)?.name ||
+                        'Student'
+                    }
                     mentorId={mentorId}
                 />
             )}

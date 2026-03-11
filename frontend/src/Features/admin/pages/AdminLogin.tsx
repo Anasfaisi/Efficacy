@@ -68,7 +68,11 @@ const AdminLogin = () => {
                 className="w-full max-w-lg bg-white shadow-2xl rounded-[40px] p-8 md:p-12 border border-slate-100"
             >
                 <div className="mx-auto mb-8 flex justify-center">
-                    <img src="/Title logo.png" alt="Efficacy Admin" className="h-20 object-contain drop-shadow-md" />
+                    <img
+                        src="/Title logo.png"
+                        alt="Efficacy Admin"
+                        className="h-20 object-contain drop-shadow-md"
+                    />
                 </div>
 
                 <h2 className="text-3xl font-black text-blue-900 text-center mb-3">

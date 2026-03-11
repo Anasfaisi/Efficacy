@@ -142,7 +142,8 @@ const BookingHistoryPage: React.FC = () => {
 
             await reviewApi.submitReview({
                 bookingId: selectedBooking.id,
-                mentorId: (mentor as any).id || (mentor as any)._id || String(mentor),
+                mentorId:
+                    (mentor as any).id || (mentor as any)._id || String(mentor),
                 userId: selectedBooking.userId,
                 rating,
                 comment,

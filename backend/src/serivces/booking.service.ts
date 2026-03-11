@@ -234,10 +234,13 @@ export class BookingService implements IBookingService {
         );
         if (!updatedBooking) throw new Error(ErrorMessages.BookingUpdateFailed);
 
-        if (data.status === BookingStatus.COMPLETED && booking.status !== BookingStatus.COMPLETED) {
+        if (
+            data.status === BookingStatus.COMPLETED &&
+            booking.status !== BookingStatus.COMPLETED
+        ) {
             const mentorId = this._extractId(booking.mentorId);
             const userId = this._extractId(booking.userId);
-            
+
             const mentor = await this._mentorRepository.findById(mentorId);
             if (mentor) {
                 await this._mentorRepository.update(mentorId, {
@@ -245,10 +248,14 @@ export class BookingService implements IBookingService {
                 });
             }
 
-            const mentorship = await this._mentorshipRepository.findByUserIdAndMentorId(mentorId, userId);
+            const mentorship =
+                await this._mentorshipRepository.findByUserIdAndMentorId(
+                    mentorId,
+                    userId
+                );
             if (mentorship && mentorship.status === MentorshipStatus.ACTIVE) {
                 await this._mentorshipRepository.update(mentorship.id, {
-                    usedSessions: (mentorship.usedSessions || 0) + 1
+                    usedSessions: (mentorship.usedSessions || 0) + 1,
                 });
             }
         }
@@ -424,7 +431,8 @@ export class BookingService implements IBookingService {
         const booking = await this._bookingRepository.findById(bookingId);
         if (!booking) throw new Error(ErrorMessages.BookingNotFound);
 
-        if (booking.actualStartTime) return BookingMapper.toResponseDto(booking);
+        if (booking.actualStartTime)
+            return BookingMapper.toResponseDto(booking);
 
         const updated = await this._bookingRepository.update(bookingId, {
             actualStartTime: new Date(),
@@ -437,7 +445,8 @@ export class BookingService implements IBookingService {
     async endSession(bookingId: string): Promise<BookingResponseDto> {
         const booking = await this._bookingRepository.findById(bookingId);
         if (!booking) throw new Error(ErrorMessages.BookingNotFound);
-        if (!booking.actualStartTime) return BookingMapper.toResponseDto(booking);
+        if (!booking.actualStartTime)
+            return BookingMapper.toResponseDto(booking);
 
         const endTime = new Date();
         const diffMs = endTime.getTime() - booking.actualStartTime.getTime();
@@ -448,13 +457,12 @@ export class BookingService implements IBookingService {
             sessionMinutes: diffMins,
         };
 
-        
         if (diffMins >= 50 && booking.status !== BookingStatus.COMPLETED) {
             updateData.status = BookingStatus.COMPLETED;
-            
+
             const mentorId = this._extractId(booking.mentorId);
             const userId = this._extractId(booking.userId);
-            
+
             const mentor = await this._mentorRepository.findById(mentorId);
             if (mentor) {
                 await this._mentorRepository.update(mentorId, {
@@ -462,15 +470,22 @@ export class BookingService implements IBookingService {
                 });
             }
 
-            const mentorship = await this._mentorshipRepository.findByUserIdAndMentorId(mentorId, userId);
+            const mentorship =
+                await this._mentorshipRepository.findByUserIdAndMentorId(
+                    mentorId,
+                    userId
+                );
             if (mentorship && mentorship.status === MentorshipStatus.ACTIVE) {
                 await this._mentorshipRepository.update(mentorship.id, {
-                    usedSessions: (mentorship.usedSessions || 0) + 1
+                    usedSessions: (mentorship.usedSessions || 0) + 1,
                 });
             }
         }
 
-        const updated = await this._bookingRepository.update(bookingId, updateData);
+        const updated = await this._bookingRepository.update(
+            bookingId,
+            updateData
+        );
         if (!updated) throw new Error(ErrorMessages.BookingUpdateFailed);
 
         return BookingMapper.toResponseDto(updated);

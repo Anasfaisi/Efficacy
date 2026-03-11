@@ -60,7 +60,9 @@ const ConfigSection = ({
 
 const AdminProfilePage = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
-    const [activeTab, setActiveTab] = useState<'general' | 'security'>('general');
+    const [activeTab, setActiveTab] = useState<'general' | 'security'>(
+        'general'
+    );
 
     const admin = currentUser as User;
 
@@ -176,7 +178,10 @@ const AdminProfilePage = () => {
                                             <input
                                                 type="email"
                                                 disabled
-                                                value={admin?.email || 'admin@efficacy.com'}
+                                                value={
+                                                    admin?.email ||
+                                                    'admin@efficacy.com'
+                                                }
                                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-500 cursor-not-allowed font-medium"
                                             />
                                         </div>
@@ -200,7 +205,11 @@ const AdminProfilePage = () => {
                                     <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex gap-3 text-amber-800">
                                         <ShieldCheck className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
                                         <p className="text-sm font-medium">
-                                            Administrative passwords and core permissions are managed directly via environment variables and direct DB access to ensure maximum platform security.
+                                            Administrative passwords and core
+                                            permissions are managed directly via
+                                            environment variables and direct DB
+                                            access to ensure maximum platform
+                                            security.
                                         </p>
                                     </div>
                                 </ConfigSection>

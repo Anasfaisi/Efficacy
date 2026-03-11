@@ -104,8 +104,10 @@ const MentorSidebar: React.FC = () => {
                 )}
             </button>
 
-            <div className={`p-8 pb-4 flex-1 flex flex-col ${collapsed ? 'px-4' : ''}`}>
-                <div className="h-4" /> 
+            <div
+                className={`p-8 pb-4 flex-1 flex flex-col ${collapsed ? 'px-4' : ''}`}
+            >
+                <div className="h-4" />
 
                 <div className="space-y-1 overflow-y-auto custom-scrollbar flex-1">
                     {navItems.map((item) => (

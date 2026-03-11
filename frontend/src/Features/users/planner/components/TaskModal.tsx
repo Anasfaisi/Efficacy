@@ -141,6 +141,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             onClose();
         } catch (error) {
             toast.error('Failed to delete task');
+            console.log(error);
         }
     };
 

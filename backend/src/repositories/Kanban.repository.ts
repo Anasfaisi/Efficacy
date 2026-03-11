@@ -1,8 +1,6 @@
 import { IKanbanRepository } from './interfaces/IKanban.repository';
 import { BaseRepository } from './base.repository';
-import { IUser } from '@/models/User.model';
 import KanbanBoardModel, { IKanbanBoard } from '@/models/Kanban-board.model';
-import { IKanbanTask } from '@/models/kanban-task.model';
 import { KanbanMapper } from '@/Mapper/KanbanMapper';
 import { KanbanBoardFromEntity } from '@/entity/fromEntity';
 import { KanbanBoardToEntity } from '@/entity/toEntity';

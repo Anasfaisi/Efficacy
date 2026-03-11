@@ -9,7 +9,8 @@ export const splitTimeRange = (range: string): string[] => {
         const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm)?/);
         if (!match) return null;
 
-        let [_, hours, mins, period] = match;
+        const [hours, mins] = match;
+        let [period] = match;
         let h = parseInt(hours);
         const m = mins ? parseInt(mins) : 0;
 
@@ -78,7 +79,8 @@ export const isBookingPast = (bookingDate: string, slot: string): boolean => {
         endDateTime.setHours(h, m, 0, 0);
 
         return endDateTime.getTime() < Date.now();
-    } catch (e) {
+    } catch (error) {
+        console.log(error);
         return false;
     }
 };
@@ -103,7 +105,8 @@ export const canReschedule = (bookingDate: string, slot: string): boolean => {
 
         const sixHoursInMs = 6 * 60 * 60 * 1000;
         return startDateTime.getTime() - Date.now() > sixHoursInMs;
-    } catch (e) {
+    } catch (error) {
+        console.log(error);
         return false;
     }
 };

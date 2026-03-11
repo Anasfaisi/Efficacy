@@ -3,7 +3,10 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { markAllNotificationsAsRead, markNotificationAsRead} from '@/Services/user.api';
+import {
+    markAllNotificationsAsRead,
+    markNotificationAsRead,
+} from '@/Services/user.api';
 
 const BellButton: React.FC = () => {
     const { notifications, unreadCount } = useAppSelector(

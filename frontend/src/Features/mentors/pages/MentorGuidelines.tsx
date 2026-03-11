@@ -121,7 +121,7 @@ const MentorGuidelines: React.FC = () => {
                         />
                     </div>
                 )}
-                
+
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
                         Mentor <span className="text-blue-600">Guidelines</span>
@@ -263,10 +263,11 @@ const MentorGuidelines: React.FC = () => {
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 flex gap-4">
                         <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
                         <p className="text-amber-800 text-sm font-medium">
-                            Important: Ensure you update your achievements and extra
-                            skills once onboarded. High ratings and positive reviews
-                            are the primary drivers of your professional growth and
-                            earning potential on Efficacy.
+                            Important: Ensure you update your achievements and
+                            extra skills once onboarded. High ratings and
+                            positive reviews are the primary drivers of your
+                            professional growth and earning potential on
+                            Efficacy.
                         </p>
                     </div>
                 )}

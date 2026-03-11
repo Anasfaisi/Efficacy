@@ -16,18 +16,18 @@ export const walletApi = {
 
     updateBankDetails: async (details: string) => {
         const response = await api.patch(
-           WalletRoutes.UPDATE_BANK_DETAILS,
+            WalletRoutes.UPDATE_BANK_DETAILS,
             details
         );
         return response.data;
     },
 
     getTransactions: async (page: number = 1, limit: number = 6) => {
-        const response = await api.get(WalletRoutes.GET_TRANSACTIONS,{
-            params:{
+        const response = await api.get(WalletRoutes.GET_TRANSACTIONS, {
+            params: {
                 page,
-                limit
-            }
+                limit,
+            },
         });
         return response.data;
     },

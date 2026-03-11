@@ -66,6 +66,8 @@ const MentorMangement = () => {
             await adminService.updateMentorStatus(id, newStatus);
             fetchMentors();
         } catch (error) {
+            console.log(error);
+
             alert('Failed to update status');
         }
     };

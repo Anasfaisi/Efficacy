@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { forgotPasswordApi, resetPasswordApi } from '@/Services/user.api';
-import { AuthMessages } from '@/utils/Constants';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { KeyRound, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 export const ForgotResetPassword: React.FC = () => {
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { IUser } from '@/models/User.model';
 import { ColumnId } from '@/types/column-enum.types';
-import { MessageStatus, Role } from '@/types/role.types';
+import { Role } from '@/types/role.types';
 
 export class LoginRequestDto {
     constructor(

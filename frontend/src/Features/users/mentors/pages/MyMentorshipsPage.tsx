@@ -27,7 +27,9 @@ const MyMentorshipsPage: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
-    const [mentorshipToCancel, setMentorshipToCancel] = useState<string | null>(null);
+    const [mentorshipToCancel, setMentorshipToCancel] = useState<string | null>(
+        null
+    );
     const [isCancelling, setIsCancelling] = useState(false);
 
     const handleChat = async (mentorId: string) => {
@@ -54,7 +56,7 @@ const MyMentorshipsPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await mentorshipApi.getUserRequests();
-                console.log(data,"my mentorshp")
+                console.log(data, 'my mentorshp');
                 const sortedData = Array.isArray(data) ? data.reverse() : [];
                 setMentorships(sortedData);
             } catch (error) {

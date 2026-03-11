@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { X, RefreshCw, AlertCircle } from 'lucide-react';
 
 interface RescheduleModalProps {
     isOpen: boolean;

@@ -14,38 +14,52 @@ export default function gamificationRoutes(
     router.post(
         '/badges',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(gamificationController.createBadge.bind(gamificationController))
+        asyncWrapper(
+            gamificationController.createBadge.bind(gamificationController)
+        )
     );
 
     router.get(
         '/badges',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(gamificationController.getAllBadges.bind(gamificationController))
+        asyncWrapper(
+            gamificationController.getAllBadges.bind(gamificationController)
+        )
     );
 
     router.get(
         '/badges/:id',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(gamificationController.getBadgeById.bind(gamificationController))
+        asyncWrapper(
+            gamificationController.getBadgeById.bind(gamificationController)
+        )
     );
 
     router.put(
         '/badges/:id',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(gamificationController.updateBadge.bind(gamificationController))
+        asyncWrapper(
+            gamificationController.updateBadge.bind(gamificationController)
+        )
     );
 
     router.delete(
         '/badges/:id',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(gamificationController.deleteBadge.bind(gamificationController))
+        asyncWrapper(
+            gamificationController.deleteBadge.bind(gamificationController)
+        )
     );
-    
+
     router.get(
-         '/constants',
-         authenticateAndAuthorize(tokenService, [Role.Admin]),
-         asyncWrapper(gamificationController.getGamificationConstants.bind(gamificationController))
-    )
+        '/constants',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            gamificationController.getGamificationConstants.bind(
+                gamificationController
+            )
+        )
+    );
 
     return router;
 }

@@ -34,10 +34,13 @@ export class PlannerTaskService implements IPlannerTaskService {
         }
 
         const wasCompleted = task.completed;
-        const updatedTask = await this._plannerTaskRepository.update(taskId, taskData);
+        const updatedTask = await this._plannerTaskRepository.update(
+            taskId,
+            taskData
+        );
 
         if (taskData.completed === true && !wasCompleted) {
-            this.handleTaskCompletionGamification(userId).catch(err => 
+            this.handleTaskCompletionGamification(userId).catch((err) =>
                 console.error('Gamification task hook failed:', err)
             );
         }
@@ -63,19 +66,19 @@ export class PlannerTaskService implements IPlannerTaskService {
 
         let newStreak = stats.taskStreakDays || 0;
         const lastActivity = stats.lastActivityDate;
-        
+
         if (lastActivity) {
             const lastData = new Date(lastActivity);
             lastData.setHours(0, 0, 0, 0);
             const diffTime = Math.abs(today.getTime() - lastData.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
+
             if (diffDays === 1) {
                 newStreak += 1;
             } else if (diffDays > 1) {
                 newStreak = 1;
             } else if (diffDays === 0 && newStreak === 0) {
-                 newStreak = 1; 
+                newStreak = 1;
             }
         } else {
             newStreak = 1;
@@ -84,7 +87,7 @@ export class PlannerTaskService implements IPlannerTaskService {
         stats.tasksCompleted += 1;
         stats.taskStreakDays = newStreak;
         stats.lastActivityDate = new Date();
-        
+
         await stats.save();
 
         emitGamificationEvent(GamificationEvent.TASK_COMPLETED, { userId });

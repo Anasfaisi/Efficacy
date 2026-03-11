@@ -45,5 +45,4 @@ const reviewSchema = new Schema<IReview>(
 
 reviewSchema.index({ mentorId: 1, createdAt: -1 });
 
-
 export default model<IReview>('Review', reviewSchema);

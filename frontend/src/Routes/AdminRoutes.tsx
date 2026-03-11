@@ -9,7 +9,6 @@ import AdminLayout from '@/Features/admin/layout/AdminLayout';
 import MentorManagement from '@/Features/admin/mentorManagement/pages/MentorManagement';
 import MentorReviewPage from '@/Features/admin/pages/MentorApplicationReviewPage';
 import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsListPage';
-import MentorDetailsPage from '@/Features/admin/mentorManagement/pages/MentorDetailsPage';
 import UserManagement from '@/Features/admin/userManagement/pages/UserManagement';
 import NotFound from '@/Features/common/pages/NotFound';
 import AdminFinancialsPage from '@/Features/admin/pages/AdminFinancialsPage';
@@ -55,7 +54,10 @@ const AdminRoutes: React.FC = () => {
                     element={<MentorReviewPage />}
                 />
                 <Route path="financials" element={<AdminFinancialsPage />} />
-                <Route path="gamification" element={<AdminGamificationPage />} />
+                <Route
+                    path="gamification"
+                    element={<AdminGamificationPage />}
+                />
                 <Route path="userManagement" element={<UserManagement />} />
                 <Route path="profile" element={<AdminProfilePage />} />
                 <Route path="*" element={<NotFound />} />

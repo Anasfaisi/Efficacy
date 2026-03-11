@@ -51,9 +51,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
                     initialState.timeLeft - elapsedSeconds
                 );
                 setTimeLeft(newTimeLeft);
-
-                if (newTimeLeft === 0) {
-                }
             }
         }
     }, []);
