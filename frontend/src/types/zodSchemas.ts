@@ -84,6 +84,7 @@ export const resetPasswordSchema = z.object({
 
 export const mentorFormSchema = z
     .object({
+        
         name: z.string().min(3, 'Name is too short'),
         phone: z
             .string()
@@ -110,6 +111,7 @@ export const mentorFormSchema = z
             .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
         availableDays: z.array(z.string()).min(3, 'Select at least 3 days'),
+        availability:z.object({key:[]}),
         preferredTime: z
             .array(z.string())
             .min(1, 'Select at least one time slot'),

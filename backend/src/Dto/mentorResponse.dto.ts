@@ -64,8 +64,9 @@ export interface MentorApplicationResponseDto {
     personalWebsite?: string;
     demoVideoLink?: string;
 
-    availableDays: string[];
-    preferredTime: string[];
+    // availableDays: string[];
+    // preferredTime: string[];
+    availability?: object;
 
     mentorType: 'Academic' | 'Industry';
     status?: string;

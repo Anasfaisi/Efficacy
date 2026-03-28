@@ -230,6 +230,8 @@ const MentorProfilePage = () => {
                             '',
                     });
                 }
+
+                console.log(data,"available days from the mentor profilepage tsx")
             } catch (error) {
                 console.log(error);
                 toast.error('Failed to fetch profile details');
@@ -425,7 +427,6 @@ const MentorProfilePage = () => {
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
-            {/* Breadcrumbs & Navigation structure like User side */}
             <div className="flex-1 min-h-screen overflow-y-auto pb-20">
                 {/* Breadcrumbs */}
                 <div className="bg-white border-b border-slate-100 px-6 py-3 flex items-center gap-2 text-sm">
@@ -1091,7 +1092,7 @@ const MentorProfilePage = () => {
                                         isLoading={isLoading === 'availability'}
                                     >
                                         <div className="flex flex-wrap gap-3">
-                                            {[
+                                            {/* {[
                                                 'Monday',
                                                 'Tuesday',
                                                 'Wednesday',
@@ -1115,7 +1116,27 @@ const MentorProfilePage = () => {
                                                 >
                                                     {day}
                                                 </button>
-                                            ))}
+                                            ))} */}
+                                            {
+                                            Object.keys(availableDays).map((day) => (
+                                                <button
+                                                    key={day}
+                                                    onClick={() =>
+                                                        toggleDay(day)
+                                                    }
+                                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                                                        availableDays.includes(
+                                                            day
+                                                        )
+                                                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-100'
+                                                            : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-500'
+                                                    }`}
+                                                >
+                                                    {day}
+                                                </button>
+                                            ))
+                                           
+                                            }
                                         </div>
                                     </ConfigSection>
 

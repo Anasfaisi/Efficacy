@@ -42,7 +42,7 @@ export default function Sidebar() {
 
     return (
         <aside className="h-screen w-64 bg-[#0c2d48] text-gray-300 flex flex-col sticky top-0 border-r border-white/10 shadow-xl">
-            <div className="p-4 border-b border-white/10 mb-2">
+            <div className="border-b border-white/10 mb-2">
                 <div className="h-4" />
             </div>
 

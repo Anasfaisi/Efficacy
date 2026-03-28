@@ -25,7 +25,6 @@ export class MentorOnboardService implements IMentorOnboardService {
         dto: MentorApplicationRequestDto
     ): Promise<MentorApplicationResponseDto | null> {
         const mentor = await this._mentorRepository.findById(dto.id);
-        console.log(mentor, 'mentor from mentor onboard service');
         if (!mentor) {
             throw new Error(ErrorMessages.MentorNotFound);
         }
@@ -44,9 +43,9 @@ export class MentorOnboardService implements IMentorOnboardService {
             personalWebsite: dto.personalWebsite,
             demoVideoLink: dto.demoVideoLink,
 
-            availableDays: dto.availableDays,
-            preferredTime: dto.preferredTime,
-
+            // availableDays: dto.availableDays,
+            // preferredTime: dto.preferredTime,
+            availability: dto.availability,
             mentorType: dto.mentorType,
 
             qualification: dto.qualification,
@@ -67,7 +66,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             certificate: dto.certificate,
             idProof: dto.idProof,
         };
-        console.log(updateData, 'updated data from mentor onboard service');
 
         const updatedMentorDoc = await this._mentorRepository.update(
             mentor.id,
@@ -110,9 +108,10 @@ export class MentorOnboardService implements IMentorOnboardService {
             personalWebsite: updatedMentorDoc.personalWebsite,
             demoVideoLink: updatedMentorDoc.demoVideoLink,
 
-            availableDays: updatedMentorDoc.availableDays || [],
-            preferredTime: updatedMentorDoc.preferredTime || [],
+            // availableDays: updatedMentorDoc.availableDays || [],
+            // preferredTime: updatedMentorDoc.preferredTime || [],
 
+            availability: updatedMentorDoc.availability,
             mentorType: updatedMentorDoc.mentorType!,
 
             qualification: updatedMentorDoc.qualification,

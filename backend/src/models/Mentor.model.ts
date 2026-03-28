@@ -24,8 +24,9 @@ interface IMentor extends Document<ObjectId> {
     skills?: string;
     experienceSummary?: string;
 
-    availableDays?: string[];
-    preferredTime?: string[];
+    // availableDays?: string[];
+    // preferredTime?: string[];
+    availability?: object;
 
     resume?: string;
     certificate?: string;
@@ -97,8 +98,9 @@ const mentorSchema = new Schema<IMentor>(
         skills: { type: String },
         experienceSummary: { type: String },
 
-        availableDays: { type: [String] },
-        preferredTime: { type: [String] },
+        // availableDays: { type: [String] },
+        // preferredTime: { type: [String] },
+        availability: { type: Object },
 
         resume: { type: String },
         certificate: { type: String },

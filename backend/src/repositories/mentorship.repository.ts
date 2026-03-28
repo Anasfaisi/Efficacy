@@ -27,7 +27,7 @@ export class MentorshipRepository
             .find({ mentorId })
             .populate(
                 'userId',
-                'name profilePic expertise availableDays preferredTime'
+                'name profilePic expertise availability preferredTime'
             );
     }
 
@@ -50,7 +50,7 @@ export class MentorshipRepository
             .sort({ createdAt: -1 })
             .populate(
                 'mentorId',
-                'name profilePic expertise availableDays preferredTime'
+                'name profilePic expertise availability preferredTime'
             );
     }
 
@@ -87,7 +87,7 @@ export class MentorshipRepository
             .findById(id)
             .populate(
                 'mentorId',
-                'name profilePic expertise availableDays preferredTime'
+                'name profilePic expertise availability preferredTime'
             )
             .populate('userId', 'name profilePic email phone')
             .exec();
