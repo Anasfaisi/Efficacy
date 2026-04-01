@@ -44,9 +44,7 @@ export interface MentorApplication {
     skills?: string;
     experienceSummary?: string;
 
-    availableDays?: string[];
-    preferredTime?: string[];
-
+    availability: Record<string, string[]>;
     resume?: string;
     certificate?: string;
     idProof?: string;

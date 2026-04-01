@@ -108,13 +108,9 @@ export class BookingService implements IBookingService {
         const dayName = booking.bookingDate.toLocaleDateString('en-US', {
             weekday: 'long',
         });
-        // if (!mentor.availableDays?.includes(dayName)) {
-        //     throw new Error(ErrorMessages.MentorNotAvailableDay);
-        // }
-        // if (!mentor.preferredTime?.includes(booking.slot)) {
-        //     throw new Error(ErrorMessages.MentorNotAvailableSlot);
-        // }
-        //needtochange
+        if(!mentor.availability?.[dayName]?.includes(booking.slot)){
+            throw new Error(ErrorMessages.MentorNotAvailableSlot);
+        }
         const mentorship =
             await this._mentorshipRepository.findByUserIdAndMentorId(
                 mentorId,

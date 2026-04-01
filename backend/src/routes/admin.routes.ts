@@ -56,6 +56,7 @@ export default function adminRoutes(adminController: AdminController) {
 
     router.get(
         '/mentors/applications/:id',
+        
         authenticateAndAuthorize(tokenService, [Role.Admin]),
         asyncWrapper(
             adminController.getMentorApplicationById.bind(adminController)

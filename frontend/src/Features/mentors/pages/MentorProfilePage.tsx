@@ -39,7 +39,7 @@ import {
     mentorProfileUpdateSchema,
     bankDetailsSchema,
 } from '@/types/zodSchemas';
-import { ZodError } from 'zod';
+import { string, ZodError } from 'zod';
 import { mentorApi } from '@/Services/mentor.api';
 import { walletApi } from '@/Services/wallet.api';
 
@@ -170,9 +170,7 @@ const MentorProfilePage = () => {
     const [monthlyCharge, setMonthlyCharge] = useState<number | string>('');
     const [achievements, setAchievements] = useState<string[]>([]);
 
-    const [availableDays, setAvailableDays] = useState<string[]>([]);
-    const [preferredTime, setPreferredTime] = useState<string[]>([]);
-
+    const [availability,setAvailability] =useState<Record<string, string[]>>({})
     const [bankDetails, setBankDetails] = useState({
         accountNumber: '',
         bankName: '',
@@ -215,8 +213,8 @@ const MentorProfilePage = () => {
                 setMonthlyCharge(data.monthlyCharge || '');
                 setAchievements(data.achievements || []);
 
-                setAvailableDays(parseStringifiedArray(data.availableDays));
-                setPreferredTime(parseStringifiedArray(data.preferredTime));
+        
+                setAvailability(data.availability||{});
 
                 const walletData = await walletApi.getWallet();
                 if (walletData?.bankAccountDetails) {
@@ -394,12 +392,11 @@ const MentorProfilePage = () => {
         setIsLoading('availability');
         try {
             await mentorApi.updateMentorProfileBasicInfo({
-                availableDays: availableDays,
-                preferredTime: preferredTime,
+                availability: availability,
             });
             toast.success('Availability updated successfully');
             setFullMentor((prev) =>
-                prev ? { ...prev, availableDays, preferredTime } : null
+                prev ? { ...prev, availability } : null
             );
         } catch (error) {
             toast.error('Failed to update availability');
@@ -410,19 +407,37 @@ const MentorProfilePage = () => {
     };
 
     const toggleDay = (day: string) => {
-        console.log(day, availableDays);
-        setAvailableDays((prev) =>
-            prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-        );
+        setAvailability((prev) => {
+            const newAvailability = { ...prev };
+            if (Object.keys(newAvailability).includes(day)) {
+                delete newAvailability[day];
+            } else {
+                newAvailability[day] = [];
+            }
+            return newAvailability;
+        });
     };
 
-    const addTimeSlot = (slot: string) => {
-        if (!slot || preferredTime.includes(slot)) return;
-        setPreferredTime((prev) => [...prev, slot]);
+    const addTimeSlot = (day: string, slot: string) => {
+        if (!slot) return;
+        setAvailability((prev) => {
+            const currentSlots = prev[day] || [];
+            if (currentSlots.includes(slot)) return prev;
+            return {
+                ...prev,
+                [day]: [...currentSlots, slot],
+            };
+        });
     };
 
-    const removeTimeRange = (index: number) => {
-        setPreferredTime((prev) => prev.filter((_, i) => i !== index));
+    const removeTimeRange = (day: string, slotIndex: number) => {
+        setAvailability((prev) => {
+            const currentSlots = prev[day] || [];
+            return {
+                ...prev,
+                [day]: currentSlots.filter((_, i) => i !== slotIndex),
+            };
+        });
     };
 
     return (
@@ -1085,143 +1100,92 @@ const MentorProfilePage = () => {
                                     className="space-y-4"
                                 >
                                     <ConfigSection
-                                        title="Weekly Availability"
-                                        description="Select the days you are available for mentoring sessions."
-                                        footer="Students can only book sessions on your selected days."
+                                        title="Schedule & Availability"
+                                        description="Set your specific availability slots for each day. Students can only book you during these refined times."
+                                        footer="Click 'Save Changes' once you've configured your weekly hours."
                                         onSave={handleSaveAvailability}
                                         isLoading={isLoading === 'availability'}
                                     >
-                                        <div className="flex flex-wrap gap-3">
-                                            {/* {[
-                                                'Monday',
-                                                'Tuesday',
-                                                'Wednesday',
-                                                'Thursday',
-                                                'Friday',
-                                                'Saturday',
-                                                'Sunday',
-                                            ].map((day) => (
-                                                <button
-                                                    key={day}
-                                                    onClick={() =>
-                                                        toggleDay(day)
-                                                    }
-                                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
-                                                        availableDays.includes(
-                                                            day
-                                                        )
-                                                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-100'
-                                                            : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-500'
-                                                    }`}
-                                                >
-                                                    {day}
-                                                </button>
-                                            ))} */}
-                                            {
-                                            Object.keys(availableDays).map((day) => (
-                                                <button
-                                                    key={day}
-                                                    onClick={() =>
-                                                        toggleDay(day)
-                                                    }
-                                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
-                                                        availableDays.includes(
-                                                            day
-                                                        )
-                                                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-100'
-                                                            : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-500'
-                                                    }`}
-                                                >
-                                                    {day}
-                                                </button>
-                                            ))
-                                           
-                                            }
-                                        </div>
-                                    </ConfigSection>
+                                        <div className="space-y-4 max-w-2xl">
+                                            {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map((day) => {
+                                                const isSelected = Object.keys(availability).includes(day);
+                                                const timeSlots = availability[day] || [];
 
-                                    <ConfigSection
-                                        title="Preferred Time Slots"
-                                        description="Define your available time ranges (e.g., 9:00 AM - 12:00 PM). These will be split into 1-hour slots."
-                                        footer="Use format: 9:00 AM - 5:00 PM"
-                                        onSave={handleSaveAvailability}
-                                        isLoading={isLoading === 'availability'}
-                                    >
-                                        <div className="space-y-4">
-                                            <div className="flex gap-3">
-                                                <div className="flex-1">
-                                                    <Select
-                                                        onValueChange={(slot) =>
-                                                            addTimeSlot(slot)
-                                                        }
-                                                    >
-                                                        <SelectTrigger className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all h-[45px]">
-                                                            <div className="flex items-center gap-3">
-                                                                <Clock className="w-4 h-4 text-slate-400" />
-                                                                <SelectValue placeholder="Select a 1-hour slot" />
+                                                return (
+                                                    <div key={day} className={`border rounded-xl overflow-hidden transition-all duration-200  shadow-sm ${isSelected ? 'border-blue-200 bg-blue-50/10' : 'border-slate-200 bg-white'}`}>
+                                                        <div 
+                                                            className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors"
+                                                            onClick={() => toggleDay(day)}
+                                                        >
+                                                            <div className="flex items-center gap-3 ">
+                                                                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all duration-200 ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
+                                                                    {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                                                </div>
+                                                                <span className={`font-semibold text-sm ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>{day}</span>
                                                             </div>
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {TIME_SLOTS.map(
-                                                                (slot) => (
-                                                                    <SelectItem
-                                                                        key={
-                                                                            slot
-                                                                        }
-                                                                        value={
-                                                                            slot
-                                                                        }
-                                                                        disabled={preferredTime.includes(
-                                                                            slot
-                                                                        )}
-                                                                    >
-                                                                        {slot}
-                                                                    </SelectItem>
-                                                                )
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                            </div>
+                                                            <div className="text-xs font-semibold text-slate-400">
+                                                                {isSelected ? `${timeSlots.length} slot${timeSlots.length !== 1 ? 's' : ''} added` : 'Not Available'}
+                                                            </div>
+                                                        </div>
 
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                <AnimatePresence mode="popLayout">
-                                                    {preferredTime.map(
-                                                        (range, index) => (
-                                                            <motion.div
-                                                                key={index}
-                                                                initial={{
-                                                                    opacity: 0,
-                                                                    scale: 0.95,
-                                                                }}
-                                                                animate={{
-                                                                    opacity: 1,
-                                                                    scale: 1,
-                                                                }}
-                                                                exit={{
-                                                                    opacity: 0,
-                                                                    scale: 0.95,
-                                                                }}
-                                                                className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl"
-                                                            >
-                                                                <span className="text-sm font-bold text-slate-700">
-                                                                    {range}
-                                                                </span>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        removeTimeRange(
-                                                                            index
-                                                                        )
-                                                                    }
-                                                                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-white rounded-lg transition-all"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            </motion.div>
-                                                        )
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
+                                                        {/* Time Slots Section (Expanded) */}
+                                                        {isSelected && (
+                                                            <div className="p-4 border-t border-slate-100 bg-white space-y-4 ">
+                                                                <div className="flex flex-col sm:flex-row gap-3">
+                                                                    <Select onValueChange={(slot) => addTimeSlot(day, slot)}>
+                                                                        <SelectTrigger className="w-full sm:w-[250px] bg-white border border-slate-200 rounded-lg px-4 h-[40px] focus:ring-2 focus:ring-blue-100 focus:border-blue-500 shadow-sm">
+                                                                            <div className="flex items-center gap-2 text-sm text-slate-600 font-medium">
+                                                                                <Clock className="w-4 h-4 text-slate-400" />
+                                                                                <SelectValue placeholder="Add time slot..." />
+                                                                            </div>
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            {TIME_SLOTS.map((slot,index) => (
+                                                                                <SelectItem 
+                                                                                    key={index} 
+                                                                                    value={slot} 
+                                                                                    disabled={timeSlots.includes(slot)}
+                                                                                >
+                                                                                    {slot}
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+
+                                                                {timeSlots.length > 0 ? (
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        <AnimatePresence mode="popLayout">
+                                                                            {timeSlots.map((slot, index) => (
+                                                                                <motion.div
+                                                                                    key={slot}
+                                                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                                                    animate={{ opacity: 1, scale: 1 }}
+                                                                                    exit={{ opacity: 0, scale: 0.9 }}
+                                                                                    className="flex items-center gap-2 p-1.5 pl-3 bg-white border border-slate-200 rounded-lg shadow-sm group hover:border-red-200 hover:bg-red-50 hover:shadow-red-100 transition-all duration-200"
+                                                                                >
+                                                                                    <span className="text-xs font-semibold text-slate-700 group-hover:text-red-700 transition-colors">{slot}</span>
+                                                                                    <button
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            removeTimeRange(day, index);
+                                                                                        }}
+                                                                                        className="p-1 text-slate-400 hover:text-red-500 hover:bg-white rounded-md transition-all"
+                                                                                    >
+                                                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                                                    </button>
+                                                                                </motion.div>
+                                                                            ))}
+                                                                        </AnimatePresence>
+                                                                    </div>
+                                                                ) : (
+                                                                    <p className="text-xs font-semibold italic text-slate-400/80 bg-slate-50 border border-dashed border-slate-200 p-3 rounded-lg text-center">No time slots added for {day} yet.</p>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </ConfigSection>
                                 </motion.div>

@@ -106,7 +106,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
                     const currentDayName = format(day, 'EEEE');
                     const isAvailableDay =
-                        mentor.availableDays?.includes(currentDayName);
+                        Object.keys(mentor.availability || {}).includes(currentDayName);
 
                     const isDisabled =
                         !isCurrentMonth || isPast || !isAvailableDay;
@@ -140,9 +140,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
     const renderSlots = () => {
         if (!selectedDate) return null;
-
-        const allPossibleSlots = getAllSlots(mentor.preferredTime || []);
-
+        const selectedDayName = format(selectedDate, 'EEEE');
+        const allPossibleSlots = getAllSlots(mentor.availability?.[selectedDayName] || []);
+        console.log(allPossibleSlots,"allPossibleSlots")
         return (
             <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between mb-4">

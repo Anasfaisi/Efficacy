@@ -43,8 +43,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             personalWebsite: dto.personalWebsite,
             demoVideoLink: dto.demoVideoLink,
 
-            // availableDays: dto.availableDays,
-            // preferredTime: dto.preferredTime,
             availability: dto.availability,
             mentorType: dto.mentorType,
 
@@ -107,9 +105,6 @@ export class MentorOnboardService implements IMentorOnboardService {
             github: updatedMentorDoc.github,
             personalWebsite: updatedMentorDoc.personalWebsite,
             demoVideoLink: updatedMentorDoc.demoVideoLink,
-
-            // availableDays: updatedMentorDoc.availableDays || [],
-            // preferredTime: updatedMentorDoc.preferredTime || [],
 
             availability: updatedMentorDoc.availability,
             mentorType: updatedMentorDoc.mentorType!,

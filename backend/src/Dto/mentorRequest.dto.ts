@@ -33,9 +33,7 @@ export interface MentorApplicationRequestDto {
     personalWebsite?: string;
     demoVideoLink: string;
 
-    // availableDays: string[];
-    // preferredTime: string[];
-    availability?: object;
+    availability?: Record<string,string[]>;
 
     mentorType: 'Academic' | 'Industry';
 

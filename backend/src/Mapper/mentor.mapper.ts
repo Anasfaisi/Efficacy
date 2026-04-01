@@ -25,8 +25,6 @@ export class MentorMapper {
             d.experienceYears,
             d.skills,
             d.experienceSummary,
-            // d.availableDays,
-            // d.preferredTime,
             d.availability,
             d.resume,
             d.certificate,
