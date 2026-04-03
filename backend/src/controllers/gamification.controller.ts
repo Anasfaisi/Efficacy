@@ -19,8 +19,10 @@ export class GamificationController {
     }
 
     public async getAllBadges(req: Request, res: Response): Promise<void> {
-        const badges = await this._gamificationService.getAllBadges();
-        res.status(Code.OK).json({ success: true, badges });
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const result = await this._gamificationService.getAllBadges(page, limit);
+        res.status(Code.OK).json({ success: true, ...result });
     }
 
     public async getBadgeById(req: Request, res: Response): Promise<void> {

@@ -44,9 +44,7 @@ export interface MentorApplication {
     skills?: string;
     experienceSummary?: string;
 
-    availableDays?: string[];
-    preferredTime?: string[];
-
+    availability: Record<string, string[]>;
     resume?: string;
     certificate?: string;
     idProof?: string;
@@ -68,4 +66,16 @@ export interface MentorApplication {
     currentRole?: string;
     guidanceAreas?: string[];
     createdAt: string;
+}
+
+
+export interface Plan {
+    _id: string;
+    name: string;
+    price: number;
+    billingCycleDays: number;
+    features: string[];
+    limitations: Record<string, number>;
+    isActive: boolean;
+    mentorType?: string;
 }

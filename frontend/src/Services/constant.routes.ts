@@ -59,9 +59,9 @@ export const AdminRoutes = {
     MENTORS_STATUS: (mentorId: string) =>
         `${ADMIN_BASE}/mentors/${mentorId}/status`,
     MENTOR_APPLICATION_APPROVE: (applicationId: string) =>
-        `${ADMIN_BASE}/mentors/applications/${applicationId}`,
+        `${ADMIN_BASE}/mentors/applications/${applicationId}/approve`,
     MENTOR_APPLICATION_REJECT: (applicationId: string) =>
-        `${ADMIN_BASE}/mentors/applications/${applicationId}`,
+        `${ADMIN_BASE}/mentors/applications/${applicationId}/reject`,
     MENTOR_APPLICATION_BY_ID: (applicationId: string) =>
         `${ADMIN_BASE}/mentors/applications/${applicationId}`,
     MENTOR_APPLICATIONS_REQUEST_CHANGES: (applicationId: string) =>
@@ -183,4 +183,13 @@ export const WalletRoutes = {
     CREATE_WITHDRAWAL: `${WALLET_BASE}/withdraw`,
     UPDATE_BANK_DETAILS: `${WALLET_BASE}/bank-details`,
     GET_TRANSACTIONS: `${WALLET_BASE}/transactions`,
+};
+
+const PLAN_BASE = '/plan';
+export const PlanRoutes = {
+    BASE: PLAN_BASE,
+    CREATE_PLAN: `${PLAN_BASE}/create`,
+    GET_ALL_PLANS: `${PLAN_BASE}/all`,
+    UPDATE_PLAN: (planId: string) => `${PLAN_BASE}/${planId}`,
+    DELETE_PLAN: (planId: string) => `${PLAN_BASE}/${planId}`,
 };

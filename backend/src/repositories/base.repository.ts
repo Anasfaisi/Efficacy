@@ -42,4 +42,11 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     async find(query: FilterQuery<T>): Promise<T[]> {
         return this.model.find(query).exec();
     }
+
+    async findWithPagination(query: FilterQuery<T>, page: number, limit: number): Promise<{ data: T[]; total: number }> {
+        const skip = (page - 1) * limit;
+        const data = await this.model.find(query).skip(skip).limit(limit).exec();
+        const total = await this.model.countDocuments(query).exec();
+        return { data, total };
+    }
 }

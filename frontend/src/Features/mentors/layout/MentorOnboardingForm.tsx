@@ -50,7 +50,7 @@ const STEPS = [
         id: 4,
         title: 'Availability',
         icon: Calendar,
-        fields: ['availableDays', 'preferredTime', 'monthlyCharge'],
+        fields: ['availability', 'monthlyCharge'],
     },
     { id: 5, title: 'Mentor Type', icon: Briefcase, fields: ['mentorType'] },
     { id: 6, title: 'Specific Details', icon: Layers, fields: [] },
@@ -69,7 +69,33 @@ const SectionTitle = ({
         {children}
     </h2>
 );
+const time = [
+    '9 AM - 10 AM',
+    '10 AM - 11 AM',
+    '11 AM - 12 PM',
+    '12 PM - 1 PM',
+    '1 PM - 2 PM',
+    '2 PM - 3 PM',
+    '3 PM - 4 PM',
+    '4 PM - 5 PM',
+    '5 PM - 6 PM',
+    '6 PM - 7 PM',
+    '7 PM - 8 PM',
+    '8 PM - 9 PM',
+    '9 PM - 10 PM',
+    '10 PM - 11 PM',
+    '11 PM - 12 PM',
+];
+const WeekSchedule: Record<string, string[]> = {
+    Monday: time,
 
+    Tuesday: time,
+    Wednesday: time,
+    Thursday: time,
+    Friday: time,
+    Saturday: time,
+    Sunday: time,
+};
 const Label = ({
     children,
     required,
@@ -117,17 +143,17 @@ export default function MentorOnboardingForm() {
         resolver: zodResolver(mentorFormSchema) as any,
         mode: 'onChange',
         defaultValues: {
-            availableDays: [],
-            preferredTime: [],
-
             mentorType: undefined,
             guidanceAreas: [],
         },
     });
 
     const watchedMentorType = watch('mentorType');
-    const watchedDays = watch('availableDays') || [];
-    const watchedTimes = watch('preferredTime') || [];
+    const availabilityState: Record<string, string[]> =
+        watch('availability') || {};
+    const selectedDays = Object.keys(availabilityState).filter((day) =>
+        Array.isArray(availabilityState[day])
+    );
     const watchedGuidanceAreas = watch('guidanceAreas') || [];
     const [fetchedMentor, setFetchedMentor] = useState<Mentor | null>(null);
 
@@ -164,8 +190,8 @@ export default function MentorOnboardingForm() {
                 navigate('/mentor/application-received');
             } else if (status === 'rejected') {
                 navigate('/mentor/application-rejected');
-            } else if (status === 'reapply') {
-            } else if (
+            } 
+             else if (
                 status &&
                 status !== 'incomplete' &&
                 status !== 'pending'
@@ -186,20 +212,7 @@ export default function MentorOnboardingForm() {
                     setValue('personalWebsite', mentor.personalWebsite);
                 if (mentor.demoVideoLink)
                     setValue('demoVideoLink', mentor.demoVideoLink);
-                if (mentor.availableDays)
-                    setValue(
-                        'availableDays',
-                        Array.isArray(mentor.availableDays)
-                            ? mentor.availableDays
-                            : []
-                    );
-                if (mentor.preferredTime)
-                    setValue(
-                        'preferredTime',
-                        Array.isArray(mentor.preferredTime)
-                            ? mentor.preferredTime
-                            : []
-                    );
+
                 if (mentor.mentorType)
                     setValue('mentorType', mentor.mentorType);
                 if (mentor.qualification)
@@ -237,7 +250,8 @@ export default function MentorOnboardingForm() {
 
     const validateStep = async (stepId: number) => {
         const stepConfig = STEPS.find((s) => s.id === stepId);
-        if (!stepConfig) return false;
+        console.log('step id from validate step ', stepConfig);
+        if (!stepConfig) return;
 
         if (stepId === 3) {
             if (!files.idProof) {
@@ -309,11 +323,13 @@ export default function MentorOnboardingForm() {
     };
 
     const handleNext = async (e?: React.MouseEvent) => {
+        console.log(currentStep);
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
         const isStepValid = await validateStep(currentStep);
+        console.log(isStepValid, 'what is coming here');
         if (isStepValid) {
             setCurrentStep((prev) => Math.min(prev + 1, STEPS.length));
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -418,15 +434,6 @@ export default function MentorOnboardingForm() {
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
             <div className="max-w-3xl mx-auto">
-                <div className="flex justify-between items-center mb-2">
-                    <Link
-                        to="/mentor/guidelines"
-                        className="text-sky-600 hover:text-sky-700 text-sm font-medium flex items-center gap-1 group transition-all"
-                    >
-                        <HelpCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        Read Guidelines
-                    </Link>
-                </div>
                 {renderHeader()}
 
                 {activeMentor?.role === 'mentor' &&
@@ -699,88 +706,203 @@ export default function MentorOnboardingForm() {
                                         Availability & Preference
                                     </SectionTitle>
 
+                                    {/* <div className=" grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2 transition-all duration-300 ease-in-out animate-fadeIn  ">
+                                        {Object.keys(WeekSchedule).map(
+                                            (day) => (
+                                                <div key={day}>
+                                                    <label
+                                                        className={`border border-gray-400 p-2 rounded flex items-center space-x-2 transition-all duration-200 ${currentDay === day ? 'bg-sky-100 border-sky-500 scale-105' : ''}`}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            className="rounded  text-sky-600 focus:ring-sky-500 w-5 h-5 mr-5 bg-amber-900"
+                                                            value={day}
+                                                            onChange={(e) =>
+                                                                handleAvailableSlot(
+                                                                    e
+                                                                )
+                                                            }
+                                                        />
+                                                        {day}
+                                                    </label>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label> Time Slots </label>
+                                        <div
+                                            className="grid grid-cols-3 gap-3 animate-fadein"
+                                            key={currentDay}
+                                        >
+                                            {WeekSchedule[currentDay]?.map(
+                                                (time: string) => (
+                                                    <label
+                                                        key={time}
+                                                        className="border border-gray-400 p-2 rounded flex items-center space-x-2 transition-all duration-300 hover:scale-105"
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            value={time}
+                                                            {...register(
+                                                                `availability.${currentDay}`
+                                                            )}
+                                                            className=" mr-5 rounded text-sky-600 focus:ring-sky-500 w-5 h-5"
+                                                        />
+                                                        {time}
+                                                    </label>
+                                                )
+                                            )}
+                                        </div>
+                                    </div> */}
+
                                     {/* Days Checkboxes */}
                                     <div>
                                         <Label required>Available Days</Label>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-                                            {[
-                                                'Monday',
-                                                'Tuesday',
-                                                'Wednesday',
-                                                'Thursday',
-                                                'Friday',
-                                                'Saturday',
-                                                'Sunday',
-                                            ].map((day) => (
-                                                <label
-                                                    key={day}
-                                                    className={`flex items-center space-x-2 p-3 border border-gray-400 rounded-lg cursor-pointer max-w-full ${watchedDays.includes(day) ? 'bg-sky-50 border-sky-400' : ''}`}
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        value={day}
-                                                        {...register(
-                                                            'availableDays'
-                                                        )}
-                                                        className="rounded text-sky-600 focus:ring-sky-500 w-5 h-5"
-                                                    />
-                                                    <span className="text-sm text-gray-700">
-                                                        {day}
-                                                    </span>
-                                                </label>
-                                            ))}
+                                            {Object.keys(WeekSchedule).map(
+                                                (day) => (
+                                                    <label
+                                                        key={day}
+                                                        className={`flex items-center space-x-2 p-3 border border-gray-400 rounded-lg cursor-pointer transition-all duration-300  ${
+                                                            availabilityState[
+                                                                day
+                                                            ]?.length > 0
+                                                                ? 'bg-sky-100 border-sky-500 scale-105 shadow-sm'
+                                                                : 'hover:bg-gray-50'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={Array.isArray(
+                                                                availabilityState[
+                                                                    day
+                                                                ]
+                                                            )}
+                                                            onChange={(e) => {
+                                                                const currentAvailability =
+                                                                    getValues(
+                                                                        'availability'
+                                                                    ) || {};
+                                                                if (
+                                                                    e.target
+                                                                        .checked
+                                                                ) {
+                                                                    setValue(
+                                                                        'availability',
+                                                                        {
+                                                                            ...currentAvailability,
+                                                                            [day]: [],
+                                                                        },
+                                                                        {
+                                                                            shouldValidate: true,
+                                                                        }
+                                                                    );
+                                                                } else {
+                                                                    const newAvailability =
+                                                                        {
+                                                                            ...currentAvailability,
+                                                                        };
+                                                                    delete newAvailability[
+                                                                        day
+                                                                    ];
+                                                                    setValue(
+                                                                        'availability',
+                                                                        newAvailability,
+                                                                        {
+                                                                            shouldValidate: true,
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }}
+                                                            className=" rounded border border-gray-600 w-5 h-5 cursor-pointer"
+                                                        />
+                                                        <span className="text-sm font-medium text-gray-700">
+                                                            {day}
+                                                        </span>
+                                                    </label>
+                                                )
+                                            )}
                                         </div>
                                         <ErrorMsg
                                             message={
-                                                errors.availableDays?.message
+                                                (
+                                                    errors.availability as {
+                                                        message?: string;
+                                                    }
+                                                )?.message
                                             }
                                         />
                                     </div>
 
-                                    {/* Time Slots */}
-                                    <div>
-                                        <Label required>Time Slots</Label>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                                            {[
-                                                '9 AM - 10 AM',
-                                                '10 AM - 11 AM',
-                                                '11 AM - 12 PM',
-                                                '12 PM - 1 PM',
-                                                '1 PM - 2 PM',
-                                                '2 PM - 3 PM',
-                                                '3 PM - 4 PM',
-                                                '4 PM - 5 PM',
-                                                '5 PM - 6 PM',
-                                                '6 PM - 7 PM',
-                                                '7 PM - 8 PM',
-                                                '8 PM - 9 PM',
-                                                '9 PM - 10 PM',
-                                                '10 PM - 11 PM',
-                                                '11 PM - 12 PM',
-                                            ].map((time) => (
-                                                <label
-                                                    key={time}
-                                                    className={`flex items-center space-x-2 p-3 border border-gray-400 rounded-lg cursor-pointer ${watchedTimes.includes(time) ? 'bg-sky-50 border-sky-400' : ''}`}
+                                    {/* Dynamic Time Slots with Framer Motion Transitions */}
+                                    <div className="mt-6 space-y-4">
+                                        <AnimatePresence>
+                                            {selectedDays.map((day: string) => (
+                                                <motion.div
+                                                    key={day}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        height: 0,
+                                                        scale: 0.95,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        height: 'auto',
+                                                        scale: 1,
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        height: 0,
+                                                        scale: 0.95,
+                                                    }}
+                                                    transition={{
+                                                        duration: 0.3,
+                                                        ease: 'easeInOut',
+                                                    }}
+                                                    className="overflow-hidden"
                                                 >
-                                                    <input
-                                                        type="checkbox"
-                                                        value={time}
-                                                        {...register(
-                                                            'preferredTime'
-                                                        )}
-                                                        className="rounded text-sky-600 focus:ring-sky-500 w-5 h-5"
-                                                    />
-                                                    <span className="text-sm text-gray-700">
-                                                        {time}
-                                                    </span>
-                                                </label>
+                                                    <div className="p-5 border border-sky-200 rounded-xl bg-sky-50/30">
+                                                        <Label>
+                                                            {day} Time Slots
+                                                        </Label>
+                                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+                                                            {WeekSchedule[
+                                                                day
+                                                            ]?.map(
+                                                                (
+                                                                    time: string
+                                                                ) => (
+                                                                    <label
+                                                                        key={
+                                                                            time
+                                                                        }
+                                                                        className="border border-gray-300 bg-white p-2.5 rounded-lg flex items-center space-x-2 transition-all duration-200 hover:border-sky-400 hover:shadow-sm cursor-pointer"
+                                                                    >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            value={
+                                                                                time
+                                                                            }
+                                                                            {...register(
+                                                                                `availability.${day}` as any
+                                                                            )}
+                                                                            className="rounded text-sky-600 focus:ring-sky-500 w-4 h-4 cursor-pointer"
+                                                                        />
+                                                                        <span className="text-xs font-medium text-gray-700">
+                                                                            {
+                                                                                time
+                                                                            }
+                                                                        </span>
+                                                                    </label>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
                                             ))}
-                                        </div>
-                                        <ErrorMsg
-                                            message={
-                                                errors.preferredTime?.message
-                                            }
-                                        />
+                                        </AnimatePresence>
                                     </div>
 
                                     {/* Monthly Pricing */}
@@ -1514,14 +1636,12 @@ export default function MentorOnboardingForm() {
                                                 Edit
                                             </button>
                                         </div>
-                                        <div className="p-6">
+                                        {/* <div className="p-6">
                                             <div className="mb-4">
-                                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-                                                    Days of Week
-                                                </p>
+                                               
                                                 <div className="flex flex-wrap gap-2">
-                                                    {watchedDays.length > 0 ? (
-                                                        watchedDays.map(
+                                                    {(Object.keys(availabilityState).length > 0) ? (
+                                                       Object.keys(availabilityState).map(
                                                             (day) => (
                                                                 <span
                                                                     key={day}
@@ -1543,14 +1663,16 @@ export default function MentorOnboardingForm() {
                                                     Preferred Times
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {watchedTimes.length > 0 ? (
-                                                        watchedTimes.map(
-                                                            (time) => (
+                                                    {Object.keys(availabilityState).length > 0 ? (
+                                                        Object.entries(availabilityState).map(
+                                                            ([day, time]) => (
                                                                 <span
-                                                                    key={time}
+                                                                    key={day}
                                                                     className="px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full border border-indigo-100"
                                                                 >
-                                                                    {time}
+                                                                    {time.map((t:string)=>(
+                                                                        <span key={t}>{t}</span>
+                                                                    ))}
                                                                 </span>
                                                             )
                                                         )
@@ -1560,6 +1682,64 @@ export default function MentorOnboardingForm() {
                                                         </span>
                                                     )}
                                                 </div>
+                                            </div>
+                                        </div> */}
+
+                                        <div className="p-6">
+                                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+                                                Availability
+                                            </p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {Object.keys(availabilityState)
+                                                    .length > 0 ? (
+                                                    Object.entries(
+                                                        availabilityState
+                                                    ).map(
+                                                        ([day, time]: [
+                                                            string,
+                                                            string[],
+                                                        ]) => (
+                                                            <div
+                                                                key={day}
+                                                                className="flex items-center flex-wrap gap-2 w-full mb-2"
+                                                            >
+                                                                <span className="font-medium text-gray-700">
+                                                                    {day} :{' '}
+                                                                </span>
+                                                                {Array.isArray(
+                                                                    time
+                                                                ) &&
+                                                                time.length >
+                                                                    0 ? (
+                                                                    time.map(
+                                                                        (
+                                                                            t: string
+                                                                        ) => (
+                                                                            <span
+                                                                                key={
+                                                                                    t
+                                                                                }
+                                                                                className="px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full border border-indigo-100"
+                                                                            >
+                                                                                {
+                                                                                    t
+                                                                                }
+                                                                            </span>
+                                                                        )
+                                                                    )
+                                                                ) : (
+                                                                    <span className="text-gray-400 text-sm italic">
+                                                                        Any time
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <span className="text-gray-400 italic">
+                                                        No days selected
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -1699,7 +1879,15 @@ export default function MentorOnboardingForm() {
                                             process.
                                         </p>
                                     </div>
-
+                                    <div className="flex justify-between items-center mb-2">
+                                        <Link
+                                            to="/mentor/guidelines"
+                                            className="text-sky-600 hover:text-sky-700 text-sm font-medium flex items-center gap-1 group transition-all"
+                                        >
+                                            <HelpCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                            Read Guidelines
+                                        </Link>
+                                    </div>
                                     <div className="class flex items-center gap-2 mt-4 mb-4">
                                         <input
                                             type="checkbox"
@@ -1710,6 +1898,7 @@ export default function MentorOnboardingForm() {
                                             }
                                             className="w-4 h-4 cursor-pointer"
                                         />
+
                                         <label className="text-sm font-medium text-gray-700 cursor-pointer ">
                                             I have read the guidelines and agree
                                         </label>

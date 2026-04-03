@@ -84,7 +84,6 @@ const MentorDashboard: React.FC = () => {
     ).size;
 
     if (!currentUser) return null;
-    console.log(isLoading, fetchedMentor, 'from mentor dashboard');
 
     if (isLoading && !fetchedMentor) {
         return (

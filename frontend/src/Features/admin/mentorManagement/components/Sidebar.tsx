@@ -38,11 +38,16 @@ export default function Sidebar() {
             label: 'Gamification Engine',
             icon: Icons.Award,
         },
+        {
+            to:'/admin/subscriptionPlans',
+           label : 'Subscription Plans',
+           icon : Icons.CreditCard,
+        }
     ];
 
     return (
         <aside className="h-screen w-64 bg-[#0c2d48] text-gray-300 flex flex-col sticky top-0 border-r border-white/10 shadow-xl">
-            <div className="p-4 border-b border-white/10 mb-2">
+            <div className="border-b border-white/10 mb-2">
                 <div className="h-4" />
             </div>
 

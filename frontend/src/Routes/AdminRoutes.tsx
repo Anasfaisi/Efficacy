@@ -15,6 +15,7 @@ import AdminFinancialsPage from '@/Features/admin/pages/AdminFinancialsPage';
 import AdminGamificationPage from '@/Features/admin/gamification/pages/AdminGamificationPage';
 import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
 import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
+import SubscriptionPlanManagement from '@/Features/admin/pages/PlanManagement';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -60,6 +61,7 @@ const AdminRoutes: React.FC = () => {
                 />
                 <Route path="userManagement" element={<UserManagement />} />
                 <Route path="profile" element={<AdminProfilePage />} />
+                <Route path='subscriptionPlans' element={<SubscriptionPlanManagement/>} />
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

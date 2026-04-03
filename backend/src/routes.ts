@@ -25,6 +25,8 @@ import { ReviewController } from './controllers/review.controller';
 import reviewRoutes from './routes/review.routes';
 import { GamificationController } from './controllers/gamification.controller';
 import gamificationRoutes from './routes/gamification.routes';
+import { PlanController } from './controllers/plan.controller';
+import planRoutes from './routes/plan.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -59,7 +61,7 @@ export function applyRoutes(app: Express) {
     const gamificationController = container.get<GamificationController>(
         TYPES.GamificationController
     );
-
+    const planController = container.get<PlanController>(TYPES.PlanController);
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
     app.use(
@@ -75,4 +77,5 @@ export function applyRoutes(app: Express) {
     app.use('/api/booking', bookingRoutes(container));
     app.use('/api/reviews', reviewRoutes(reviewController));
     app.use('/api/gamification', gamificationRoutes(gamificationController));
+    app.use('/api/plan', planRoutes(planController));
 }

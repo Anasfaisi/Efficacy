@@ -1,4 +1,5 @@
 import { Schema, model, Document, ObjectId } from 'mongoose';
+import { object } from 'zod';
 
 interface IMentor extends Document<ObjectId> {
     name: string;
@@ -23,9 +24,7 @@ interface IMentor extends Document<ObjectId> {
     experienceYears?: string;
     skills?: string;
     experienceSummary?: string;
-
-    availableDays?: string[];
-    preferredTime?: string[];
+    availability?:{[key:string]:string[]};
 
     resume?: string;
     certificate?: string;
@@ -97,8 +96,7 @@ const mentorSchema = new Schema<IMentor>(
         skills: { type: String },
         experienceSummary: { type: String },
 
-        availableDays: { type: [String] },
-        preferredTime: { type: [String] },
+        availability: { type: Object },
 
         resume: { type: String },
         certificate: { type: String },

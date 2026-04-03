@@ -22,8 +22,9 @@ import {
     ChevronLeft,
 } from 'lucide-react';
 import { mentorshipApi } from '@/Services/mentorship.api';
-import { reviewApi, type Review } from '@/Services/review.api';
+import { reviewApi} from '@/Services/review.api';
 import { toast } from 'sonner';
+import type { Review } from '@/types/reviews';
 
 const MentorDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -511,10 +512,8 @@ const MentorDetailPage: React.FC = () => {
                                                 Active Days
                                             </p>
                                             <div className="flex flex-wrap gap-2">
-                                                {Array.isArray(
-                                                    mentor.availableDays
-                                                ) ? (
-                                                    mentor.availableDays.map(
+                                                {Object.keys(mentor.availability || {}).length > 0 ? (
+                                                    Object.keys(mentor.availability || {}).map(
                                                         (day) => (
                                                             <span
                                                                 key={day}
@@ -541,10 +540,7 @@ const MentorDetailPage: React.FC = () => {
                                             </p>
                                             <div className="text-gray-700 font-bold flex items-center gap-2">
                                                 <Clock size={16} />
-                                                {mentor.preferredTime &&
-                                                mentor.preferredTime.length > 0
-                                                    ? `${mentor.preferredTime[0]} - ${mentor.preferredTime[mentor.preferredTime.length - 1]}`
-                                                    : 'Discuss in chat'}
+                                                {mentor.availability ? 'Discuss in chat' : 'Discuss in chat'}
                                             </div>
                                         </div>
                                     </div>

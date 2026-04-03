@@ -145,8 +145,8 @@ export class GamificationService implements IGamificationService {
         return await this._badgeRepository.create(badgeData);
     }
 
-    public async getAllBadges(): Promise<IBadge[]> {
-        return await this._badgeRepository.getAllBadgesAdmin();
+    public async getAllBadges(page: number, limit: number): Promise<{ badges: IBadge[], total: number }> {
+        return await this._badgeRepository.getAllBadgesAdmin(page, limit);
     }
 
     public async getBadgeById(

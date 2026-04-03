@@ -74,7 +74,7 @@ const MentorLogin: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
+        <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -113,7 +113,7 @@ const MentorLogin: React.FC = () => {
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="flex-1 p-8 md:p-16 lg:p-20 bg-white">
+                <div className="flex-1 p-8 md:p-10 bg-white">
                     <div className="max-w-md mx-auto">
                         <div className="mb-10 text-center md:text-left">
                             <h2 className="text-4xl font-black text-slate-800">

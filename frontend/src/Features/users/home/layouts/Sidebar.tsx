@@ -10,10 +10,12 @@ import {
     ChevronRight,
     Wallet,
     LogOut,
+    CreditCard,
 } from 'lucide-react';
 import SidebarButton from '../components/SidebarButton';
 import { useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { CardNumberElement } from '@stripe/react-stripe-js';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -80,12 +82,18 @@ const Sidebar = () => {
             color: '#7F00FF',
         },
 
+        // {
+        //     icon: <Trophy size={20} />,
+        //     label: 'Conqueror',
+        //     to: '#',
+        //     color: '#FFC107',
+        // },
         {
-            icon: <Trophy size={20} />,
-            label: 'Conqueror',
-            to: '#',
-            color: '#FFC107',
-        },
+            icon:<CreditCard size={20} />,
+            label: 'Subscription',
+            to: '/subscription',
+            color: '#FFC107'
+        }
     ];
 
     const [collapsed, setCollapsed] = useState(false);

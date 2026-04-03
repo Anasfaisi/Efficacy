@@ -9,6 +9,7 @@ interface CancelMentorshipModalProps {
     title?: string;
     message?: string;
     isLoading?: boolean;
+    startDate?: string | Date;
 }
 
 const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
@@ -18,8 +19,24 @@ const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
     title = 'Cancel Mentorship',
     message = 'Are you sure you want to cancel this mentorship? Refund policies apply.',
     isLoading = false,
+    startDate,
 }) => {
     if (!isOpen) return null;
+
+    let policyNote = null;
+    if (startDate) {
+        const start = new Date(startDate);
+        const today = new Date();
+        const diffTime = Math.abs(today.getTime() - start.getTime());
+        const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const daysLeft = 7 - daysPassed;
+
+        if (daysPassed <= 7) {
+            policyNote = `${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left need time to think? Our policy allows cancellation within the first 7 days for a full refund.`;
+        } else {
+            policyNote = `Note: The 7-day refund period has passed (${daysPassed} days since start).`;
+        }
+    }
 
     return (
         <AnimatePresence>
@@ -64,9 +81,14 @@ const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
                         </div>
 
                         <div className="mb-8 pl-1">
-                            <p className="text-gray-600 font-medium">
+                            <p className="text-gray-600 font-medium mb-3">
                                 {message}
                             </p>
+                            {policyNote && (
+                                <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                                    <p className="text-sm text-blue-700 font-medium">{policyNote}</p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-3">

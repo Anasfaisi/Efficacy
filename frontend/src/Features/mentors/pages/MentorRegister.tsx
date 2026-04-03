@@ -119,10 +119,10 @@ const MentorRegister: React.FC = () => {
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="flex-1 p-8 md:p-12 lg:p-16 bg-white overflow-y-auto">
+                <div className="flex-1 p-8 md:p-12  bg-white overflow-y-auto">
                     <div className="max-w-md mx-auto">
                         <div className="mb-10 text-center md:text-left">
-                            <h2 className="text-4xl font-black text-slate-800">
+                            <h2 className="text-3xl font-black text-slate-800">
                                 Professional Sign Up
                             </h2>
                             <p className="text-slate-500 mt-2">

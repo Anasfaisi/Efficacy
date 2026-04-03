@@ -2,9 +2,28 @@ import api from './axiosConfig';
 import type { MentorApplication, Notification } from '../Features/admin/types';
 import type { LoginCredentials, Mentor, User } from '../types/auth';
 import type { Transaction } from '@/types/wallet';
-import { AdminRoutes } from './constant.routes';
+import { AdminRoutes, PlanRoutes } from './constant.routes';
+import { type PlanData } from '../Features/admin/components/AddPlanModal';
 
 export const adminService = {
+    createPlan: async (planData: PlanData) => {
+        const res = await api.post(PlanRoutes.CREATE_PLAN, planData);
+        return res.data;
+    },
+    getPlans: async (search = '', status = 'all', page = 1, limit = 10) => {
+        const res = await api.get(PlanRoutes.GET_ALL_PLANS, {
+            params: { search, status, page, limit },
+        });
+        return res.data;
+    },
+    updatePlan: async (planId: string, planData: Partial<PlanData>) => {
+        const res = await api.put(PlanRoutes.UPDATE_PLAN(planId), planData);
+        return res.data;
+    },
+    deletePlan: async (planId: string, isActive: boolean) => {
+        const res = await api.delete(PlanRoutes.DELETE_PLAN(planId), { data: { isActive } });
+        return res.data;
+    },
     adminLoginApi: async (credentials: LoginCredentials) => {
         const res = await api.post(AdminRoutes.ADMINLOGIN, credentials);
         return res.data;

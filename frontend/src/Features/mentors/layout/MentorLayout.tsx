@@ -6,6 +6,7 @@ import { MentorNotificationListener } from '../components/MentorNotificationList
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
 import { mentorApi } from '@/Services/mentor.api';
+import { Bell } from 'lucide-react';
 
 const MentorLayout: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);

@@ -57,8 +57,7 @@ export class AdminService implements IAdminService {
             github: mentor.github,
             personalWebsite: mentor.personalWebsite,
             demoVideoLink: mentor.demoVideoLink,
-            availableDays: mentor.availableDays || [],
-            preferredTime: mentor.preferredTime || [],
+            availability: mentor.availability,
             mentorType: mentor.mentorType!,
             qualification: mentor.qualification,
             domain: mentor.domain,
@@ -126,6 +125,7 @@ export class AdminService implements IAdminService {
             status: 'approved',
             isVerified: true,
         });
+        console.log(mentor,' what is coming here ')
         if (mentor) {
             await this._notificationService.createNotification(
                 mentor.id,
