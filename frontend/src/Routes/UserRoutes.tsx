@@ -4,6 +4,7 @@ import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
 import { logoutApi } from '@/Services/user.api';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
+import SubscriptionPage from '@/Features/users/subscription/pages/SubscriptionPage';
 
 // Lazy load components
 const Home = lazy(() => import('../Features/users/home/pages/Home'));
@@ -14,9 +15,7 @@ const CancelPage = lazy(
     () => import('@/Features/users/payment/pages/CancelPage')
 );
 const ChatPage = lazy(() => import('@/Features/users/chat/pages/ChatPage'));
-const SubscriptionForm = lazy(
-    () => import('@/Features/users/payment/pages/CheckoutForm')
-);
+
 const UserProfilePage = lazy(
     () => import('@/Features/users/profile/pages/UserProfilePage')
 );
@@ -85,7 +84,6 @@ const UserRoutes: React.FC = () => {
 
                     <Route path="success" element={<SuccessPage />} />
                     <Route path="failed" element={<CancelPage />} />
-                    <Route path="subscription" element={<SubscriptionForm />} />
 
                     <Route path="chat" element={<ChatPage />} />
                     <Route path="profile" element={<UserProfilePage />} />
@@ -109,6 +107,7 @@ const UserRoutes: React.FC = () => {
                     <Route path="planner" element={<PlannerPage />} />
                     <Route path="pomodoro" element={<PomodoroPage />} />
                     <Route path="notes" element={<NotesPage />} />
+                    <Route path="subscription" element={<SubscriptionPage/>} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </Suspense>

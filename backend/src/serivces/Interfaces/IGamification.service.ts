@@ -8,7 +8,7 @@ export interface IGamificationService {
     ): Promise<void>;
 
     createBadge(badgeData: Partial<IBadge>): Promise<IBadge>;
-    getAllBadges(): Promise<IBadge[]>;
+    getAllBadges(page: number, limit: number): Promise<{ badges: IBadge[], total: number }>;
     getBadgeById(id: string | Types.ObjectId): Promise<IBadge | null>;
     updateBadge(
         id: string | Types.ObjectId,

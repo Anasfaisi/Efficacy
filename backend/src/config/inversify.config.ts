@@ -89,7 +89,12 @@ import { GamificationService } from '@/serivces/gamification.service';
 import { IGamificationService } from '@/serivces/Interfaces/IGamification.service';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
 import { BadgeRepository } from '@/repositories/badge.repository';
-import { GamificationController } from '@/controllers/gamification.controller';
+import { GamificationController} from '@/controllers/gamification.controller';
+import { IPlanService } from '@/serivces/Interfaces/IPlan.service';
+import { PlanService } from '@/serivces/plan.service';
+import { IPlanRepository } from '@/repositories/interfaces/IPlan.repository';
+import { planRepository } from '@/repositories/plan.repository';
+import { PlanController } from '@/controllers/plan.controller';
 
 export const container = new Container();
 
@@ -123,6 +128,7 @@ container.bind<ReviewController>(TYPES.ReviewController).to(ReviewController);
 container
     .bind<GamificationController>(TYPES.GamificationController)
     .to(GamificationController);
+container.bind<PlanController>(TYPES.PlanController).to(PlanController);
 
 container.bind<AuthService>(TYPES.AuthService).to(AuthService);
 container.bind<TokenService>(TYPES.TokenService).to(TokenService);
@@ -164,6 +170,7 @@ container.bind<IReviewService>(TYPES.ReviewService).to(ReviewService);
 container
     .bind<IGamificationService>(TYPES.GamificationService)
     .to(GamificationService);
+container.bind<IPlanService>(TYPES.PlanService).to(PlanService)
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -200,3 +207,4 @@ container
     .bind<IBookingRepository>(TYPES.BookingRepository)
     .to(BookingRepository);
 container.bind<IReviewRepository>(TYPES.ReviewRepository).to(ReviewRepository);
+container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository)

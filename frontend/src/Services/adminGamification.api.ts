@@ -13,8 +13,13 @@ export const adminGamificationApi = {
         return response.data;
     },
 
-    getAllBadges: async (): Promise<{ success: boolean; badges: IBadge[] }> => {
-        const response = await api.get(GamificationRoutes.BADGES);
+    getAllBadges: async (
+        page = 1,
+        limit = 10
+    ): Promise<{ success: boolean; badges: IBadge[]; total: number }> => {
+        const response = await api.get(GamificationRoutes.BADGES, {
+            params: { page, limit },
+        });
         return response.data;
     },
 

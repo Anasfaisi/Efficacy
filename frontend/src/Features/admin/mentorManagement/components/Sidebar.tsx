@@ -38,6 +38,11 @@ export default function Sidebar() {
             label: 'Gamification Engine',
             icon: Icons.Award,
         },
+        {
+            to:'/admin/subscriptionPlans',
+           label : 'Subscription Plans',
+           icon : Icons.CreditCard,
+        }
     ];
 
     return (

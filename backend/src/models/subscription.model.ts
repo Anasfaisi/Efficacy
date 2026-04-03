@@ -1,20 +1,32 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import { IPlan } from './Plan.model';
 
-export interface ISubscription {
-    id?: string;
-    status?: string;
-    priceId?: string;
-    current_period_end?: Date;
+export  enum SubscriptionStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+    CANCELLED = 'cancelled'
+}
+
+export interface ISubscription extends Document {
+    planId: Schema.Types.ObjectId | IPlan;
+    status: SubscriptionStatus;
+    stripeSubscriptionId?: string;
+    currentPeriodEnd?: Date;
+    sessionsBookedThisMonth: number;
 }
 
 const subscriptionSchema = new Schema<ISubscription>(
     {
-        id: { type: String },
-        status: { type: String },
-        priceId: { type: String },
-        current_period_end: { type: Date },
+        planId: { type: Schema.Types.ObjectId, ref: 'Plan' },
+        status: {
+            type: String,
+            enum: Object.values(SubscriptionStatus),
+            default: SubscriptionStatus.INACTIVE,
+        }, stripeSubscriptionId: { type: String },
+        currentPeriodEnd: { type: Date },
+        sessionsBookedThisMonth: { type: Number, default: 0 },
     },
-    { _id: false }
+    { timestamps: true }
 );
 
 export default model<ISubscription>('Subscriptions', subscriptionSchema);

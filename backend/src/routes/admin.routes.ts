@@ -137,5 +137,6 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.getDashboardStats.bind(adminController))
     );
 
+   
     return router;
 }

@@ -67,3 +67,15 @@ export interface MentorApplication {
     guidanceAreas?: string[];
     createdAt: string;
 }
+
+
+export interface Plan {
+    _id: string;
+    name: string;
+    price: number;
+    billingCycleDays: number;
+    features: string[];
+    limitations: Record<string, number>;
+    isActive: boolean;
+    mentorType?: string;
+}

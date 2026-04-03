@@ -13,7 +13,10 @@ export class BadgeRepository
         super(Badge);
     }
 
-    async getAllBadgesAdmin(): Promise<IBadge[]> {
-        return this.model.find().sort({ createdAt: -1 }).exec();
+    async getAllBadgesAdmin(page: number, limit: number): Promise<{ badges: IBadge[], total: number }> {
+        const skip = (page - 1) * limit;
+        const total = await this.model.countDocuments();
+        const badges = await this.model.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
+        return { badges, total };
     }
 }

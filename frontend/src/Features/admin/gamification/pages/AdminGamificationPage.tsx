@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminGamificationApi } from '@/Services/adminGamification.api';
 import type {
     IBadge,
     IGamificationConstants,
 } from '@/Services/adminGamification.api';
 import BadgePreview from '../components/BadgePreview';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function AdminBadgesPage() {
@@ -17,6 +17,13 @@ export default function AdminBadgesPage() {
     const [editingBadge, setEditingBadge] = useState<Partial<IBadge> | null>(
         null
     );
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const limit = 5;
 
     // Initial state matching standard IBadge schema
     const initialFormState: Partial<IBadge> = {
@@ -37,33 +44,26 @@ export default function AdminBadgesPage() {
     const [formState, setFormState] =
         useState<Partial<IBadge>>(initialFormState);
 
-    useEffect(() => {
-        console.log('AdminGamificationPage loaded, fetching data...');
-        loadData();
-    }, []);
-
-    const loadData = async () => {
-        console.log('Executing gamification api calls...');
+    const fetchBadges = useCallback(async (page: number) => {
+        setLoading(true);
         try {
-            const [bRes, cRes] = await Promise.all([
-                adminGamificationApi.getAllBadges().catch((e) => {
-                    console.error('Badges error:', e);
-                    return { success: false, badges: [] };
-                }),
-                adminGamificationApi.getConstants().catch((e) => {
-                    console.error('Constants error:', e);
-                    return {
-                        success: false,
-                        templates: [],
-                        triggerEvents: [],
-                        rarities: [],
-                    };
-                }),
-            ]);
-            console.log('API Responses:', { bRes, cRes });
+            const response = await adminGamificationApi.getAllBadges(page, limit);
+            if (response.success) {
+                setBadges(response.badges);
+                setTotalItems(response.total);
+                setTotalPages(Math.ceil(response.total / limit) || 1);
+            }
+        } catch (error) {
+            console.error('Failed to fetch badges', error);
+            toast.error('Failed to load badges');
+        } finally {
+            setLoading(false);
+        }
+    }, [limit]);
 
-            if (bRes.success) setBadges(bRes.badges);
-            // Default to empty arrays if undefined so constants is not null, ensuring the UI opens later
+    const fetchConstants = async () => {
+        try {
+            const cRes = await adminGamificationApi.getConstants();
             setConstants({
                 templates: cRes.templates || [
                     'TASK_COUNT',
@@ -77,10 +77,27 @@ export default function AdminBadgesPage() {
                 rarities: cRes.rarities || ['COMMON', 'RARE', 'EPIC'],
             });
         } catch (error) {
-            console.error('Critical loading error', error);
-            toast.error('Failed to load Gamification system data');
+            console.error('Constants error:', error);
+            toast.error('Failed to load system constants');
         }
     };
+
+    const loadInitialData = async () => {
+        await Promise.all([fetchBadges(1), fetchConstants()]);
+    };
+
+    useEffect(() => {
+        loadInitialData();
+    }, []);
+
+    useEffect(() => {
+        if (currentPage > 1) {
+            fetchBadges(currentPage);
+        } else if (currentPage === 1 && badges.length > 0) {
+            // Already fetched initially, but if user goes back to 1 we might need it
+            fetchBadges(1);
+        }
+    }, [currentPage]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -94,11 +111,12 @@ export default function AdminBadgesPage() {
             } else {
                 await adminGamificationApi.createBadge(formState);
                 toast.success('New Badge unlocked directly into the DB!');
+                setCurrentPage(1);
             }
             setIsFormOpen(false);
             setEditingBadge(null);
             setFormState(initialFormState);
-            loadData();
+            fetchBadges(currentPage);
         } catch {
             toast.error('Failed to save Badge');
         }
@@ -109,7 +127,11 @@ export default function AdminBadgesPage() {
         try {
             await adminGamificationApi.deleteBadge(id);
             toast.success('Badge shattered into pixels');
-            loadData();
+            if (badges.length === 1 && currentPage > 1) {
+                setCurrentPage(currentPage - 1);
+            } else {
+                fetchBadges(currentPage);
+            }
         } catch {
             toast.error('Delete failed');
         }
@@ -122,7 +144,7 @@ export default function AdminBadgesPage() {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-8">
+        <div className="p-6 max-w-7xl mx-auto space-y-8 min-h-screen pb-20">
             <div className="flex justify-between items-end border-b border-gray-200 pb-4">
                 <div>
                     <h1 className="text-3xl font-extrabold text-[#0c2d48]">
@@ -134,10 +156,6 @@ export default function AdminBadgesPage() {
                 </div>
                 <button
                     onClick={() => {
-                        console.log(
-                            "User clicked 'Build New Badge', isFormOpen will become true",
-                            constants
-                        );
                         setFormState(initialFormState);
                         setEditingBadge(null);
                         setIsFormOpen(true);
@@ -149,49 +167,103 @@ export default function AdminBadgesPage() {
             </div>
 
             {/* List existing badges in a dynamic premium grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {badges.map((badge) => (
-                    <div
-                        key={badge._id}
-                        className="relative group rounded-xl p-4 bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center"
-                    >
-                        <BadgePreview badge={badge} size="lg" />
-
-                        <div className="mt-4 text-center w-full">
-                            <p className="text-xs text-blue-500 font-bold mb-1">
-                                {badge.template}
-                            </p>
-                            <p className="text-[10px] text-gray-400 capitalize bg-gray-50 rounded px-2 py-0.5 inline-block truncate max-w-full">
-                                Unlocks at {badge.threshold}
-                            </p>
-                        </div>
-
-                        {/* Hover Overlay Controls */}
-                        <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-3">
-                            <button
-                                onClick={() => openEdit(badge)}
-                                className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
-                            >
-                                <Edit2 size={18} />
-                            </button>
-                            <button
-                                onClick={() =>
-                                    badge._id && handleDelete(badge._id)
-                                }
-                                className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                            >
-                                <Trash2 size={18} />
-                            </button>
-                        </div>
+            {loading ? (
+                <div className="flex items-center justify-center h-64">
+                    <div className="flex flex-col items-center gap-3">
+                        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-gray-500 font-medium animate-pulse">Forging view...</p>
                     </div>
-                ))}
-            </div>
-
-            {badges.length === 0 && (
-                <div className="text-center py-24 text-gray-400 border border-dashed rounded-xl border-gray-300">
-                    No Badges forged yet. Click "Build New Badge" to seed your
-                    gamification DB.
                 </div>
+            ) : (
+                <>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        {badges.map((badge) => (
+                            <div
+                                key={badge._id}
+                                className="relative group rounded-xl p-4 bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center"
+                            >
+                                <BadgePreview badge={badge} size="lg" />
+
+                                <div className="mt-4 text-center w-full">
+                                    <p className="text-xs text-blue-500 font-bold mb-1">
+                                        {badge.template}
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 capitalize bg-gray-50 rounded px-2 py-0.5 inline-block truncate max-w-full">
+                                        Unlocks at {badge.threshold}
+                                    </p>
+                                </div>
+
+                                {/* Hover Overlay Controls */}
+                                <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-3">
+                                    <button
+                                        onClick={() => openEdit(badge)}
+                                        className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
+                                    >
+                                        <Edit2 size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            badge._id && handleDelete(badge._id)
+                                        }
+                                        className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {badges.length === 0 && (
+                        <div className="text-center py-24 text-gray-400 border border-dashed rounded-xl border-gray-300">
+                            No Badges forged yet. Click "Build New Badge" to seed your
+                            gamification DB.
+                        </div>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalItems > 0 && (
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                            <div className="text-sm text-gray-500">
+                                Showing <span className="font-bold text-gray-800">{((currentPage - 1) * limit) + 1}</span> to <span className="font-bold text-gray-800">{Math.min(currentPage * limit, totalItems)}</span> of <span className="font-bold text-gray-800">{totalItems}</span> badges
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1 || loading}
+                                    className="p-2 border border-gray-200 rounded-xl text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-10 h-10 rounded-xl text-sm font-bold transition-all shadow-sm ${
+                                                currentPage === page
+                                                    ? "bg-blue-600 text-white shadow-blue-500/20"
+                                                    : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50"
+                                            }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                <button
+                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                    disabled={currentPage >= totalPages || loading}
+                                    className="p-2 border border-gray-200 rounded-xl text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
 
             {/* Admin Badge Creator Modal Form */}
