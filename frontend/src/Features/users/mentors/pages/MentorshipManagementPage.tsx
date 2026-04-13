@@ -8,6 +8,7 @@ import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import Breadcrumbs from '@/Components/common/Breadcrumbs';
 import { requestWrapper } from '@/utils/apiHandler';
+import { MentorshipMessages } from '../constants/mentorshipMessages.constants';
 import {
     Calendar,
     Clock,
@@ -126,7 +127,7 @@ const MentorshipManagementPage: React.FC = () => {
                 );
                 setIsSessionActive(true);
                 toast.success(
-                    'Mentor has started the session! You can join now.'
+                    MentorshipMessages.MENTOR_STARTED_SESSION
                 );
             }
         });
@@ -156,8 +157,8 @@ const MentorshipManagementPage: React.FC = () => {
         const data = await requestWrapper(
             mentorshipApi.confirmSuggestion(id, confirm),
             confirm
-                ? 'Mentorship confirmed! Proceed to payment.'
-                : 'Mentorship request rejected.'
+                ? MentorshipMessages.MENTORSHIP_CONFIRMED
+                : MentorshipMessages.MENTORSHIP_REJECTED
         );
         if (data) fetchData();
         setIsProcessing(false);
@@ -181,6 +182,7 @@ const MentorshipManagementPage: React.FC = () => {
     };
 
     const handleSelectSlot = (date: Date, slot: string) => {
+        console.log(date,slot)
         setSelectedDate(date);
         setSelectedSlot(slot);
         setIsBookingModalOpen(true);
@@ -189,19 +191,19 @@ const MentorshipManagementPage: React.FC = () => {
     const handleConfirmBooking = async (topic: string): Promise<void> => {
         const mentor = mentorship?.mentorId as Mentor;
         if (!mentor?._id && !mentor?.id) {
-            toast.error('Mentor information is missing');
-            throw new Error('Mentor information missing');
+            toast.error(MentorshipMessages.MENTOR_INFO_MISSING);
+            throw new Error(MentorshipMessages.MENTOR_INFO_MISSING);
         }
         if (!selectedDate || !selectedSlot) {
-            toast.error('Date or slot is not selected');
-            throw new Error('Date or slot not selected');
+            toast.error(MentorshipMessages.DATE_OR_SLOT_MISSING);
+            throw new Error(MentorshipMessages.DATE_OR_SLOT_MISSING);
         }
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (selectedDate < today) {
-            toast.error('Cannot book sessions for past dates.');
-            throw new Error('Cannot book sessions for past dates.');
+            toast.error(MentorshipMessages.CANNOT_BOOK_PAST_DATE);
+            throw new Error(MentorshipMessages.CANNOT_BOOK_PAST_DATE);
         }
 
         const data = await requestWrapper(
@@ -211,7 +213,7 @@ const MentorshipManagementPage: React.FC = () => {
                 slot: selectedSlot,
                 topic,
             }),
-            'Session booked successfully'
+            MentorshipMessages.SESSION_BOOKED
         );
 
         if (!data) {
@@ -225,7 +227,7 @@ const MentorshipManagementPage: React.FC = () => {
         if (!id) return;
         const data = await requestWrapper(
             mentorshipApi.completeMentorship(id, 'user'),
-            'You have confirmed the completion of this mentorship!'
+            MentorshipMessages.MENTORSHIP_COMPLETED
         );
         if (data) fetchData();
     };
@@ -251,7 +253,7 @@ const MentorshipManagementPage: React.FC = () => {
                 bookingId: rescheduleData.id,
                 status: BookingStatus.RESCHEDULED,
             }),
-            'Reschedule request sent to mentor. They will propose a new time.'
+            MentorshipMessages.RESCHEDULE_SENT
         );
         if (!data) throw new Error('Reschedule failed');
         fetchData();
@@ -264,8 +266,8 @@ const MentorshipManagementPage: React.FC = () => {
         const data = await requestWrapper(
             bookingApi.respondToReschedule(bookingId, approve),
             approve
-                ? 'New time accepted!'
-                : 'Reschedule rejected and session cancelled'
+                ? MentorshipMessages.RESCHEDULE_ACCEPTED
+                : MentorshipMessages.RESCHEDULE_DECLINED
         );
         if (data) fetchData();
     };
@@ -280,16 +282,16 @@ const MentorshipManagementPage: React.FC = () => {
                         </div>
                         <div>
                             <h4 className="font-black text-sm uppercase tracking-tight text-gray-900">
-                                Cancel Session
+                                {MentorshipMessages.CANCEL_SESSION_TITLE}
                             </h4>
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                Action cannot be undone
+                                {MentorshipMessages.CANCEL_ACTION_UNDONE}
                             </p>
                         </div>
                     </div>
 
                     <p className="text-sm font-medium text-gray-600 ml-1">
-                        Are you sure you want to cancel this session?
+                        {MentorshipMessages.CANCEL_SESSION_CONFIRM_TEXT}
                     </p>
 
                     <div className="flex gap-2 justify-end">
@@ -297,7 +299,7 @@ const MentorshipManagementPage: React.FC = () => {
                             onClick={() => toast.dismiss(t)}
                             className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 hover:text-gray-600 transition-colors"
                         >
-                            Keep Session
+                            {MentorshipMessages.CANCEL_KEEP_BTN}
                         </button>
                         <button
                             onClick={async () => {
@@ -307,13 +309,13 @@ const MentorshipManagementPage: React.FC = () => {
                                         bookingId,
                                         status: BookingStatus.CANCELLED,
                                     }),
-                                    'Booking cancelled successfully'
+                                    MentorshipMessages.BOOKING_CANCELLED
                                 );
                                 if (data) fetchData();
                             }}
                             className="px-6 py-2 bg-black text-white text-[10px] font-black uppercase rounded-xl hover:bg-red-600 transition-all shadow-lg hover:shadow-red-200"
                         >
-                            Yes, Cancel
+                            {MentorshipMessages.CANCEL_CONFIRM_BTN}
                         </button>
                     </div>
                 </div>
@@ -340,7 +342,7 @@ const MentorshipManagementPage: React.FC = () => {
             fetchData();
         } catch (error: any) {
             toast.error(
-                error.response?.data?.message || 'Failed to submit review'
+                error.response?.data?.message || MentorshipMessages.REVIEW_ERROR_FALLBACK
             );
         }
     };
@@ -350,7 +352,7 @@ const MentorshipManagementPage: React.FC = () => {
         setIsProcessing(true);
         const data = await requestWrapper(
             mentorshipApi.cancelMentorship(id),
-            'Mentorship cancelled successfully.'
+            MentorshipMessages.MENTORSHIP_CANCELLED
         );
         if (data) fetchData();
         setIsProcessing(false);
@@ -369,13 +371,13 @@ const MentorshipManagementPage: React.FC = () => {
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
                 <AlertCircle size={48} className="text-gray-300 mb-4" />
                 <h2 className="text-xl font-bold text-gray-900">
-                    Mentorship not found
+                    {MentorshipMessages.NOT_FOUND_TITLE}
                 </h2>
                 <button
                     onClick={() => navigate('/home')}
                     className="mt-4 text-[#7F00FF] font-bold"
                 >
-                    Return Home
+                    {MentorshipMessages.BTN_RETURN_HOME}
                 </button>
             </div>
         );
@@ -395,26 +397,25 @@ const MentorshipManagementPage: React.FC = () => {
                                 />
                             </div>
                             <h2 className="text-2xl font-black text-gray-900 mb-2">
-                                Request Rejected
+                                {MentorshipMessages.REJECTED_TITLE}
                             </h2>
                             <p className="text-gray-500 mb-6 font-medium">
-                                The mentor has reviewed your request but decided
-                                not to proceed at this time.
+                                {MentorshipMessages.REJECTED_BODY}
                             </p>
 
                             <div className="bg-gray-50 rounded-2xl p-6 text-left mb-6">
                                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
-                                    Reason provided
+                                    {MentorshipMessages.REJECTED_REASON_LABEL}
                                 </h3>
                                 <p className="text-gray-800 font-medium">
                                     {mentorship.rejectionReason ||
-                                        'No specific reason provided.'}
+                                        MentorshipMessages.REJECTED_NO_REASON}
                                 </p>
 
                                 {mentorship.mentorSuggestedStartDate && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
                                         <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
-                                            You can re-apply after
+                                            {MentorshipMessages.REJECTED_REAPPLY_LABEL}
                                         </h3>
                                         <p className="text-[#7F00FF] font-bold">
                                             {new Date(
@@ -434,7 +435,7 @@ const MentorshipManagementPage: React.FC = () => {
                                 onClick={() => navigate('/home')}
                                 className="w-full py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors"
                             >
-                                Back to Home
+                                {MentorshipMessages.BTN_BACK_TO_HOME}
                             </button>
                         </div>
                     </main>
@@ -468,17 +469,17 @@ const MentorshipManagementPage: React.FC = () => {
                                 />
                             </button>
                             <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
-                                Mentorship Dashboard
+                                {MentorshipMessages.PAGE_TITLE}
                                 {mentorship.status ===
                                     MentorshipStatus.COMPLETED && (
                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-black rounded-lg uppercase tracking-wider">
-                                        Completed
+                                        {MentorshipMessages.STATUS_COMPLETED}
                                     </span>
                                 )}
                                 {mentorship.status ===
                                     MentorshipStatus.CANCELLED && (
                                     <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-black rounded-lg uppercase tracking-wider">
-                                        Cancelled
+                                        {MentorshipMessages.STATUS_CANCELLED}
                                     </span>
                                 )}
                             </h1>
@@ -504,13 +505,13 @@ const MentorshipManagementPage: React.FC = () => {
                                                 </span>
                                                 <span className="text-xs font-black uppercase tracking-widest text-white/60">
                                                     {isSessionActive
-                                                        ? 'Happening Now'
-                                                        : 'Upcoming Session'}
+                                                        ? MentorshipMessages.SESSION_HAPPENING_NOW
+                                                        : MentorshipMessages.SESSION_UPCOMING}
                                                 </span>
                                             </div>
                                             <h2 className="text-2xl font-black mb-1">
                                                 {nextSession.topic ||
-                                                    'Mentorship Session'}
+                                                    MentorshipMessages.SESSION_DEFAULT_TOPIC}
                                             </h2>
                                             <p className="text-white/60 text-sm">
                                                 {nextSession.bookingDate
@@ -520,7 +521,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                           ),
                                                           'MMMM d, yyyy'
                                                       )
-                                                    : 'Date TBD'}{' '}
+                                                    : MentorshipMessages.SESSION_DATE_TBD}{' '}
                                                 • {nextSession.slot}
                                             </p>
                                         </div>
@@ -547,16 +548,16 @@ const MentorshipManagementPage: React.FC = () => {
                                             <Video size={20} />
                                             {isMentor
                                                 ? isSessionStartable()
-                                                    ? 'Start Session'
+                                                    ? MentorshipMessages.BTN_START_SESSION
                                                     : isBookingPast(
                                                             nextSession.bookingDate,
                                                             nextSession.slot
                                                         )
-                                                      ? 'Session Expired'
-                                                      : 'Start Session'
+                                                      ? MentorshipMessages.BTN_SESSION_EXPIRED
+                                                      : MentorshipMessages.BTN_START_SESSION
                                                 : isSessionActive
-                                                  ? 'Join Session'
-                                                  : 'Waiting for Host...'}
+                                                  ? MentorshipMessages.BTN_JOIN_SESSION
+                                                  : MentorshipMessages.BTN_WAITING_HOST}
                                         </button>
                                     </div>
                                 </div>
@@ -568,14 +569,14 @@ const MentorshipManagementPage: React.FC = () => {
                                 {/* Mentor Profile Mini & Actions */}
                                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
                                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">
-                                        Your Mentor
+                                        {MentorshipMessages.YOUR_MENTOR_LABEL}
                                     </h3>
                                     <div className="flex items-center gap-4 mb-6">
                                         <img
                                             src={
                                                 (mentorship.mentorId as Mentor)
                                                     ?.profilePic ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((mentorship.mentorId as Mentor)?.name || 'Mentor')}`
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((mentorship.mentorId as Mentor)?.name || MentorshipMessages.MENTOR_DEFAULT_NAME)}`
                                             }
                                             className="w-16 h-16 rounded-2xl object-cover"
                                             alt=""
@@ -590,7 +591,7 @@ const MentorshipManagementPage: React.FC = () => {
                                             </h4>
                                             <p className="text-xs text-[#7F00FF] font-semibold">
                                                 {(mentorship.mentorId as Mentor)
-                                                    ?.expertise || 'Mentor'}
+                                                    ?.expertise || MentorshipMessages.MENTOR_DEFAULT_EXPERTISE}
                                             </p>
                                         </div>
                                     </div>
@@ -603,7 +604,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 size={16}
                                                 className="group-hover:scale-110 transition-transform"
                                             />{' '}
-                                            Chat
+                                            {MentorshipMessages.BTN_CHAT}
                                         </button>
                                         <button
                                             onClick={() =>
@@ -615,7 +616,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 size={16}
                                                 className="group-hover:scale-110 transition-transform"
                                             />{' '}
-                                            Policy
+                                            {MentorshipMessages.BTN_POLICY}
                                         </button>
                                         {mentorship.status ===
                                             MentorshipStatus.ACTIVE &&
@@ -632,7 +633,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                         size={16}
                                                         className="group-hover:scale-110 transition-transform"
                                                     />{' '}
-                                                    Cancel
+                                                    {MentorshipMessages.BTN_CANCEL}
                                                 </button>
                                             )}
                                     </div>
@@ -642,11 +643,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
                                         <div>
                                             <h2 className="text-xl font-bold text-gray-900 mb-1">
-                                                Session Usage
+                                                {MentorshipMessages.SESSION_USAGE_TITLE}
                                             </h2>
                                             <p className="text-gray-500 text-sm">
-                                                Track your progress during this
-                                                month
+                                                {MentorshipMessages.SESSION_USAGE_SUBTITLE}
                                             </p>
                                         </div>
                                         <div className="flex gap-4">
@@ -655,7 +655,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {mentorship.totalSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    Total
+                                                    {MentorshipMessages.LABEL_TOTAL}
                                                 </p>
                                             </div>
                                             <div className="text-center">
@@ -663,7 +663,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {mentorship.usedSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    Used
+                                                    {MentorshipMessages.LABEL_USED}
                                                 </p>
                                             </div>
                                             <div className="text-center">
@@ -671,7 +671,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {remainingSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    Left
+                                                    {MentorshipMessages.LABEL_LEFT}
                                                 </p>
                                             </div>
                                         </div>
@@ -679,14 +679,14 @@ const MentorshipManagementPage: React.FC = () => {
 
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center text-xs font-bold text-gray-400 uppercase">
-                                            <span>Progress</span>
+                                            <span>{MentorshipMessages.LABEL_PROGRESS}</span>
                                             <span>
                                                 {Math.round(
                                                     (mentorship.usedSessions /
                                                         mentorship.totalSessions) *
                                                         100
                                                 )}
-                                                % Complete
+                                                {MentorshipMessages.LABEL_PERCENT_COMPLETE}
                                             </span>
                                         </div>
                                         <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden flex">
@@ -708,14 +708,13 @@ const MentorshipManagementPage: React.FC = () => {
                                     MentorshipStatus.MENTOR_ACCEPTED && (
                                     <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
                                         <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                            Application Accepted!
+                                            {MentorshipMessages.ACCEPTED_TITLE}
                                         </h3>
                                         <p className="text-gray-600 text-sm mb-4">
-                                            The mentor has accepted your
-                                            request.
+                                            {MentorshipMessages.ACCEPTED_BODY}
                                             {mentorship.mentorSuggestedStartDate && (
                                                 <span className="block mt-2 font-medium text-[#7F00FF]">
-                                                    Note: Suggested Start Date:{' '}
+                                                    {MentorshipMessages.ACCEPTED_SUGGESTED_DATE_PREFIX}{' '}
                                                     {new Date(
                                                         mentorship.mentorSuggestedStartDate
                                                     ).toLocaleDateString()}
@@ -730,7 +729,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 disabled={isProcessing}
                                                 className="flex-1 py-3 bg-[#7F00FF] text-white font-black rounded-xl hover:bg-[#6c00db] transition-colors disabled:opacity-50"
                                             >
-                                                Confirm & Pay
+                                                {MentorshipMessages.BTN_CONFIRM_PAY}
                                             </button>
                                             <button
                                                 onClick={() =>
@@ -739,7 +738,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 disabled={isProcessing}
                                                 className="flex-1 py-3 bg-red-50 text-red-600 font-black rounded-xl hover:bg-red-100 transition-colors disabled:opacity-50"
                                             >
-                                                Reject
+                                                {MentorshipMessages.BTN_REJECT}
                                             </button>
                                         </div>
                                     </div>
@@ -749,15 +748,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     MentorshipStatus.PAYMENT_PENDING && (
                                     <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
                                         <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                            Payment Required
+                                            {MentorshipMessages.PAYMENT_REQUIRED_TITLE}
                                         </h3>
                                         <p className="text-gray-600 text-sm mb-4">
-                                            Please complete the payment to
-                                            activate your mentorship.
+                                            {MentorshipMessages.PAYMENT_REQUIRED_BODY}
                                         </p>
                                         <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                                             <span className="text-sm font-medium text-gray-600">
-                                                Total Amount
+                                                {MentorshipMessages.PAYMENT_TOTAL_AMOUNT}
                                             </span>
                                             <span className="text-xl font-black text-gray-900">
                                                 ₹{mentorship.amount}
@@ -769,8 +767,8 @@ const MentorshipManagementPage: React.FC = () => {
                                             className="w-full py-3 bg-[#7F00FF] text-white font-black rounded-xl hover:bg-[#6c00db] transition-colors disabled:opacity-50"
                                         >
                                             {isProcessing
-                                                ? 'Processing...'
-                                                : 'Pay Now'}
+                                                ? MentorshipMessages.BTN_PROCESSING
+                                                : MentorshipMessages.BTN_PAY_NOW}
                                         </button>
                                     </div>
                                 )}
@@ -786,7 +784,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                         size={20}
                                                         className="text-[#7F00FF]"
                                                     />
-                                                    Schedule a Session
+                                                    {MentorshipMessages.SCHEDULE_SESSION_TITLE}
                                                 </h3>
                                                 {mentorship.mentorId && (
                                                     <BookingCalendar
@@ -807,10 +805,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                 <div className="mt-4 flex items-center gap-2 text-xs text-gray-400 font-medium px-2">
                                                     <Info size={14} />
                                                     <span>
-                                                        You have{' '}
-                                                        {remainingSessions}{' '}
-                                                        sessions remaining for
-                                                        this month.
+                                                        {MentorshipMessages.SESSIONS_REMAINING_HINT(remainingSessions)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -837,12 +832,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     mentorship.usedSessions >= 7 && (
                                         <div className="bg-green-50 rounded-3xl p-6 border border-green-100">
                                             <h3 className="text-green-800 font-bold mb-2">
-                                                Finish Mentorship?
+                                                {MentorshipMessages.COMPLETION_TITLE}
                                             </h3>
                                             <p className="text-sm text-green-700 mb-4 leading-relaxed">
-                                                If you've completed your
-                                                sessions and goals, you can mark
-                                                this mentorship as complete.
+                                                {MentorshipMessages.COMPLETION_BODY}
                                             </p>
                                             <button
                                                 onClick={handleComplete}
@@ -852,8 +845,8 @@ const MentorshipManagementPage: React.FC = () => {
                                                 className="w-full py-3 bg-green-600 text-white font-black rounded-xl hover:bg-green-700 active:scale-95 transition-all disabled:opacity-50"
                                             >
                                                 {mentorship.userConfirmedCompletion
-                                                    ? 'Awaiting Mentor Confirmation'
-                                                    : 'Confirm Completion'}
+                                                    ? MentorshipMessages.BTN_AWAITING_MENTOR
+                                                    : MentorshipMessages.BTN_CONFIRM_COMPLETION}
                                             </button>
                                         </div>
                                     )}
@@ -861,7 +854,7 @@ const MentorshipManagementPage: React.FC = () => {
                                 <div className="mt-8 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
                                     <div className="p-6 border-b border-gray-50 flex items-center justify-between">
                                         <h3 className="text-lg font-bold text-gray-900">
-                                            Recent Sessions
+                                            {MentorshipMessages.RECENT_SESSIONS_TITLE}
                                         </h3>
                                     </div>
                                     <div className="divide-y divide-gray-50 max-h-[600px] overflow-y-auto custom-scrollbar">
@@ -872,11 +865,10 @@ const MentorshipManagementPage: React.FC = () => {
                                                     className="mx-auto text-gray-200 mb-4"
                                                 />
                                                 <p className="text-gray-500 font-medium">
-                                                    No sessions booked yet
+                                                    {MentorshipMessages.NO_SESSIONS_TITLE}
                                                 </p>
                                                 <p className="text-gray-400 text-xs mt-1">
-                                                    Book your first session
-                                                    above
+                                                    {MentorshipMessages.NO_SESSIONS_HINT}
                                                 </p>
                                             </div>
                                         ) : (
@@ -925,7 +917,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                                     <div>
                                                                         <p className="font-bold text-gray-900">
                                                                             {booking.topic ||
-                                                                                `Session #${idx + 1}`}
+                                                                                MentorshipMessages.SESSION_FALLBACK_TOPIC(idx + 1)}
                                                                         </p>
                                                                         <div className="flex items-center gap-2 text-xs text-gray-500">
                                                                             <Clock
@@ -1008,7 +1000,7 @@ const MentorshipManagementPage: React.FC = () => {
                     onClose={() => setIsReviewModalOpen(false)}
                     onSubmit={handleReviewSubmit}
                     mentorName={
-                        (mentorship?.mentorId as Mentor)?.name || 'Mentor'
+                        (mentorship?.mentorId as Mentor)?.name || MentorshipMessages.MENTOR_DEFAULT_NAME
                     }
                     canSkip={true}
                 />
@@ -1039,10 +1031,10 @@ const MentorshipManagementPage: React.FC = () => {
                                 <XCircle size={20} />
                             </button>
                             <h3 className="text-2xl font-black mb-2">
-                                Mentorship Policy
+                                {MentorshipMessages.POLICY_MODAL_TITLE}
                             </h3>
                             <p className="text-white/80 font-medium italic">
-                                Terms and guidelines for your sessions
+                                {MentorshipMessages.POLICY_MODAL_SUBTITLE}
                             </p>
                         </div>
                         <div className="p-8 space-y-6">
@@ -1053,12 +1045,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            Personal Guidance
+                                            {MentorshipMessages.POLICY_PERSONAL_GUIDANCE_TITLE}
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            Support for career, job
-                                            applications, and emotional
-                                            well-being.
+                                            {MentorshipMessages.POLICY_PERSONAL_GUIDANCE_BODY}
                                         </p>
                                     </div>
                                 </div>
@@ -1068,12 +1058,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            Schedule & Duration
+                                            {MentorshipMessages.POLICY_SCHEDULE_TITLE}
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {mentorship.totalSessions} regular
-                                            sessions on alternative days (30
-                                            mins each).
+                                            {MentorshipMessages.POLICY_SCHEDULE_BODY(mentorship.totalSessions)}
                                         </p>
                                     </div>
                                 </div>
@@ -1083,11 +1071,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            Communication Mode
+                                            {MentorshipMessages.POLICY_COMMUNICATION_TITLE}
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            Session scheduling via tool with
-                                            Video or Audio call preference.
+                                            {MentorshipMessages.POLICY_COMMUNICATION_BODY}
                                         </p>
                                     </div>
                                 </div>
@@ -1097,12 +1084,10 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            Rescheduling Policy
+                                            {MentorshipMessages.POLICY_RESCHEDULE_TITLE}
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            Must request at least 6 hours
-                                            before. Missed sessions require
-                                            alternative allocation.
+                                            {MentorshipMessages.POLICY_RESCHEDULE_BODY}
                                         </p>
                                     </div>
                                 </div>
@@ -1111,7 +1096,7 @@ const MentorshipManagementPage: React.FC = () => {
                                 onClick={() => setIsPolicyModalOpen(false)}
                                 className="w-full py-4 bg-black text-white font-black rounded-2xl shadow-xl hover:bg-gray-800 transition-all"
                             >
-                                Understood
+                                {MentorshipMessages.BTN_UNDERSTOOD}
                             </button>
                         </div>
                     </div>
