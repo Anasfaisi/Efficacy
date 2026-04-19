@@ -132,6 +132,14 @@ export const GamificationRoutes = {
     DELETE_BADGE: (badgeId: string) => `${GAMIFICATION_BASE}/badges/${badgeId}`,
 };
 
+const BADGE_BASE = '/badge';
+export const BadgeRoutes = {
+    BASE: BADGE_BASE,
+    CREATE_BADGE: `${BADGE_BASE}/badges`,
+    UPDATE_BADGE: (badgeId: string) => `${BADGE_BASE}/badges/${badgeId}`,
+    GET_ALL_BADGES: `${BADGE_BASE}`,
+};
+
 const KANBAN_BASE = '/kanban';
 export const KanbanRoutes = {
     BASE: KANBAN_BASE,

@@ -23,10 +23,13 @@ import noteRoutes from './routes/note.routes';
 import { bookingRoutes } from './routes/booking.routes';
 import { ReviewController } from './controllers/review.controller';
 import reviewRoutes from './routes/review.routes';
-import { GamificationController } from './controllers/gamification.controller';
+import { GamificationController } from './controllers/Gamification/gamification.controller';
 import gamificationRoutes from './routes/gamification.routes';
 import { PlanController } from './controllers/plan.controller';
 import planRoutes from './routes/plan.routes';
+import { BadgeController } from './controllers/Gamification/badge.controller';
+import { ITokenService } from './serivces/Interfaces/IToken.service';
+import BadgeRoutes from './routes/Gamification/badge.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -62,6 +65,8 @@ export function applyRoutes(app: Express) {
         TYPES.GamificationController
     );
     const planController = container.get<PlanController>(TYPES.PlanController);
+    const badgeController = container.get<BadgeController>(TYPES.BadgeController);
+    const tokenService = container.get<ITokenService>(TYPES.TokenService);
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
     app.use(
@@ -76,6 +81,7 @@ export function applyRoutes(app: Express) {
     app.use('/api/notes', noteRoutes(noteController));
     app.use('/api/booking', bookingRoutes(container));
     app.use('/api/reviews', reviewRoutes(reviewController));
-    app.use('/api/gamification', gamificationRoutes(gamificationController));
+    app.use('/api/gamification', gamificationRoutes(gamificationController, tokenService));
     app.use('/api/plan', planRoutes(planController));
+    app.use('/api/badge', BadgeRoutes(badgeController, tokenService));
 }

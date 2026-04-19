@@ -1,15 +1,15 @@
 import express, { Router } from 'express';
-import { GamificationController } from '../controllers/gamification.controller';
+import { GamificationController } from '../controllers/Gamification/gamification.controller';
 import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
 import { Role } from '@/types/role.types';
-import { TokenService } from '@/serivces/token.service';
+import { ITokenService } from '@/serivces/Interfaces/IToken.service';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function gamificationRoutes(
-    gamificationController: GamificationController
+    gamificationController: GamificationController,
+    tokenService: ITokenService
 ): Router {
     const router = express.Router();
-    const tokenService = new TokenService();
 
     router.post(
         '/badges',

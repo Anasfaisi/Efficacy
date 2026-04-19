@@ -1,3 +1,4 @@
+import { Role } from '@/types/role.types';
 import { Types } from 'mongoose';
 
 export interface JwtPayload {
@@ -9,7 +10,7 @@ export interface ITokenService {
     generateRefreshToken(userId: string, role: string): string;
     verifyAccessToken(token: string): {
         id: string;
-        role: string;
+        role: Role;
         email: string;
     };
     verifyRefreshToken(refreshToken: string): { id: string; role: string };

@@ -1,20 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
-import { adminGamificationApi } from '@/Services/adminGamification.api';
+import { badgeApi } from '@/Services/Gamification/badge.api';
 import type {
-    IBadge,
     IGamificationConstants,
-} from '@/Services/adminGamification.api';
+} from '@/Services/Gamification/adminGamification.api';
 import BadgePreview from '../components/BadgePreview';
 import { Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import type { Badge } from '@/types/gamification';
 
 export default function AdminBadgesPage() {
-    const [badges, setBadges] = useState<IBadge[]>([]);
+    const [badges, setBadges] = useState<Badge[]>([]);
     const [constants, setConstants] = useState<IGamificationConstants | null>(
         null
     );
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [editingBadge, setEditingBadge] = useState<Partial<IBadge> | null>(
+    const [editingBadge, setEditingBadge] = useState<Partial<Badge> | null>(
         null
     );
     const [loading, setLoading] = useState(false);
@@ -25,8 +25,8 @@ export default function AdminBadgesPage() {
     const [totalItems, setTotalItems] = useState(0);
     const limit = 5;
 
-    // Initial state matching standard IBadge schema
-    const initialFormState: Partial<IBadge> = {
+    // Initial state matching standard Badge schema
+    const initialFormState: Partial<Badge> = {
         name: '',
         story: '',
         template: 'TASK_COUNT',
@@ -42,12 +42,12 @@ export default function AdminBadgesPage() {
     };
 
     const [formState, setFormState] =
-        useState<Partial<IBadge>>(initialFormState);
+        useState<Partial<Badge>>(initialFormState);
 
     const fetchBadges = useCallback(async (page: number) => {
         setLoading(true);
         try {
-            const response = await adminGamificationApi.getAllBadges(page, limit);
+            const response = await badgeApi.getAllBadges(page, limit);
             if (response.success) {
                 setBadges(response.badges);
                 setTotalItems(response.total);
@@ -63,7 +63,7 @@ export default function AdminBadgesPage() {
 
     const fetchConstants = async () => {
         try {
-            const cRes = await adminGamificationApi.getConstants();
+            const cRes = await badgeApi.getConstants();
             setConstants({
                 templates: cRes.templates || [
                     'TASK_COUNT',
@@ -103,13 +103,13 @@ export default function AdminBadgesPage() {
         e.preventDefault();
         try {
             if (editingBadge?._id) {
-                await adminGamificationApi.updateBadge(
+                await badgeApi.updateBadge(
                     editingBadge._id,
                     formState
                 );
                 toast.success('Badge successfully updated');
             } else {
-                await adminGamificationApi.createBadge(formState);
+                await badgeApi.createBadge(formState);
                 toast.success('New Badge unlocked directly into the DB!');
                 setCurrentPage(1);
             }
@@ -125,7 +125,7 @@ export default function AdminBadgesPage() {
     const handleDelete = async (id: string) => {
         if (!window.confirm('Delete this badge permanently?')) return;
         try {
-            await adminGamificationApi.deleteBadge(id);
+            await badgeApi.deleteBadge(id);
             toast.success('Badge shattered into pixels');
             if (badges.length === 1 && currentPage > 1) {
                 setCurrentPage(currentPage - 1);
@@ -137,7 +137,7 @@ export default function AdminBadgesPage() {
         }
     };
 
-    const openEdit = (badge: IBadge) => {
+    const openEdit = (badge: Badge) => {
         setEditingBadge(badge);
         setFormState(badge);
         setIsFormOpen(true);
@@ -453,7 +453,7 @@ export default function AdminBadgesPage() {
                                                 design: {
                                                     ...formState.design!,
                                                     rarity: e.target
-                                                        .value as IBadge['design']['rarity'],
+                                                        .value as Badge['design']['rarity'],
                                                 },
                                             })
                                         }

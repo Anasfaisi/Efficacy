@@ -1,4 +1,4 @@
-export interface IBadge {
+export interface Badge {
     _id?: string;
     name: string;
     story: string;

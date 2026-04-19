@@ -1,4 +1,4 @@
-import type { IBadge } from '@/Services/adminGamification.api';
+import type { IBadge } from '@/Services/Gamification/adminGamification.api';
 import * as Icons from 'lucide-react';
 import { motion } from 'framer-motion';
 

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { Types } from 'mongoose';
-import { Badge } from '@/models/Badge.model';
+import { Badge,IBadge} from '@/models/Badge.model';
 import { UserStats } from '@/models/UserStats.model';
 import { UserBadge } from '@/models/UserBadge.model';
 import { badgeTemplates } from '@/config/badgeTemplates.config';
@@ -9,7 +9,6 @@ import { ISocketService } from './Interfaces/ISocket.service';
 import {
     GamificationEvent,
     BadgeTemplate,
-    IBadge,
 } from '@/types/gamification.types';
 import { IGamificationService } from './Interfaces/IGamification.service';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
@@ -122,7 +121,7 @@ export class GamificationService implements IGamificationService {
 
             const badgeDetails = await Badge.findById(badgeId).lean();
 
-            this._socketService.emitToRoom(
+        this._socketService.emitToRoom(
                 userId.toString(),
                 'BADGE_UNLOCKED',
                 { badge: badgeDetails }
@@ -147,7 +146,7 @@ export class GamificationService implements IGamificationService {
 
     public async getAllBadges(page: number, limit: number): Promise<{ badges: IBadge[], total: number }> {
         return await this._badgeRepository.getAllBadgesAdmin(page, limit);
-    }
+}
 
     public async getBadgeById(
         id: string | Types.ObjectId

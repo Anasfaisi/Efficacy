@@ -1,10 +1,31 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import {
     BadgeTemplate,
     GamificationEvent,
-    IBadge,
+    Rarity,
+    IconType
 } from '../types/gamification.types';
 
+export interface IBadge extends Document {
+    name: string;
+    story: string;
+    template: BadgeTemplate;
+    threshold: number;
+    design: {
+        iconType: IconType;
+        iconName?: string;
+        imageUrl?: string;
+        primaryColor: string;
+        bgColor: string;
+        rarity: Rarity;
+    };
+    triggerEvent: GamificationEvent;
+    isHidden: boolean;
+    isActive: boolean;
+    createdBy?: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+}
 const BadgeSchema = new Schema<IBadge>(
     {
         name: { type: String, required: true },
@@ -18,9 +39,9 @@ const BadgeSchema = new Schema<IBadge>(
         design: {
             iconType: {
                 type: String,
-                enum: ['icon', 'image'],
+                enum: Object.values(IconType),
                 required: true,
-                default: 'icon',
+                default: IconType.ICON,
             },
             iconName: { type: String },
             imageUrl: { type: String },
@@ -28,8 +49,8 @@ const BadgeSchema = new Schema<IBadge>(
             bgColor: { type: String, required: true },
             rarity: {
                 type: String,
-                enum: ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'],
-                default: 'COMMON',
+                enum: Object.values(Rarity),
+                default: Rarity.COMMON,
             },
         },
         triggerEvent: {

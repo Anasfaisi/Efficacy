@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { Role } from '@/types/role.types';
-import { TokenService } from '@/serivces/token.service';
+import { ITokenService } from '@/serivces/Interfaces/IToken.service';
 const authenticateAndAuthorize = (
-    _tokenService: TokenService,
+    _tokenService: ITokenService,
     roles: Role | Role[]
 ) => {
     return (req: Request, res: Response, next: NextFunction) => {

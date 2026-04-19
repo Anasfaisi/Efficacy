@@ -1,6 +1,6 @@
-import type { IBadge } from '@/types/gamification';
-import api from './axiosConfig';
-import { GamificationRoutes } from './constant.routes';
+import type { Badge } from '@/types/gamification';
+import api from '../axiosConfig';
+import { GamificationRoutes } from '../constant.routes';
 
 export const adminGamificationApi = {
     getConstants: async (): Promise<{
@@ -16,7 +16,7 @@ export const adminGamificationApi = {
     getAllBadges: async (
         page = 1,
         limit = 10
-    ): Promise<{ success: boolean; badges: IBadge[]; total: number }> => {
+    ): Promise<{ success: boolean; badges: Badge[]; total: number }> => {
         const response = await api.get(GamificationRoutes.BADGES, {
             params: { page, limit },
         });
@@ -24,16 +24,16 @@ export const adminGamificationApi = {
     },
 
     createBadge: async (
-        data: Partial<IBadge>
-    ): Promise<{ success: boolean; badge: IBadge }> => {
+        data: Partial<Badge>
+    ): Promise<{ success: boolean; badge: Badge }> => {
         const response = await api.post(GamificationRoutes.CREATE_BADGE, data);
         return response.data;
     },
 
     updateBadge: async (
         id: string,
-        data: Partial<IBadge>
-    ): Promise<{ success: boolean; badge: IBadge }> => {
+        data: Partial<Badge>
+    ): Promise<{ success: boolean; badge: Badge }> => {
         const response = await api.put(
             GamificationRoutes.UPDATE_BADGE(id),
             data
