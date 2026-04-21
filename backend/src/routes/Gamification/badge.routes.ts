@@ -6,9 +6,9 @@ import { ITokenService } from '@/serivces/Interfaces/IToken.service';
 
 export default function BadgeRoutes(badgeController : BadgeController , tokenService : ITokenService){
     const router = Router()
-    router.post('/',authenticateAndAuthorize(tokenService,[Role.ADMIN]),badgeController.CreateBadge)
-    router.get('/',authenticateAndAuthorize(tokenService,[Role.ADMIN]),badgeController.getAllBadges)
-    router.get('/:badgeId',authenticateAndAuthorize(tokenService,[Role.ADMIN]),badgeController.getBadgeById)
-    router.put('/:badgeId',authenticateAndAuthorize(tokenService,[Role.ADMIN]),badgeController.updateBadge)
+    router.post('/',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.CreateBadge.bind(badgeController))
+    router.get('/',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.getAllBadges.bind(badgeController))
+    router.get('/:badgeId',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.getBadgeById.bind(badgeController))
+    router.put('/:badgeId',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.updateBadge.bind(badgeController))
     return router
 }

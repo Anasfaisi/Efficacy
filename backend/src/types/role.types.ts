@@ -7,7 +7,6 @@ export enum Role {
     User = 'user',
     Mentor = 'mentor',
     Admin = 'admin',
-    ADMIN = "ADMIN",
 }
 
 export enum MessageStatus {

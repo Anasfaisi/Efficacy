@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { badgeApi } from '@/Services/Gamification/badge.api';
-import type {
-    IGamificationConstants,
+import {
+    adminGamificationApi,
+    type IGamificationConstants,
 } from '@/Services/Gamification/adminGamification.api';
 import BadgePreview from '../components/BadgePreview';
 import { Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -63,7 +64,7 @@ export default function AdminBadgesPage() {
 
     const fetchConstants = async () => {
         try {
-            const cRes = await badgeApi.getConstants();
+            const cRes = await adminGamificationApi.getConstants();
             setConstants({
                 templates: cRes.templates || [
                     'TASK_COUNT',

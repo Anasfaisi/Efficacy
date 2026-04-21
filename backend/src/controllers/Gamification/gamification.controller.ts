@@ -15,7 +15,6 @@ export class GamificationController {
     public async createBadge(req: Request, res: Response): Promise<void> {
         const badgeData = req.body;
         const newBadge = await this._gamificationService.createBadge(badgeData);
-        console.log(newBadge,'console for new badges')
         res.status(Code.CREATED).json({ success: true, badge: newBadge });
     }
 
@@ -69,7 +68,6 @@ export class GamificationController {
         req: Request,
         res: Response
     ): Promise<void> {
-        console.log('jajajjd');
         res.status(Code.OK).json({
             success: true,
             templates: Object.values(BadgeTemplate),

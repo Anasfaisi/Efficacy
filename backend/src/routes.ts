@@ -65,7 +65,9 @@ export function applyRoutes(app: Express) {
         TYPES.GamificationController
     );
     const planController = container.get<PlanController>(TYPES.PlanController);
-    const badgeController = container.get<BadgeController>(TYPES.BadgeController);
+    const badgeController = container.get<BadgeController>(
+        TYPES.BadgeController
+    );
     const tokenService = container.get<ITokenService>(TYPES.TokenService);
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
@@ -81,7 +83,10 @@ export function applyRoutes(app: Express) {
     app.use('/api/notes', noteRoutes(noteController));
     app.use('/api/booking', bookingRoutes(container));
     app.use('/api/reviews', reviewRoutes(reviewController));
-    app.use('/api/gamification', gamificationRoutes(gamificationController, tokenService));
-    app.use('/api/plan', planRoutes(planController));
     app.use('/api/badge', BadgeRoutes(badgeController, tokenService));
+    app.use('/api/plan', planRoutes(planController));
+    app.use(
+        '/api/gamification',
+        gamificationRoutes(gamificationController, tokenService)
+    );
 }

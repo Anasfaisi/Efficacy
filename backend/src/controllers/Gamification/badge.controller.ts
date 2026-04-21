@@ -13,7 +13,6 @@ export class BadgeController {
     public async CreateBadge(req: Request, res: Response): Promise<void> {
         const badgeData = req.body;
         const newBadge = await this._badgeService.createBadge(badgeData);
-        console.log(newBadge, 'you can see the new badge is here');
         res.status(Code.CREATED).json({ success: true, badge: newBadge });
     }
 
