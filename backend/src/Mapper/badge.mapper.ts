@@ -4,6 +4,7 @@ import { IBadge } from "@/models/Badge.model";
 export class BadgeMapper{
     static ToResponseDto(badge:IBadge):CreateBadgeResponseDto{
       return{
+        id: badge._id?.toString(),
         name:badge.name,
         story:badge.story,
         template:badge.template,
@@ -13,5 +14,9 @@ export class BadgeMapper{
         isHidden:badge.isHidden,
         isActive:badge.isActive,
       }   
+    }
+
+    static ToResponseDtoList(badges: IBadge[]): CreateBadgeResponseDto[] {
+        return badges.map(BadgeMapper.ToResponseDto);
     }
 }   

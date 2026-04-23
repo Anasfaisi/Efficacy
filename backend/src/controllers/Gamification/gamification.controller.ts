@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IGamificationService } from '@/serivces/Interfaces/IGamification.service';
-import { GamificationEvent, BadgeTemplate } from '@/types/gamification.types';
 import Code from '@/types/http-status.enum';
 
 @injectable()
@@ -58,21 +57,12 @@ export class GamificationController {
     public async deleteBadge(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         await this._gamificationService.deleteBadge(id);
+        
         res.status(Code.OK).json({
             success: true,
             message: 'Badge deleted successfully',
         });
     }
 
-    public async getGamificationConstants(
-        req: Request,
-        res: Response
-    ): Promise<void> {
-        res.status(Code.OK).json({
-            success: true,
-            templates: Object.values(BadgeTemplate),
-            triggerEvents: Object.values(GamificationEvent),
-            rarities: ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'],
-        });
-    }
+ 
 }

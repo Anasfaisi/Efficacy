@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
 import { TYPES } from '@/config/inversify-key.types';
 import { BadgeMapper } from '@/Mapper/badge.mapper';
-import { IBadge } from '@/models/Badge.model';
+
 
 @injectable()
 export class BadgeService implements IBadgeService {
@@ -23,8 +23,9 @@ export class BadgeService implements IBadgeService {
     async getAllBadges(
         number: number,
         limit: number
-    ): Promise<{ badges: IBadge[]; total: number }> {
-        return await this._badgeRepository.getAllBadgesAdmin(number, limit);
+    ): Promise<{ badges: CreateBadgeResponseDto[]; total: number }> {
+        const { badges, total } = await this._badgeRepository.getAllBadgesAdmin(number, limit);
+        return { badges: BadgeMapper.ToResponseDtoList(badges), total };
     }
 
     async getBadgeById(badgeId: string): Promise<CreateBadgeResponseDto> {
@@ -37,8 +38,9 @@ export class BadgeService implements IBadgeService {
     ): Promise<CreateBadgeResponseDto> {
         return await this._badgeRepository.update(badgeId, badgeData);
     }
-    async toggleBadgeStatus(badgeId: string, status: string): Promise<void> {
-        return await this._badgeRepository.updateOne(badgeId, {isActive:status});
+    async toggleBadgeStatus(badgeId: string, status: boolean): Promise<CreateBadgeResponseDto> {
+        const result =  await this._badgeRepository.update(badgeId, {isActive:status});
+        return BadgeMapper.ToResponseDto(result);
     }
 
 }

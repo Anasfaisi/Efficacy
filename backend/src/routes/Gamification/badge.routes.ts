@@ -10,5 +10,6 @@ export default function BadgeRoutes(badgeController : BadgeController , tokenSer
     router.get('/',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.getAllBadges.bind(badgeController))
     router.get('/:badgeId',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.getBadgeById.bind(badgeController))
     router.put('/:badgeId',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.updateBadge.bind(badgeController))
+    router.patch('/:badgeId/toggle-status',authenticateAndAuthorize(tokenService,[Role.Admin]),badgeController.toggleBadgeStatus.bind(badgeController))
     return router
 }

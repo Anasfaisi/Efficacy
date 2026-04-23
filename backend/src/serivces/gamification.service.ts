@@ -139,30 +139,4 @@ export class GamificationService implements IGamificationService {
             }
         }
     }
-
-    public async createBadge(badgeData: Partial<IBadge>): Promise<IBadge> {
-        return await this._badgeRepository.create(badgeData);
-    }
-
-    public async getAllBadges(page: number, limit: number): Promise<{ badges: IBadge[], total: number }> {
-        return await this._badgeRepository.getAllBadgesAdmin(page, limit);
-}
-
-    public async getBadgeById(
-        id: string | Types.ObjectId
-    ): Promise<IBadge | null> {
-        return await this._badgeRepository.findById(id.toString());
-    }
-
-    public async updateBadge(
-        id: string | Types.ObjectId,
-        updateData: Partial<IBadge>
-    ): Promise<IBadge | null> {
-        return await this._badgeRepository.update(id.toString(), updateData);
-    }
-
-    public async deleteBadge(id: string | Types.ObjectId): Promise<boolean> {
-        await this._badgeRepository.deleteOne(id.toString());
-        return true;
-    }
 }

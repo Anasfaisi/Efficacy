@@ -51,15 +51,6 @@ export default function gamificationRoutes(
         )
     );
 
-    router.get(
-        '/constants',
-        authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(
-            gamificationController.getGamificationConstants.bind(
-                gamificationController
-            )
-        )
-    );
 
     return router;
 }

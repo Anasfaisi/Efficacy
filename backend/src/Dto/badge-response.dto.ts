@@ -1,6 +1,7 @@
 import { GamificationEvent, IconType, Rarity } from "@/types/gamification.types";
 
 export interface CreateBadgeResponseDto{
+    id?: string;
     name: string;
     story : string;
     template : string;
