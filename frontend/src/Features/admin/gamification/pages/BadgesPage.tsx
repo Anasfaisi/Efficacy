@@ -12,7 +12,7 @@ import {
     Filter,
     Settings2,
 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import type { Badge } from '@/types/gamification';
 import { BadgeTemplate, GamificationEvent, Rarity } from '@/types/gamification';
 import { BadgeMessages } from '@/utils/Constants';
@@ -58,7 +58,6 @@ export default function AdminBadgesPage() {
     const fetchBadges = useCallback(
         async (page: number) => {
             setLoading(true);
-            console.log(badges,"intial")
             try {
                 const response = await badgeApi.getAllBadges(page, limit);
                 if (response.success) {
@@ -71,7 +70,6 @@ export default function AdminBadgesPage() {
                 toast.error('Failed to load badges');
             } finally {
                 setLoading(false);
-                console.log(badges,"final")
             }
         },
         [limit]
@@ -136,7 +134,10 @@ export default function AdminBadgesPage() {
                 badgeId,
                 !currentStatus
             );
-            if (result.success) {
+            console.log(result, "this is the reuslt")
+            if (result.status) {
+                console.log("this is successfull response after toggling")
+                console.log(result.badge,"this is badges array over here")
                 setBadges((prev) =>
                     prev.map((badge) =>
                         badge.id == badgeId ? result.badge : badge
@@ -144,6 +145,7 @@ export default function AdminBadgesPage() {
                 );
                 toast.success(BadgeMessages.BadgeUpdated);
             }
+            console.log(badges,"this is the badges after updating the badge array")
         } catch (error) {
             toast.error(BadgeMessages.BadgeNotUpdated);
         }
@@ -154,7 +156,7 @@ export default function AdminBadgesPage() {
         setFormState(badge);
         setIsFormOpen(true);
     };
-
+console.log(badges,"before the active and inactive badges assigning")
     const activeBadges = badges.filter((b) => b.isActive);
     const inactiveBadges = badges.filter((b) => !b.isActive);
 
@@ -164,7 +166,7 @@ export default function AdminBadgesPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-                        Gamification Engine
+                        Badge Engine
                     </h1>
                     <p className="text-slate-500 mt-2 font-medium">
                         Design Badges, Set Thresholds, Let the Backend Evaluate

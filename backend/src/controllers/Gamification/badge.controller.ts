@@ -53,7 +53,7 @@ export class BadgeController {
     public async toggleBadgeStatus(req:Request,res:Response){
         const badgeId = req.params.badgeId;
         const status = req.body.status;
-        const result = this._badgeService.toggleBadgeStatus(badgeId,status)
-        res.status(Code.OK).json({status:true,result})
+        const result = await this._badgeService.toggleBadgeStatus(badgeId,status)
+        res.status(Code.OK).json({status:true,badge:result})
     }
 }

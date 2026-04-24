@@ -34,8 +34,8 @@ export default function Sidebar() {
             icon: Banknote,
         },
         {
-            to: '/admin/gamification',
-            label: 'Gamification Engine',
+            to: '/admin/badge-engine',
+            label: 'Badge Engine',
             icon: Icons.Award,
         },
         {

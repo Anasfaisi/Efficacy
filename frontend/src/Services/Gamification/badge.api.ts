@@ -35,13 +35,14 @@ export const badgeApi = {
     toggleBadgeStatus: async (
         badgeId: string,
         status: boolean
-    ): Promise<{ success: boolean; badge: Badge }> => {
-        console.log(badgeId,status,"from the badge api")
+    ): Promise<{ status: boolean; badge: Badge }> => {
+        console.log(badgeId,status,"from the badge")
 
         const response = await api.patch(
             BadgeRoutes.TOGGLE_BADGE_STATUS(badgeId),
-            status
+            {status}
         );
         return response.data;
     },
 };
+``
