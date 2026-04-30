@@ -12,26 +12,58 @@ import {
 } from '@/types/gamification.types';
 import { IGamificationService } from './Interfaces/IGamification.service';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
-import { subscribeToGamificationEvent } from '@/utils/eventBus';
+import { subscribeToGamificationEvent, emitGamificationEvent } from '@/utils/eventBus';
 import { logger } from '@/utils/logMiddlewares';
+import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
+import { IDailyStreakCalculator } from './Gamification/interfaces/IDaily-streak-calculator.service';
 
 @injectable()
 export class GamificationService implements IGamificationService {
     constructor(
         @inject(TYPES.SocketService) private _socketService: ISocketService,
-        @inject(TYPES.BadgeRepository)
-        private _badgeRepository: IBadgeRepository
+        @inject(TYPES.BadgeRepository) private _badgeRepository: IBadgeRepository,
+        @inject(TYPES.UserStatsRepository) private _userStatsRepository: IUserStatsRepository,
+        @inject(TYPES.DailyStreakCalculator) private _dailyStreakCalculator: IDailyStreakCalculator
     ) {
         this.initializeListeners();
     }
 
     private initializeListeners() {
+        
         const events = Object.values(GamificationEvent);
         for (const event of events) {
             subscribeToGamificationEvent(
                 event as GamificationEvent,
                 async (payload) => {
                     try {
+                        const userIdStr = payload.userId.toString();
+
+                        if (event === GamificationEvent.TASK_COMPLETED) {
+                            let stats = await this._userStatsRepository.FindByUserId(userIdStr);
+                            if (!stats) {
+                                stats = await this._userStatsRepository.CreateUserStats({
+                                    id: new Types.ObjectId().toString(),
+                                    userId: userIdStr,
+                                    taskStreakDays: 0,
+                                    tasksCompleted: 0,
+                                    pomodorosCompleted: 0,
+                                    focusMinutes: 0,
+                                    sessionsCompleted: 0,
+                                    lastActivityDate: new Date()
+                                });
+                            }
+
+                            const oldStreak = stats.taskStreakDays;
+                            stats.tasksCompleted += 1;
+                            
+                            stats = await this._dailyStreakCalculator.calculateDailyStreak(stats);
+                            await this._userStatsRepository.UpdateUserStats(stats.id, stats);
+                            
+                            if (stats.taskStreakDays !== oldStreak) {
+                                emitGamificationEvent(GamificationEvent.STREAK_UPDATED, { userId: payload.userId });
+                            }
+                        }
+
                         await this.evaluateBadges(
                             new Types.ObjectId(payload.userId),
                             event as GamificationEvent

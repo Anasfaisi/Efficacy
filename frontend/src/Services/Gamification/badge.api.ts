@@ -36,8 +36,6 @@ export const badgeApi = {
         badgeId: string,
         status: boolean
     ): Promise<{ status: boolean; badge: Badge }> => {
-        console.log(badgeId,status,"from the badge")
-
         const response = await api.patch(
             BadgeRoutes.TOGGLE_BADGE_STATUS(badgeId),
             {status}

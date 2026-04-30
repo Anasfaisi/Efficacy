@@ -23,6 +23,8 @@ export const TYPES = {
     BadgeService : Symbol('BadgeService'),
     PlanService: Symbol('PlanService'),
     NoteService: Symbol('NoteService'),
+    DailyStreakCalculator: Symbol('DailyStreakCalculator'),
+    TaskGamificationHandler: Symbol('TaskGamificationHandler'),
 
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
@@ -37,6 +39,10 @@ export const TYPES = {
     KanbanRepository: Symbol('KanbanRepository'),
     BadgeRepository: Symbol('BadgeRepository'),
     planRepository:Symbol('planRepository'),
+    UserStatsRepository: Symbol('UserStatsRepository'),
+
+    
+
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
     MentorController: Symbol('MentorController'),

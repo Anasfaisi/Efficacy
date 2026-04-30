@@ -98,6 +98,10 @@ import { PlanController } from '@/controllers/plan.controller';
 import { BadgeController } from '@/controllers/Gamification/badge.controller';
 import { IBadgeService } from '@/serivces/Gamification/interfaces/IBadge.service';
 import { BadgeService } from '@/serivces/Gamification/badge.service';
+import { IDailyStreakCalculator } from '@/serivces/Gamification/interfaces/IDaily-streak-calculator.service';
+import { DailyStreakCalculator } from '@/serivces/Gamification/daily-streak-calculator.service';
+import { UserStatsRepository } from '@/repositories/Gamification/user-stats.repository';
+import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
 
 export const container = new Container();
 
@@ -174,8 +178,9 @@ container.bind<IReviewService>(TYPES.ReviewService).to(ReviewService);
 container
     .bind<IGamificationService>(TYPES.GamificationService)
     .to(GamificationService);
-container.bind<IPlanService>(TYPES.PlanService).to(PlanService)
-container.bind<IBadgeService>(TYPES.BadgeService).to(BadgeService)
+container.bind<IPlanService>(TYPES.PlanService).to(PlanService);
+container.bind<IBadgeService>(TYPES.BadgeService).to(BadgeService);
+container.bind<IDailyStreakCalculator>(TYPES.DailyStreakCalculator).to(DailyStreakCalculator);
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -213,3 +218,4 @@ container
     .to(BookingRepository);
 container.bind<IReviewRepository>(TYPES.ReviewRepository).to(ReviewRepository);
 container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository)
+container.bind<IUserStatsRepository>(TYPES.UserStatsRepository).to(UserStatsRepository)

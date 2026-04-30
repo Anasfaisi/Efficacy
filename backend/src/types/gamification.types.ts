@@ -34,16 +34,7 @@ export interface GamificationEventPayload {
 }
 
 
-export interface IUserStats extends Document {
-    userId: Types.ObjectId;
-    tasksCompleted: number;
-    taskStreakDays: number;
-    pomodorosCompleted: number;
-    focusMinutes: number;
-    sessionsCompleted: number;
-    lastActivityDate: Date;
-    updatedAt: Date;
-}
+
 
 export interface IUserBadge extends Document {
     userId: Types.ObjectId;

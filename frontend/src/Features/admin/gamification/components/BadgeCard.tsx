@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Badge } from '@/types/gamification';
 import BadgePreview from './BadgePreview';
 import { Edit2, Trash2, Lock, Clock } from 'lucide-react';
@@ -15,7 +15,18 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
     onEdit,
     onToggleStatus,
 }) => {
-    const isActive = badge.isActive;
+    const [isActive, setIsActive] = useState(badge.isActive);
+
+    const handleToggle = async () => {
+        if (!badge.id) return;
+        const newStatus = !isActive;
+        setIsActive(newStatus);
+        try {
+            await onToggleStatus(badge.id, isActive);
+        } catch {
+            setIsActive(isActive);
+        }
+    };
 
     return (
         <motion.div
@@ -39,13 +50,15 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
                     </button>
                     
                     <button
-                        onClick={() => badge.id && onToggleStatus(badge.id, isActive)}
-                        className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none ${
+                        onClick={handleToggle}
+                        className={`relative w-11 h-6 rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500 ${
                             isActive ? 'bg-green-500' : 'bg-slate-200'
                         }`}
+                        aria-checked={isActive}
+                        role="switch"
                     >
                         <span
-                            className={`absolute top-0.5 left-0.5 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 transform ${
+                            className={`absolute top-0.5 left-0.5 bg-white w-5 h-5 rounded-full shadow-md transition-transform duration-300 ease-in-out ${
                                 isActive ? 'translate-x-5' : 'translate-x-0'
                             }`}
                         />

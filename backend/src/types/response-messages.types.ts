@@ -154,6 +154,7 @@ export const ErrorMessages = {
         'You have reached the maximum limit of 3 bookings per week.',
     BookingDateOutsideMentorship:
         'Booking date must be within your active mentorship period.',
+    UserStatsNotFound : 'No user statistics found with the Id'
 };
 
 export interface joinRoomPayload {

@@ -9,8 +9,8 @@ export const splitTimeRange = (range: string): string[] => {
         const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm)?/);
         if (!match) return null;
 
-        const [hours, mins] = match;
-        let [period] = match;
+        const [_, hours, mins, periodMatch] = match;
+        let period = periodMatch;
         let h = parseInt(hours);
         const m = mins ? parseInt(mins) : 0;
 

@@ -1,6 +1,15 @@
-import mongoose, { Schema } from 'mongoose';
-import { IUserStats } from '../types/gamification.types';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
+export interface IUserStats extends Document {
+    id:string;
+    userId: Types.ObjectId;
+    tasksCompleted: number;
+    taskStreakDays: number;
+    pomodorosCompleted: number;
+    focusMinutes: number;
+    sessionsCompleted: number;
+    lastActivityDate: Date;
+}
 const UserStatsSchema = new Schema<IUserStats>(
     {
         userId: {

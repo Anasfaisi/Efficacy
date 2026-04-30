@@ -27,6 +27,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         await this.model.updateOne({ _id: id }, data).exec();
     }
 
+    
     async updateMany(query: FilterQuery<T>, data: Partial<T>): Promise<void> {
         await this.model.updateMany(query, data).exec();
     }
