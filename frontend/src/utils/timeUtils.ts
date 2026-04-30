@@ -1,10 +1,10 @@
 export const splitTimeRange = (range: string): string[] => {
+
     const parts = range
         .toLowerCase()
         .split('-')
         .map((p) => p.trim());
     if (parts.length !== 2) return [range];
-
     const parseTime = (timeStr: string) => {
         const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm)?/);
         if (!match) return null;
@@ -12,7 +12,6 @@ export const splitTimeRange = (range: string): string[] => {
         const [_, hours, mins, periodMatch] = match;
         let period = periodMatch;
         let h = parseInt(hours);
-        const m = mins ? parseInt(mins) : 0;
 
         if (!period) {
             if (h < 12) period = 'am';
@@ -22,7 +21,7 @@ export const splitTimeRange = (range: string): string[] => {
         if (period === 'pm' && h < 12) h += 12;
         if (period === 'am' && h === 12) h = 0;
 
-        return h * 60 + m;
+        return h * 60 ;
     };
 
     const formatTime = (totalMinutes: number) => {

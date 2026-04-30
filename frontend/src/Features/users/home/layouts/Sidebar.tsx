@@ -13,9 +13,8 @@ import {
     CreditCard,
 } from 'lucide-react';
 import SidebarButton from '../components/SidebarButton';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { CardNumberElement } from '@stripe/react-stripe-js';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -98,17 +97,22 @@ const Sidebar = () => {
 
     const [collapsed, setCollapsed] = useState(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (
             location.pathname.startsWith('/mentors') ||
             location.pathname.startsWith('/mentorship') ||
             location.pathname.startsWith('/my-mentorships')
         ) {
-            setExpandedItems((prev) => [...new Set([...prev, 'Mentor Room'])]);
+            setExpandedItems((prev) => [...new Set([...prev, 'Mentor Pool'])]);
         }
     }, [location.pathname]);
 
-    const toggleExpand = (label: string) => {
+    const toggleExpand = (label: string, firstSubItemPath: string) => {
+        // Always navigate to the first sub-item
+        navigate(firstSubItemPath);
+
         if (collapsed) {
             setCollapsed(false);
             setExpandedItems([label]);
@@ -124,7 +128,7 @@ const Sidebar = () => {
 
     return (
         <div
-            className={`${collapsed ? 'w-24' : 'w-64'} h-screen bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 relative z-20 transition-all duration-300`}
+            className={`${collapsed ? 'w-24' : 'w-64'} h-screen sticky top-0 shrink-0 bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 relative z-20 transition-all duration-300`}
         >
             {/* Toggle Button */}
             <button
@@ -151,7 +155,7 @@ const Sidebar = () => {
                             collapsed={collapsed}
                             onClick={
                                 item.subItems
-                                    ? () => toggleExpand(item.label)
+                                    ? () => toggleExpand(item.label,item.subItems[0].to)
                                     : undefined
                             }
                             active={

@@ -24,10 +24,10 @@ const MentorLayout: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex font-sans text-gray-800">
+        <div className="h-screen overflow-hidden bg-gray-50 flex font-sans text-gray-800">
             <MentorNotificationListener />
             <MentorSidebar />
-            <div className="flex-1 flex flex-col min-h-screen transition-all duration-300 overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-y-auto transition-all duration-300">
                 {/* Navbar */}
                 <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
