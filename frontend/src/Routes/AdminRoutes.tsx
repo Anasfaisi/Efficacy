@@ -12,10 +12,11 @@ import MentorApplicationsPage from '@/Features/admin/pages/MentorApplicationsLis
 import UserManagement from '@/Features/admin/userManagement/pages/UserManagement';
 import NotFound from '@/Features/common/pages/NotFound';
 import AdminFinancialsPage from '@/Features/admin/pages/AdminFinancialsPage';
-import AdminGamificationPage from '@/Features/admin/gamification/pages/AdminGamificationPage';
+import AdminGamificationPage from '@/Features/admin/gamification/pages/BadgesPage';
 import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
 import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
 import SubscriptionPlanManagement from '@/Features/admin/pages/PlanManagement';
+import BadgeCard from '@/Features/admin/gamification/components/BadgeCard';
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -56,7 +57,7 @@ const AdminRoutes: React.FC = () => {
                 />
                 <Route path="financials" element={<AdminFinancialsPage />} />
                 <Route
-                    path="gamification"
+                    path="badge-engine"
                     element={<AdminGamificationPage />}
                 />
                 <Route path="userManagement" element={<UserManagement />} />

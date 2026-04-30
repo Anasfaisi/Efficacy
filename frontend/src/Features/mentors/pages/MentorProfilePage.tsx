@@ -212,9 +212,7 @@ const MentorProfilePage = () => {
                 setExpertise(data.expertise || '');
                 setMonthlyCharge(data.monthlyCharge || '');
                 setAchievements(data.achievements || []);
-
-        
-                setAvailability(data.availability||{});
+                setAvailability(data.availability || {});
 
                 const walletData = await walletApi.getWallet();
                 if (walletData?.bankAccountDetails) {

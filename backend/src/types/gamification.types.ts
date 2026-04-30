@@ -16,42 +16,25 @@ export enum GamificationEvent {
     SESSION_COMPLETED = 'SESSION_COMPLETED',
 }
 
+export enum Rarity{
+    COMMON = 'COMMON',
+    UNCOMMON = 'UNCOMMON',
+    RARE = 'RARE',
+    EPIC = 'EPIC',
+    LEGENDARY = 'LEGENDARY',
+}
+export enum IconType{
+    ICON='icon',
+    IMAGE='image'
+}
+
 export interface GamificationEventPayload {
     userId: string;
     [key: string]: any;
 }
 
-export interface IBadge extends Document {
-    name: string;
-    story: string;
-    template: BadgeTemplate;
-    threshold: number;
-    design: {
-        iconType: 'icon' | 'image';
-        iconName?: string;
-        imageUrl?: string;
-        primaryColor: string;
-        bgColor: string;
-        rarity: 'COMMON' | 'UNCOMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
-    };
-    triggerEvent: GamificationEvent;
-    isHidden: boolean;
-    isActive: boolean;
-    createdBy?: Types.ObjectId;
-    createdAt: Date;
-    updatedAt: Date;
-}
 
-export interface IUserStats extends Document {
-    userId: Types.ObjectId;
-    tasksCompleted: number;
-    taskStreakDays: number;
-    pomodorosCompleted: number;
-    focusMinutes: number;
-    sessionsCompleted: number;
-    lastActivityDate: Date;
-    updatedAt: Date;
-}
+
 
 export interface IUserBadge extends Document {
     userId: Types.ObjectId;

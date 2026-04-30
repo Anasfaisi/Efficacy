@@ -10,7 +10,7 @@ export const createPlannerTask = async (
 };
 
 export const getPlannerTasks = async (): Promise<IPlannerTask[]> => {
-    const response = await api.get('/planner');
+    const response = await api.get(PlannerRoutes.BASE);
     return response.data;
 };
 

@@ -11,3 +11,13 @@ export const AuthMessages = {
     ForgotFailed: 'Failed to send reset link',
     ResetPasswordFailed: 'Password reset failed',
 };
+
+export const BadgeMessages = {
+    BadgeCreated: 'Badge created successfully',
+    BadgeUpdated: 'Badge updated successfully',
+    BadgeNotFound: 'Badge not found',
+    BadgeAlreadyExists: 'Badge already exists',
+    BadgeNotCreated: 'Failed to create badge',
+    BadgeNotUpdated: 'Failed to update badge',
+    BadgeNotDeleted: 'Failed to delete badge',
+};

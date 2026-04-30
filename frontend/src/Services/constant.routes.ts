@@ -124,12 +124,15 @@ export const BookingRoutes = {
 };
 
 const GAMIFICATION_BASE = '/gamification';
-export const GamificationRoutes = {
-    CONSTANTS: `${GAMIFICATION_BASE}/constants`,
-    BADGES: `${GAMIFICATION_BASE}/badges`,
-    CREATE_BADGE: `${GAMIFICATION_BASE}/badges`,
-    UPDATE_BADGE: (badgeId: string) => `${GAMIFICATION_BASE}/badges/${badgeId}`,
-    DELETE_BADGE: (badgeId: string) => `${GAMIFICATION_BASE}/badges/${badgeId}`,
+export const GamificationRoutes = {};
+
+const BADGE_BASE = '/badge';
+export const BadgeRoutes = {
+    CREATE_BADGE: `${BADGE_BASE}`,
+    UPDATE_BADGE: (badgeId: string) => `${BADGE_BASE}/${badgeId}`,
+    GET_ALL_BADGES: `${BADGE_BASE}`,
+    TOGGLE_BADGE_STATUS: (badgeId:string) =>
+        `${BADGE_BASE}/${badgeId}/toggle-status`,
 };
 
 const KANBAN_BASE = '/kanban';

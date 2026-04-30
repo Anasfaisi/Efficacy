@@ -74,7 +74,6 @@ export const mentorshipApi = {
                 cancelUrl,
             }
         );
-        console.log(response.data, 'response data mentorship api');
         return response.data;
     },
 

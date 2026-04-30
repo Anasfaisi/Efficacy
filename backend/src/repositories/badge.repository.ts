@@ -1,8 +1,7 @@
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import { IBadgeRepository } from './interfaces/IBadge.repository';
-import { Badge } from '@/models/Badge.model';
-import { IBadge } from '@/types/gamification.types';
+import { Badge, IBadge } from '@/models/Badge.model';
 
 @injectable()
 export class BadgeRepository

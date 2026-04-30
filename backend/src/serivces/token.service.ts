@@ -2,11 +2,13 @@ import jwt from 'jsonwebtoken';
 import { ITokenService } from './Interfaces/IToken.service';
 import { Types } from 'mongoose';
 import { Role } from '@/types/role.types';
+import { injectable } from 'inversify';
 export interface JwtPayload {
     id: string;
     role?: Role;
     email?: string;
 }
+@injectable()
 export class TokenService implements ITokenService {
     private _accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET!;
     private _refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET!;

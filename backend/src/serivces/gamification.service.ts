@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { Types } from 'mongoose';
-import { Badge } from '@/models/Badge.model';
+import { Badge,IBadge} from '@/models/Badge.model';
 import { UserStats } from '@/models/UserStats.model';
 import { UserBadge } from '@/models/UserBadge.model';
 import { badgeTemplates } from '@/config/badgeTemplates.config';
@@ -9,30 +9,61 @@ import { ISocketService } from './Interfaces/ISocket.service';
 import {
     GamificationEvent,
     BadgeTemplate,
-    IBadge,
 } from '@/types/gamification.types';
 import { IGamificationService } from './Interfaces/IGamification.service';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
-import { subscribeToGamificationEvent } from '@/utils/eventBus';
+import { subscribeToGamificationEvent, emitGamificationEvent } from '@/utils/eventBus';
 import { logger } from '@/utils/logMiddlewares';
+import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
+import { IDailyStreakCalculator } from './Gamification/interfaces/IDaily-streak-calculator.service';
 
 @injectable()
 export class GamificationService implements IGamificationService {
     constructor(
         @inject(TYPES.SocketService) private _socketService: ISocketService,
-        @inject(TYPES.BadgeRepository)
-        private _badgeRepository: IBadgeRepository
+        @inject(TYPES.BadgeRepository) private _badgeRepository: IBadgeRepository,
+        @inject(TYPES.UserStatsRepository) private _userStatsRepository: IUserStatsRepository,
+        @inject(TYPES.DailyStreakCalculator) private _dailyStreakCalculator: IDailyStreakCalculator
     ) {
         this.initializeListeners();
     }
 
     private initializeListeners() {
+        
         const events = Object.values(GamificationEvent);
         for (const event of events) {
             subscribeToGamificationEvent(
                 event as GamificationEvent,
                 async (payload) => {
                     try {
+                        const userIdStr = payload.userId.toString();
+
+                        if (event === GamificationEvent.TASK_COMPLETED) {
+                            let stats = await this._userStatsRepository.FindByUserId(userIdStr);
+                            if (!stats) {
+                                stats = await this._userStatsRepository.CreateUserStats({
+                                    id: new Types.ObjectId().toString(),
+                                    userId: userIdStr,
+                                    taskStreakDays: 0,
+                                    tasksCompleted: 0,
+                                    pomodorosCompleted: 0,
+                                    focusMinutes: 0,
+                                    sessionsCompleted: 0,
+                                    lastActivityDate: new Date()
+                                });
+                            }
+
+                            const oldStreak = stats.taskStreakDays;
+                            stats.tasksCompleted += 1;
+                            
+                            stats = await this._dailyStreakCalculator.calculateDailyStreak(stats);
+                            await this._userStatsRepository.UpdateUserStats(stats.id, stats);
+                            
+                            if (stats.taskStreakDays !== oldStreak) {
+                                emitGamificationEvent(GamificationEvent.STREAK_UPDATED, { userId: payload.userId });
+                            }
+                        }
+
                         await this.evaluateBadges(
                             new Types.ObjectId(payload.userId),
                             event as GamificationEvent
@@ -122,7 +153,7 @@ export class GamificationService implements IGamificationService {
 
             const badgeDetails = await Badge.findById(badgeId).lean();
 
-            this._socketService.emitToRoom(
+        this._socketService.emitToRoom(
                 userId.toString(),
                 'BADGE_UNLOCKED',
                 { badge: badgeDetails }
@@ -139,31 +170,5 @@ export class GamificationService implements IGamificationService {
                 );
             }
         }
-    }
-
-    public async createBadge(badgeData: Partial<IBadge>): Promise<IBadge> {
-        return await this._badgeRepository.create(badgeData);
-    }
-
-    public async getAllBadges(page: number, limit: number): Promise<{ badges: IBadge[], total: number }> {
-        return await this._badgeRepository.getAllBadgesAdmin(page, limit);
-    }
-
-    public async getBadgeById(
-        id: string | Types.ObjectId
-    ): Promise<IBadge | null> {
-        return await this._badgeRepository.findById(id.toString());
-    }
-
-    public async updateBadge(
-        id: string | Types.ObjectId,
-        updateData: Partial<IBadge>
-    ): Promise<IBadge | null> {
-        return await this._badgeRepository.update(id.toString(), updateData);
-    }
-
-    public async deleteBadge(id: string | Types.ObjectId): Promise<boolean> {
-        await this._badgeRepository.deleteOne(id.toString());
-        return true;
     }
 }
