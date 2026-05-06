@@ -4,7 +4,7 @@ import { IMentorService } from './Interfaces/IMentor.service';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IPasswordService } from './Interfaces/IPassword.service';
 import { IMentor } from '@/models/Mentor.model';
-import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
+import { UpdateMentorProfileDto } from '@/dto/mentorRequest.dto';
 import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()

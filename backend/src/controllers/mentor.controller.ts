@@ -11,7 +11,7 @@ import {
     SuccessMessages,
     CommonMessages,
 } from '@/types/response-messages.types';
-import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
+import { UpdateMentorProfileDto } from '@/dto/mentorRequest.dto';
 
 export class MentorController {
     constructor(

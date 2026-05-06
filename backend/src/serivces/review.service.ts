@@ -4,7 +4,7 @@ import { IReviewRepository } from '@/repositories/interfaces/IReview.repository'
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
 import { TYPES } from '@/config/inversify-key.types';
-import { CreateReviewRequestDto, ReviewResponseDto } from '@/Dto/review.dto';
+import { CreateReviewRequestDto, ReviewResponseDto } from '@/dto/review.dto';
 import { ReviewMapper } from '@/Mapper/review.mapper';
 import { ReviewStatus } from '@/types/review-status.types';
 import { Types } from 'mongoose';

@@ -1,10 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { IMentorOnboardService } from './Interfaces/IMentor-onboard.service';
-import { MentorApplicationRequestDto } from '@/Dto/mentorRequest.dto';
+import { MentorApplicationRequestDto } from '@/dto/mentorRequest.dto';
 import { IMentor } from '@/models/Mentor.model';
 import { TYPES } from '@/config/inversify-key.types';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
-import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
+import { MentorApplicationResponseDto } from '@/dto/mentorResponse.dto';
 import { INotificationService } from './Interfaces/INotification.service';
 import { NotificationType } from '@/types/notification.enum';
 import {

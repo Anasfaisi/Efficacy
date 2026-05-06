@@ -1,6 +1,6 @@
 import { IMentorship } from '@/models/Mentorship.model';
 import { ObjectId } from 'mongoose';
-import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
+import { PaginatedMentorshipResponseDto } from '@/dto/mentorship.dto';
 
 export interface IMentorshipService {
     createRequest(

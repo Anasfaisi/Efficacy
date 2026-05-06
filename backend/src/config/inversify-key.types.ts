@@ -25,7 +25,8 @@ export const TYPES = {
     NoteService: Symbol('NoteService'),
     DailyStreakCalculator: Symbol('DailyStreakCalculator'),
     TaskGamificationHandler: Symbol('TaskGamificationHandler'),
-
+    IBadgeEvaluator: Symbol('IBadgeEvaluator'),
+    BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),

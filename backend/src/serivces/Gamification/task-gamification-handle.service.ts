@@ -36,7 +36,8 @@ export class TaskGamificationHandleService
             updatedStats
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
-
+ 
+        // await this._badgeGamficationService.evaluate(event,savedStats)
         
     }
 }

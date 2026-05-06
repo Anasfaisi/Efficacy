@@ -1,5 +1,5 @@
-import { CreateBadgeRequestDto } from "@/Dto/badge-request.dto";
-import { CreateBadgeResponseDto } from "@/Dto/badge-response.dto";
+import { CreateBadgeRequestDto } from "@/dto/badge-request.dto";
+import { CreateBadgeResponseDto } from "@/dto/badge-response.dto";
 
 export interface IBadgeService{
     createBadge(badgeData : CreateBadgeRequestDto): Promise<CreateBadgeResponseDto>

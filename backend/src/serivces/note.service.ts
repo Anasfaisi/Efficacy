@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { CreateNoteDTO, UpdateNoteDTO } from '../Dto/note.dto';
+import { CreateNoteDTO, UpdateNoteDTO } from '../dto/note.dto';
 import { INote } from '../models/Note.model';
 import { INoteService } from './Interfaces/INote.service';
 import { INoteRepository } from '@/repositories/interfaces/INote.repository';

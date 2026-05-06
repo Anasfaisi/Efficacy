@@ -4,8 +4,8 @@ import {
     GetKanbanBoardRequestDto,
     reorderKanbanTaskRequestDto,
     updateKanbanTaskRequestDto,
-} from '@/Dto/request.dto';
-import { KanbanBoardResponseDto } from '@/Dto/response.dto';
+} from '@/dto/request.dto';
+import { KanbanBoardResponseDto } from '@/dto/response.dto';
 
 export interface IKanbanService {
     getKanbanBoard(

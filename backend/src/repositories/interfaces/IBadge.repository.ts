@@ -1,6 +1,12 @@
+import { BadgeEntity } from '@/entity/badge.entity';
 import { IBaseRepository } from './IBase.repository';
-import { IBadge } from '@/types/gamification.types';
+import { IBadge } from '@/models/Badge.model';
+import { FilterQuery } from 'mongoose';
 
 export interface IBadgeRepository extends IBaseRepository<IBadge> {
-    getAllBadgesAdmin(page: number, limit: number): Promise<{ badges: IBadge[], total: number }>;
+    findBadges(query: FilterQuery<BadgeEntity>): Promise<BadgeEntity[]>;
+    getAllBadgesAdmin(
+        page: number,
+        limit: number
+    ): Promise<{ badges: IBadge[]; total: number }>;
 }

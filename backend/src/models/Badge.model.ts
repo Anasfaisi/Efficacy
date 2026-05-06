@@ -3,13 +3,15 @@ import {
     BadgeTemplate,
     GamificationEvent,
     Rarity,
-    IconType
+    IconType,
+    BadgeType
 } from '../types/gamification.types';
 
 export interface IBadge extends Document {
     name: string;
     story: string;
     template: BadgeTemplate;
+    type : BadgeType;
     threshold: number;
     design: {
         iconType: IconType;
@@ -20,7 +22,6 @@ export interface IBadge extends Document {
         rarity: Rarity;
     };
     triggerEvent: GamificationEvent;
-    isHidden: boolean;
     isActive: boolean;
     createdBy?: Types.ObjectId;
     createdAt: Date;
@@ -35,6 +36,7 @@ const BadgeSchema = new Schema<IBadge>(
             enum: Object.values(BadgeTemplate),
             required: true,
         },
+        type:{String, enum : Object.values(BadgeType)},
         threshold: { type: Number, required: true },
         design: {
             iconType: {
@@ -58,7 +60,6 @@ const BadgeSchema = new Schema<IBadge>(
             enum: Object.values(GamificationEvent),
             required: true,
         },
-        isHidden: { type: Boolean, default: false },
         isActive: { type: Boolean, default: true },
         createdBy: { type: Schema.Types.ObjectId, ref: 'Admin' },
     },

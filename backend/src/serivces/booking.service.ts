@@ -11,7 +11,7 @@ import {
     UpdateBookingStatusRequestDto,
     RescheduleRequestDto,
     PaginatedBookingResponseDto,
-} from '@/Dto/booking.dto';
+} from '@/dto/booking.dto';
 import { BookingMapper } from '@/Mapper/booking.mapper';
 import { BookingStatus } from '@/types/booking-status.types';
 import { BookingEntity } from '@/entity/booking.entity';

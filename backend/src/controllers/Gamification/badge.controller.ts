@@ -3,7 +3,7 @@ import { IBadgeService } from '@/serivces/Gamification/interfaces/IBadge.service
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import Code from '@/types/http-status.enum';
-import { CreateBadgeResponseDto } from '@/Dto/badge-response.dto';
+import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
 @injectable()
 export class BadgeController {
     constructor(

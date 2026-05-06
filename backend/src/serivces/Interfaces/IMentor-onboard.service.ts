@@ -1,5 +1,5 @@
-import { MentorApplicationRequestDto } from '@/Dto/mentorRequest.dto';
-import { MentorApplicationResponseDto } from '@/Dto/mentorResponse.dto';
+import { MentorApplicationRequestDto } from '@/dto/mentorRequest.dto';
+import { MentorApplicationResponseDto } from '@/dto/mentorResponse.dto';
 
 export interface IMentorOnboardService {
     mentorApplicationInit(

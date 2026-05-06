@@ -1,5 +1,12 @@
-import mongoose, { Schema } from 'mongoose';
-import { IUserBadge } from '../types/gamification.types';
+import mongoose, { Document, Schema, Types } from 'mongoose';
+
+export interface IUserBadge extends Document {
+    userId: Types.ObjectId;
+    badgeId: Types.ObjectId;
+    unlockedAt: Date;
+    seen: boolean;
+}
+
 
 const UserBadgeSchema = new Schema<IUserBadge>({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },

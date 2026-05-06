@@ -8,14 +8,14 @@ import {
     resendOtpRequestDto,
     ResetPasswordrequestDto,
     userGoogleLoginRequestDto,
-} from '@/Dto/request.dto';
+} from '@/dto/request.dto';
 import {
     LoginResponseDTO,
     OtpVerificationResponseDto,
     ProfileResponseDto,
     RegisterInitResponseDto,
     userGoogleLoginResponseDto,
-} from '@/Dto/response.dto';
+} from '@/dto/response.dto';
 
 export interface IAuthService {
     updateUserProfile(

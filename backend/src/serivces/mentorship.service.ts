@@ -16,7 +16,7 @@ import {
 import { NotificationType } from '@/types/notification.enum';
 import { Role } from '@/types/role.types';
 import { ObjectId, Types } from 'mongoose';
-import { PaginatedMentorshipResponseDto } from '@/Dto/mentorship.dto';
+import { PaginatedMentorshipResponseDto } from '@/dto/mentorship.dto';
 import {
     ErrorMessages,
     CommonMessages,

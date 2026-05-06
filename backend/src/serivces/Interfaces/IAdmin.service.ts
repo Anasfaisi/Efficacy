@@ -2,9 +2,9 @@ import {
     MentorApplicationResponseDto,
     PaginatedMentorApplicationResponseDto,
     PaginatedMentorResponseDto,
-} from '@/Dto/mentorResponse.dto';
-import { PaginatedUserResponseDto } from '@/Dto/response.dto';
-import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+} from '@/dto/mentorResponse.dto';
+import { PaginatedUserResponseDto } from '@/dto/response.dto';
+import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { ITransaction } from '@/models/Wallet.model';
 
 export interface IAdminService {
