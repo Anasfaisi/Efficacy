@@ -1,6 +1,7 @@
 import { BadgeTemplate, BadgeType, GamificationEvent, IconType, Rarity } from '@/types/gamification.types';
 
 export interface BadgeEntity {
+    id:string;
     name: string;
     story: string;
     template: BadgeTemplate;

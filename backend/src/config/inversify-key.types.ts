@@ -41,7 +41,7 @@ export const TYPES = {
     BadgeRepository: Symbol('BadgeRepository'),
     planRepository:Symbol('planRepository'),
     UserStatsRepository: Symbol('UserStatsRepository'),
-
+    UserBadgeRepository : Symbol('UserBadgeRepository'),
     
 
     AdminController: Symbol('AdminController'),

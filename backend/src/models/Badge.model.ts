@@ -8,6 +8,7 @@ import {
 } from '../types/gamification.types';
 
 export interface IBadge extends Document {
+    id:string
     name: string;
     story: string;
     template: BadgeTemplate;

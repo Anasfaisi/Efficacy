@@ -5,6 +5,7 @@ import { TYPES } from '@/config/inversify-key.types';
 import { GamificationEvent } from '@/types/gamification.types';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
 import { IBadgeTemplateResolverService } from './interfaces/IBadge-template-resolver.service';
+import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
 
 @injectable()
 export class BadgeGamificationService implements IBadgeGamificationService {
@@ -12,29 +13,35 @@ export class BadgeGamificationService implements IBadgeGamificationService {
         @inject(TYPES.BadgeRepository)
         private _badgeRepository: IBadgeRepository,
         @inject(TYPES.BadgeTemplateResolverService) private _badgeTemplateResolver : IBadgeTemplateResolverService,
-        @inject(TYPES.)
+        @inject(TYPES.UserBadgeRepository) private _userBadgeRepo : IUserBadgeRepository
     ) {}
     async evaluate(
         event: GamificationEvent,
-        userstats: UserStatsEntity
+        userStats: UserStatsEntity
     ): Promise<void> {
         const possibleBadges = await this._badgeRepository.findBadges({
             triggerEvent: event,
         });
 
-        for (let badge of possibleBadges) {
+        for (const badge of possibleBadges) {
             // first we need to check the if the user is already having the badge
-            // for that now we want to create 
-            const alreadyEarned = 
+            // for that now we want to create user badge for checking already occupied
+            const alreadyEarned = await this._userBadgeRepo.findExistingBadge(badge.id)
+            if(alreadyEarned)continue
+
             //we need a badge resolver that would deliver the evaluator
-            const evaluator = this._badgeTemplateResolver(badge.template)
-            // with badge.template (TASk_COUNT)
+            const evaluator = this._badgeTemplateResolver.resolve(badge.template)
+
             // 1.construct a badge resolver interface and implementation calling evaluate method
             // 2.evaluate method will accept a badge.template only
             // 3.It should return with an evaluator
+
             //then we will call the evalutor.evaluate method,
             // it will return boolean
+            const evaluatedValue = evaluator.evaulate({userStats,badge})
+
             //if unlocked call badge unlock
+            // if(evaluatedValue) await 
         }
     }
 }

@@ -1,4 +1,4 @@
-import { GamificationEvent } from '@/types/gamification.types';
+import { BadgeTemplate} from '@/types/gamification.types';
 import { IBadgeTemplateResolverService } from './interfaces/IBadge-template-resolver.service';
 import { IBadgeEvaluator } from './interfaces/IBadge-evaluator';
 import { injectable, multiInject } from 'inversify';
@@ -11,7 +11,7 @@ export class BadgeTemplateResolverService implements IBadgeTemplateResolverServi
         @multiInject(TYPES.IBadgeEvaluator)
         private _templateEvaluator: IBadgeEvaluator[]
     ) {}
-    resolve(templateEvent: GamificationEvent): IBadgeEvaluator {
+    resolve(templateEvent: BadgeTemplate): IBadgeEvaluator {
         const badge = this._templateEvaluator.find(
             (bde) => bde.badgeTemplateEvent == templateEvent
         );

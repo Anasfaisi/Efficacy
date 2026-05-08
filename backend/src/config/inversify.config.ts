@@ -107,6 +107,8 @@ import { TaskCountEvaluator } from '@/serivces/Gamification/task-count-evaluator
 import { PomodoroEvaluator } from '@/serivces/Gamification/pomodoro-evaluator.service';
 import { BadgeTemplateResolverService } from '@/serivces/Gamification/badge-template-resolver.service';
 import { IBadgeTemplateResolverService } from '@/serivces/Gamification/interfaces/IBadge-template-resolver.service';
+import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
+import { UserBadgeRepository } from '@/repositories/Gamification/user-badge.repository';
 
 export const container = new Container();
 
@@ -234,3 +236,4 @@ container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository);
 container
     .bind<IUserStatsRepository>(TYPES.UserStatsRepository)
     .to(UserStatsRepository);
+container.bind<IUserBadgeRepository>(TYPES.UserBadgeRepository).to(UserBadgeRepository)
