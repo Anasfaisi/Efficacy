@@ -1,7 +1,7 @@
 import { BadgeTemplate} from '@/types/gamification.types';
 import { IBadgeTemplateResolverService } from './interfaces/IBadge-template-resolver.service';
 import { IBadgeEvaluator } from './interfaces/IBadge-evaluator';
-import { injectable, multiInject } from 'inversify';
+import { inject, injectable, multiInject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { ErrorMessages } from '@/types/response-messages.types';
 
@@ -17,6 +17,6 @@ export class BadgeTemplateResolverService implements IBadgeTemplateResolverServi
         );
         if (!badge) throw new Error(ErrorMessages.NoEvaluator);
 
-        return badge;
+    return badge;
     }
 }

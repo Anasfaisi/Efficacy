@@ -15,6 +15,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["./src/*"]
     }

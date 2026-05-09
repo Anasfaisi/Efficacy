@@ -26,6 +26,7 @@ export const TYPES = {
     DailyStreakCalculator: Symbol('DailyStreakCalculator'),
     TaskGamificationHandler: Symbol('TaskGamificationHandler'),
     IBadgeEvaluator: Symbol('IBadgeEvaluator'),
+    IGamificationHandleService : Symbol('IGamificationHandleService'),
     BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),

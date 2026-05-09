@@ -109,6 +109,8 @@ import { BadgeTemplateResolverService } from '@/serivces/Gamification/badge-temp
 import { IBadgeTemplateResolverService } from '@/serivces/Gamification/interfaces/IBadge-template-resolver.service';
 import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
 import { UserBadgeRepository } from '@/repositories/Gamification/user-badge.repository';
+import { IGamificationHandleService } from '@/serivces/Gamification/interfaces/IGamification-handle.service';
+import { TaskGamificationHandleService } from '@/serivces/Gamification/task-gamification-handle.service';
 
 export const container = new Container();
 
@@ -195,7 +197,7 @@ container.bind<IBadgeEvaluator>(TYPES.IBadgeEvaluator).to(PomodoroEvaluator);
 container
     .bind<IBadgeTemplateResolverService>(TYPES.BadgeTemplateResolverService)
     .to(BadgeTemplateResolverService);
-    
+container.bind<IGamificationHandleService>(TYPES.IGamificationHandleService).to(TaskGamificationHandleService)
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container

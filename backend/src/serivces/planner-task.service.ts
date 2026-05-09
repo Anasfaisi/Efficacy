@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable, multiInject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTask } from '@/models/PlannerTask.model';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
@@ -13,7 +13,7 @@ export class PlannerTaskService implements IPlannerTaskService {
     constructor(
         @inject(TYPES.PlannerTaskRepository)
         private _plannerTaskRepository: IPlannerTaskRepository,
-        @inject(TYPES.TaskGamificationHandler)
+        @multiInject(TYPES.IGamificationHandleService)
         private _taskGamificationHandler: IGamificationHandleService
     ) {}
 
