@@ -155,7 +155,8 @@ export const ErrorMessages = {
     BookingDateOutsideMentorship:
         'Booking date must be within your active mentorship period.',
     UserStatsNotFound : 'No user statistics found with the Id',
-    NoEvaluator: 'No evaluator found for the badge template'
+    NoEvaluator: 'No evaluator found for the badge template',
+        BadgeCreationFailed : 'Due to technical issue failed to unlock the badge'
 };
 
 export interface joinRoomPayload {

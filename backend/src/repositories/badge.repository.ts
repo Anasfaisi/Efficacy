@@ -34,5 +34,4 @@ export class BadgeRepository
         const badges = await super.find(query);
         return BadgeMapper.listtoBadgeEntity(badges);
     }
-
 }

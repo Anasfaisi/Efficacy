@@ -1,5 +1,9 @@
-import { IUserBadge } from "@/models/UserBadge.model";
+import { IUserBadge } from '@/models/UserBadge.model';
 
-export interface IUserBadgeRepository{
-    findExistingBadge(badgeId:string):Promise<IUserBadge|null>
+export interface IUserBadgeRepository {
+    findExistingBadge(badgeId: string): Promise<IUserBadge | null>;
+    unlockBadge(
+        badgeId: string,
+        userId: string,
+    ): Promise<void>;
 }
