@@ -50,10 +50,6 @@ export class PlannerTaskService implements IPlannerTaskService {
         return updatedTask;
     }
 
-    // private async handleTaskCompletionGamification(userId: string) {
-    //     emitGamificationEvent(GamificationEvent.TASK_COMPLETED, { userId });
-    // }
-
     async deleteTask(taskId: string, userId: string): Promise<void> {
         const task = await this._plannerTaskRepository.findById(taskId);
         if (!task || task.userId.toString() !== userId) {

@@ -19,7 +19,6 @@ export const TYPES = {
     MentorshipService: Symbol('MentorshipService'),
     WalletService: Symbol('WalletService'),
     KanbanService: Symbol('KanbanService'),
-    GamificationService: Symbol('GamificationService'),
     BadgeService : Symbol('BadgeService'),
     PlanService: Symbol('PlanService'),
     NoteService: Symbol('NoteService'),

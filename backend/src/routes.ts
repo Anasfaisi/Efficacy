@@ -23,8 +23,6 @@ import noteRoutes from './routes/note.routes';
 import { bookingRoutes } from './routes/booking.routes';
 import { ReviewController } from './controllers/review.controller';
 import reviewRoutes from './routes/review.routes';
-import { GamificationController } from './controllers/Gamification/gamification.controller';
-import gamificationRoutes from './routes/gamification.routes';
 import { PlanController } from './controllers/plan.controller';
 import planRoutes from './routes/plan.routes';
 import { BadgeController } from './controllers/Gamification/badge.controller';
@@ -61,9 +59,6 @@ export function applyRoutes(app: Express) {
     const reviewController = container.get<ReviewController>(
         TYPES.ReviewController
     );
-    const gamificationController = container.get<GamificationController>(
-        TYPES.GamificationController
-    );
     const planController = container.get<PlanController>(TYPES.PlanController);
     const badgeController = container.get<BadgeController>(
         TYPES.BadgeController
@@ -85,8 +80,5 @@ export function applyRoutes(app: Express) {
     app.use('/api/reviews', reviewRoutes(reviewController));
     app.use('/api/badge', BadgeRoutes(badgeController, tokenService));
     app.use('/api/plan', planRoutes(planController));
-    app.use(
-        '/api/gamification',
-        gamificationRoutes(gamificationController, tokenService)
-    );
+
 }
