@@ -5,7 +5,7 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class TaskCountEvaluator implements IBadgeEvaluator {
-    public readonly badgeTemplateEvent: BadgeTemplate.TASK_COUNT
+    public readonly badgeTemplateEvent:BadgeTemplate= BadgeTemplate.TASK_COUNT
     constructor() {}
 
     evaulate(data: BadgeEvaluatorDto): boolean {

@@ -28,6 +28,8 @@ export const TYPES = {
     IBadgeEvaluator: Symbol('IBadgeEvaluator'),
     IGamificationHandleService : Symbol('IGamificationHandleService'),
     BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
+    BadgeGamficationService:Symbol('BadgeGamficationService'),
+    
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),

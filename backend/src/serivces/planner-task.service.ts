@@ -4,17 +4,16 @@ import { IPlannerTask } from '@/models/PlannerTask.model';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { IPlannerTaskService } from './Interfaces/IPlannerTask.service';
 import { ErrorMessages } from '@/types/response-messages.types';
-import { emitGamificationEvent } from '@/utils/eventBus';
 import { GamificationEvent } from '@/types/gamification.types';
-import { IGamificationHandleService } from './Gamification/interfaces/IGamification-handle.service';
+import { ITaskGamificationHandleService } from './Gamification/interfaces/ITask-Gamification-handle.service';
 
 @injectable()
 export class PlannerTaskService implements IPlannerTaskService {
     constructor(
         @inject(TYPES.PlannerTaskRepository)
         private _plannerTaskRepository: IPlannerTaskRepository,
-        @multiInject(TYPES.IGamificationHandleService)
-        private _taskGamificationHandler: IGamificationHandleService
+        @inject(TYPES.TaskGamificationHandler)
+        private _taskGamificationHandler: ITaskGamificationHandleService
     ) {}
 
     async createTask(taskData: Partial<IPlannerTask>): Promise<IPlannerTask> {

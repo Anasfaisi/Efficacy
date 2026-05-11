@@ -1,5 +1,5 @@
 import { GamificationEvent } from "@/types/gamification.types";
 
-export interface IGamificationHandleService {
+export interface ITaskGamificationHandleService {
     processAction(event:GamificationEvent,userId:string):Promise<void>   
 }

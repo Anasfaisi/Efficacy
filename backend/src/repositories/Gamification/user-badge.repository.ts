@@ -10,8 +10,8 @@ export class UserBadgeRepository
     constructor() {
         super(UserBadge);
     }
-    async findExistingBadge(badgeId: string): Promise<IUserBadge | null> {
-        return this.model.findOne({ badgeId: badgeId });
+    async findExistingBadge(badgeId: string,userId:string): Promise<IUserBadge | null> {
+        return this.model.findOne({ badgeId: badgeId, userId: userId });
     }
 
     //update badge unlocks
@@ -20,8 +20,8 @@ export class UserBadgeRepository
     async unlockBadge(
         badgeId: string,
         userId: string,
-    ): Promise<void> {
-        await super.create({
+    ): Promise<IUserBadge | null> {
+        return await super.create({
             badgeId: new Types.ObjectId(badgeId),
             userId: new Types.ObjectId(userId),
         });

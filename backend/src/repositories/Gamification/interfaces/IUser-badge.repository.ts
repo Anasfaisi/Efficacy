@@ -1,9 +1,9 @@
 import { IUserBadge } from '@/models/UserBadge.model';
 
 export interface IUserBadgeRepository {
-    findExistingBadge(badgeId: string): Promise<IUserBadge | null>;
+    findExistingBadge(badgeId: string,userId:string): Promise<IUserBadge | null>;
     unlockBadge(
         badgeId: string,
         userId: string,
-    ): Promise<void>;
+    ): Promise<IUserBadge | null>;
 }

@@ -1,10 +1,11 @@
 import { GamificationEvent } from '@/types/gamification.types';
-import { IGamificationHandleService } from './interfaces/IGamification-handle.service';
+import { IGamificationHandleService } from './interfaces/ITask-Gamification-handle.service';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
 import { IDailyStreakCalculator } from './interfaces/IDaily-streak-calculator.service';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { IBadgeGamificationService } from './interfaces/IBadge-gamification.service';
 @injectable()
 export class TaskGamificationHandleService
     implements IGamificationHandleService
@@ -13,7 +14,9 @@ export class TaskGamificationHandleService
         @inject(TYPES.UserStatsRepository)
         private _userStatsRepo: IUserStatsRepository,
         @inject(TYPES.DailyStreakCalculator)
-        private _dailyStreakCalculator: IDailyStreakCalculator
+        private _dailyStreakCalculator: IDailyStreakCalculator,
+        @inject(TYPES.BadgeGamficationService) 
+        private _badgeGamficationService: IBadgeGamificationService,
     ) {}
 
     async processAction(
@@ -37,7 +40,7 @@ export class TaskGamificationHandleService
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
  
-        // await this._badgeGamficationService.evaluate(event,savedStats)
+        await this._badgeGamficationService.evaluate(event,savedStats)
         
     }
 }

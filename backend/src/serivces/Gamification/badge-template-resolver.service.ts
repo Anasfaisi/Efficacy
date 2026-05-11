@@ -1,4 +1,4 @@
-import { BadgeTemplate} from '@/types/gamification.types';
+import { BadgeTemplate } from '@/types/gamification.types';
 import { IBadgeTemplateResolverService } from './interfaces/IBadge-template-resolver.service';
 import { IBadgeEvaluator } from './interfaces/IBadge-evaluator';
 import { inject, injectable, multiInject } from 'inversify';
@@ -6,10 +6,12 @@ import { TYPES } from '@/config/inversify-key.types';
 import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
-export class BadgeTemplateResolverService implements IBadgeTemplateResolverService {
+export class BadgeTemplateResolverService
+    implements IBadgeTemplateResolverService
+{
     constructor(
         @multiInject(TYPES.IBadgeEvaluator)
-        private _templateEvaluator: IBadgeEvaluator[]
+        private _templateEvaluator: IBadgeEvaluator[] //[new taskevaluator,new pomodoroevaluator]
     ) {}
     resolve(templateEvent: BadgeTemplate): IBadgeEvaluator {
         const badge = this._templateEvaluator.find(
@@ -17,6 +19,6 @@ export class BadgeTemplateResolverService implements IBadgeTemplateResolverServi
         );
         if (!badge) throw new Error(ErrorMessages.NoEvaluator);
 
-    return badge;
+        return badge;
     }
 }
