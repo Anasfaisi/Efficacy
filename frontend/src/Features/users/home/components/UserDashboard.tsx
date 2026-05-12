@@ -230,7 +230,7 @@ const UserDashboard: React.FC = () => {
             </div>
 
             {/* Collaboration Section */}
-            <section>
+            {/* <section>
                 <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
                     🤝 Collaborate with Peers
                 </h2>
@@ -250,7 +250,7 @@ const UserDashboard: React.FC = () => {
                         icon={<Video size={32} />}
                     />
                 </div>
-            </section>
+            </section> */}
         </div>
     );
 };

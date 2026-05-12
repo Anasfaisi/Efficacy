@@ -1,5 +1,5 @@
-import { RequestPaymentDto } from '@/Dto/request.dto';
-import { ResponsePaymentDto } from '@/Dto/response.dto';
+import { RequestPaymentDto } from '@/dto/request.dto';
+import { ResponsePaymentDto } from '@/dto/response.dto';
 
 export interface IPaymentService {
     createCheckoutSession(dto: RequestPaymentDto): Promise<ResponsePaymentDto>;

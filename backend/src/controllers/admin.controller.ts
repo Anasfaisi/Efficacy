@@ -8,7 +8,7 @@ import {
     ErrorMessages,
     SuccessMessages,
 } from '@/types/response-messages.types';
-import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';

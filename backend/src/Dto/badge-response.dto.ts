@@ -1,20 +1,23 @@
-import { GamificationEvent, IconType, Rarity } from "@/types/gamification.types";
+import {
+    GamificationEvent,
+    IconType,
+    Rarity,
+} from '@/types/gamification.types';
 
-export interface CreateBadgeResponseDto{
+export interface CreateBadgeResponseDto {
     id?: string;
     name: string;
-    story : string;
-    template : string;
-    threshold : number;
-    design : {
-        iconType : IconType;
-        iconName? : string; 
-        imageUrl? : string;
-        primaryColor : string; 
-        bgColor : string;
-        rarity : Rarity;
+    story: string;
+    template: string;
+    threshold: number;
+    design: {
+        iconType: IconType;
+        iconName?: string;
+        imageUrl?: string;
+        primaryColor: string;
+        bgColor: string;
+        rarity: Rarity;
     };
-    triggerEvent : GamificationEvent;
-    isHidden : boolean;
-    isActive : boolean; 
+    triggerEvent: GamificationEvent;
+    isActive: boolean;
 }

@@ -4,17 +4,17 @@ import {
     ResetPasswordrequestDto,
     userGoogleLoginRequestDto,
     resendOtpRequestDto,
-} from '@/Dto/request.dto';
+} from '@/dto/request.dto';
 import {
     MentorRegisterRequestDto,
     MentorOtpVerificationRequestDto,
-} from '@/Dto/mentorRequest.dto';
+} from '@/dto/mentorRequest.dto';
 import {
     MentorLoginResponseDTO,
     MentorRegisterInitResponseDto,
     MentorOtpVerificationResponseDto,
-} from '@/Dto/mentorResponse.dto';
-import { userGoogleLoginResponseDto } from '@/Dto/response.dto';
+} from '@/dto/mentorResponse.dto';
+import { userGoogleLoginResponseDto } from '@/dto/response.dto';
 
 export interface IMentorAuthService {
     mentorLogin(dto: LoginRequestDto): Promise<MentorLoginResponseDTO>;

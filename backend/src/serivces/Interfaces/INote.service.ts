@@ -1,5 +1,5 @@
 import { INote } from '@/models/Note.model';
-import { CreateNoteDTO, UpdateNoteDTO } from '@/Dto/note.dto';
+import { CreateNoteDTO, UpdateNoteDTO } from '@/dto/note.dto';
 
 export interface INoteService {
     createNote(data: CreateNoteDTO): Promise<INote>;

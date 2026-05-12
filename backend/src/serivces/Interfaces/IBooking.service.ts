@@ -4,7 +4,7 @@ import {
     UpdateBookingStatusRequestDto,
     RescheduleRequestDto,
     PaginatedBookingResponseDto,
-} from '@/Dto/booking.dto';
+} from '@/dto/booking.dto';
 
 export interface IBookingService {
     createBooking(data: CreateBookingRequestDto): Promise<BookingResponseDto>;

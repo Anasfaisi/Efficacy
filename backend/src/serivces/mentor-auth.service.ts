@@ -13,19 +13,19 @@ import {
     MentorLoginResponseDTO,
     MentorOtpVerificationResponseDto,
     MentorRegisterInitResponseDto,
-} from '@/Dto/mentorResponse.dto';
+} from '@/dto/mentorResponse.dto';
 import {
     LoginRequestDto,
     ForgotPasswordRequestDto,
     ResetPasswordrequestDto,
     userGoogleLoginRequestDto,
     resendOtpRequestDto,
-} from '@/Dto/request.dto';
+} from '@/dto/request.dto';
 import {
     MentorOtpVerificationRequestDto,
     MentorRegisterRequestDto,
-} from '@/Dto/mentorRequest.dto';
-import { userGoogleLoginResponseDto } from '@/Dto/response.dto';
+} from '@/dto/mentorRequest.dto';
+import { userGoogleLoginResponseDto } from '@/dto/response.dto';
 import { mentorStatus } from '@/types/mentor-status.types';
 import {
     ErrorMessages,

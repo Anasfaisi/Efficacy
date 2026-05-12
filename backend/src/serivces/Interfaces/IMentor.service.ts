@@ -1,5 +1,5 @@
 import { IMentor } from '@/models/Mentor.model';
-import { UpdateMentorProfileDto } from '@/Dto/mentorRequest.dto';
+import { UpdateMentorProfileDto } from '@/dto/mentorRequest.dto';
 
 export interface IMentorService {
     getMentorProfile(id: string): Promise<IMentor>;

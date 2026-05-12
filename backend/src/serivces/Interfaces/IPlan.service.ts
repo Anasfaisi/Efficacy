@@ -1,4 +1,4 @@
-import { createPlanResponseDto, createPlanRequestDto } from "@/Dto/plan.dto";
+import { createPlanResponseDto, createPlanRequestDto } from "@/dto/plan.dto";
 import { IPlan } from "@/models/Plan.model";
 import { FilterQuery } from "mongoose";
 

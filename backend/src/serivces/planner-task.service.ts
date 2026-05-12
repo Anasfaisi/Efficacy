@@ -1,17 +1,19 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable, multiInject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTask } from '@/models/PlannerTask.model';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';
 import { IPlannerTaskService } from './Interfaces/IPlannerTask.service';
 import { ErrorMessages } from '@/types/response-messages.types';
-import { emitGamificationEvent } from '@/utils/eventBus';
 import { GamificationEvent } from '@/types/gamification.types';
+import { ITaskGamificationHandleService } from './Gamification/interfaces/ITask-Gamification-handle.service';
 
 @injectable()
 export class PlannerTaskService implements IPlannerTaskService {
     constructor(
         @inject(TYPES.PlannerTaskRepository)
-        private _plannerTaskRepository: IPlannerTaskRepository
+        private _plannerTaskRepository: IPlannerTaskRepository,
+        @inject(TYPES.TaskGamificationHandler)
+        private _taskGamificationHandler: ITaskGamificationHandleService
     ) {}
 
     async createTask(taskData: Partial<IPlannerTask>): Promise<IPlannerTask> {
@@ -39,16 +41,13 @@ export class PlannerTaskService implements IPlannerTaskService {
         );
 
         if (taskData.completed === true && !wasCompleted) {
-            this.handleTaskCompletionGamification(userId).catch((err) =>
-                console.error('Gamification task hook failed:', err)
+            await this._taskGamificationHandler.processAction(
+                GamificationEvent.TASK_COMPLETED,
+                userId
             );
         }
 
         return updatedTask;
-    }
-
-    private async handleTaskCompletionGamification(userId: string) {
-        emitGamificationEvent(GamificationEvent.TASK_COMPLETED, { userId });
     }
 
     async deleteTask(taskId: string, userId: string): Promise<void> {

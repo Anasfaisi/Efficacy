@@ -154,7 +154,9 @@ export const ErrorMessages = {
         'You have reached the maximum limit of 3 bookings per week.',
     BookingDateOutsideMentorship:
         'Booking date must be within your active mentorship period.',
-    UserStatsNotFound : 'No user statistics found with the Id'
+    UserStatsNotFound : 'No user statistics found with the Id',
+    NoEvaluator: 'No evaluator found for the badge template',
+        BadgeCreationFailed : 'Due to technical issue failed to unlock the badge'
 };
 
 export interface joinRoomPayload {

@@ -4,7 +4,7 @@ import {
     MentorApplicationResponseDto,
     PaginatedMentorApplicationResponseDto,
     PaginatedMentorResponseDto,
-} from '@/Dto/mentorResponse.dto';
+} from '@/dto/mentorResponse.dto';
 import { IMentor } from '@/models/Mentor.model';
 import { TYPES } from '@/config/inversify-key.types';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
@@ -20,8 +20,8 @@ import { ITransaction } from '@/models/Wallet.model';
 import {
     UserManagementResponseDto,
     PaginatedUserResponseDto,
-} from '@/Dto/response.dto';
-import { UpdateUserStatusRequestDto } from '@/Dto/request.dto';
+} from '@/dto/response.dto';
+import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { NotificationMessages } from '@/types/response-messages.types';
 
 @injectable()

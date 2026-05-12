@@ -19,13 +19,16 @@ export const TYPES = {
     MentorshipService: Symbol('MentorshipService'),
     WalletService: Symbol('WalletService'),
     KanbanService: Symbol('KanbanService'),
-    GamificationService: Symbol('GamificationService'),
     BadgeService : Symbol('BadgeService'),
     PlanService: Symbol('PlanService'),
     NoteService: Symbol('NoteService'),
     DailyStreakCalculator: Symbol('DailyStreakCalculator'),
     TaskGamificationHandler: Symbol('TaskGamificationHandler'),
-
+    IBadgeEvaluator: Symbol('IBadgeEvaluator'),
+    IGamificationHandleService : Symbol('IGamificationHandleService'),
+    BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
+    BadgeGamficationService:Symbol('BadgeGamficationService'),
+    
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),
@@ -40,7 +43,7 @@ export const TYPES = {
     BadgeRepository: Symbol('BadgeRepository'),
     planRepository:Symbol('planRepository'),
     UserStatsRepository: Symbol('UserStatsRepository'),
-
+    UserBadgeRepository : Symbol('UserBadgeRepository'),
     
 
     AdminController: Symbol('AdminController'),

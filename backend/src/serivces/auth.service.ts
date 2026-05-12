@@ -18,7 +18,7 @@ import {
     ProfileResponseDto,
     RegisterInitResponseDto,
     userGoogleLoginResponseDto,
-} from '@/Dto/response.dto';
+} from '@/dto/response.dto';
 import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
@@ -29,7 +29,7 @@ import {
     resendOtpRequestDto,
     ResetPasswordrequestDto,
     userGoogleLoginRequestDto,
-} from '@/Dto/request.dto';
+} from '@/dto/request.dto';
 import { IAdmin } from '@/models/Admin.model';
 import {
     ErrorMessages,

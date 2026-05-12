@@ -85,11 +85,8 @@ import { ReviewRepository } from '@/repositories/review.repository';
 import { IReviewService } from '@/serivces/Interfaces/IReview.service';
 import { ReviewService } from '@/serivces/review.service';
 import { ReviewController } from '@/controllers/review.controller';
-import { GamificationService } from '@/serivces/gamification.service';
-import { IGamificationService } from '@/serivces/Interfaces/IGamification.service';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
 import { BadgeRepository } from '@/repositories/badge.repository';
-import { GamificationController} from '@/controllers/Gamification/gamification.controller';
 import { IPlanService } from '@/serivces/Interfaces/IPlan.service';
 import { PlanService } from '@/serivces/plan.service';
 import { IPlanRepository } from '@/repositories/interfaces/IPlan.repository';
@@ -102,6 +99,17 @@ import { IDailyStreakCalculator } from '@/serivces/Gamification/interfaces/IDail
 import { DailyStreakCalculator } from '@/serivces/Gamification/daily-streak-calculator.service';
 import { UserStatsRepository } from '@/repositories/Gamification/user-stats.repository';
 import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
+import { IBadgeEvaluator } from '@/serivces/Gamification/interfaces/IBadge-evaluator';
+import { TaskCountEvaluator } from '@/serivces/Gamification/task-count-evaluator.service';
+import { PomodoroEvaluator } from '@/serivces/Gamification/pomodoro-evaluator.service';
+import { BadgeTemplateResolverService } from '@/serivces/Gamification/badge-template-resolver.service';
+import { IBadgeTemplateResolverService } from '@/serivces/Gamification/interfaces/IBadge-template-resolver.service';
+import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
+import { UserBadgeRepository } from '@/repositories/Gamification/user-badge.repository';
+import { ITaskGamificationHandleService } from '@/serivces/Gamification/interfaces/ITask-Gamification-handle.service';
+import { TaskGamificationHandleService } from '@/serivces/Gamification/task-gamification-handle.service';
+import { BadgeGamificationService } from '@/serivces/Gamification/badge-gamification.service';
+import { IBadgeGamificationService } from '@/serivces/Gamification/interfaces/IBadge-gamification.service';
 
 export const container = new Container();
 
@@ -132,9 +140,6 @@ container
     .bind<BookingController>(TYPES.BookingController)
     .to(BookingController);
 container.bind<ReviewController>(TYPES.ReviewController).to(ReviewController);
-container
-    .bind<GamificationController>(TYPES.GamificationController)
-    .to(GamificationController);
 container.bind<PlanController>(TYPES.PlanController).to(PlanController);
 container.bind<BadgeController>(TYPES.BadgeController).to(BadgeController);
 
@@ -175,12 +180,18 @@ container
 container.bind<IWalletService>(TYPES.WalletService).to(WalletService);
 container.bind<IBookingService>(TYPES.BookingService).to(BookingService);
 container.bind<IReviewService>(TYPES.ReviewService).to(ReviewService);
-container
-    .bind<IGamificationService>(TYPES.GamificationService)
-    .to(GamificationService);
 container.bind<IPlanService>(TYPES.PlanService).to(PlanService);
 container.bind<IBadgeService>(TYPES.BadgeService).to(BadgeService);
-container.bind<IDailyStreakCalculator>(TYPES.DailyStreakCalculator).to(DailyStreakCalculator);
+container
+    .bind<IDailyStreakCalculator>(TYPES.DailyStreakCalculator)
+    .to(DailyStreakCalculator);
+container.bind<IBadgeEvaluator>(TYPES.IBadgeEvaluator).to(TaskCountEvaluator);
+container.bind<IBadgeEvaluator>(TYPES.IBadgeEvaluator).to(PomodoroEvaluator);
+container
+    .bind<IBadgeTemplateResolverService>(TYPES.BadgeTemplateResolverService)
+    .to(BadgeTemplateResolverService);
+container.bind<ITaskGamificationHandleService>(TYPES.TaskGamificationHandler).to(TaskGamificationHandleService)
+container.bind<IBadgeGamificationService>(TYPES.BadgeGamficationService).to(BadgeGamificationService)
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -217,5 +228,8 @@ container
     .bind<IBookingRepository>(TYPES.BookingRepository)
     .to(BookingRepository);
 container.bind<IReviewRepository>(TYPES.ReviewRepository).to(ReviewRepository);
-container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository)
-container.bind<IUserStatsRepository>(TYPES.UserStatsRepository).to(UserStatsRepository)
+container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository);
+container
+    .bind<IUserStatsRepository>(TYPES.UserStatsRepository)
+    .to(UserStatsRepository);
+container.bind<IUserBadgeRepository>(TYPES.UserBadgeRepository).to(UserBadgeRepository)

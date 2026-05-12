@@ -1,3 +1,5 @@
+import { BadgeEntity } from "@/entity/badge.entity";
+import { UserStatsEntity } from "@/entity/user-stats.entity";
 import { BadgeTemplate, GamificationEvent, IconType, Rarity } from "@/types/gamification.types";
 
 export interface CreateBadgeRequestDto{
@@ -14,7 +16,12 @@ export interface CreateBadgeRequestDto{
     rarity:Rarity;
  };
  triggerEvent:GamificationEvent;
- isHidden: boolean;
  isActive : boolean;
  createdBy : string;
+}
+
+
+export interface BadgeEvaluatorDto{
+ userStats: UserStatsEntity,
+ badge : BadgeEntity
 }

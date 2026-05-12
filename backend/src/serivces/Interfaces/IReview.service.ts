@@ -1,4 +1,4 @@
-import { ReviewResponseDto, CreateReviewRequestDto } from '@/Dto/review.dto';
+import { ReviewResponseDto, CreateReviewRequestDto } from '@/dto/review.dto';
 
 export interface IReviewService {
     submitReview(dto: CreateReviewRequestDto): Promise<ReviewResponseDto>;

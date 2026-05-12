@@ -4,7 +4,7 @@ import { number, string } from "zod";
 import { TYPES } from "@/config/inversify-key.types";
 import { IPlanRepository } from "@/repositories/interfaces/IPlan.repository";
 import { planMapper } from "@/Mapper/plan.mapper";
-import { createPlanRequestDto, createPlanResponseDto } from "@/Dto/plan.dto";
+import { createPlanRequestDto, createPlanResponseDto } from "@/dto/plan.dto";
 import { FilterQuery } from "mongoose";
 import { IPlan } from "@/models/Plan.model";
 
@@ -15,16 +15,16 @@ export class PlanService implements IPlanService{
     ){}
 
     async createPlan(data:createPlanRequestDto):Promise<createPlanResponseDto>{
-       let result = await this._planRepository.createPlan(data)
+       const result = await this._planRepository.createPlan(data)
         return planMapper.ToResponse(result)
     }
 
     async getAllPlans(page:number,limit:number,search?:string,status?:string):Promise<{data:createPlanResponseDto[],total:number}>{
-        let result = await this._planRepository.getAllPlans(page,limit,search,status)
+        const result = await this._planRepository.getAllPlans(page,limit,search,status)
         return { data: result.data.map(planMapper.ToResponse), total: result.total }
     }
     async getPlanById(planId:string):Promise<createPlanResponseDto>{
-        let result = await this._planRepository.getPlanById(planId)
+        const result = await this._planRepository.getPlanById(planId)
         if(!result){
             throw new Error("Plan not found")
         }

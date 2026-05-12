@@ -4,8 +4,8 @@ import {
     GetKanbanBoardRequestDto,
     reorderKanbanTaskRequestDto,
     updateKanbanTaskRequestDto,
-} from '@/Dto/request.dto';
-import { KanbanBoardResponseDto } from '@/Dto/response.dto';
+} from '@/dto/request.dto';
+import { KanbanBoardResponseDto } from '@/dto/response.dto';
 import { IKanbanRepository } from '@/repositories/interfaces/IKanban.repository';
 import { TYPES } from '@/config/inversify-key.types';
 import { inject, injectable } from 'inversify';
