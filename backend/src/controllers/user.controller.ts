@@ -119,7 +119,6 @@ export class UserController {
                     ? error.message
                     : ErrorMessages.LoginFailed;
             res.status(code.BAD_REQUEST).json({ message });
-            console.log(error);
         }
     }
 

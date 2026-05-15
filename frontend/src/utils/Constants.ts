@@ -21,3 +21,7 @@ export const BadgeMessages = {
     BadgeNotUpdated: 'Failed to update badge',
     BadgeNotDeleted: 'Failed to delete badge',
 };
+
+export const TimeContextMessages = {
+    ContextError: 'useTime must be used within a TimeProvider'
+}

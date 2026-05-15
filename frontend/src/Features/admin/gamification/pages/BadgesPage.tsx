@@ -87,7 +87,6 @@ export default function AdminBadgesPage() {
         if (currentPage > 1) {
             fetchBadges(currentPage);
         } else if (currentPage === 1 && badges.length > 0) {
-            // Already fetched initially, but if user goes back to 1 we might need it
             fetchBadges(1);
         }
     }, [currentPage]);
@@ -134,10 +133,8 @@ export default function AdminBadgesPage() {
                 badgeId,
                 !currentStatus
             );
-            console.log(result, "this is the reuslt")
             if (result.status) {
-                console.log("this is successfull response after toggling")
-                console.log(result.badge,"this is badges array over here")
+        
                 setBadges((prev) =>
                     prev.map((badge) =>
                         badge.id == badgeId ? result.badge : badge
@@ -145,7 +142,6 @@ export default function AdminBadgesPage() {
                 );
                 toast.success(BadgeMessages.BadgeUpdated);
             }
-            console.log(badges,"this is the badges after updating the badge array")
         } catch (error) {
             toast.error(BadgeMessages.BadgeNotUpdated);
         }
@@ -156,7 +152,6 @@ export default function AdminBadgesPage() {
         setFormState(badge);
         setIsFormOpen(true);
     };
-console.log(badges,"before the active and inactive badges assigning")
     const activeBadges = badges.filter((b) => b.isActive);
     const inactiveBadges = badges.filter((b) => !b.isActive);
 

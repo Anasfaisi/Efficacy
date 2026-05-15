@@ -23,3 +23,8 @@ export interface IPlannerTask {
     createdAt: string;
     updatedAt: string;
 }
+
+
+export interface TimeContextType{
+    currentTime : Date;
+}

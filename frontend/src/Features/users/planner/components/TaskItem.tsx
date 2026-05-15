@@ -6,12 +6,14 @@ import {
     Trash2,
     Pencil,
     Calendar,
+    ShieldAlert,
 } from 'lucide-react';
 import type { IPlannerTask } from '@/Features/users/planner/types';
 import { Priority } from '@/Features/users/planner/types';
 import { cn } from '@/lib/utils';
-import { format, differenceInHours } from 'date-fns';
+import { format, differenceInHours,differenceInMinutes } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { useTime } from '../context/TimeContext';
 
 interface TaskItemProps {
     task: IPlannerTask;
@@ -26,6 +28,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     onEdit,
     onDelete,
 }) => {
+    const {currentTime} = useTime();
     const getPriorityStyles = (priority: Priority) => {
         switch (priority) {
             case Priority.HIGH:
@@ -52,10 +55,16 @@ const TaskItem: React.FC<TaskItemProps> = ({
         }
     };
 
-    const duration = differenceInHours(
+    const duration = differenceInMinutes(
         new Date(task.endDate),
-        new Date(task.startDate)
+        currentTime
     );
+    const totalestimatedtime = differenceInMinutes(new Date(task.endDate), new Date(task.startDate))
+    const deadline = Math.floor(duration/ totalestimatedtime *100)
+    console.log(duration,"duration from the taskItem")
+    console.log(totalestimatedtime,"totalestimatedtime from the taskItem")
+    console.log(deadline,"deadline from the taskItem")
+    console.log(deadline+"%","deadline from the taskItem")
 
     return (
         <div
@@ -111,15 +120,29 @@ const TaskItem: React.FC<TaskItemProps> = ({
             {/* Time Analyzer */}
             <div className="flex items-center gap-3 px-4 py-1.5 rounded-xl bg-white/50 border border-white/20">
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <Hourglass className="w-4 h-4 text-amber-500 animate-pulse" />
+                    {!task.completed && duration < 0 ? (
+                        <ShieldAlert className="w-4 h-4 text-red-500" />
+                    ) : (
+                        <Hourglass className="w-4 h-4 text-amber-500 animate-pulse" />
+                    )}
                     <span className="text-xs font-bold text-gray-700">
-                        {duration > 0 ? `${duration}h` : '< 1h'}
+                        {!task.completed ? (
+                            duration < 0 ? (
+                                <span className="text-red-500">Overdue</span>
+                            ) : duration >= 60 ? (
+                                `${Math.floor(duration / 60)}h ${duration % 60}m`
+                            ) : (
+                                `${duration}m`
+                            )
+                        ) : (
+                            "Done"
+                        )}
                     </span>
                 </div>
                 <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                     <div
                         className="h-full bg-primary rounded-full transition-all duration-500"
-                        style={{ width: task.completed ? '100%' : '30%' }}
+                        style={{ width: task.completed ? '100%' : (!task.completed? '0%' : deadline+ '%') }}
                     />
                 </div>
             </div>
