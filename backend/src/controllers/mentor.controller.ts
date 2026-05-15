@@ -33,7 +33,6 @@ export class MentorController {
     }
 
     async menotrRegisterVerify(req: Request, res: Response) {
-        console.log('it is reaching in mentor controller');
         const { accessToken, refreshToken, user } =
             await this._mentorAuthService.mentorRegisterVerify(req.body);
 
@@ -66,7 +65,6 @@ export class MentorController {
 
     async logout(req: Request, res: Response) {
         try {
-            console.log('at the mentor logout route', req.cookies);
             const refreshToken = req.cookies.refreshToken;
             if (!refreshToken) {
                 throw new Error(AuthMessages.InvalidRefreshToken);
@@ -266,7 +264,6 @@ export class MentorController {
     }
 
     async forgotPassword(req: Request, res: Response) {
-        console.log('Mentor forgot password request received:', req.body);
         try {
             const result = await this._mentorAuthService.mentorForgotPassword(
                 req.body

@@ -82,7 +82,6 @@ export class AdminController {
     }
 
     async approveMentorApplication(req: Request, res: Response): Promise<void> {
-        console.log("it is reacing in admin controller in approve mentor application")
         const { id } = req.params;
         await this._adminService.approveMentorApplication(id);
         res.status(code.OK).json({

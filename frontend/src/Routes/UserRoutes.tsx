@@ -5,7 +5,7 @@ import { logout } from '@/redux/slices/authSlice';
 import { logoutApi } from '@/Services/user.api';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
 import SubscriptionPage from '@/Features/users/subscription/pages/SubscriptionPage';
-
+import TimeProvider from '@/Features/users/planner/context/TimeProvider';
 // Lazy load components
 const Home = lazy(() => import('../Features/users/home/pages/Home'));
 const SuccessPage = lazy(
@@ -20,7 +20,7 @@ const UserProfilePage = lazy(
     () => import('@/Features/users/profile/pages/UserProfilePage')
 );
 const TasksPage = lazy(
-    () => import('@/Features/users/KanbanBorad/pages/TasksPage')
+    () => import('@/Features/users/planner/pages/TasksPage')
 );
 const MentorListingPage = lazy(
     () => import('@/Features/users/mentors/pages/MentorListingPage')
@@ -89,7 +89,14 @@ const UserRoutes: React.FC = () => {
                     <Route path="profile" element={<UserProfilePage />} />
                     <Route path="profile/wallet" element={<UserWalletPage />} />
 
-                    <Route path="tasks" element={<TasksPage />} />
+                    <Route
+                        path="tasks"
+                        element={
+                            <TimeProvider>
+                                <TasksPage />
+                            </TimeProvider>
+                        }
+                    />
                     <Route path="mentors" element={<MentorListingPage />} />
                     <Route path="mentors/:id" element={<MentorDetailPage />} />
                     <Route

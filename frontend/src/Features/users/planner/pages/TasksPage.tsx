@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isToday, isAfter, isBefore, endOfDay } from 'date-fns';
+import TimeProvider from '../context/TimeProvider';
 
 const TasksPage: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -170,7 +171,8 @@ const TasksPage: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    return (
+    return (<>
+    <TimeProvider >
         <div className="min-h-screen flex bg-white">
             <Sidebar />
 
@@ -444,6 +446,8 @@ const TasksPage: React.FC = () => {
                 />
             )}
         </div>
+        </TimeProvider>
+        </>
     );
 };
 

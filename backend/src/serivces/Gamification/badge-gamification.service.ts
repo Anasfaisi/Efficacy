@@ -33,27 +33,25 @@ export class BadgeGamificationService implements IBadgeGamificationService {
         for (const badge of possibleBadges) {
             // first we need to check the if the user is already having the badge
             // for that now we want to create user badge for checking already occupied
+            //we need a badge resolver that would deliver the evaluator
+            // 1.construct a badge resolver interface and implementation calling evaluate method
+            // 2.evaluate method will accept a badge.template only            
+            // 3.It should return with an evaluator
+            //then we will call the evalutor.evaluate method,
+            // it will return boolean
+            //if unlocked call badge unlock
+            //so nammal badge.id ,userstats.userId ,pass aakunnu,todays date appo calcualte aakunnu aakunnu
+            //nnit avar userbadge update aakanm nothing returning ,
             const alreadyEarned = await this._userBadgeRepo.findExistingBadge(
                 badge.id,
                 userStats.userId
             );
             if (alreadyEarned) continue;
-            console.log(badge, userStats);
-            //we need a badge resolver that would deliver the evaluator
-            // 1.construct a badge resolver interface and implementation calling evaluate method
-            // 2.evaluate method will accept a badge.template only
-            // 3.It should return with an evaluator
             const evaluator = this._badgeTemplateResolver.resolve(
                 badge.template
             );
-
-            //then we will call the evalutor.evaluate method,
-            // it will return boolean
             const evaluatedValue = evaluator.evaulate({ userStats, badge });
 
-            //if unlocked call badge unlock
-            //so nammal badge.id ,userstats.userId ,pass aakunnu,todays date appo calcualte aakunnu aakunnu
-            //nnit avar userbadge update aakanm nothing returning ,
             if (evaluatedValue) await this.unlockBadge(badge, userStats.userId);
         }
     }
@@ -64,20 +62,17 @@ export class BadgeGamificationService implements IBadgeGamificationService {
     ): Promise<void> {
         //ivde namak vanna userid kk vanna userbadge update aaknm,
         //innatha date calculate aakan , unlocked date kodkaan
+                //userbadge repo method ezhudhanm
+                //event notifier ne vilikanm
         const alreadyEarned = await this._userBadgeRepo.findExistingBadge(
             badge.id,
             userId
         );
         if (alreadyEarned) return;
-        console.log(alreadyEarned)
         const newBadge = await this._userBadgeRepo.unlockBadge(
             badge.id,
             userId
         );
-        console.log(newBadge);
-
-        //userbadge repo method ezhudhanm
-        //event notifier ne vilikanm
 
         if (!newBadge) {
             throw new Error(ErrorMessages.BadgeCreationFailed);
@@ -88,6 +83,5 @@ export class BadgeGamificationService implements IBadgeGamificationService {
                 { badge: badge }
             );
         }
-        console.log('socket service activated');
     }
 }
