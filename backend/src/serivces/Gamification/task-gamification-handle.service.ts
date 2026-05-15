@@ -1,5 +1,5 @@
 import { GamificationEvent } from '@/types/gamification.types';
-import { IGamificationHandleService } from './interfaces/ITask-Gamification-handle.service';
+import { ITaskGamificationHandleService } from './interfaces/ITask-Gamification-handle.service';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
@@ -8,8 +8,9 @@ import { ErrorMessages } from '@/types/response-messages.types';
 import { IBadgeGamificationService } from './interfaces/IBadge-gamification.service';
 @injectable()
 export class TaskGamificationHandleService
-    implements IGamificationHandleService
+    implements ITaskGamificationHandleService
 {
+    
     constructor(
         @inject(TYPES.UserStatsRepository)
         private _userStatsRepo: IUserStatsRepository,

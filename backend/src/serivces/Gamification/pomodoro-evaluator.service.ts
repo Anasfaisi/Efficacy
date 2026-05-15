@@ -3,7 +3,7 @@ import { IBadgeEvaluator } from './interfaces/IBadge-evaluator';
 import { BadgeEvaluatorDto } from '@/dto/badge-request.dto';
 
 export class PomodoroEvaluator implements IBadgeEvaluator {
-    public readonly badgeTemplateEvent: BadgeTemplate.POMODORO_COUNT
+    public readonly badgeTemplateEvent: BadgeTemplate.POMODORO_COUNT = BadgeTemplate.POMODORO_COUNT
     constructor(
     ) {}
     evaulate(data: BadgeEvaluatorDto): boolean {

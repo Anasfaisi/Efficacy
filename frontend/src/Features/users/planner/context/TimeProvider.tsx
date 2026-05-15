@@ -9,6 +9,7 @@ const TimeProvider = ({ children }: { children: React.ReactNode }) => {
         const interval = setInterval(() => {
             setTime(new Date())
         }, 60000);
+        console.log("hi")
         return () => clearInterval(interval);
     }, []);
 
