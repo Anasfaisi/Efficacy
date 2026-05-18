@@ -110,6 +110,8 @@ import { ITaskGamificationHandleService } from '@/serivces/Gamification/interfac
 import { TaskGamificationHandleService } from '@/serivces/Gamification/task-gamification-handle.service';
 import { BadgeGamificationService } from '@/serivces/Gamification/badge-gamification.service';
 import { IBadgeGamificationService } from '@/serivces/Gamification/interfaces/IBadge-gamification.service';
+import { IPomodoroGamification } from '@/serivces/Gamification/interfaces/IPomodoro-gamification.service';
+import { PomodoroGamificationService } from '@/serivces/Gamification/pomodoro-gamification.service';
 
 export const container = new Container();
 
@@ -190,8 +192,16 @@ container.bind<IBadgeEvaluator>(TYPES.IBadgeEvaluator).to(PomodoroEvaluator);
 container
     .bind<IBadgeTemplateResolverService>(TYPES.BadgeTemplateResolverService)
     .to(BadgeTemplateResolverService);
-container.bind<ITaskGamificationHandleService>(TYPES.TaskGamificationHandler).to(TaskGamificationHandleService)
-container.bind<IBadgeGamificationService>(TYPES.BadgeGamficationService).to(BadgeGamificationService)
+container
+    .bind<ITaskGamificationHandleService>(TYPES.TaskGamificationHandler)
+    .to(TaskGamificationHandleService);
+container
+    .bind<IBadgeGamificationService>(TYPES.BadgeGamficationService)
+    .to(BadgeGamificationService);
+container
+    .bind<IPomodoroGamification>(TYPES.PomodoroGamificationService)
+    .to(PomodoroGamificationService);
+    
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
@@ -232,4 +242,6 @@ container.bind<IPlanRepository>(TYPES.planRepository).to(planRepository);
 container
     .bind<IUserStatsRepository>(TYPES.UserStatsRepository)
     .to(UserStatsRepository);
-container.bind<IUserBadgeRepository>(TYPES.UserBadgeRepository).to(UserBadgeRepository)
+container
+    .bind<IUserBadgeRepository>(TYPES.UserBadgeRepository)
+    .to(UserBadgeRepository);

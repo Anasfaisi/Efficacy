@@ -116,7 +116,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
         onSessionComplete(duration, mode);
 
         if (mode === 'pomodoro') {
-            onSessionComplete(duration, mode);
             setMode('shortBreak');
             setTimeLeft(settings.shortBreak * 60);
             if (settings.autoStartBreaks) {

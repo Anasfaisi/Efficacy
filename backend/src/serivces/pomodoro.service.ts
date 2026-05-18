@@ -6,17 +6,17 @@ import { IPomodoroRepository } from '@/repositories/interfaces/IPomodoro.reposit
 import { UserStats } from '@/models/UserStats.model';
 import { emitGamificationEvent } from '@/utils/eventBus';
 import { GamificationEvent } from '@/types/gamification.types';
+import { IPomodoroGamificationService } from './Gamification/interfaces/IPomodoro-gamification.service';
 
 @injectable()
 export class PomodoroService implements IPomodoroService {
-    private pomodoroRepository: IPomodoroRepository;
 
     constructor(
         @inject(TYPES.PomodoroRepository)
-        pomodoroRepository: IPomodoroRepository
-    ) {
-        this.pomodoroRepository = pomodoroRepository;
-    }
+        private _pomodoroRepository: IPomodoroRepository,
+        @inject(TYPES.PomodoroGamificationService)
+        private _pomodoroGamificationService :IPomodoroGamificationService
+    ) {}
 
     async logSession(
         userId: string,
@@ -28,21 +28,18 @@ export class PomodoroService implements IPomodoroService {
 
         const startTime = new Date(now.getTime() - duration * 1000);
 
-        const log = await this.pomodoroRepository.addSession(userId, date, {
+        const log = await this._pomodoroRepository.addSession(userId, date, {
             duration,
             type: type as 'pomodoro' | 'shortBreak' | 'longBreak',
             startTime,
             endTime: now,
         });
-
+        console.log("it is coming 1")
         if (type === 'pomodoro') {
-            this.handlePomodoroCompletionGamification(
-                userId,
-                Math.floor(duration / 60)
-            ).catch((err) =>
-                console.error('Gamification pomodoro hook failed:', err)
-            );
+            // here we pass userid and gamification event instead of focus time
+            await this._pomodoroGamificationService.handlePomodoroCompletion(GamificationEvent.POMODORO_COMPLETED,userId)
         }
+
 
         return log;
     }
@@ -72,6 +69,6 @@ export class PomodoroService implements IPomodoroService {
     }
 
     async getStats(userId: string, date: string): Promise<IPomodoroLog | null> {
-        return this.pomodoroRepository.findByDate(userId, date);
+        return this._pomodoroRepository.findByDate(userId, date);
     }
 }
