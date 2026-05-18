@@ -47,7 +47,7 @@ const Sidebar = () => {
         },
         {
             icon: <Timer size={20} />,
-            label: 'Pomodoro Timer',
+            label: 'Pomodoro',
             to: '/pomodoro',
             color: '#f87171',
         },

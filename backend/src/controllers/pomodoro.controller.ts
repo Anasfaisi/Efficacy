@@ -7,13 +7,10 @@ import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PomodoroController {
-    private pomodoroService: IPomodoroService;
 
     constructor(
-        @inject(TYPES.PomodoroService) pomodoroService: IPomodoroService
-    ) {
-        this.pomodoroService = pomodoroService;
-    }
+        @inject(TYPES.PomodoroService) private _pomodoroService: IPomodoroService
+    ) {}
 
     public logSession = async (req: Request, res: Response): Promise<void> => {
         const userId = req.currentUser!.id;
@@ -26,7 +23,7 @@ export class PomodoroController {
             return;
         }
 
-        const updatedLog = await this.pomodoroService.logSession(userId, {
+        const updatedLog = await this._pomodoroService.logSession(userId, {
             duration,
             type,
         });
@@ -47,7 +44,7 @@ export class PomodoroController {
             return;
         }
 
-        const stats = await this.pomodoroService.getStats(userId, date);
+        const stats = await this._pomodoroService.getStats(userId, date);
         res.status(code.OK).json(
             stats || {
                 date,

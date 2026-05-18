@@ -1,26 +1,22 @@
-import { GamificationEvent } from '@/types/gamification.types';
-import { ITaskGamificationHandleService } from './interfaces/ITask-Gamification-handle.service';
 import { inject, injectable } from 'inversify';
+import { IPomodoroGamificationService } from './interfaces/IPomodoro-gamification.service';
 import { TYPES } from '@/config/inversify-key.types';
 import { IUserStatsRepository } from '@/repositories/Gamification/interfaces/IUser-stats.repository';
+import { GamificationEvent } from '@/types/gamification.types';
 import { IDailyStreakCalculator } from './interfaces/IDaily-streak-calculator.service';
 import { ErrorMessages } from '@/types/response-messages.types';
 import { IBadgeGamificationService } from './interfaces/IBadge-gamification.service';
 @injectable()
-export class TaskGamificationHandleService
-    implements ITaskGamificationHandleService
-{
-    
+export class PomodoroGamificationService implements IPomodoroGamificationService {
     constructor(
         @inject(TYPES.UserStatsRepository)
         private _userStatsRepo: IUserStatsRepository,
         @inject(TYPES.DailyStreakCalculator)
-        private _dailyStreakCalculator: IDailyStreakCalculator,
-        @inject(TYPES.BadgeGamficationService) 
-        private _badgeGamficationService: IBadgeGamificationService,
+        private _dailyStreakCalc: IDailyStreakCalculator,
+        @inject(TYPES.BadgeGamficationService)
+        private _badgeGamificationService: IBadgeGamificationService
     ) {}
-
-    async processAction(
+    async handlePomodoroCompletion(
         event: GamificationEvent,
         userId: string
     ): Promise<void> {
@@ -30,17 +26,17 @@ export class TaskGamificationHandleService
                 userId: userId,
                 lastActivityDate: new Date(),
             });
-        stats.tasksCompleted += 1;
+        stats.pomodorosCompleted += 1;
 
-        const updatedStats =
-            await this._dailyStreakCalculator.calculateDailyStreak(stats);
-
+        const streakUpdate = await this._dailyStreakCalc.calculateDailyStreak(stats);
         const savedStats = await this._userStatsRepo.UpdateUserStats(
-            updatedStats.id,
-            updatedStats
+            streakUpdate.id,
+            streakUpdate
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
- 
-        await this._badgeGamficationService.evaluate(event,savedStats)
+
+                console.log("it is coming 2")
+
+        await this._badgeGamificationService.evaluate(event,savedStats);
     }
 }

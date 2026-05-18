@@ -28,6 +28,7 @@ export const TYPES = {
     IGamificationHandleService : Symbol('IGamificationHandleService'),
     BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
     BadgeGamficationService:Symbol('BadgeGamficationService'),
+    PomodoroGamificationService : Symbol('PomodoroGamificationService'),
     
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
