@@ -6,6 +6,7 @@ import { logoutApi } from '@/Services/user.api';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
 import SubscriptionPage from '@/Features/users/subscription/pages/SubscriptionPage';
 import TimeProvider from '@/Features/users/planner/context/TimeProvider';
+import Achievements from '@/Features/users/achievements/Achievements';
 // Lazy load components
 const Home = lazy(() => import('../Features/users/home/pages/Home'));
 const SuccessPage = lazy(
@@ -84,11 +85,6 @@ const UserRoutes: React.FC = () => {
 
                     <Route path="success" element={<SuccessPage />} />
                     <Route path="failed" element={<CancelPage />} />
-
-                    <Route path="chat" element={<ChatPage />} />
-                    <Route path="profile" element={<UserProfilePage />} />
-                    <Route path="profile/wallet" element={<UserWalletPage />} />
-
                     <Route
                         path="tasks"
                         element={
@@ -97,24 +93,39 @@ const UserRoutes: React.FC = () => {
                             </TimeProvider>
                         }
                     />
-                    <Route path="mentors" element={<MentorListingPage />} />
-                    <Route path="mentors/:id" element={<MentorDetailPage />} />
-                    <Route
-                        path="my-mentorships"
-                        element={<MyMentorshipsPage />}
-                    />
-                    <Route
-                        path="mentorship/:id"
-                        element={<MentorshipManagementPage />}
-                    />
-                    <Route
-                        path="booking-history"
-                        element={<BookingHistoryPage />}
-                    />
-                    <Route path="planner" element={<PlannerPage />} />
-                    <Route path="pomodoro" element={<PomodoroPage />} />
-                    <Route path="notes" element={<NotesPage />} />
-                    <Route path="subscription" element={<SubscriptionPage/>} />
+
+                        <Route path="chat" element={<ChatPage />} />
+                        <Route path="profile" element={<UserProfilePage />} />
+                        <Route
+                            path="profile/wallet"
+                            element={<UserWalletPage />}
+                        />
+
+                        <Route path="mentors" element={<MentorListingPage />} />
+                        <Route
+                            path="mentors/:id"
+                            element={<MentorDetailPage />}
+                        />
+                        <Route
+                            path="my-mentorships"
+                            element={<MyMentorshipsPage />}
+                        />
+                        <Route
+                            path="mentorship/:id"
+                            element={<MentorshipManagementPage />}
+                        />
+                        <Route
+                            path="booking-history"
+                            element={<BookingHistoryPage />}
+                        />
+                        <Route path="planner" element={<PlannerPage />} />
+                        <Route path="pomodoro" element={<PomodoroPage />} />
+                        <Route path="notes" element={<NotesPage />} />
+                        <Route
+                            path="subscription"
+                            element={<SubscriptionPage />}
+                        />
+                        <Route path="achievements" element={<Achievements />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </Suspense>
