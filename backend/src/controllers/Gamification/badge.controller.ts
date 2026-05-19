@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import Code from '@/types/http-status.enum';
 import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
+import { ErrorMessages } from '@/types/response-messages.types';
 @injectable()
 export class BadgeController {
     constructor(
@@ -55,5 +56,18 @@ export class BadgeController {
         const status = req.body.status;
         const result = await this._badgeService.toggleBadgeStatus(badgeId,status)
         res.status(Code.OK).json({status:true,badge:result})
+    }
+
+    async getUserBadges(req:Request,res:Response){
+        const userId = req.currentUser?.id
+     if (!userId) {
+            res.status(Code.UNAUTHORIZED).json({
+                message: ErrorMessages.UserNotFound,
+
+            });
+            return
+        }
+        const result = await this._badgeService.getUserBadges(userId)
+        res.status(Code.OK).json({status:true,badges:result})
     }
 }

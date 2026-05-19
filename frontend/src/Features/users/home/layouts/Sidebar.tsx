@@ -81,12 +81,12 @@ const Sidebar = () => {
             color: '#7F00FF',
         },
 
-        // {
-        //     icon: <Trophy size={20} />,
-        //     label: 'Conqueror',
-        //     to: '#',
-        //     color: '#FFC107',
-        // },
+        {
+            icon: <Trophy size={20} />,
+            label: 'Achievements',
+            to: '/achievements',
+            color: '#FFC107',
+        },
         {
             icon:<CreditCard size={20} />,
             label: 'Subscription',

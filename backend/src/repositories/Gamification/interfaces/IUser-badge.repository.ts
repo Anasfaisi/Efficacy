@@ -1,3 +1,4 @@
+import { UserBadgeEntity } from '@/entity/user-badge.entity';
 import { IUserBadge } from '@/models/UserBadge.model';
 
 export interface IUserBadgeRepository {
@@ -6,4 +7,5 @@ export interface IUserBadgeRepository {
         badgeId: string,
         userId: string,
     ): Promise<IUserBadge | null>;
+    getAllBadges(userId:string):Promise<UserBadgeEntity[]>
 }

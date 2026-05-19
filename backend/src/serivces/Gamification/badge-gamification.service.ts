@@ -29,7 +29,6 @@ export class BadgeGamificationService implements IBadgeGamificationService {
         const possibleBadges = await this._badgeRepository.findBadges({
             triggerEvent: event,
         });
-        console.log("it is coming 3")
 
         for (const badge of possibleBadges) {
             // first we need to check the if the user is already having the badge
@@ -51,7 +50,6 @@ export class BadgeGamificationService implements IBadgeGamificationService {
             const evaluator = this._badgeTemplateResolver.resolve(
                 badge.template
             );
-            console.log(badge,"4")
             const evaluatedValue = evaluator.evaulate({ userStats, badge });
 
             if (evaluatedValue) await this.unlockBadge(badge, userStats.userId);
@@ -75,7 +73,6 @@ export class BadgeGamificationService implements IBadgeGamificationService {
             badge.id,
             userId
         );
-        console.log(newBadge,"5")
         if (!newBadge) {
             throw new Error(ErrorMessages.BadgeCreationFailed);
         } else {

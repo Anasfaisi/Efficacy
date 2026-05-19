@@ -11,13 +11,14 @@ export interface Badge {
         imageUrl?: string;
         primaryColor: string;
         bgColor: string;
-        rarity: typeof Rarity;
+        rarity: keyof typeof Rarity;
     };
     triggerEvent: string;
     isHidden: boolean;
     isActive: boolean;
     createdAt?: string;
     updatedAt?: string;
+    isUnlocked?:boolean
 }
 
 
@@ -43,4 +44,17 @@ UNCOMMON : 'UNCOMMON',
 RARE : 'RARE',
 EPIC : 'EPIC',
 LEGENDARY : 'LEGENDARY',
+}
+
+
+export interface UserBadge{
+    userId : string;
+    badgeId : string;
+    badge : Badge;
+    currentStreak : number;
+    totalEarned : number;
+    unlockedAt : string;
+    createdAt : string;
+    updatedAt : string;
+    isUnlocked ?: boolean;
 }

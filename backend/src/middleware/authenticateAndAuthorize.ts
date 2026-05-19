@@ -7,7 +7,7 @@ const authenticateAndAuthorize = (
 ) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.cookies?.accessToken;
-
+console.log("it is coming here")
         if (!token) {
             res.status(403).json({ message: 'Unauthorized' });
             return;
@@ -16,7 +16,7 @@ const authenticateAndAuthorize = (
         const currentUser = _tokenService.verifyAccessToken(token);
         req.currentUser = currentUser;
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
-
+         console.log(currentUser,allowedRoles,'=-=======')
         if (
             allowedRoles.length > 0 &&
             (!req.currentUser || !allowedRoles.includes(req.currentUser.role))
