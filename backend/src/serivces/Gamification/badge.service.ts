@@ -5,13 +5,16 @@ import { inject, injectable } from 'inversify';
 import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
 import { TYPES } from '@/config/inversify-key.types';
 import { BadgeMapper } from '@/Mapper/badge.mapper';
+import { UserBadgeEntity } from '@/entity/user-badge.entity';
+import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
 
 
 @injectable()
 export class BadgeService implements IBadgeService {
     constructor(
         @inject(TYPES.BadgeRepository)
-        private _badgeRepository: IBadgeRepository
+        private _badgeRepository: IBadgeRepository,
+        @inject(TYPES.UserBadgeRepository) private _userBadgeRepository : IUserBadgeRepository
     ) {}
     async createBadge(
         badgeData: CreateBadgeRequestDto
@@ -41,6 +44,10 @@ export class BadgeService implements IBadgeService {
     async toggleBadgeStatus(badgeId: string, status: boolean): Promise<CreateBadgeResponseDto> {
         const result =  await this._badgeRepository.update(badgeId, {isActive:status});
         return BadgeMapper.ToResponseDto(result);
+    }
+
+    async getUserBadges(userId:string):Promise<UserBadgeEntity[]>{
+        return await this._userBadgeRepository.getAllBadges(userId)
     }
 
 }

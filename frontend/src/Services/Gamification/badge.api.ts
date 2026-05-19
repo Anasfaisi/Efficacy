@@ -43,4 +43,3 @@ export const badgeApi = {
         return response.data;
     },
 };
-``
