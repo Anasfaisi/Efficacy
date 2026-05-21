@@ -144,4 +144,14 @@ export class WalletController {
         });
         res.status(code.OK).json(result);
     }
+
+    async verifyStripeStatus(req: Request, res: Response): Promise<void> {
+        const mentorId = req.currentUser?.id;
+        if (!mentorId) {
+            res.status(code.NOT_FOUND);
+            return;
+        }
+        const result = await this._walletService.verifyStripeStatus(mentorId);
+        res.status(code.OK).json(result);
+    }
 }

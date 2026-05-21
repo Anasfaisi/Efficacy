@@ -24,4 +24,5 @@ export interface IWalletService {
     ): Promise<IWallet>;
     getTransactions(mentorId: string | ObjectId): Promise<ITransaction[]>;
     createStripeConnect(data: createStripeConnectReqDto): Promise<string>;
+    verifyStripeStatus(mentorId: string): Promise<{ onboarded: boolean; email?: string | null }>;
 }

@@ -139,7 +139,7 @@ export class PaymentService implements IPaymentService {
                     customerEmail!,
                     {
                         id: subscriptionId,
-                        status: subscription.status,
+                        status: subscription.status as any,
                         priceId: subscription.items.data[0]?.price?.id,
                         current_period_end: endDate,
                     }
@@ -148,6 +148,29 @@ export class PaymentService implements IPaymentService {
         }
     }
 
-   
+    async transferToConnectAccount(accountId: string, amount: number): Promise<string> {
+        const transfer = await this._stripe.transfers.create({
+            amount: Math.round(amount * 100), // Convert INR rupees to paise (cents)
+            currency: 'inr',
+            destination: accountId,
+        });
+        return transfer.id;
+    }
+
+    async refundStripePayment(sessionId: string, amount: number): Promise<string> {
+        const session = await this._stripe.checkout.sessions.retrieve(sessionId);
+        const paymentIntentId = session.payment_intent as string;
+
+        if (!paymentIntentId) {
+            throw new Error("No Payment Intent found for this session.");
+        }
+
+        const refund = await this._stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            amount: Math.round(amount * 100), // Convert to paise
+        });
+
+        return refund.id;
+    }
 }
 

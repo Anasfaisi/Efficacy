@@ -116,7 +116,6 @@ export class WalletService implements IWalletService {
             },
             metadata: { mentorId: data.mentorId },
         });
-console.log("account , ",account)
       await  this._walletRepository.updateStripeConnectId(data.mentorId, account.id);
 
       return await   this.configureStripeConnectLink(account.id)
@@ -134,5 +133,24 @@ console.log("account , ",account)
         });
         console.log(accountLink,"account link from wallet service0")
         return accountLink.url;
+    }
+
+    async verifyStripeStatus(mentorId: string): Promise<{ onboarded: boolean; email?: string | null }> {
+        const wallet = await this.getWallet(mentorId);
+        if (!wallet || !wallet.stripeConnectAccountId) {
+            return { onboarded: false };
+        }
+
+        const account = await this._stripe.accounts.retrieve(wallet.stripeConnectAccountId);
+
+        if (account.details_submitted) {
+            wallet.stripeConnectOnboarded = true;
+            await this._walletRepository.update(wallet._id as string, wallet);
+        }
+
+        return {
+            onboarded: wallet.stripeConnectOnboarded || false,
+            email: account.email
+        };
     }
 }

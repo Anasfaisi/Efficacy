@@ -33,7 +33,7 @@ export class TokenService implements ITokenService {
         };
     }
 
-    verifyRefreshToken(refreshToken: string): { id: string; role: Role } {
+    verifyRefreshToken(refreshToken: string): { id: string; role: Role; email: string } {
         return jwt.verify(refreshToken, this._refreshTokenSecret) as {
             id: string;
             role: Role;

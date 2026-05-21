@@ -19,6 +19,7 @@ export class BadgeService implements IBadgeService {
     async createBadge(
         badgeData: CreateBadgeRequestDto
     ): Promise<CreateBadgeResponseDto> {
+        //needed a mapped badge to give to badge repo
         const Badge = await this._badgeRepository.create(badgeData);
         return BadgeMapper.ToResponseDto(Badge);
     }
@@ -32,17 +33,22 @@ export class BadgeService implements IBadgeService {
     }
 
     async getBadgeById(badgeId: string): Promise<CreateBadgeResponseDto> {
-        return await this._badgeRepository.findById(badgeId);
+        const badge = await this._badgeRepository.findById(badgeId);
+        if (!badge) throw new Error("Badge not found");
+        return BadgeMapper.ToResponseDto(badge);
     }
 
     async updateBadge(
         badgeId: string,
         badgeData: CreateBadgeRequestDto
     ): Promise<CreateBadgeResponseDto> {
-        return await this._badgeRepository.update(badgeId, badgeData);
+        const result = await this._badgeRepository.update(badgeId, badgeData);
+        if (!result) throw new Error("Badge not found");
+        return BadgeMapper.ToResponseDto(result);
     }
     async toggleBadgeStatus(badgeId: string, status: boolean): Promise<CreateBadgeResponseDto> {
         const result =  await this._badgeRepository.update(badgeId, {isActive:status});
+        if (!result) throw new Error("Badge not found");
         return BadgeMapper.ToResponseDto(result);
     }
 

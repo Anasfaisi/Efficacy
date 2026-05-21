@@ -46,7 +46,7 @@ export default function WalletRoutes(
     router.get(
         '/stripe-status',
         authenticateAndAuthorize(tokenService,[Role.Mentor]),
-        // asyncWrapper(walletController.verifyStripeStatus.bind(walletController))
+        asyncWrapper(walletController.verifyStripeStatus.bind(walletController))
     )
 
     return router

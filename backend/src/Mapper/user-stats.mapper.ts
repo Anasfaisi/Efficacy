@@ -3,7 +3,7 @@ import { IUserStats } from "@/models/UserStats.model";
 import { Types } from "mongoose";
 
 export class UserStatsMapper {
- static toPersistence(data : UserStatsEntity):Partial<IUserStats>{
+ static toPersistence(data :Partial<UserStatsEntity>):Partial<IUserStats>{
     return{
         id:data.id,
         userId:new Types.ObjectId(data.userId),
