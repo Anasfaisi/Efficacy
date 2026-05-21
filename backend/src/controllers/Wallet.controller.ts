@@ -138,7 +138,7 @@ export class WalletController {
             res.status(code.NOT_FOUND);
             return;
         }
-        const result = this._walletService.createStripeConnect({
+        const result = await this._walletService.createStripeConnect({
             email,
             mentorId,
         });

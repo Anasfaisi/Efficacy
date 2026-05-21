@@ -125,12 +125,14 @@ console.log("account , ",account)
     private async configureStripeConnectLink(
         accountId: string
     ): Promise<string> {
+        console.log("account Id : ",accountId)
         const accountLink = await this._stripe.accountLinks.create({
             account: accountId,
             refresh_url: process.env.FRONTEND_URL+'/mentor/wallet?refresh=true',
             return_url: process.env.FRONTEND_URL+'/mentor/wallet?success=true',
             type: 'account_onboarding',
         });
+        console.log(accountLink,"account link from wallet service0")
         return accountLink.url;
     }
 }
