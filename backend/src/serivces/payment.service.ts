@@ -7,6 +7,9 @@ import { ResponsePaymentDto } from '@/dto/response.dto';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { IMentorshipService } from './Interfaces/IMentorship.service';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { IMentorship } from '@/models/Mentorship.model';
+import { MentorEntity } from '@/entity/mentor.entity';
+import { UserEntity } from '@/entity/user.entity';
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -21,20 +24,20 @@ export class PaymentService implements IPaymentService {
         });
     }
 
-    async createCheckoutSession(
-        dto: RequestPaymentDto
-    ): Promise<ResponsePaymentDto> {
-        const session = await this._stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            mode: 'subscription',
-            line_items: [{ price: dto.priceId, quantity: 1 }],
-            success_url: dto.successUrl,
-            cancel_url: dto.cancelUrl,
-            customer_email: (await this._userRepository.findById(dto.userId))
-                ?.email,
-        });
-        return new ResponsePaymentDto(session.id, session.url!);
-    }
+    // async createCheckoutSession(
+    //     dto: RequestPaymentDto
+    // ): Promise<ResponsePaymentDto> {
+    //     const session = await this._stripe.checkout.sessions.create({
+    //         payment_method_types: ['card'],
+    //         mode: 'subscription',
+    //         line_items: [{ price: dto.priceId, quantity: 1 }],
+    //         success_url: dto.successUrl,
+    //         cancel_url: dto.cancelUrl,
+    //         customer_email: (await this._userRepository.findById(dto.userId))
+    //             ?.email,
+    //     });
+    //     return new ResponsePaymentDto(session.id, session.url!);
+    // }
 
     async verifyCheckoutSession(
         sessionId: string
@@ -65,7 +68,7 @@ export class PaymentService implements IPaymentService {
                         currency: 'inr',
                         product_data: {
                             name: 'Mentorship Session',
-                            description: `1 Month Mentorship with ${((mentorship.mentorId as any)._id || mentorship.mentorId).toString()}`,
+                            description: `1 Month Mentorship with ${((mentorship.mentorId as unknown as MentorEntity).id || mentorship.mentorId).toString()}`,
                         },
                         unit_amount: mentorship.amount * 100,
                     },
@@ -81,7 +84,7 @@ export class PaymentService implements IPaymentService {
             customer_email: (
                 await this._userRepository.findById(
                     (
-                        (mentorship.userId as any)._id || mentorship.userId
+                        (mentorship.userId as unknown as UserEntity).id || mentorship.userId
                     ).toString()
                 )
             )?.email,
@@ -144,4 +147,7 @@ export class PaymentService implements IPaymentService {
             }
         }
     }
+
+   
 }
+

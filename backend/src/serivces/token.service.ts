@@ -1,26 +1,22 @@
 import jwt from 'jsonwebtoken';
-import { ITokenService } from './Interfaces/IToken.service';
+import { ITokenService, JwtPayload } from './Interfaces/IToken.service';
 import { Types } from 'mongoose';
 import { Role } from '@/types/role.types';
 import { injectable } from 'inversify';
-export interface JwtPayload {
-    id: string;
-    role?: Role;
-    email?: string;
-}
+
 @injectable()
 export class TokenService implements ITokenService {
     private _accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET!;
     private _refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET!;
 
-    generateAccessToken(userId: string, role: Role): string {
-        return jwt.sign({ id: userId, role }, this._accessTokenSecret, {
+    generateAccessToken(userId: string, role: Role ,email:string): string {
+        return jwt.sign({ id: userId, role, email }, this._accessTokenSecret, {
             expiresIn: '1d',
         });
     }
 
-    generateRefreshToken(userId: string, role: Role): string {
-        return jwt.sign({ id: userId, role }, this._refreshTokenSecret, {
+    generateRefreshToken(userId: string, role: Role ,email :string): string {
+        return jwt.sign({ id: userId, role ,email}, this._refreshTokenSecret, {
             expiresIn: '14d',
         });
     }
@@ -41,6 +37,7 @@ export class TokenService implements ITokenService {
         return jwt.verify(refreshToken, this._refreshTokenSecret) as {
             id: string;
             role: Role;
+            email: string
         };
     }
 

@@ -30,12 +30,14 @@ export class AdminAuthService implements IAdminAuthService {
         if (!isMatch) throw new Error(ErrorMessages.InvalidCredentials);
         const accessToken = this._tokenService.generateAccessToken(
             admin.id,
-            admin.role
+            admin.role,
+            admin.email
         );
 
         const refreshToken = this._tokenService.generateRefreshToken(
             admin.id,
-            admin.role
+            admin.role,
+            admin.email
         );
         return new AdminLoginRespondseDto(
             {

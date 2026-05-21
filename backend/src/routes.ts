@@ -28,6 +28,8 @@ import planRoutes from './routes/plan.routes';
 import { BadgeController } from './controllers/Gamification/badge.controller';
 import { ITokenService } from './serivces/Interfaces/IToken.service';
 import BadgeRoutes from './routes/Gamification/badge.routes';
+import { WalletController } from './controllers/Wallet.controller';
+import WalletRoutes from './routes/wallet.routes';
 
 export function applyRoutes(app: Express) {
     const adminController = container.get<AdminController>(
@@ -63,6 +65,10 @@ export function applyRoutes(app: Express) {
     const badgeController = container.get<BadgeController>(
         TYPES.BadgeController
     );
+     const walletController = container.get<WalletController>(
+        TYPES.WalletController
+    );
+
     const tokenService = container.get<ITokenService>(TYPES.TokenService);
     app.use('/api', userRoutes(userController));
     app.use('/api/admin', adminRoutes(adminController));
@@ -80,5 +86,6 @@ export function applyRoutes(app: Express) {
     app.use('/api/reviews', reviewRoutes(reviewController));
     app.use('/api/badge', BadgeRoutes(badgeController, tokenService));
     app.use('/api/plan', planRoutes(planController));
+    app.use('/api/wallet',WalletRoutes(walletController,tokenService))
 
 }

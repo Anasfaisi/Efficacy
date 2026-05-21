@@ -22,6 +22,8 @@ import {
     CommonMessages,
     NotificationMessages,
 } from '@/types/response-messages.types';
+import { MentorEntity } from '@/entity/mentor.entity';
+import { UserEntity } from '@/entity/user.entity';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -248,7 +250,7 @@ export class MentorshipService implements IMentorshipService {
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as any)?._id?.toString();
+                : (mentorship.mentorId as unknown as MentorEntity).id?.toString();
         await this._adminRepository.addRevenue(adminShare);
         await this._walletRepository.creditPendingBalance(
             currentMentorId as string,
@@ -261,7 +263,7 @@ export class MentorshipService implements IMentorshipService {
         const currentUserId =
             mentorship.userId instanceof Types.ObjectId
                 ? mentorship.userId.toString()
-                : (mentorship.userId as any)?._id?.toString();
+                : (mentorship.userId as unknown as UserEntity)?.id?.toString();
         await this._notificationService.createNotification(
             currentUserId as string,
             Role.User,
@@ -273,7 +275,7 @@ export class MentorshipService implements IMentorshipService {
         const mentorIdForNotif =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as any)?._id?.toString();
+                : (mentorship.mentorId as unknown as MentorEntity)?.id?.toString();
         if (mentorIdForNotif) {
             await this._notificationService.createNotification(
                 mentorIdForNotif,
@@ -284,7 +286,7 @@ export class MentorshipService implements IMentorshipService {
                 { mentorshipId }
             );
         }
-
+        //! we need to write a mentor wallet transaction update 
         return mentorship;
     }
 

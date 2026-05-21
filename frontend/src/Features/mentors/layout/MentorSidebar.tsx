@@ -70,7 +70,7 @@ const MentorSidebar: React.FC = () => {
         },
         {
             icon: <Wallet size={20} />,
-            label: 'Wallet',
+            label: 'wallet',
             to: '/mentor/wallet',
         },
         {

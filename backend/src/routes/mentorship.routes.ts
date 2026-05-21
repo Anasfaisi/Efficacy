@@ -62,33 +62,6 @@ export default function mentorshipRoutes(
         )
     );
 
-    const walletController = container.get<WalletController>(
-        TYPES.WalletController
-    );
-
-    router.get(
-        '/wallet',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(walletController.getWallet.bind(walletController))
-    );
-
-    router.post(
-        '/wallet/withdraw',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(walletController.requestWithdrawal.bind(walletController))
-    );
-
-    router.patch(
-        '/wallet/bank-details',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(walletController.updateBankDetails.bind(walletController))
-    );
-
-    router.get(
-        '/wallet/transactions',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(walletController.getTransactions.bind(walletController))
-    );
 
     router.get(
         '/active',

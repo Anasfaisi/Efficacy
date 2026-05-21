@@ -10,13 +10,21 @@ import {
 } from '@/models/Wallet.model';
 import { ObjectId } from 'mongoose';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { createStripeConnectReqDto } from '@/dto/wallet-request.dto';
+import Stripe from 'stripe';
+import { email } from 'zod';
 
 @injectable()
 export class WalletService implements IWalletService {
+    private _stripe: Stripe;
     constructor(
         @inject(TYPES.WalletRepository)
         private _walletRepository: IWalletRepository
-    ) {}
+    ) {
+        this._stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: '2025-08-27.basil',
+        });
+    }
 
     async getWallet(mentorId: string | ObjectId): Promise<IWallet> {
         let wallet = await this._walletRepository.findByMentorId(mentorId);
@@ -93,5 +101,36 @@ export class WalletService implements IWalletService {
     ): Promise<ITransaction[]> {
         const wallet = await this.getWallet(mentorId);
         return wallet.transactions;
+    }
+
+    async createStripeConnect(
+        data: createStripeConnectReqDto
+    ): Promise<string> {
+ 
+        const account = await this._stripe.accounts.create({
+            type: 'express',
+            email: data.email,
+            capabilities: {
+                card_payments: { requested: true },
+                transfers: { requested: true },
+            },
+            metadata: { mentorId: data.mentorId },
+        });
+console.log("account , ",account)
+      await  this._walletRepository.updateStripeConnectId(data.mentorId, account.id);
+
+      return await   this.configureStripeConnectLink(account.id)
+    }
+
+    private async configureStripeConnectLink(
+        accountId: string
+    ): Promise<string> {
+        const accountLink = await this._stripe.accountLinks.create({
+            account: accountId,
+            refresh_url: process.env.FRONTEND_URL+'/mentor/wallet?refresh=true',
+            return_url: process.env.FRONTEND_URL+'/mentor/wallet?success=true',
+            type: 'account_onboarding',
+        });
+        return accountLink.url;
     }
 }

@@ -33,6 +33,8 @@ interface IWallet extends Document {
         ifscCode: string;
         accountHolderName: string;
     };
+    stripeConnectAccountId?: string;
+    stripeConnectOnboarded?: boolean;
 }
 
 const transactionSchema = new Schema<ITransaction>({
@@ -71,6 +73,8 @@ const walletSchema = new Schema<IWallet>(
             ifscCode: { type: String },
             accountHolderName: { type: String },
         },
+        stripeConnectAccountId: { type: String },
+        stripeConnectOnboarded: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

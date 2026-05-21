@@ -8,6 +8,8 @@ import Wallet, {
 import { IWalletRepository } from './interfaces/IWallet.repository';
 import { ObjectId, PipelineStage } from 'mongoose';
 import { ITransaction } from '@/models/Wallet.model';
+import { WalletEntity } from '@/entity/wallet.entity';
+import { WalletMapper } from '@/Mapper/wallet.mapper';
 
 @injectable()
 export class WalletRepository
@@ -258,5 +260,15 @@ export class WalletRepository
         const total = result[0].metadata[0]?.total || 0;
 
         return { transactions: data, total };
+    }
+
+    async updateStripeConnectId(
+        mentorId: string,
+        accountId: string
+    ): Promise<void> {
+         await this.model.updateOne(
+            { mentorId: mentorId },
+            { $set: { stripeConnectAccountId: accountId } }
+        );
     }
 }

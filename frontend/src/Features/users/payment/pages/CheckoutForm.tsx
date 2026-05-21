@@ -53,7 +53,6 @@ const SubscriptionForm = () => {
     const user = currentUser as User;
 
     async function handleSubscribe(planId: string) {
-        console.log('it is in checkout form');
         if (!stripe) return;
         setLoading(planId);
         setMessage('');
