@@ -115,9 +115,4 @@ export class UserRepository
     }
 }
 
-/*await userRepository.updateSubscriptionByEmail(customerEmail, {
-  id: subscription.id,
-  status: subscription.status,
-  priceId: subscription.items.data[0].price.id,
-  current_period_end: new Date(subscription.current_period_end * 1000),
-}); */
+

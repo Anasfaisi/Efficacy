@@ -187,12 +187,14 @@ export const ReviewRoutes = {
     DELETE_REVIEW: (reviewId: string) => `${REVIEWS_BASE}/${reviewId}`,
 };
 
-const WALLET_BASE = '/mentorship/wallet';
+const WALLET_BASE = '/wallet';
 export const WalletRoutes = {
     BASE: WALLET_BASE,
     CREATE_WITHDRAWAL: `${WALLET_BASE}/withdraw`,
     UPDATE_BANK_DETAILS: `${WALLET_BASE}/bank-details`,
     GET_TRANSACTIONS: `${WALLET_BASE}/transactions`,
+    STRIPE_CONNECT: `${WALLET_BASE}/stripe-connect`,
+    STRIPE_STATUS: `${WALLET_BASE}/stripe-status`,
 };
 
 const PLAN_BASE = '/plan';

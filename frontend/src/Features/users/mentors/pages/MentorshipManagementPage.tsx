@@ -81,7 +81,6 @@ const MentorshipManagementPage: React.FC = () => {
 
             if (bookingData?.bookings) {
                 const bookings = bookingData.bookings;
-                console.log(bookings, 'bookings');
                 const mentor = data.mentorId as Mentor;
 
                 const relevantBookings = bookings.filter(

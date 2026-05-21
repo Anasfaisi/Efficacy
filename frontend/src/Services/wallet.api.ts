@@ -14,7 +14,7 @@ export const walletApi = {
         return response.data;
     },
 
-    updateBankDetails: async (details: string) => {
+    updateBankDetails: async (details: any) => {
         const response = await api.patch(
             WalletRoutes.UPDATE_BANK_DETAILS,
             details
@@ -31,4 +31,14 @@ export const walletApi = {
         });
         return response.data;
     },
+
+    onboardStripeConnect : async()=>{
+        const response = await api.post(WalletRoutes.STRIPE_CONNECT);
+        return response.data
+    },
+
+    verifyStripeStatus : async()=>{
+        const response = await api.get(WalletRoutes.STRIPE_STATUS);
+        return response.data
+    }
 };

@@ -32,7 +32,6 @@ export class UserBadgeRepository
     async getAllBadges(userId:string):Promise<UserBadgeEntity[]>{
 
         const result =  await super.find({userId : userId})
-        console.log("repo",result)
         return UserBadgeMapper.listToUserBadgeEntity(result)
     }
 }

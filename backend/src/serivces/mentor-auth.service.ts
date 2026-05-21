@@ -61,12 +61,14 @@ export class MentorAuthService implements IMentorAuthService {
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,
-            account.role
+            account.role,
+            account.email
         );
 
         const refreshToken = this._tokenService.generateRefreshToken(
             account.id,
-            account.role
+            account.role,
+            account.email
         );
 
         return new MentorLoginResponseDTO(accessToken, refreshToken, {
@@ -135,11 +137,13 @@ export class MentorAuthService implements IMentorAuthService {
         await this._unverifiedUserRepository.deleteByEmail(dto.email);
         const accessToken = this._tokenService.generateAccessToken(
             user.id,
-            user.role
+            user.role,
+            user.email
         );
         const refreshToken = this._tokenService.generateRefreshToken(
             user.id,
-            user.role
+            user.role,
+            user.email
         );
         return new MentorOtpVerificationResponseDto(accessToken, refreshToken, {
             id: user._id.toString(),
@@ -172,11 +176,13 @@ export class MentorAuthService implements IMentorAuthService {
 
         const accessToken = this._tokenService.generateAccessToken(
             account.id,
-            account.role
+            account.role,
+            account.email
         );
         const refreshToken = this._tokenService.generateRefreshToken(
             account.id,
-            account.role
+            account.role,
+            account.email
         );
 
         return new userGoogleLoginResponseDto(accessToken, refreshToken, {

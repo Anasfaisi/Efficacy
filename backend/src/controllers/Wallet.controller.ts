@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
+import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
 import code from '@/types/http-status.enum';
 import { Role } from '@/types/role.types';
 import { SuccessMessages } from '@/types/response-messages.types';
@@ -10,7 +11,9 @@ import { SuccessMessages } from '@/types/response-messages.types';
 export class WalletController {
     constructor(
         @inject(TYPES.WalletRepository)
-        private _walletRepository: IWalletRepository
+        private _walletRepository: IWalletRepository,
+        @inject(TYPES.WalletService)
+        private _walletService: IWalletService
     ) {}
 
     async getWallet(req: Request, res: Response): Promise<void> {
@@ -66,9 +69,36 @@ export class WalletController {
     }
 
     async requestWithdrawal(req: Request, res: Response): Promise<void> {
-        res.status(code.OK).json({
-            message: SuccessMessages.WithdrawalRequested,
-        });
+        const userId = req.currentUser!.id;
+        const role = req.currentUser!.role;
+        const { amount } = req.body;
+
+        if (role !== Role.Mentor) {
+            res.status(code.BAD_REQUEST).json({
+                message: 'Only mentors can withdraw funds.',
+            });
+            return;
+        }
+
+        if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+            res.status(code.BAD_REQUEST).json({
+                message: 'Please enter a valid withdrawal amount.',
+            });
+            return;
+        }
+
+        try {
+            const wallet = await this._walletService.requestWithdrawal(
+                userId,
+                Number(amount)
+            );
+            res.status(code.OK).json({
+                message: SuccessMessages.WithdrawalRequested,
+                wallet,
+            });
+        } catch (error: any) {
+            res.status(code.BAD_REQUEST).json({ message: error.message });
+        }
     }
 
     async getTransactions(req: Request, res: Response): Promise<void> {
@@ -99,5 +129,19 @@ export class WalletController {
             totalPages: Math.ceil(result.total / limit),
             currentPage: page,
         });
+    }
+
+    async createStripeConnect(req: Request, res: Response): Promise<void> {
+        const email = req.currentUser?.email;
+        const mentorId = req.currentUser?.id;
+        if (!email || !mentorId) {
+            res.status(code.NOT_FOUND);
+            return;
+        }
+        const result = this._walletService.createStripeConnect({
+            email,
+            mentorId,
+        });
+        res.status(code.OK).json(result);
     }
 }

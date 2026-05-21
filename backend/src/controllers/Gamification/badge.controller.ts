@@ -68,6 +68,7 @@ export class BadgeController {
             return
         }
         const result = await this._badgeService.getUserBadges(userId)
+        console.log(result,"wanted to see the result")
         res.status(Code.OK).json({status:true,badges:result})
     }
 }

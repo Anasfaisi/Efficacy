@@ -35,7 +35,6 @@ export class PomodoroGamificationService implements IPomodoroGamificationService
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
 
-                console.log("it is coming 2")
 
         await this._badgeGamificationService.evaluate(event,savedStats);
     }

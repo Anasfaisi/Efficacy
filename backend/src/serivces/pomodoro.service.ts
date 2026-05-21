@@ -34,7 +34,6 @@ export class PomodoroService implements IPomodoroService {
             startTime,
             endTime: now,
         });
-        console.log("it is coming 1")
         if (type === 'pomodoro') {
             // here we pass userid and gamification event instead of focus time
             await this._pomodoroGamificationService.handlePomodoroCompletion(GamificationEvent.POMODORO_COMPLETED,userId)

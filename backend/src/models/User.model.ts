@@ -16,8 +16,8 @@ interface IUser extends Document<ObjectId> {
 
     stripeCustomerId?: string;
     subscription?: ISubscription;
-    walletBalance?: number;
     walletCurrency?: string;
+    walletBalance?: number;
 
     xpPoints?: number;
     badge?: string;

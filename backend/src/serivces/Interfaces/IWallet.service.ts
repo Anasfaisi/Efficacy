@@ -1,3 +1,4 @@
+import { createStripeConnectReqDto } from '@/dto/wallet-request.dto';
 import { IWallet, ITransaction } from '@/models/Wallet.model';
 import { ObjectId } from 'mongoose';
 
@@ -22,4 +23,5 @@ export interface IWalletService {
         }
     ): Promise<IWallet>;
     getTransactions(mentorId: string | ObjectId): Promise<ITransaction[]>;
+    createStripeConnect(data: createStripeConnectReqDto): Promise<string>;
 }
