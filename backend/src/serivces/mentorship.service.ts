@@ -10,6 +10,7 @@ import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
 import { IAdmin } from '@/models/Admin.model';
 import {
     IMentorship,
+    ISession,
     MentorshipStatus,
     SessionStatus,
 } from '@/models/Mentorship.model';
@@ -24,6 +25,7 @@ import {
 } from '@/types/response-messages.types';
 import { MentorEntity } from '@/entity/mentor.entity';
 import { UserEntity } from '@/entity/user.entity';
+import { IOtpService } from './Interfaces/IOtp.service';
 
 @injectable()
 export class MentorshipService implements IMentorshipService {
@@ -38,7 +40,9 @@ export class MentorshipService implements IMentorshipService {
         @inject(TYPES.WalletRepository)
         private _walletRepository: IWalletRepository,
         @inject(TYPES.AdminRepository)
-        private _adminRepository: IAdminRepository<IAdmin>
+        private _adminRepository: IAdminRepository<IAdmin>,
+        @inject(TYPES.OtpService)
+        private _otpService: IOtpService
     ) {}
 
     async createRequest(
@@ -141,7 +145,9 @@ export class MentorshipService implements IMentorshipService {
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as any)?._id?.toString();
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  )?.id?.toString();
         if (currentMentorId !== mentorId)
             throw new Error(CommonMessages.Unauthorized);
 
@@ -158,7 +164,7 @@ export class MentorshipService implements IMentorshipService {
         const recipientId =
             mentorship.userId instanceof Types.ObjectId
                 ? mentorship.userId.toString()
-                : (mentorship.userId as any)?._id?.toString();
+                : (mentorship.userId as unknown as UserEntity)?.id?.toString();
 
         if (recipientId) {
             await this._notificationService.createNotification(
@@ -187,7 +193,7 @@ export class MentorshipService implements IMentorshipService {
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         const mentorshipUserId =
-            (mentorship.userId as any)._id?.toString() ||
+            (mentorship.userId as unknown as UserEntity).id?.toString() ||
             mentorship.userId.toString();
         if (mentorshipUserId !== userId)
             throw new Error(CommonMessages.Unauthorized);
@@ -206,7 +212,9 @@ export class MentorshipService implements IMentorshipService {
         const mentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as any)?._id?.toString();
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  )?.id?.toString();
 
         if (mentorId) {
             await this._notificationService.createNotification(
@@ -250,7 +258,9 @@ export class MentorshipService implements IMentorshipService {
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as unknown as MentorEntity).id?.toString();
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  ).id?.toString();
         await this._adminRepository.addRevenue(adminShare);
         await this._walletRepository.creditPendingBalance(
             currentMentorId as string,
@@ -275,7 +285,9 @@ export class MentorshipService implements IMentorshipService {
         const mentorIdForNotif =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as unknown as MentorEntity)?.id?.toString();
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  )?.id?.toString();
         if (mentorIdForNotif) {
             await this._notificationService.createNotification(
                 mentorIdForNotif,
@@ -286,7 +298,6 @@ export class MentorshipService implements IMentorshipService {
                 { mentorshipId }
             );
         }
-        //! we need to write a mentor wallet transaction update 
         return mentorship;
     }
 
@@ -314,7 +325,7 @@ export class MentorshipService implements IMentorshipService {
         if (mentorship.usedSessions >= mentorship.totalSessions)
             throw new Error(ErrorMessages.NoSessionsRemaining);
 
-        (mentorship.sessions as unknown as Types.DocumentArray<any>).push({
+        (mentorship.sessions as unknown as Types.DocumentArray<ISession>).push({
             date,
             slot,
             status: SessionStatus.BOOKED,
@@ -336,7 +347,7 @@ export class MentorshipService implements IMentorshipService {
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
         const session = (
-            mentorship.sessions as unknown as Types.DocumentArray<any>
+            mentorship.sessions as unknown as Types.DocumentArray<ISession>
         ).id(sessionId);
         if (!session) throw new Error(ErrorMessages.SessionNotFound);
 
@@ -370,13 +381,15 @@ export class MentorshipService implements IMentorshipService {
             mentorship.mentorConfirmedCompletion
         ) {
             mentorship.status = MentorshipStatus.COMPLETED;
-
+            mentorship.completionInitiatedAt = undefined;
             await this.checkAndReleaseFunds(mentorship);
 
             const userIdForNotif =
                 mentorship.userId instanceof Types.ObjectId
                     ? mentorship.userId.toString()
-                    : (mentorship.userId as any)?._id?.toString();
+                    : (
+                          mentorship.userId as unknown as MentorEntity
+                      )?.id?.toString();
             if (userIdForNotif) {
                 await this._notificationService.createNotification(
                     userIdForNotif,
@@ -391,7 +404,9 @@ export class MentorshipService implements IMentorshipService {
             const mentorIdForNotif =
                 mentorship.mentorId instanceof Types.ObjectId
                     ? mentorship.mentorId.toString()
-                    : (mentorship.mentorId as any)?._id?.toString();
+                    : (
+                          mentorship.mentorId as unknown as MentorEntity
+                      )?.id?.toString();
             if (mentorIdForNotif) {
                 await this._notificationService.createNotification(
                     mentorIdForNotif,
@@ -402,10 +417,107 @@ export class MentorshipService implements IMentorshipService {
                     { mentorshipId }
                 );
             }
+        } else {
+            if (!mentorship.completionInitiatedAt) {
+                mentorship.completionInitiatedAt = new Date();
+            }
         }
 
         await this._mentorshipRepository.update(mentorshipId, mentorship);
         return mentorship;
+    }
+
+    async runDailyCompletionCheck(): Promise<void> {
+        const today = new Date();
+        const activeMentorships =
+            await this._mentorshipRepository.findActiveMentorshipsForCompletionCheck();
+        for (const mentorship of activeMentorships) {
+            const endDate = mentorship.endDate
+                ? new Date(mentorship.endDate)
+                : null;
+            if (!endDate) continue;
+
+            const timeDiff = today.getTime() - endDate.getTime();
+            const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+            const userEmail = (mentorship.userId as unknown as UserEntity)
+                ?.email;
+            const mentorEmail = (mentorship.mentorId as unknown as MentorEntity)
+                ?.email;
+
+            if (
+                daysPassed === 0 ||
+                (daysPassed > 0 &&
+                    daysPassed < 7 &&
+                    !mentorship.completionInitiatedAt)
+            ) {
+                await this._notificationService.createNotification(
+                    userEmail,
+                    Role.User,
+                    NotificationType.MENTORSHIP_COMPLETED,
+                    'Mentorship Period Concluded',
+                    "Your 30-day mentorship has completed! Please confirm completion on your dashboard so we can unlock your mentor's payout.",
+                    { mentorshipId: mentorship._id }
+                );
+
+                await this._notificationService.createNotification(
+                    mentorEmail,
+                    Role.Mentor,
+                    NotificationType.MENTORSHIP_COMPLETED,
+                    'Mentorship Period Concluded',
+                    'Your 30-day mentorship guidance has completed! Please request completion on your dashboard to unlock your payout.',
+                    { mentorshipId: mentorship._id }
+                );
+
+                if (userEmail) {
+                    await this._otpService.sendEmail(
+                        userEmail,
+                        'Confirm your Mentorship Completion - Efficacy',
+                        `Hi there,\n\nYour 30-day guidance period has concluded! Please log in to Efficacy and confirm your completion so we can release your mentor's payout.`
+                    );
+                }
+                if (mentorEmail) {
+                    await this._otpService.sendEmail(
+                        mentorEmail,
+                        'Mentorship Session Concluded - Efficacy',
+                        `Hi,\n\nYour 30-day guidance period has concluded! Please log in and request completion on your dashboard so we can clear your available balance.`
+                    );
+                }
+            }
+
+            if (mentorship.completionInitiatedAt) {
+                const initiatedDate = new Date(
+                    mentorship.completionInitiatedAt
+                );
+                const initiatedDiff = today.getTime() - initiatedDate.getTime();
+                const initiatedDaysPassed = Math.floor(
+                    initiatedDiff / (1000 * 3600 * 24)
+                );
+
+                if (initiatedDaysPassed >= 2) {
+                    mentorship.status = MentorshipStatus.COMPLETED;
+                    mentorship.userConfirmedCompletion = true;
+                    mentorship.mentorConfirmedCompletion = true;
+                    await this.checkAndReleaseFunds(mentorship);
+                    await this._mentorshipRepository.update(
+                        mentorship.id as string,
+                        mentorship
+                    );
+                    continue;
+                }
+            }
+
+            if (daysPassed >= 7) {
+                mentorship.status = MentorshipStatus.COMPLETED;
+                mentorship.userConfirmedCompletion = true;
+                mentorship.mentorConfirmedCompletion = true;
+                await this.checkAndReleaseFunds(mentorship);
+                await this._mentorshipRepository.update(
+                    mentorship.id as string,
+                    mentorship
+                );
+            }
+        }
     }
 
     async submitFeedback(
@@ -438,7 +550,7 @@ export class MentorshipService implements IMentorshipService {
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
         const mentorshipUserId =
-            (mentorship.userId as any)._id?.toString() ||
+            (mentorship.userId as unknown as MentorEntity).id?.toString() ||
             mentorship.userId.toString();
         if (mentorshipUserId !== userId)
             throw new Error(CommonMessages.Unauthorized);
@@ -473,7 +585,9 @@ export class MentorshipService implements IMentorshipService {
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as any)?._id?.toString();
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  ).id?.toString();
         const debitAmount = originalMentorShare - retainedMentorShare;
         if (debitAmount > 0 && currentMentorId) {
             await this._walletRepository.debitPendingBalance(
@@ -505,15 +619,17 @@ export class MentorshipService implements IMentorshipService {
     private async checkAndReleaseFunds(mentorship: IMentorship): Promise<void> {
         if (
             mentorship.status === MentorshipStatus.COMPLETED &&
-            mentorship.userFeedback &&
-            mentorship.mentorFeedback &&
             mentorship.paymentStatus === 'verified'
         ) {
             const mentorShare = mentorship.amount * 0.9;
             const currentMentorId =
                 mentorship.mentorId instanceof Types.ObjectId
                     ? mentorship.mentorId.toString()
-                    : (mentorship.mentorId as any)?._id?.toString();
+                    : (mentorship.mentorId as unknown as MentorEntity).id
+                      ? (mentorship.mentorId as unknown as MentorEntity).id.toString()
+                      : (
+                            mentorship.mentorId as unknown as MentorEntity
+                        ).id?.toString();
             if (currentMentorId) {
                 await this._walletRepository.releasePendingBalance(
                     currentMentorId,

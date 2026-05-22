@@ -12,6 +12,7 @@ import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
 import { INotificationService } from '@/serivces/Interfaces/INotification.service';
 import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
+import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
 
 @injectable()
 export class AdminController {
@@ -23,7 +24,9 @@ export class AdminController {
         @inject(TYPES.AdminService)
         private _adminService: IAdminService,
         @inject(TYPES.AuthService)
-        private _authService: IAuthService
+        private _authService: IAuthService,
+        @inject(TYPES.WalletService)
+        private _walletService: IWalletService
     ) {}
 
     async getNotifications(req: Request, res: Response): Promise<void> {
@@ -270,5 +273,29 @@ export class AdminController {
         }
         const stats = await this._adminService.getDashboardStats(id);
         res.status(code.OK).json(stats);
+    }
+
+    async approveWithdrawal(req: Request, res: Response): Promise<void> {
+        const { walletId, transactionId } = req.params;
+        const wallet = await this._walletService.approveWithdrawal(
+            walletId,
+            transactionId
+        );
+        res.status(code.OK).json({
+            message: 'Payout approved and Stripe Express Transfer completed successfully.',
+            wallet,
+        });
+    }
+
+    async rejectWithdrawal(req: Request, res: Response): Promise<void> {
+        const { walletId, transactionId } = req.params;
+        const wallet = await this._walletService.rejectWithdrawal(
+            walletId,
+            transactionId
+        );
+        res.status(code.OK).json({
+            message: 'Payout request rejected and funds returned to mentor balance.',
+            wallet,
+        });
     }
 }

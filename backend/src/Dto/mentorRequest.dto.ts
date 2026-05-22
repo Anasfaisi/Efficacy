@@ -33,7 +33,7 @@ export interface MentorApplicationRequestDto {
     personalWebsite?: string;
     demoVideoLink: string;
 
-    availability?: Record<string,string[]>;
+    availability?: Record<string, string[]>;
 
     mentorType: 'Academic' | 'Industry';
 

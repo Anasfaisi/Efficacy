@@ -62,7 +62,6 @@ export default function mentorshipRoutes(
         )
     );
 
-
     router.get(
         '/active',
         authenticateAndAuthorize(tokenService, Role.User),

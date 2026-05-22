@@ -7,7 +7,6 @@ export interface IUserBadge extends Document {
     seen: boolean;
 }
 
-
 const UserBadgeSchema = new Schema<IUserBadge>({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     badgeId: { type: Schema.Types.ObjectId, ref: 'Badge', required: true },

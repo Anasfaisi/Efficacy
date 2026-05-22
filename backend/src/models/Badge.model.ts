@@ -4,15 +4,15 @@ import {
     GamificationEvent,
     Rarity,
     IconType,
-    BadgeType
+    BadgeType,
 } from '../types/gamification.types';
 
 export interface IBadge extends Document {
-    id:string
+    id: string;
     name: string;
     story: string;
     template: BadgeTemplate;
-    type : BadgeType;
+    type: BadgeType;
     threshold: number;
     design: {
         iconType: IconType;
@@ -37,7 +37,7 @@ const BadgeSchema = new Schema<IBadge>(
             enum: Object.values(BadgeTemplate),
             required: true,
         },
-        type:{String, enum : Object.values(BadgeType)},
+        type: { String, enum: Object.values(BadgeType) },
         threshold: { type: Number, required: true },
         design: {
             iconType: {

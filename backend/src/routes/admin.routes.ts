@@ -56,7 +56,7 @@ export default function adminRoutes(adminController: AdminController) {
 
     router.get(
         '/mentors/applications/:id',
-        
+
         authenticateAndAuthorize(tokenService, [Role.Admin]),
         asyncWrapper(
             adminController.getMentorApplicationById.bind(adminController)
@@ -137,6 +137,21 @@ export default function adminRoutes(adminController: AdminController) {
         asyncWrapper(adminController.getDashboardStats.bind(adminController))
     );
 
-   
+    router.post(
+        '/withdrawals/:walletId/transactions/:transactionId/approve',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.approveWithdrawal.bind(adminController)
+        )
+    );
+
+    router.post(
+        '/withdrawals/:walletId/transactions/:transactionId/reject',
+        authenticateAndAuthorize(tokenService, [Role.Admin]),
+        asyncWrapper(
+            adminController.rejectWithdrawal.bind(adminController)
+        )
+    );
+
     return router;
 }

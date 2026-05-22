@@ -1,6 +1,6 @@
-import { BadgeTemplate } from "@/types/gamification.types";
-import { IBadgeEvaluator } from "./IBadge-evaluator";
+import { BadgeTemplate } from '@/types/gamification.types';
+import { IBadgeEvaluator } from './IBadge-evaluator';
 
-export interface IBadgeTemplateResolverService{
-    resolve(templateEvent:BadgeTemplate):IBadgeEvaluator
+export interface IBadgeTemplateResolverService {
+    resolve(templateEvent: BadgeTemplate): IBadgeEvaluator;
 }

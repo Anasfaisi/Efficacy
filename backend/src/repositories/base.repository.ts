@@ -27,7 +27,6 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         await this.model.updateOne({ _id: id }, data).exec();
     }
 
-    
     async updateMany(query: FilterQuery<T>, data: Partial<T>): Promise<void> {
         await this.model.updateMany(query, data).exec();
     }
@@ -44,9 +43,17 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         return this.model.find(query).exec();
     }
 
-    async findWithPagination(query: FilterQuery<T>, page: number, limit: number): Promise<{ data: T[]; total: number }> {
+    async findWithPagination(
+        query: FilterQuery<T>,
+        page: number,
+        limit: number
+    ): Promise<{ data: T[]; total: number }> {
         const skip = (page - 1) * limit;
-        const data = await this.model.find(query).skip(skip).limit(limit).exec();
+        const data = await this.model
+            .find(query)
+            .skip(skip)
+            .limit(limit)
+            .exec();
         const total = await this.model.countDocuments(query).exec();
         return { data, total };
     }

@@ -1,18 +1,17 @@
-import { WalletController } from "@/controllers/Wallet.controller";
-import authenticateAndAuthorize from "@/middleware/authenticateAndAuthorize";
-import { ITokenService } from "@/serivces/Interfaces/IToken.service";
-import { Role } from "@/types/role.types";
-import { asyncWrapper } from "@/utils/asyncWrapper";
-import { Router } from "express";
-import { auth } from "google-auth-library";
+import { WalletController } from '@/controllers/Wallet.controller';
+import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import { ITokenService } from '@/serivces/Interfaces/IToken.service';
+import { Role } from '@/types/role.types';
+import { asyncWrapper } from '@/utils/asyncWrapper';
+import { Router } from 'express';
+import { auth } from 'google-auth-library';
 
 export default function WalletRoutes(
     walletController: WalletController,
-    tokenService : ITokenService
-){
-
-    const router = Router()
-       router.get(
+    tokenService: ITokenService
+) {
+    const router = Router();
+    router.get(
         '/',
         authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
         asyncWrapper(walletController.getWallet.bind(walletController))
@@ -38,16 +37,17 @@ export default function WalletRoutes(
 
     router.post(
         '/stripe-connect',
-        authenticateAndAuthorize(tokenService,[Role.Mentor]),
-        asyncWrapper(walletController.createStripeConnect.bind(walletController))
-        
-    )
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
+        asyncWrapper(
+            walletController.createStripeConnect.bind(walletController)
+        )
+    );
 
     router.get(
         '/stripe-status',
-        authenticateAndAuthorize(tokenService,[Role.Mentor]),
+        authenticateAndAuthorize(tokenService, [Role.Mentor]),
         asyncWrapper(walletController.verifyStripeStatus.bind(walletController))
-    )
+    );
 
-    return router
+    return router;
 }

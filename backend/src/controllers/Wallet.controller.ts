@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
 import code from '@/types/http-status.enum';
 import { Role } from '@/types/role.types';
@@ -10,8 +9,6 @@ import { SuccessMessages } from '@/types/response-messages.types';
 @injectable()
 export class WalletController {
     constructor(
-        @inject(TYPES.WalletRepository)
-        private _walletRepository: IWalletRepository,
         @inject(TYPES.WalletService)
         private _walletService: IWalletService
     ) {}
@@ -20,22 +17,7 @@ export class WalletController {
         const userId = req.currentUser!.id;
         const role = req.currentUser!.role;
 
-        let wallet;
-        if (role === Role.Mentor) {
-            wallet = await this._walletRepository.findByMentorId(userId);
-        } else {
-            wallet = await this._walletRepository.findByUserId(userId);
-        }
-
-        if (!wallet) {
-            res.status(code.OK).json({
-                balance: 0,
-                pendingBalance: 0,
-                transactions: [],
-            });
-            return;
-        }
-
+        const wallet = await this._walletService.getWallet(userId, role);
         res.status(code.OK).json(wallet);
     }
 
@@ -44,41 +26,18 @@ export class WalletController {
         const role = req.currentUser!.role;
         const details = req.body;
 
-        let wallet =
-            role === Role.Mentor
-                ? await this._walletRepository.findByMentorId(userId)
-                : await this._walletRepository.findByUserId(userId);
-
-        if (!wallet) {
-            const initialData: any = {
-                balance: 0,
-                pendingBalance: 0,
-                transactions: [],
-                bankAccountDetails: details,
-            };
-            if (role === Role.Mentor) initialData.mentorId = userId;
-            else initialData.userId = userId;
-
-            wallet = await this._walletRepository.create(initialData);
-        } else {
-            wallet.bankAccountDetails = details;
-            await wallet.save();
-        }
+        const wallet = await this._walletService.updateBankDetails(
+            userId,
+            role,
+            details
+        );
 
         res.status(code.OK).json(wallet);
     }
 
     async requestWithdrawal(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
-        const role = req.currentUser!.role;
         const { amount } = req.body;
-
-        if (role !== Role.Mentor) {
-            res.status(code.BAD_REQUEST).json({
-                message: 'Only mentors can withdraw funds.',
-            });
-            return;
-        }
 
         if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
             res.status(code.BAD_REQUEST).json({
@@ -87,18 +46,22 @@ export class WalletController {
             return;
         }
 
-        try {
-            const wallet = await this._walletService.requestWithdrawal(
-                userId,
-                Number(amount)
-            );
-            res.status(code.OK).json({
-                message: SuccessMessages.WithdrawalRequested,
-                wallet,
+        const amtNum = Number(amount);
+        if (amtNum < 100) {
+            res.status(code.BAD_REQUEST).json({
+                message: 'Minimum withdrawal amount is ₹100.',
             });
-        } catch (error: any) {
-            res.status(code.BAD_REQUEST).json({ message: error.message });
+            return;
         }
+
+        const wallet = await this._walletService.requestWithdrawal(
+            userId,
+            amtNum
+        );
+        res.status(code.OK).json({
+            message: SuccessMessages.WithdrawalRequested,
+            wallet,
+        });
     }
 
     async getTransactions(req: Request, res: Response): Promise<void> {
@@ -107,18 +70,9 @@ export class WalletController {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
 
-        const wallet =
-            role === Role.Mentor
-                ? await this._walletRepository.findByMentorId(userId)
-                : await this._walletRepository.findByUserId(userId);
-
-        if (!wallet) {
-            res.status(code.OK).json({ transactions: [], total: 0 });
-            return;
-        }
-
-        const result = await this._walletRepository.findPaginatedTransactions(
-            (wallet as any)._id,
+        const result = await this._walletService.getPaginatedTransactions(
+            userId,
+            role,
             page,
             limit
         );

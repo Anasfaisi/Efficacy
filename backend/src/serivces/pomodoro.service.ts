@@ -10,12 +10,11 @@ import { IPomodoroGamificationService } from './Gamification/interfaces/IPomodor
 
 @injectable()
 export class PomodoroService implements IPomodoroService {
-
     constructor(
         @inject(TYPES.PomodoroRepository)
         private _pomodoroRepository: IPomodoroRepository,
         @inject(TYPES.PomodoroGamificationService)
-        private _pomodoroGamificationService :IPomodoroGamificationService
+        private _pomodoroGamificationService: IPomodoroGamificationService
     ) {}
 
     async logSession(
@@ -36,9 +35,11 @@ export class PomodoroService implements IPomodoroService {
         });
         if (type === 'pomodoro') {
             // here we pass userid and gamification event instead of focus time
-            await this._pomodoroGamificationService.handlePomodoroCompletion(GamificationEvent.POMODORO_COMPLETED,userId)
+            await this._pomodoroGamificationService.handlePomodoroCompletion(
+                GamificationEvent.POMODORO_COMPLETED,
+                userId
+            );
         }
-
 
         return log;
     }

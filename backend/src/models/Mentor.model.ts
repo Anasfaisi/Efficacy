@@ -1,5 +1,4 @@
 import { Schema, model, Document, ObjectId } from 'mongoose';
-import { object } from 'zod';
 
 interface IMentor extends Document<ObjectId> {
     name: string;
@@ -24,7 +23,7 @@ interface IMentor extends Document<ObjectId> {
     experienceYears?: string;
     skills?: string;
     experienceSummary?: string;
-    availability?:{[key:string]:string[]};
+    availability?: { [key: string]: string[] };
 
     resume?: string;
     certificate?: string;

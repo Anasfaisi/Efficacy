@@ -4,7 +4,7 @@ import {
     Rarity,
 } from '@/types/gamification.types';
 
-export interface    CreateBadgeResponseDto {
+export interface CreateBadgeResponseDto {
     id?: string;
     name: string;
     story: string;

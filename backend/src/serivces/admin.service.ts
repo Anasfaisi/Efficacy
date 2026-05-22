@@ -125,7 +125,7 @@ export class AdminService implements IAdminService {
             status: 'approved',
             isVerified: true,
         });
-        console.log(mentor,' what is coming here ')
+        console.log(mentor, ' what is coming here ');
         if (mentor) {
             await this._notificationService.createNotification(
                 mentor.id,

@@ -26,6 +26,9 @@ interface IWallet extends Document {
     userId?: Types.ObjectId;
     balance: number;
     pendingBalance: number;
+    pendingWithdrawal?: number;
+    totalWithdrawn?: number;
+    lifetimeEarnings?: number;
     transactions: ITransaction[];
     bankAccountDetails?: {
         accountNumber: string;
@@ -66,6 +69,9 @@ const walletSchema = new Schema<IWallet>(
         },
         balance: { type: Number, default: 0 },
         pendingBalance: { type: Number, default: 0 },
+        pendingWithdrawal: { type: Number, default: 0 },
+        totalWithdrawn: { type: Number, default: 0 },
+        lifetimeEarnings: { type: Number, default: 0 },
         transactions: [transactionSchema],
         bankAccountDetails: {
             accountNumber: { type: String },
@@ -78,6 +84,7 @@ const walletSchema = new Schema<IWallet>(
     },
     { timestamps: true }
 );
+
 
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

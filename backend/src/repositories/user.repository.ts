@@ -114,5 +114,3 @@ export class UserRepository
         return { users, totalCount };
     }
 }
-
-

@@ -10,7 +10,7 @@ export class UserBadgeMapper {
             unlockedAt: userBadge.unlockedAt,
         };
     }
-    static listToUserBadgeEntity(badges:IUserBadge[]):UserBadgeEntity[]{
-        return badges.map(UserBadgeMapper.ToEntity)
+    static listToUserBadgeEntity(badges: IUserBadge[]): UserBadgeEntity[] {
+        return badges.map(UserBadgeMapper.ToEntity);
     }
 }

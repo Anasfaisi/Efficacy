@@ -2,12 +2,10 @@ import { injectable, inject } from 'inversify';
 import Stripe from 'stripe';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPaymentService } from './Interfaces/IPayment.service';
-import { RequestPaymentDto } from '@/dto/request.dto';
 import { ResponsePaymentDto } from '@/dto/response.dto';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
 import { IMentorshipService } from './Interfaces/IMentorship.service';
 import { ErrorMessages } from '@/types/response-messages.types';
-import { IMentorship } from '@/models/Mentorship.model';
 import { MentorEntity } from '@/entity/mentor.entity';
 import { UserEntity } from '@/entity/user.entity';
 
@@ -84,7 +82,8 @@ export class PaymentService implements IPaymentService {
             customer_email: (
                 await this._userRepository.findById(
                     (
-                        (mentorship.userId as unknown as UserEntity).id || mentorship.userId
+                        (mentorship.userId as unknown as UserEntity).id ||
+                        mentorship.userId
                     ).toString()
                 )
             )?.email,
@@ -138,17 +137,19 @@ export class PaymentService implements IPaymentService {
                 await this._userRepository.updateSubscriptionByEmail(
                     customerEmail!,
                     {
-                        id: subscriptionId,
+                        stripeSubscriptionId: subscriptionId,
                         status: subscription.status as any,
-                        priceId: subscription.items.data[0]?.price?.id,
-                        current_period_end: endDate,
-                    }
+                        currentPeriodEnd: endDate,
+                    } as any
                 );
             }
         }
     }
 
-    async transferToConnectAccount(accountId: string, amount: number): Promise<string> {
+    async transferToConnectAccount(
+        accountId: string,
+        amount: number
+    ): Promise<string> {
         const transfer = await this._stripe.transfers.create({
             amount: Math.round(amount * 100), // Convert INR rupees to paise (cents)
             currency: 'inr',
@@ -157,12 +158,16 @@ export class PaymentService implements IPaymentService {
         return transfer.id;
     }
 
-    async refundStripePayment(sessionId: string, amount: number): Promise<string> {
-        const session = await this._stripe.checkout.sessions.retrieve(sessionId);
+    async refundStripePayment(
+        sessionId: string,
+        amount: number
+    ): Promise<string> {
+        const session =
+            await this._stripe.checkout.sessions.retrieve(sessionId);
         const paymentIntentId = session.payment_intent as string;
 
         if (!paymentIntentId) {
-            throw new Error("No Payment Intent found for this session.");
+            throw new Error('No Payment Intent found for this session.');
         }
 
         const refund = await this._stripe.refunds.create({
@@ -173,4 +178,3 @@ export class PaymentService implements IPaymentService {
         return refund.id;
     }
 }
-

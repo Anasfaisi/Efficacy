@@ -30,7 +30,7 @@ export class BadgeRepository
         return { badges, total };
     }
 
-    async findBadges(query: FilterQuery<BadgeEntity>):Promise <BadgeEntity[]> {
+    async findBadges(query: FilterQuery<BadgeEntity>): Promise<BadgeEntity[]> {
         const badges = await super.find(query);
         return BadgeMapper.listtoBadgeEntity(badges);
     }

@@ -18,4 +18,5 @@ export interface IMentorshipRepository extends IBaseRepository<IMentorship> {
         status?: string,
         search?: string
     ): Promise<{ mentorships: IMentorship[]; total: number }>;
+    findActiveMentorshipsForCompletionCheck(): Promise<IMentorship[]>;
 }

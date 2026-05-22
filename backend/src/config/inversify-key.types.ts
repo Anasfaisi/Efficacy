@@ -19,17 +19,17 @@ export const TYPES = {
     MentorshipService: Symbol('MentorshipService'),
     WalletService: Symbol('WalletService'),
     KanbanService: Symbol('KanbanService'),
-    BadgeService : Symbol('BadgeService'),
+    BadgeService: Symbol('BadgeService'),
     PlanService: Symbol('PlanService'),
     NoteService: Symbol('NoteService'),
     DailyStreakCalculator: Symbol('DailyStreakCalculator'),
     TaskGamificationHandler: Symbol('TaskGamificationHandler'),
     IBadgeEvaluator: Symbol('IBadgeEvaluator'),
-    IGamificationHandleService : Symbol('IGamificationHandleService'),
+    IGamificationHandleService: Symbol('IGamificationHandleService'),
     BadgeTemplateResolverService: Symbol('BadgeTemplateResolverService'),
-    BadgeGamficationService:Symbol('BadgeGamficationService'),
-    PomodoroGamificationService : Symbol('PomodoroGamificationService'),
-    
+    BadgeGamficationService: Symbol('BadgeGamficationService'),
+    PomodoroGamificationService: Symbol('PomodoroGamificationService'),
+
     AdminRepository: Symbol('AdminRepository'),
     UserRepository: Symbol('UserRepository'),
     MentorRepository: Symbol('MentorRepository'),
@@ -42,10 +42,9 @@ export const TYPES = {
     WalletRepository: Symbol('WalletRepository'),
     KanbanRepository: Symbol('KanbanRepository'),
     BadgeRepository: Symbol('BadgeRepository'),
-    planRepository:Symbol('planRepository'),
+    planRepository: Symbol('planRepository'),
     UserStatsRepository: Symbol('UserStatsRepository'),
-    UserBadgeRepository : Symbol('UserBadgeRepository'),
-    
+    UserBadgeRepository: Symbol('UserBadgeRepository'),
 
     AdminController: Symbol('AdminController'),
     UserController: Symbol('UserController'),
@@ -61,14 +60,14 @@ export const TYPES = {
     MentorshipController: Symbol('MentorshipController'),
     NoteController: Symbol('NoteController'),
     PlanController: Symbol('PlanController'),
-    
+
     NoteRepository: Symbol('NoteRepository'),
     BookingRepository: Symbol('BookingRepository'),
     BookingService: Symbol('BookingService'),
     BookingController: Symbol('BookingController'),
 
     GamificationController: Symbol('GamificationController'),
-    BadgeController : Symbol('BadgeController'),
+    BadgeController: Symbol('BadgeController'),
     ReviewService: Symbol('ReviewService'),
     ReviewRepository: Symbol('ReviewRepository'),
     ReviewController: Symbol('ReviewController'),

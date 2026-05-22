@@ -190,4 +190,14 @@ export const adminService = {
         const response = await api.get(AdminRoutes.DASHBOARD_STATS);
         return response.data;
     },
+
+    approveWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
+        const response = await api.post(AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId));
+        return response.data;
+    },
+
+    rejectWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
+        const response = await api.post(AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId));
+        return response.data;
+    },
 };

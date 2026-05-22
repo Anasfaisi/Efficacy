@@ -7,7 +7,9 @@ import { IDailyStreakCalculator } from './interfaces/IDaily-streak-calculator.se
 import { ErrorMessages } from '@/types/response-messages.types';
 import { IBadgeGamificationService } from './interfaces/IBadge-gamification.service';
 @injectable()
-export class PomodoroGamificationService implements IPomodoroGamificationService {
+export class PomodoroGamificationService
+    implements IPomodoroGamificationService
+{
     constructor(
         @inject(TYPES.UserStatsRepository)
         private _userStatsRepo: IUserStatsRepository,
@@ -28,14 +30,14 @@ export class PomodoroGamificationService implements IPomodoroGamificationService
             });
         stats.pomodorosCompleted += 1;
 
-        const streakUpdate = await this._dailyStreakCalc.calculateDailyStreak(stats);
+        const streakUpdate =
+            await this._dailyStreakCalc.calculateDailyStreak(stats);
         const savedStats = await this._userStatsRepo.UpdateUserStats(
             streakUpdate.id,
             streakUpdate
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
 
-
-        await this._badgeGamificationService.evaluate(event,savedStats);
+        await this._badgeGamificationService.evaluate(event, savedStats);
     }
 }
