@@ -110,8 +110,9 @@ import { ITaskGamificationHandleService } from '@/serivces/Gamification/interfac
 import { TaskGamificationHandleService } from '@/serivces/Gamification/task-gamification-handle.service';
 import { BadgeGamificationService } from '@/serivces/Gamification/badge-gamification.service';
 import { IBadgeGamificationService } from '@/serivces/Gamification/interfaces/IBadge-gamification.service';
-import { IPomodoroGamification } from '@/serivces/Gamification/interfaces/IPomodoro-gamification.service';
+import { IPomodoroGamificationService } from '@/serivces/Gamification/interfaces/IPomodoro-gamification.service';
 import { PomodoroGamificationService } from '@/serivces/Gamification/pomodoro-gamification.service';
+
 
 export const container = new Container();
 
@@ -199,9 +200,8 @@ container
     .bind<IBadgeGamificationService>(TYPES.BadgeGamficationService)
     .to(BadgeGamificationService);
 container
-    .bind<IPomodoroGamification>(TYPES.PomodoroGamificationService)
+    .bind<IPomodoroGamificationService>(TYPES.PomodoroGamificationService)
     .to(PomodoroGamificationService);
-    
 
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container

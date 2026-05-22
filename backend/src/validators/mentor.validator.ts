@@ -38,24 +38,29 @@ export const mentorApplicationSchema = z
             .string()
             .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-        availability: z.preprocess((val: unknown) => {
-            if (typeof val === 'string') {
-                try {
-                    return JSON.parse(val);
-                } catch {
+        availability: z
+            .preprocess(
+                (val: unknown) => {
+                    if (typeof val === 'string') {
+                        try {
+                            return JSON.parse(val);
+                        } catch {
+                            return val;
+                        }
+                    }
                     return val;
-                }
-            }
-            return val;
-        }, z.object({
-            Monday: z.array(z.string()).optional(),
-            Tuesday: z.array(z.string()).optional(),
-            Wednesday: z.array(z.string()).optional(),
-            Thursday: z.array(z.string()).optional(),
-            Friday: z.array(z.string()).optional(),
-            Saturday: z.array(z.string()).optional(),
-            Sunday: z.array(z.string()).optional(),
-        })).optional(),
+                },
+                z.object({
+                    Monday: z.array(z.string()).optional(),
+                    Tuesday: z.array(z.string()).optional(),
+                    Wednesday: z.array(z.string()).optional(),
+                    Thursday: z.array(z.string()).optional(),
+                    Friday: z.array(z.string()).optional(),
+                    Saturday: z.array(z.string()).optional(),
+                    Sunday: z.array(z.string()).optional(),
+                })
+            )
+            .optional(),
         mentorType: z.enum(['Academic', 'Industry']).optional(),
 
         qualification: z.string().optional(),

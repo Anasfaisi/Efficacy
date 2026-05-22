@@ -10,14 +10,13 @@ import { IBadgeGamificationService } from './interfaces/IBadge-gamification.serv
 export class TaskGamificationHandleService
     implements ITaskGamificationHandleService
 {
-    
     constructor(
         @inject(TYPES.UserStatsRepository)
         private _userStatsRepo: IUserStatsRepository,
         @inject(TYPES.DailyStreakCalculator)
         private _dailyStreakCalculator: IDailyStreakCalculator,
-        @inject(TYPES.BadgeGamficationService) 
-        private _badgeGamficationService: IBadgeGamificationService,
+        @inject(TYPES.BadgeGamficationService)
+        private _badgeGamficationService: IBadgeGamificationService
     ) {}
 
     async processAction(
@@ -40,7 +39,7 @@ export class TaskGamificationHandleService
             updatedStats
         );
         if (!savedStats) throw new Error(ErrorMessages.UserStatsNotFound);
- 
-        await this._badgeGamficationService.evaluate(event,savedStats)
+
+        await this._badgeGamficationService.evaluate(event, savedStats);
     }
 }

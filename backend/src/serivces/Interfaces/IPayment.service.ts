@@ -1,4 +1,3 @@
-import { RequestPaymentDto } from '@/dto/request.dto';
 import { ResponsePaymentDto } from '@/dto/response.dto';
 
 export interface IPaymentService {
@@ -10,8 +9,9 @@ export interface IPaymentService {
         cancelUrl: string
     ): Promise<ResponsePaymentDto>;
     handleWebhookEvent(rawBody: Buffer, signature: string): Promise<void>;
-    createExpressConnectAccount(email: string, mentorId: string): Promise<string>;
-    createConnectAccountLink(accountId: string): Promise<string>;
-    transferToConnectAccount(accountId: string, amount: number): Promise<string>;
+    transferToConnectAccount(
+        accountId: string,
+        amount: number
+    ): Promise<string>;
     refundStripePayment(sessionId: string, amount: number): Promise<string>;
 }

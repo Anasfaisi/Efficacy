@@ -14,8 +14,8 @@ export enum GamificationEvent {
     SESSION_COMPLETED = 'SESSION_COMPLETED',
 }
 
-export enum NotifierEvent{
-    BADGE_UNLOCKED= 'BADGE_UNLOCKED' 
+export enum NotifierEvent {
+    BADGE_UNLOCKED = 'BADGE_UNLOCKED',
 }
 
 export enum BadgeType {

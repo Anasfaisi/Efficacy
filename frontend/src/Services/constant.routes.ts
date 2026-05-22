@@ -66,6 +66,10 @@ export const AdminRoutes = {
         `${ADMIN_BASE}/mentors/applications/${applicationId}`,
     MENTOR_APPLICATIONS_REQUEST_CHANGES: (applicationId: string) =>
         `${ADMIN_BASE}/mentors/applications/${applicationId}/request-changes`,
+    APPROVE_WITHDRAWAL: (walletId: string, transactionId: string) =>
+        `${ADMIN_BASE}/withdrawals/${walletId}/transactions/${transactionId}/approve`,
+    REJECT_WITHDRAWAL: (walletId: string, transactionId: string) =>
+        `${ADMIN_BASE}/withdrawals/${walletId}/transactions/${transactionId}/reject`,
 };
 
 const CHAT_BASE = '/chat';

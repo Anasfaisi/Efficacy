@@ -18,6 +18,5 @@ export default function paymentRoutes(paymentController: PaymentController) {
         )
     );
 
-    
     return router;
 }

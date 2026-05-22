@@ -1,4 +1,4 @@
-export interface createStripeConnectReqDto{
-    email: string,
-    mentorId:string
+export interface createStripeConnectReqDto {
+    email: string;
+    mentorId: string;
 }

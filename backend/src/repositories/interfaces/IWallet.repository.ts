@@ -36,8 +36,5 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
         limit: number
     ): Promise<{ transactions: ITransaction[]; total: number }>;
 
-    updateStripeConnectId(
-        mentorId: string,
-        accountId: string
-    ): Promise<void>;
+    updateStripeConnectId(mentorId: string, accountId: string): Promise<void>;
 }

@@ -65,7 +65,7 @@ export function applyRoutes(app: Express) {
     const badgeController = container.get<BadgeController>(
         TYPES.BadgeController
     );
-     const walletController = container.get<WalletController>(
+    const walletController = container.get<WalletController>(
         TYPES.WalletController
     );
 
@@ -86,6 +86,5 @@ export function applyRoutes(app: Express) {
     app.use('/api/reviews', reviewRoutes(reviewController));
     app.use('/api/badge', BadgeRoutes(badgeController, tokenService));
     app.use('/api/plan', planRoutes(planController));
-    app.use('/api/wallet',WalletRoutes(walletController,tokenService))
-
+    app.use('/api/wallet', WalletRoutes(walletController, tokenService));
 }

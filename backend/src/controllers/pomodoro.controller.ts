@@ -7,9 +7,9 @@ import { ErrorMessages } from '@/types/response-messages.types';
 
 @injectable()
 export class PomodoroController {
-
     constructor(
-        @inject(TYPES.PomodoroService) private _pomodoroService: IPomodoroService
+        @inject(TYPES.PomodoroService)
+        private _pomodoroService: IPomodoroService
     ) {}
 
     public logSession = async (req: Request, res: Response): Promise<void> => {

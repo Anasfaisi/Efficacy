@@ -3,7 +3,7 @@ import { IWallet, ITransaction } from '@/models/Wallet.model';
 import { ObjectId } from 'mongoose';
 
 export interface IWalletService {
-    getWallet(mentorId: string | ObjectId): Promise<IWallet>;
+    getWallet(userId: string | ObjectId, role: string): Promise<IWallet>;
     addEarnings(
         mentorId: string | ObjectId,
         amount: number,
@@ -14,7 +14,8 @@ export interface IWalletService {
         amount: number
     ): Promise<IWallet>;
     updateBankDetails(
-        mentorId: string | ObjectId,
+        userId: string | ObjectId,
+        role: string,
         details: {
             accountNumber: string;
             bankName: string;
@@ -22,6 +23,16 @@ export interface IWalletService {
             accountHolderName: string;
         }
     ): Promise<IWallet>;
-    getTransactions(mentorId: string | ObjectId): Promise<ITransaction[]>;
+    getPaginatedTransactions(
+        userId: string | ObjectId,
+        role: string,
+        page: number,
+        limit: number
+    ): Promise<{ transactions: ITransaction[]; total: number }>;
     createStripeConnect(data: createStripeConnectReqDto): Promise<string>;
+    verifyStripeStatus(
+        mentorId: string
+    ): Promise<{ onboarded: boolean; email?: string | null }>;
+    approveWithdrawal(walletId: string, transactionId: string): Promise<IWallet>;
+    rejectWithdrawal(walletId: string, transactionId: string): Promise<IWallet>;
 }

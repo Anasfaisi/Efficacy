@@ -17,7 +17,9 @@ interface AuthenticatedRequest extends Request {
 
 @injectable()
 export class NoteController {
-    constructor(@inject(TYPES.NoteService) private _noteService: INoteService) {}
+    constructor(
+        @inject(TYPES.NoteService) private _noteService: INoteService
+    ) {}
 
     async createNote(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser?.id;

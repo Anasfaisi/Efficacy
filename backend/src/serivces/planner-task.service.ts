@@ -1,4 +1,4 @@
-import { inject, injectable, multiInject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPlannerTask } from '@/models/PlannerTask.model';
 import { IPlannerTaskRepository } from '@/repositories/interfaces/IPlannerTask.repository';

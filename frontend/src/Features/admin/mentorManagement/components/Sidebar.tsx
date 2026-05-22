@@ -34,6 +34,11 @@ export default function Sidebar() {
             icon: Banknote,
         },
         {
+            to: '/admin/payouts',
+            label: 'Payout Requests',
+            icon: Icons.Wallet,
+        },
+        {
             to: '/admin/badge-engine',
             label: 'Badge Engine',
             icon: Icons.Award,

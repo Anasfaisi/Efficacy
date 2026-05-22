@@ -12,7 +12,10 @@ export class UserBadgeRepository
     constructor() {
         super(UserBadge);
     }
-    async findExistingBadge(badgeId: string,userId:string): Promise<IUserBadge | null> {
+    async findExistingBadge(
+        badgeId: string,
+        userId: string
+    ): Promise<IUserBadge | null> {
         return this.model.findOne({ badgeId: badgeId, userId: userId });
     }
 
@@ -21,7 +24,7 @@ export class UserBadgeRepository
     //incoming will be userId,badgeid,unlocked date
     async unlockBadge(
         badgeId: string,
-        userId: string,
+        userId: string
     ): Promise<IUserBadge | null> {
         return await super.create({
             badgeId: new Types.ObjectId(badgeId),
@@ -29,9 +32,8 @@ export class UserBadgeRepository
         });
     }
 
-    async getAllBadges(userId:string):Promise<UserBadgeEntity[]>{
-
-        const result =  await super.find({userId : userId})
-        return UserBadgeMapper.listToUserBadgeEntity(result)
+    async getAllBadges(userId: string): Promise<UserBadgeEntity[]> {
+        const result = await super.find({ userId: userId });
+        return UserBadgeMapper.listToUserBadgeEntity(result);
     }
 }

@@ -1,4 +1,4 @@
-export interface UserBadgeEntity{
+export interface UserBadgeEntity {
     id: string;
     userId: string;
     badgeId: string;

@@ -7,7 +7,7 @@ class GamificationEventBus extends EventEmitter {}
 export const eventBus = new GamificationEventBus();
 export interface GamificationEventPayload {
     userId: string | Types.ObjectId;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export const emitGamificationEvent = (

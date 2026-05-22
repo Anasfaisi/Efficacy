@@ -37,38 +37,43 @@ export class BadgeController {
         res.status(Code.OK).json({ success: true, badge });
     }
 
-    public async updateBadge(req:Request, res:Response){
+    public async updateBadge(req: Request, res: Response) {
         const badgeId = req.params.badgeId;
-        const badgeData = req.body
-        const updatedBadge = await this._badgeService.updateBadge(badgeId,badgeData)
-              if (!updatedBadge) {
+        const badgeData = req.body;
+        const updatedBadge = await this._badgeService.updateBadge(
+            badgeId,
+            badgeData
+        );
+        if (!updatedBadge) {
             res.status(Code.NOT_FOUND).json({
                 success: false,
                 message: 'Badge not found',
             });
             return;
         }
-        res.status(Code.OK).json({status:true,updatedBadge})
+        res.status(Code.OK).json({ status: true, updatedBadge });
     }
 
-    public async toggleBadgeStatus(req:Request,res:Response){
+    public async toggleBadgeStatus(req: Request, res: Response) {
         const badgeId = req.params.badgeId;
         const status = req.body.status;
-        const result = await this._badgeService.toggleBadgeStatus(badgeId,status)
-        res.status(Code.OK).json({status:true,badge:result})
+        const result = await this._badgeService.toggleBadgeStatus(
+            badgeId,
+            status
+        );
+        res.status(Code.OK).json({ status: true, badge: result });
     }
 
-    async getUserBadges(req:Request,res:Response){
-        const userId = req.currentUser?.id
-     if (!userId) {
+    async getUserBadges(req: Request, res: Response) {
+        const userId = req.currentUser?.id;
+        if (!userId) {
             res.status(Code.UNAUTHORIZED).json({
                 message: ErrorMessages.UserNotFound,
-
             });
-            return
+            return;
         }
-        const result = await this._badgeService.getUserBadges(userId)
-        console.log(result,"wanted to see the result")
-        res.status(Code.OK).json({status:true,badges:result})
+        const result = await this._badgeService.getUserBadges(userId);
+        console.log(result, 'wanted to see the result');
+        res.status(Code.OK).json({ status: true, badges: result });
     }
 }

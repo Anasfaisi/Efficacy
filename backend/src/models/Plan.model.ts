@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from 'mongoose';
 
 export interface IPlan extends Document {
     name: string;
@@ -17,7 +17,7 @@ const planSchema = new Schema<IPlan>({
     features: { type: [String] },
     limitations: { type: Object },
     isActive: { type: Boolean, default: true },
-    mentorType: { type: String }
+    mentorType: { type: String },
 });
 
-export default model<IPlan>("Plan", planSchema);
+export default model<IPlan>('Plan', planSchema);

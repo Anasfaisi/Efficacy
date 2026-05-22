@@ -35,7 +35,7 @@ export class BadgeGamificationService implements IBadgeGamificationService {
             // for that now we want to create user badge for checking already occupied
             //we need a badge resolver that would deliver the evaluator
             // 1.construct a badge resolver interface and implementation calling evaluate method
-            // 2.evaluate method will accept a badge.template only            
+            // 2.evaluate method will accept a badge.template only
             // 3.It should return with an evaluator
             //then we will call the evalutor.evaluate method,
             // it will return boolean
@@ -62,8 +62,8 @@ export class BadgeGamificationService implements IBadgeGamificationService {
     ): Promise<void> {
         //ivde namak vanna userid kk vanna userbadge update aaknm,
         //innatha date calculate aakan , unlocked date kodkaan
-                //userbadge repo method ezhudhanm
-                //event notifier ne vilikanm
+        //userbadge repo method ezhudhanm
+        //event notifier ne vilikanm
         const alreadyEarned = await this._userBadgeRepo.findExistingBadge(
             badge.id,
             userId

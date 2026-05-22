@@ -85,6 +85,43 @@ const MentorWalletPage: React.FC = () => {
         fetchData();
     }, [page]);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const success = queryParams.get('success');
+        const refresh = queryParams.get('refresh');
+
+        if (success === 'true') {
+            const verifyStatus = async () => {
+                const toastId = toast.loading('Verifying Stripe Connect status...');
+                try {
+                    const status = await walletApi.verifyStripeStatus();
+                    toast.dismiss(toastId);
+                    if (status.onboarded) {
+                        toast.success('Successfully onboarded with Stripe Connect!');
+                    } else {
+                        toast.error('Stripe Connect onboarding details were not fully submitted.');
+                    }
+                    // Clean up URL query parameters so refresh doesn't re-trigger verification
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                    // Reload wallet data
+                    fetchData();
+                } catch (error) {
+                    toast.dismiss(toastId);
+                    console.error('Failed to verify Stripe Connect status:', error);
+                    toast.error('Failed to verify Stripe Connect status.');
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            };
+            verifyStatus();
+        } else if (refresh === 'true') {
+            toast.info('Onboarding was interrupted. Please try connecting your account again.');
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }, []);
+
     const handleWithdraw = async () => {
         const amt = Number(withdrawAmount);
         if (!withdrawAmount || isNaN(amt) || amt < 500) {

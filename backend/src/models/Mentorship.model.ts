@@ -59,6 +59,7 @@ interface IMentorship extends Document {
     mentorConfirmedCompletion: boolean;
 
     rejectionReason?: string;
+    completionInitiatedAt?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -119,6 +120,7 @@ const mentorshipSchema = new Schema<IMentorship>(
         mentorConfirmedCompletion: { type: Boolean, default: false },
 
         rejectionReason: { type: String },
+        completionInitiatedAt: { type: Date, default: undefined },
     },
     { timestamps: true }
 );

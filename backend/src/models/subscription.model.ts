@@ -1,10 +1,10 @@
 import { Schema, model, Document } from 'mongoose';
 import { IPlan } from './Plan.model';
 
-export  enum SubscriptionStatus {
+export enum SubscriptionStatus {
     ACTIVE = 'active',
     INACTIVE = 'inactive',
-    CANCELLED = 'cancelled'
+    CANCELLED = 'cancelled',
 }
 
 export interface ISubscription extends Document {
@@ -22,7 +22,8 @@ const subscriptionSchema = new Schema<ISubscription>(
             type: String,
             enum: Object.values(SubscriptionStatus),
             default: SubscriptionStatus.INACTIVE,
-        }, stripeSubscriptionId: { type: String },
+        },
+        stripeSubscriptionId: { type: String },
         currentPeriodEnd: { type: Date },
         sessionsBookedThisMonth: { type: Number, default: 0 },
     },

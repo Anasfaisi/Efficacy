@@ -22,7 +22,7 @@ export class BadgeMapper {
 
     static ToEntity(badge: IBadge): BadgeEntity {
         return {
-            id:badge.id,
+            id: badge.id,
             name: badge.name,
             story: badge.story,
             template: badge.template,

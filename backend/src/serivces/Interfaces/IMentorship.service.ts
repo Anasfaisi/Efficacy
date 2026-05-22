@@ -65,4 +65,5 @@ export interface IMentorshipService {
         mentorshipId: string,
         userId: string
     ): Promise<IMentorship>;
+    runDailyCompletionCheck(): Promise<void>;
 }

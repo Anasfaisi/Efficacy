@@ -20,6 +20,7 @@ export class WalletRepository
         super(Wallet);
     }
 
+
     async findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null> {
         if (
             !mentorId ||
@@ -203,6 +204,7 @@ export class WalletRepository
                 $project: {
                     _id: 0,
                     walletId: '$_id',
+                    transactionId: '$transactions._id',
                     amount: '$transactions.amount',
                     type: '$transactions.type',
                     status: '$transactions.status',
@@ -217,6 +219,9 @@ export class WalletRepository
                         name: { $arrayElemAt: ['$mentorDetails.name', 0] },
                         email: { $arrayElemAt: ['$mentorDetails.email', 0] },
                     },
+                    bankAccountDetails: '$bankAccountDetails',
+                    stripeConnectAccountId: '$stripeConnectAccountId',
+                    stripeConnectOnboarded: '$stripeConnectOnboarded',
                 },
             },
             {
@@ -266,7 +271,7 @@ export class WalletRepository
         mentorId: string,
         accountId: string
     ): Promise<void> {
-         await this.model.updateOne(
+        await this.model.updateOne(
             { mentorId: mentorId },
             { $set: { stripeConnectAccountId: accountId } }
         );

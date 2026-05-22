@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IUserStats extends Document {
-    id:string;
+    id: string;
     userId: Types.ObjectId;
     tasksCompleted: number;
     taskStreakDays: number;
