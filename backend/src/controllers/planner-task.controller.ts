@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IPlannerTaskService } from '@/serivces/Interfaces/IPlannerTask.service';
+import { IPlannerTaskService } from '@/services/Interfaces/IPlannerTask.service';
 import code from '@/types/http-status.enum';
 import { ErrorMessages, CommonMessages } from '@/types/response-messages.types';
 

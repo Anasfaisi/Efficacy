@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { BadgeController } from '@/controllers/Gamification/badge.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { Role } from '@/types/role.types';
-import { ITokenService } from '@/serivces/Interfaces/IToken.service';
+import { ITokenService } from '@/services/Interfaces/IToken.service';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function BadgeRoutes(

@@ -1,4 +1,4 @@
-import { IAdmin } from '@/models/Admin.model';
+import { IAdmin } from '@/models/admin.model';
 import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IUserRepository } from '@/repositories/interfaces/IUser.repository';

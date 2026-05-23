@@ -1,4 +1,4 @@
-import { IReview } from '@/models/Review.model';
+import { IReview } from '@/models/review.model';
 import { ReviewEntity } from '@/entity/review.entity';
 import { ReviewResponseDto, CreateReviewRequestDto } from '@/dto/review.dto';
 import { ReviewStatus } from '@/types/review-status.types';

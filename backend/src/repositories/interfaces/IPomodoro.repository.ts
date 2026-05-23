@@ -1,4 +1,4 @@
-import { IPomodoroLog } from '@/models/PomodoroLog.model';
+import { IPomodoroLog } from '@/models/pomodoro-log.model';
 import { IBaseRepository } from './IBase.repository';
 
 export interface IPomodoroRepository extends IBaseRepository<IPomodoroLog> {

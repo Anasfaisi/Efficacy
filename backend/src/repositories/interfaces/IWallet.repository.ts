@@ -1,4 +1,4 @@
-import { IWallet, ITransaction } from '@/models/Wallet.model';
+import { IWallet, ITransaction } from '@/models/wallet.model';
 import { IBaseRepository } from './IBase.repository';
 import { ObjectId } from 'mongoose';
 import { WalletEntity } from '@/entity/wallet.entity';

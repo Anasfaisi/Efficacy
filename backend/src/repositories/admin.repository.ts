@@ -1,5 +1,5 @@
 import { BaseRepository } from './base.repository';
-import AdminModel, { IAdmin } from '../models/Admin.model';
+import AdminModel, { IAdmin } from '../models/admin.model';
 import { IAdminRepository } from './interfaces/IAdmin.repository';
 import { Role } from '@/types/role.types';
 

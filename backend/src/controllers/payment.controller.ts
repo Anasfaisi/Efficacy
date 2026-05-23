@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { IPaymentService } from '@/serivces/Interfaces/IPayment.service';
+import { IPaymentService } from '@/services/Interfaces/IPayment.service';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
 import { ErrorMessages } from '@/types/response-messages.types';

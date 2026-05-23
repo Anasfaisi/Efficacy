@@ -1,5 +1,5 @@
 import { TYPES } from '@/config/inversify-key.types';
-import { IBadgeService } from '@/serivces/Gamification/interfaces/IBadge.service';
+import { IBadgeService } from '@/services/Gamification/interfaces/IBadge.service';
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import Code from '@/types/http-status.enum';

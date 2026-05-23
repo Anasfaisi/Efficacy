@@ -1,6 +1,6 @@
 import { BaseRepository } from './base.repository';
 import { IReviewRepository } from './interfaces/IReview.repository';
-import Review, { IReview } from '@/models/Review.model';
+import Review, { IReview } from '@/models/review.model';
 import { ReviewStatus } from '@/types/review-status.types';
 import { ReviewEntity } from '@/entity/review.entity';
 import { ReviewMapper } from '@/Mapper/review.mapper';

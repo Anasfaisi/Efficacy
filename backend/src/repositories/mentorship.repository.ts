@@ -3,7 +3,7 @@ import { BaseRepository } from './base.repository';
 import Mentorship, {
     IMentorship,
     MentorshipStatus,
-} from '@/models/Mentorship.model';
+} from '@/models/mentorship.model';
 import { IMentorshipRepository } from './interfaces/IMentorship.repository';
 import { ObjectId, Types } from 'mongoose';
 

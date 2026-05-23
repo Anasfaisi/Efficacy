@@ -1,4 +1,4 @@
-import { IBooking } from '@/models/Booking.model';
+import { IBooking } from '@/models/booking.model';
 import { BookingEntity } from '@/entity/booking.entity';
 import { BookingResponseDto } from '@/dto/booking.dto';
 import { UserEntity } from '@/entity/user.entity';

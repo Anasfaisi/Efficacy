@@ -1,6 +1,6 @@
 import { WalletController } from '@/controllers/Wallet.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
-import { ITokenService } from '@/serivces/Interfaces/IToken.service';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
+import { ITokenService } from '@/services/Interfaces/IToken.service';
 import { Role } from '@/types/role.types';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { Router } from 'express';

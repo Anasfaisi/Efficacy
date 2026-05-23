@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import { IBadgeRepository } from './interfaces/IBadge.repository';
-import { Badge, IBadge } from '@/models/Badge.model';
+import { Badge, IBadge } from '@/models/badge.model';
 import { FilterQuery } from 'mongoose';
 import { BadgeEntity } from '@/entity/badge.entity';
 import { BadgeMapper } from '@/Mapper/badge.mapper';

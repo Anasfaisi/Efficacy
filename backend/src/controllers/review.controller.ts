@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IReviewService } from '@/serivces/Interfaces/IReview.service';
+import { IReviewService } from '@/services/Interfaces/IReview.service';
 import code from '@/types/http-status.enum';
 
 @injectable()

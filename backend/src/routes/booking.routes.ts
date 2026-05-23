@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { Container } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { BookingController } from '@/controllers/booking.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
-import { TokenService } from '@/serivces/token.service';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
+import { TokenService } from '@/services/token.service';
 import { Role } from '@/types/role.types';
 import { asyncWrapper } from '@/utils/asyncWrapper';
-import { validateRequest } from '@/middleware/validateRequest';
+import { validateRequest } from '@/middleware/validate-request';
 import {
     createBookingSchema,
     rescheduleRequestSchema,

@@ -1,5 +1,5 @@
 import { UserStatsEntity } from '@/entity/user-stats.entity';
-import { IUserStats } from '@/models/UserStats.model';
+import { IUserStats } from '@/models/userStats.model';
 import { Types } from 'mongoose';
 
 export class UserStatsMapper {

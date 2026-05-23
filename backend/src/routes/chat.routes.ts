@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { ChatController } from '@/controllers/chat.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
-import { TokenService } from '@/serivces/token.service';
+import { TokenService } from '@/services/token.service';
 import { Role } from '@/types/role.types';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 

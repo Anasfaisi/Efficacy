@@ -1,6 +1,6 @@
 import { BaseRepository } from './base.repository';
 import { IUserRepository } from './interfaces/IUser.repository';
-import User, { IUser } from '../models/User.model';
+import User, { IUser } from '../models/user.model';
 import { Role } from '@/types/role.types';
 import { UserUpdateData } from '@/types/repository.types';
 import { ISubscription } from '@/models/subscription.model';

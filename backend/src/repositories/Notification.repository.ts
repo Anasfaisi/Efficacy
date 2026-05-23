@@ -1,4 +1,4 @@
-import { INotification, NotificationModel } from '@/models/Notification.model';
+import { INotification, NotificationModel } from '@/models/notification.model';
 import { BaseRepository } from './base.repository';
 import { INotificationRepository } from './interfaces/INotification.repository';
 import { injectable } from 'inversify';

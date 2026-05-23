@@ -1,6 +1,6 @@
 import UnverifiedUserModel, {
     IUnverifiedUser,
-} from '@/models/Unverified-user.model';
+} from '@/models/unverified-user.model';
 import { IUnverifiedUserRepository } from './interfaces/IUnverified-user.repository';
 
 export class UnverifiedUserRepository implements IUnverifiedUserRepository {

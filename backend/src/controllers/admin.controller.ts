@@ -2,17 +2,17 @@ import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';
-import { IAuthService } from '@/serivces/Interfaces/IAuth.service';
+import { IAuthService } from '@/services/Interfaces/IAuth.service';
 import {
     AuthMessages,
     ErrorMessages,
     SuccessMessages,
 } from '@/types/response-messages.types';
 import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
-import { IAdminAuthService } from '@/serivces/Interfaces/IAdmin-authService';
-import { INotificationService } from '@/serivces/Interfaces/INotification.service';
-import { IAdminService } from '@/serivces/Interfaces/IAdmin.service';
-import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
+import { IAdminAuthService } from '@/services/Interfaces/IAdmin-authService';
+import { INotificationService } from '@/services/Interfaces/INotification.service';
+import { IAdminService } from '@/services/Interfaces/IAdmin.service';
+import { IWalletService } from '@/services/Interfaces/IWallet.service';
 
 @injectable()
 export class AdminController {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IWalletService } from '@/serivces/Interfaces/IWallet.service';
+import { IWalletService } from '@/services/Interfaces/IWallet.service';
 import code from '@/types/http-status.enum';
 import { Role } from '@/types/role.types';
 import { SuccessMessages } from '@/types/response-messages.types';

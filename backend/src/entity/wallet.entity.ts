@@ -1,5 +1,5 @@
 import { MentorEntity } from './mentor.entity';
-import { TransactionEntity } from './transactionEntity';
+import { TransactionEntity } from './transaction.entity';
 import { UserEntity } from './user.entity';
 
 export interface WalletEntity {

@@ -1,5 +1,5 @@
 import { MessageEntity } from '@/entity/message.entity';
-import { IMessage } from '@/models/Message.model';
+import { IMessage } from '@/models/message.model';
 import { Types } from 'mongoose';
 import { MessageStatus } from '@/types/role.types';
 

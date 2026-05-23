@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { NoteModel, INote } from '../models/Note.model';
+import { NoteModel, INote } from '../models/note.model';
 import { BaseRepository } from './base.repository';
 import { INoteRepository } from './interfaces/INote.repository';
 

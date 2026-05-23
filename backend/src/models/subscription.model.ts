@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-import { IPlan } from './Plan.model';
+import { IPlan } from './plan.model';
 
 export enum SubscriptionStatus {
     ACTIVE = 'active',

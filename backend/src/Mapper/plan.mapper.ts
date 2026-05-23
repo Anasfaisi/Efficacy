@@ -1,4 +1,4 @@
-import { IPlan } from '@/models/Plan.model';
+import { IPlan } from '@/models/plan.model';
 
 export class planMapper {
     static ToResponse(data: Partial<IPlan>) {

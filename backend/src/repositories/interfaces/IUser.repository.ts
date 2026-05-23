@@ -1,5 +1,5 @@
 import { ISubscription } from '@/models/subscription.model';
-import { IUser } from '@/models/User.model';
+import { IUser } from '@/models/user.model';
 import { UserUpdateData } from '@/types/repository.types';
 import { Role } from '@/types/role.types';
 import { IBaseRepository } from './IBase.repository';

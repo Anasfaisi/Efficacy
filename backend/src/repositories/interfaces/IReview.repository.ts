@@ -1,4 +1,4 @@
-import { IReview } from '@/models/Review.model';
+import { IReview } from '@/models/review.model';
 import { IBaseRepository } from './IBase.repository';
 import { ReviewEntity } from '@/entity/review.entity';
 import { Types } from 'mongoose';

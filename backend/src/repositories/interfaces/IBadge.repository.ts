@@ -1,6 +1,6 @@
 import { BadgeEntity } from '@/entity/badge.entity';
 import { IBaseRepository } from './IBase.repository';
-import { IBadge } from '@/models/Badge.model';
+import { IBadge } from '@/models/badge.model';
 import { FilterQuery } from 'mongoose';
 
 export interface IBadgeRepository extends IBaseRepository<IBadge> {

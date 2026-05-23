@@ -1,4 +1,4 @@
-import { IUser } from '@/models/User.model';
+import { IUser } from '@/models/user.model';
 import { ColumnId } from '@/types/column-enum.types';
 import { Role } from '@/types/role.types';
 

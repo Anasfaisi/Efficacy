@@ -1,10 +1,10 @@
 import { TYPES } from '@/config/inversify-key.types';
-import { IPlanService } from '@/serivces/Interfaces/IPlan.service';
+import { IPlanService } from '@/services/Interfaces/IPlan.service';
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import httpStatus from '@/types/http-status.enum';
 import { FilterQuery } from 'mongoose';
-import { IPlan } from '@/models/Plan.model';
+import { IPlan } from '@/models/plan.model';
 @injectable()
 export class PlanController {
     constructor(

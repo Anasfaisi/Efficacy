@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IPomodoroService } from '@/serivces/Interfaces/IPomodoro.service';
+import { IPomodoroService } from '@/services/Interfaces/IPomodoro.service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import code from '@/types/http-status.enum';

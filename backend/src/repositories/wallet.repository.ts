@@ -4,10 +4,10 @@ import Wallet, {
     IWallet,
     TransactionStatus,
     TransactionType,
-} from '@/models/Wallet.model';
+} from '@/models/wallet.model';
 import { IWalletRepository } from './interfaces/IWallet.repository';
 import { ObjectId, PipelineStage } from 'mongoose';
-import { ITransaction } from '@/models/Wallet.model';
+import { ITransaction } from '@/models/wallet.model';
 import { WalletEntity } from '@/entity/wallet.entity';
 import { WalletMapper } from '@/Mapper/wallet.mapper';
 

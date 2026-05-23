@@ -1,4 +1,4 @@
-import { IMentorship } from '@/models/Mentorship.model';
+import { IMentorship } from '@/models/mentorship.model';
 import { IBaseRepository } from './IBase.repository';
 import { ObjectId } from 'mongoose';
 

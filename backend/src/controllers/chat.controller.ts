@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IChatService } from '@/serivces/Interfaces/IChat.service';
-import { ISocketService } from '@/serivces/Interfaces/ISocket.service';
+import { IChatService } from '@/services/Interfaces/IChat.service';
+import { ISocketService } from '@/services/Interfaces/ISocket.service';
 import Code from '@/types/http-status.enum';
 import {
     ErrorMessages,

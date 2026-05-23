@@ -1,8 +1,8 @@
 import express from 'express';
 import { AdminController } from '../controllers/admin.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { Role } from '@/types/role.types';
-import { TokenService } from '@/serivces/token.service';
+import { TokenService } from '@/services/token.service';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 
 export default function adminRoutes(adminController: AdminController) {

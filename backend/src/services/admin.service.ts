@@ -1,0 +1,270 @@
+import { injectable, inject } from 'inversify';
+import { IAdminService } from './Interfaces/IAdmin.service';
+import {
+    MentorApplicationResponseDto,
+    PaginatedMentorApplicationResponseDto,
+    PaginatedMentorResponseDto,
+} from '@/dto/mentorResponse.dto';
+import { IMentor } from '@/models/mentor.model';
+import { TYPES } from '@/config/inversify-key.types';
+import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
+import { INotificationService } from './Interfaces/INotification.service';
+import { NotificationType } from '@/types/notification.enum';
+import { Role } from '@/types/role.types';
+import { IUser } from '@/models/user.model';
+import { IUserRepository } from '@/repositories/interfaces/IUser.repository';
+import { IAdminRepository } from '@/repositories/interfaces/IAdmin.repository';
+import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
+import { IAdmin } from '@/models/admin.model';
+import { ITransaction } from '@/models/wallet.model';
+import {
+    UserManagementResponseDto,
+    PaginatedUserResponseDto,
+} from '@/dto/response.dto';
+import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
+import { NotificationMessages } from '@/types/response-messages.types';
+
+@injectable()
+export class AdminService implements IAdminService {
+    constructor(
+        @inject(TYPES.MentorRepository)
+        private _mentorRepository: IMentorRepository,
+        @inject(TYPES.NotificationService)
+        private _notificationService: INotificationService,
+        @inject(TYPES.UserRepository)
+        private _userRepository: IUserRepository,
+        @inject(TYPES.WalletRepository)
+        private _walletRepository: IWalletRepository,
+        @inject(TYPES.AdminRepository)
+        private _adminRepository: IAdminRepository<IAdmin>
+    ) {}
+
+    private mapToResponseDto(mentor: IMentor): MentorApplicationResponseDto {
+        return {
+            id: mentor.id,
+            _id: mentor.id,
+            email: mentor.email,
+            name: mentor.name,
+            phone: mentor.phone,
+            city: mentor.city || '',
+            state: mentor.state || '',
+            country: mentor.country || '',
+            bio: mentor.bio || '',
+            createdAt: mentor.createdAt,
+            status: mentor.status,
+
+            linkedin: mentor.linkedin,
+            github: mentor.github,
+            personalWebsite: mentor.personalWebsite,
+            demoVideoLink: mentor.demoVideoLink,
+            availability: mentor.availability,
+            mentorType: mentor.mentorType!,
+            qualification: mentor.qualification,
+            domain: mentor.domain,
+            university: mentor.university,
+            graduationYear: mentor.graduationYear,
+            expertise: mentor.expertise,
+            academicSpan: mentor.academicSpan,
+            industryCategory: mentor.industryCategory,
+            experienceYears: mentor.experienceYears,
+            currentRole: mentor.currentRole,
+            skills: mentor.skills,
+            guidanceAreas: mentor.guidanceAreas,
+            experienceSummary: mentor.experienceSummary,
+            resume: mentor.resume,
+            certificate: mentor.certificate,
+            idProof: mentor.idProof,
+        };
+    }
+
+    private mapToUserManagementResponseDto(
+        user: IUser
+    ): UserManagementResponseDto {
+        return new UserManagementResponseDto(
+            user.id.toString(),
+            user.name,
+            user.email,
+            user.role,
+            user.isActive,
+            user.profilePic,
+            user.createdAt
+        );
+    }
+
+    async getMentorApplications(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorApplicationResponseDto> {
+        const { mentors, total } =
+            await this._mentorRepository.getMentorApplications(
+                page,
+                limit,
+                search,
+                filters
+            );
+        const mappedApplications = mentors.map((m) => this.mapToResponseDto(m));
+        return new PaginatedMentorApplicationResponseDto(
+            mappedApplications,
+            total,
+            Math.ceil(total / limit),
+            page
+        );
+    }
+
+    async getMentorApplicationById(
+        id: string
+    ): Promise<MentorApplicationResponseDto | null> {
+        const mentor = await this._mentorRepository.findById(id);
+        return mentor ? this.mapToResponseDto(mentor) : null;
+    }
+
+    async approveMentorApplication(id: string): Promise<void> {
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'approved',
+            isVerified: true,
+        });
+        console.log(mentor, ' what is coming here ');
+        if (mentor) {
+            await this._notificationService.createNotification(
+                mentor.id,
+                Role.Mentor,
+                NotificationType.MENTOR_APPLICATION_APPROVED,
+                NotificationMessages.MentorAppApprovedTitle,
+                'Congratulations! Your mentor application has been approved. You can now access the mentor dashboard.',
+                { link: '/mentor/dashboard' }
+            );
+        }
+    }
+
+    async rejectMentorApplication(id: string, reason: string): Promise<void> {
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'rejected',
+            applicationFeedback: reason,
+        });
+        if (mentor) {
+            await this._notificationService.createNotification(
+                mentor.id,
+                Role.Mentor,
+                NotificationType.MENTOR_APPLICATION_REJECTED,
+                NotificationMessages.MentorAppRejectedTitle,
+                `Your mentor application has been rejected. Reason: ${reason}`,
+                { reason }
+            );
+        }
+    }
+
+    async requestChangesMentorApplication(
+        id: string,
+        reason: string
+    ): Promise<void> {
+        const mentor = await this._mentorRepository.update(id, {
+            status: 'reapply',
+            applicationFeedback: reason,
+        });
+        if (mentor) {
+            await this._notificationService.createNotification(
+                mentor.id,
+                Role.Mentor,
+                NotificationType.SYSTEM_ANNOUNCEMENT,
+                NotificationMessages.ChangesRequestedTitle,
+                `The admin has requested changes to your application. Reason: ${reason}`,
+                { reason, link: '/mentor/onboarding' }
+            );
+        }
+    }
+
+    async getAllMentors(
+        page: number,
+        limit: number,
+        search?: string,
+        filters?: { status?: string; mentorType?: string }
+    ): Promise<PaginatedMentorResponseDto> {
+        const { mentors, total } = await this._mentorRepository.getAllMentors(
+            page,
+            limit,
+            search,
+            filters
+        );
+        const mappedMentors = mentors.map((mentor) =>
+            this.mapToResponseDto(mentor)
+        );
+        return new PaginatedMentorResponseDto(
+            mappedMentors,
+            total,
+            Math.ceil(total / limit),
+            page
+        );
+    }
+
+    async getMentorById(
+        id: string
+    ): Promise<MentorApplicationResponseDto | null> {
+        return this.getMentorApplicationById(id);
+    }
+
+    async updateMentorStatus(id: string, status: string): Promise<void> {
+        await this._mentorRepository.update(id, { status });
+    }
+
+    async getAllUsers(
+        page: number,
+        limit: number,
+        search?: string
+    ): Promise<PaginatedUserResponseDto> {
+        const { users, totalCount } = await this._userRepository.getAllUsers(
+            page,
+            limit,
+            search
+        );
+        const mappedUsers = users.map((user) =>
+            this.mapToUserManagementResponseDto(user)
+        );
+        return new PaginatedUserResponseDto(
+            mappedUsers,
+            totalCount,
+            Math.ceil(totalCount / limit),
+            page
+        );
+    }
+
+    async updateUserStatus(dto: UpdateUserStatusRequestDto): Promise<void> {
+        await this._userRepository.updateUser(dto.userId, {
+            isActive: dto.isActive,
+        });
+    }
+
+    async getRevenueDetails(
+        adminId: string
+    ): Promise<{ totalRevenue: number }> {
+        const admin = await this._adminRepository.findById(adminId);
+        return { totalRevenue: admin?.totalRevenue || 0 };
+    }
+
+    async getAllTransactions(
+        page: number,
+        limit: number,
+        filter: 'all' | 'mentor' | 'user'
+    ): Promise<{ transactions: ITransaction[]; total: number }> {
+        return await this._walletRepository.getGlobalTransactions(
+            page,
+            limit,
+            filter
+        );
+    }
+
+    async getDashboardStats(adminId: string): Promise<{
+        totalUsers: number;
+        totalMentors: number;
+        totalRevenue: number;
+    }> {
+        const { totalCount: totalUsers } =
+            await this._userRepository.getAllUsers(1, 1);
+        const { total: totalMentors } =
+            await this._mentorRepository.getAllMentors(1, 1);
+        const { totalRevenue } = await this.getRevenueDetails(adminId);
+
+        return { totalUsers, totalMentors, totalRevenue };
+    }
+}

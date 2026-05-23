@@ -1,5 +1,5 @@
 import { container } from '@/config/inversify.config';
-import { IMentorshipService } from '../serivces/Interfaces/IMentorship.service';
+import { IMentorshipService } from '../services/Interfaces/IMentorship.service';
 import { TYPES } from '@/config/inversify-key.types';
 import { logger } from './logMiddlewares';
 

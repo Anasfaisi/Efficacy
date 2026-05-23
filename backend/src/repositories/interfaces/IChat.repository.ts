@@ -1,5 +1,5 @@
-import { IConversation } from '@/models/Conversation.model';
-import { IMessage } from '@/models/Message.model';
+import { IConversation } from '@/models/conversation.model';
+import { IMessage } from '@/models/message.model';
 
 export interface IChatRepository {
     createConversation(

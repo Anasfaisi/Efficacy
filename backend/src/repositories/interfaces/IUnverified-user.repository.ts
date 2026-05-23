@@ -1,4 +1,4 @@
-import { IUnverifiedUser } from '@/models/Unverified-user.model';
+import { IUnverifiedUser } from '@/models/unverified-user.model';
 
 export interface IUnverifiedUserRepository {
     findByEmail(email: string): Promise<IUnverifiedUser | null>;

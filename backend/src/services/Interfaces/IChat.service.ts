@@ -1,0 +1,23 @@
+import { IConversation } from '@/models/conversation.model';
+import { IMessage } from '@/models/message.model';
+
+export interface IChatService {
+    initiateChat(userId: string, mentorId: string): Promise<IConversation>;
+
+    getUserConversations(userId: string): Promise<IConversation[]>;
+    getRoomMessages(
+        roomId: string,
+        userId: string,
+        limit?: number,
+        skip?: number
+    ): Promise<IMessage[]>;
+
+    sendMessage(
+        senderId: string,
+        roomId: string,
+        content: string,
+        type?: 'text' | 'image' | 'audio' | 'file'
+    ): Promise<IMessage>;
+    validateRoomAccess(roomId: string, userId: string): Promise<boolean>;
+    deleteMessage(userId: string, messageId: string): Promise<IMessage>;
+}

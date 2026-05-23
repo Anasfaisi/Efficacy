@@ -1,4 +1,4 @@
-import { IUser } from '@/models/User.model';
+import { IUser } from '@/models/user.model';
 import { UserEntity } from '@/entity/user.entity';
 import { Types } from 'mongoose';
 

@@ -1,4 +1,4 @@
-import { PomodoroLogModel, IPomodoroLog } from '../models/PomodoroLog.model';
+import { PomodoroLogModel, IPomodoroLog } from '../models/pomodoro-log.model';
 import { BaseRepository } from './base.repository';
 import { IPomodoroRepository } from './interfaces/IPomodoro.repository';
 import { injectable } from 'inversify';

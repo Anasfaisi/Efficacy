@@ -3,8 +3,8 @@ import { ReviewController } from '@/controllers/review.controller';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
-import { TokenService } from '@/serivces/token.service';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
+import { TokenService } from '@/services/token.service';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { Role } from '@/types/role.types';
 
 export default function reviewRoutes(reviewController: ReviewController) {

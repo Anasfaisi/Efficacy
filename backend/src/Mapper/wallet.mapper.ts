@@ -1,5 +1,5 @@
 import { WalletEntity } from '@/entity/wallet.entity';
-import { IWallet } from '@/models/Wallet.model';
+import { IWallet } from '@/models/wallet.model';
 
 export class WalletMapper {
     static ToEntity(wallet: IWallet): WalletEntity {

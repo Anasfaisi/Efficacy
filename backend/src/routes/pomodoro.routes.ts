@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { PomodoroController } from '../controllers/pomodoro.controller';
-import authenticateAndAuthorize from '../middleware/authenticateAndAuthorize';
+import authenticateAndAuthorize from '../middleware/authenticate-and-authorize';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
-import { TokenService } from '@/serivces/token.service';
+import { TokenService } from '@/services/token.service';
 import { Role } from '@/types/role.types';
 
 export default function pomodoroRouter(pomodoroController: PomodoroController) {

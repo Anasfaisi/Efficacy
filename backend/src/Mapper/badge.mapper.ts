@@ -1,6 +1,6 @@
 import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
 import { BadgeEntity } from '@/entity/badge.entity';
-import { IBadge } from '@/models/Badge.model';
+import { IBadge } from '@/models/badge.model';
 
 export class BadgeMapper {
     static ToResponseDto(badge: IBadge): CreateBadgeResponseDto {

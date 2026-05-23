@@ -26,7 +26,7 @@ import reviewRoutes from './routes/review.routes';
 import { PlanController } from './controllers/plan.controller';
 import planRoutes from './routes/plan.routes';
 import { BadgeController } from './controllers/Gamification/badge.controller';
-import { ITokenService } from './serivces/Interfaces/IToken.service';
+import { ITokenService } from './services/Interfaces/IToken.service';
 import BadgeRoutes from './routes/Gamification/badge.routes';
 import { WalletController } from './controllers/Wallet.controller';
 import WalletRoutes from './routes/wallet.routes';

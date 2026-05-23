@@ -1,5 +1,5 @@
-import { KanbanBoardFromEntity } from '@/entity/fromEntity';
-import { KanbanBoardToEntity } from '@/entity/toEntity';
+import { KanbanBoardFromEntity } from '@/entity/from.entity';
+import { KanbanBoardToEntity } from '@/entity/to.entity';
 
 export interface IKanbanRepository {
     findKanbanBoardByUserId(id: string): Promise<KanbanBoardToEntity>;

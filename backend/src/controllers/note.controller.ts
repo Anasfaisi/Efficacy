@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
-import { INoteService } from '../serivces/Interfaces/INote.service';
+import { INoteService } from '../services/Interfaces/INote.service';
 import { TYPES } from '../config/inversify-key.types';
 import HttpStatus from '../types/http-status.enum';
 import {

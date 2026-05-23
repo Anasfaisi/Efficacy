@@ -1,4 +1,4 @@
-import { IPlannerTask } from '@/models/PlannerTask.model';
+import { IPlannerTask } from '@/models/planner-task.model';
 import { IBaseRepository } from './IBase.repository';
 
 export interface IPlannerTaskRepository extends IBaseRepository<IPlannerTask> {

@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { TYPES } from '@/config/inversify-key.types';
 import { inject } from 'inversify';
 import code from '@/types/http-status.enum';
-import { IMentorAuthService } from '@/serivces/Interfaces/IMentor-auth.service';
-import { IMentorService } from '@/serivces/Interfaces/IMentor.service';
-import { INotificationService } from '@/serivces/Interfaces/INotification.service';
+import { IMentorAuthService } from '@/services/Interfaces/IMentor-auth.service';
+import { IMentorService } from '@/services/Interfaces/IMentor.service';
+import { INotificationService } from '@/services/Interfaces/INotification.service';
 import {
     AuthMessages,
     ErrorMessages,

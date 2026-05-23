@@ -1,4 +1,4 @@
-import { INotification } from '@/models/Notification.model';
+import { INotification } from '@/models/notification.model';
 import { IBaseRepository } from './IBase.repository';
 
 export interface INotificationRepository

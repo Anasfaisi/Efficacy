@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
 import { BaseRepository } from './base.repository';
-import PlanModel, { IPlan } from '@/models/Plan.model';
+import PlanModel, { IPlan } from '@/models/plan.model';
 import { IPlanRepository } from './interfaces/IPlan.repository';
 
 export class planRepository

@@ -1,4 +1,4 @@
-import { MessageModel, IMessage } from '@/models/Message.model';
+import { MessageModel, IMessage } from '@/models/message.model';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 import { BaseRepository } from './base.repository';
 import { injectable } from 'inversify';

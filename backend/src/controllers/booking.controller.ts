@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IBookingService } from '@/serivces/Interfaces/IBooking.service';
+import { IBookingService } from '@/services/Interfaces/IBooking.service';
 import code from '@/types/http-status.enum';
 import { CommonMessages } from '@/types/response-messages.types';
 

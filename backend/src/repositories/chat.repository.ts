@@ -1,7 +1,7 @@
 import { BaseRepository } from './base.repository';
 import { IChatRepository } from './interfaces/IChat.repository';
-import { ConversationModel, IConversation } from '@/models/Conversation.model';
-import { IMessage } from '@/models/Message.model';
+import { ConversationModel, IConversation } from '@/models/conversation.model';
+import { IMessage } from '@/models/message.model';
 import { injectable, inject } from 'inversify';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';

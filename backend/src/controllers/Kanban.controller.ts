@@ -1,4 +1,4 @@
-import { IKanbanService } from '@/serivces/Interfaces/Ikanban.service';
+import { IKanbanService } from '@/servies/Interfaces/Ikanban.service';
 import HttpStatus from '@/types/http-status.enum';
 import { TYPES } from '@/config/inversify-key.types';
 import {

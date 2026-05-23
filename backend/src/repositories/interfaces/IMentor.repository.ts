@@ -1,4 +1,4 @@
-import { IMentor } from '@/models/Mentor.model';
+import { IMentor } from '@/models/mentor.model';
 import { IBaseRepository } from './IBase.repository';
 
 export interface IMentorRepository extends IBaseRepository<IMentor> {

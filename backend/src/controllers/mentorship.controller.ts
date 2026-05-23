@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IMentorshipService } from '@/serivces/Interfaces/IMentorship.service';
+import { IMentorshipService } from '@/services/Interfaces/IMentorship.service';
 import code from '@/types/http-status.enum';
 
 @injectable()

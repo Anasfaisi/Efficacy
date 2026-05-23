@@ -1,4 +1,4 @@
-import { IPlan } from '@/models/Plan.model';
+import { IPlan } from '@/models/plan.model';
 import { FilterQuery } from 'mongoose';
 
 export interface IPlanRepository {

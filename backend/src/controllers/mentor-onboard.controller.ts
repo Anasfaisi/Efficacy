@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { inject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
-import { IMentorOnboardService } from '@/serivces/Interfaces/IMentor-onboard.service';
+import { IMentorOnboardService } from '@/services/Interfaces/IMentor-onboard.service';
 import code from '@/types/http-status.enum';
 import {
     ErrorMessages,

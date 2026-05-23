@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { RequestHandler } from 'express';
 import { UserController } from '../controllers/user.controller';
-import authenticateAndAuthorize from '@/middleware/authenticateAndAuthorize';
-import { TokenService } from '@/serivces/token.service';
+import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
+import { TokenService } from '@/services/token.service';
 import { Role } from '@/types/role.types';
 import { upload } from '@/config/multer.config';
 import { container } from '@/config/inversify.config';

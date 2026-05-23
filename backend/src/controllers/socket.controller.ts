@@ -1,4 +1,4 @@
-import { ISocketService } from '@/serivces/Interfaces/ISocket.service';
+import { ISocketService } from '@/services/Interfaces/ISocket.service';
 import { TYPES } from '@/config/inversify-key.types';
 import { Server } from 'socket.io';
 import { inject, injectable } from 'inversify';

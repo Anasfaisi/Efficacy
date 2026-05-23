@@ -1,5 +1,5 @@
 import { UserBadgeEntity } from '@/entity/user-badge.entity';
-import { IUserBadge } from '@/models/UserBadge.model';
+import { IUserBadge } from '@/models/userBadge.model';
 
 export interface IUserBadgeRepository {
     findExistingBadge(
