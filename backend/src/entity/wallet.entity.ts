@@ -1,13 +1,17 @@
+import { ObjectId } from 'mongoose';
 import { MentorEntity } from './mentor.entity';
 import { TransactionEntity } from './transactionEntity';
 import { UserEntity } from './user.entity';
 
 export interface WalletEntity {
     id: string;
-    mentorId?: string | MentorEntity;
-    userId?: string | UserEntity;
+    mentorId?: string | MentorEntity|ObjectId;
+    userId?: string | UserEntity|ObjectId;
     balance: number;
     pendingBalance: number;
+    pendingWithdrawal?: number;
+    totalWithdrawn?: number;
+    lifetimeEarnings?: number;
     transactions: TransactionEntity[];
     bankAccountDetails?: {
         accountNumber: string;

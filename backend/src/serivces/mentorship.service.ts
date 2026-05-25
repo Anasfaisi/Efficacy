@@ -626,7 +626,9 @@ export class MentorshipService implements IMentorshipService {
                 mentorship.mentorId instanceof Types.ObjectId
                     ? mentorship.mentorId.toString()
                     : (mentorship.mentorId as unknown as MentorEntity).id
-                      ? (mentorship.mentorId as unknown as MentorEntity).id.toString()
+                      ? (
+                            mentorship.mentorId as unknown as MentorEntity
+                        ).id.toString()
                       : (
                             mentorship.mentorId as unknown as MentorEntity
                         ).id?.toString();

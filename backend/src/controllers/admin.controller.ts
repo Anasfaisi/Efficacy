@@ -282,7 +282,8 @@ export class AdminController {
             transactionId
         );
         res.status(code.OK).json({
-            message: 'Payout approved and Stripe Express Transfer completed successfully.',
+            message:
+                'Payout approved and Stripe Express Transfer completed successfully.',
             wallet,
         });
     }
@@ -294,7 +295,8 @@ export class AdminController {
             transactionId
         );
         res.status(code.OK).json({
-            message: 'Payout request rejected and funds returned to mentor balance.',
+            message:
+                'Payout request rejected and funds returned to mentor balance.',
             wallet,
         });
     }

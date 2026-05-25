@@ -140,17 +140,13 @@ export default function adminRoutes(adminController: AdminController) {
     router.post(
         '/withdrawals/:walletId/transactions/:transactionId/approve',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(
-            adminController.approveWithdrawal.bind(adminController)
-        )
+        asyncWrapper(adminController.approveWithdrawal.bind(adminController))
     );
 
     router.post(
         '/withdrawals/:walletId/transactions/:transactionId/reject',
         authenticateAndAuthorize(tokenService, [Role.Admin]),
-        asyncWrapper(
-            adminController.rejectWithdrawal.bind(adminController)
-        )
+        asyncWrapper(adminController.rejectWithdrawal.bind(adminController))
     );
 
     return router;

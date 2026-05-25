@@ -113,7 +113,6 @@ import { IBadgeGamificationService } from '@/serivces/Gamification/interfaces/IB
 import { IPomodoroGamificationService } from '@/serivces/Gamification/interfaces/IPomodoro-gamification.service';
 import { PomodoroGamificationService } from '@/serivces/Gamification/pomodoro-gamification.service';
 
-
 export const container = new Container();
 
 container.bind<IBadgeRepository>(TYPES.BadgeRepository).to(BadgeRepository);

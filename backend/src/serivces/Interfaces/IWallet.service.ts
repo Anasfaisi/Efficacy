@@ -1,4 +1,5 @@
 import { createStripeConnectReqDto } from '@/dto/wallet-request.dto';
+import { WalletEntity } from '@/entity/wallet.entity';
 import { IWallet, ITransaction } from '@/models/Wallet.model';
 import { ObjectId } from 'mongoose';
 
@@ -33,6 +34,9 @@ export interface IWalletService {
     verifyStripeStatus(
         mentorId: string
     ): Promise<{ onboarded: boolean; email?: string | null }>;
-    approveWithdrawal(walletId: string, transactionId: string): Promise<IWallet>;
-    rejectWithdrawal(walletId: string, transactionId: string): Promise<IWallet>;
+    approveWithdrawal(
+        walletId: string,
+        transactionId: string
+    ): Promise<IWallet>;
+    rejectWithdrawal(walletId: string, transactionId: string): Promise<WalletEntity>;
 }

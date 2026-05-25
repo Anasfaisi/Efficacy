@@ -39,5 +39,5 @@ export enum IconType {
 
 export interface GamificationEventPayload {
     userId: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
