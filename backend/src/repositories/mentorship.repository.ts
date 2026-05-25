@@ -155,11 +155,12 @@ export class MentorshipRepository
     }
 
     async findActiveMentorshipsForCompletionCheck(): Promise<IMentorship[]> {
-        return await this.model.find({
-            status: MentorshipStatus.ACTIVE,
-        })
-        .populate('userId', 'name email')
-        .populate('mentorId', 'name email')
-        .exec();
+        return await this.model
+            .find({
+                status: MentorshipStatus.ACTIVE,
+            })
+            .populate('userId', 'name email')
+            .populate('mentorId', 'name email')
+            .exec();
     }
 }

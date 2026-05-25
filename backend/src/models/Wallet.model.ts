@@ -13,6 +13,7 @@ export enum TransactionStatus {
 }
 
 interface ITransaction {
+    id?:string ;
     amount: number;
     type: TransactionType;
     status: TransactionStatus;
@@ -84,7 +85,6 @@ const walletSchema = new Schema<IWallet>(
     },
     { timestamps: true }
 );
-
 
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

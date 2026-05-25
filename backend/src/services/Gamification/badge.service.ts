@@ -45,7 +45,10 @@ export class BadgeService implements IBadgeService {
         badgeId: string,
         badgeData: CreateBadgeRequestDto
     ): Promise<CreateBadgeResponseDto> {
-        const result = await this._badgeRepository.update(badgeId, badgeData as any);
+        const result = await this._badgeRepository.update(
+            badgeId,
+            badgeData as any
+        );
         if (!result) throw new Error('Badge not found');
         return BadgeMapper.ToResponseDto(result);
     }
