@@ -16,7 +16,8 @@ import { INotificationService } from './Interfaces/INotification.service';
 import { Role } from '@/types/role.types';
 import { NotificationType } from '@/types/notification.enum';
 import { WalletEntity } from '@/entity/wallet.entity';
-import { TransactionEntity } from '@/entity/transactionEntity';
+import { TransactionEntity } from '@/entity/transaction.entity';
+import { WalletMapper } from '@/Mapper/wallet.mapper';
 
 @injectable()
 export class WalletService implements IWalletService {
@@ -294,9 +295,9 @@ export class WalletService implements IWalletService {
         transactionId: string
     ): Promise<WalletEntity> {
         const wallet = await this._walletRepository.findWalletById(walletId);
-        if (!wallet) throw new Error('Wallet not found');
+        if (!wallet ) throw new Error('Wallet not found');
 
-        const transaction = wallet.transactions.find(
+        const transaction = wallet?.transactions?.find(
             (t: TransactionEntity) => t.id && t.id.toString() === transactionId
         );
         if (!transaction) throw new Error('Transaction not found');
@@ -321,7 +322,7 @@ export class WalletService implements IWalletService {
 
         transaction.status = TransactionStatus.FAILED;
 
-        await this._walletRepository.update(wallet.id as string, wallet);
+       const udpatedWallet= await this._walletRepository.update(wallet.id as string, wallet);
 
         // Notify Mentor of rejected payout request
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';
@@ -336,6 +337,6 @@ export class WalletService implements IWalletService {
             );
         }
 
-        return wallet;
+        return WalletMapper.ToEntity(udpatedWallet) as WalletEntity;
     }
 }

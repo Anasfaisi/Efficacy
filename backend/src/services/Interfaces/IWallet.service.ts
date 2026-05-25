@@ -1,5 +1,9 @@
+
 import { createStripeConnectReqDto } from '@/dto/wallet-request.dto'
-import { ObjectId } from 'mongoose';import { IWallet, ITransaction } from '@/models/Wallet.model';
+import { WalletEntity } from '@/entity/wallet.entity';
+import { ITransaction, IWallet } from '@/models/wallet.model';
+import { ObjectId } from 'mongoose';
+
 
 
 export interface IWalletService {

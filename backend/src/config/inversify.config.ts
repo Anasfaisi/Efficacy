@@ -36,7 +36,6 @@ import { MentorOnboardController } from '@/controllers/mentor-onboard.controller
 import { IMentorOnboardService } from '@/services/Interfaces/IMentor-onboard.service';
 import { MentorOnboardService } from '@/services/mentor-onboard.service';
 import { INotificationRepository } from '@/repositories/interfaces/INotification.repository';
-import { NotificationRepository } from '@/repositories/notification.repository';
 import { INotificationService } from '@/services/Interfaces/INotification.service';
 import { NotificationService } from '@/services/notification.service';
 import { IAdminService } from '@/services/Interfaces/IAdmin.service';
@@ -106,12 +105,15 @@ import { BadgeTemplateResolverService } from '@/services/Gamification/badge-temp
 import { IBadgeTemplateResolverService } from '@/services/Gamification/interfaces/IBadge-template-resolver.service';
 import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
 import { UserBadgeRepository } from '@/repositories/Gamification/user-badge.repository';
+
 import { ITaskGamificationHandleService } from '@/services/Gamification/interfaces/ITask-gamification-handle.service';
 import { TaskGamificationHandleService } from '@/services/Gamification/task-gamification-handle.service';
 import { BadgeGamificationService } from '@/services/Gamification/badge-gamification.service';
 import { IBadgeGamificationService } from '@/services/Gamification/interfaces/IBadge-gamification.service';
 import { IPomodoroGamificationService } from '@/services/Gamification/interfaces/IPomodoro-gamification.service';
 import { PomodoroGamificationService } from '@/services/Gamification/pomodoro-gamification.service';
+import { NotificationRepository } from '@/repositories/Notification.repository';
+
 
 export const container = new Container();
 

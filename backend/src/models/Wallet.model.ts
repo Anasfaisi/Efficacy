@@ -23,6 +23,7 @@ interface ITransaction {
 }
 
 interface IWallet extends Document {
+    id?:string
     mentorId?: Types.ObjectId;
     userId?: Types.ObjectId;
     balance: number;
