@@ -13,5 +13,5 @@ export enum NotificationType {
     MENTORSHIP_RESPONSE = 'mentorship_response',
     MENTORSHIP_ACTIVE = 'mentorship_active',
     MENTORSHIP_COMPLETED = 'mentorship_completed',
-    MENTOR_PAYOUT_REQUEST = 'mentor_Payout_Request'
+    MENTOR_PAYOUT_REQUEST = 'mentor_Payout_Request',
 }

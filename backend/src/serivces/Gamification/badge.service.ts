@@ -1,12 +1,12 @@
-import { CreateBadgeRequestDto } from '@/dto/badge-request.dto';
-import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
-import { IBadgeService } from './interfaces/IBadge.service';
-import { inject, injectable } from 'inversify';
-import { IBadgeRepository } from '@/repositories/interfaces/IBadge.repository';
-import { TYPES } from '@/config/inversify-key.types';
-import { BadgeMapper } from '@/Mapper/badge.mapper';
-import { UserBadgeEntity } from '@/entity/user-badge.entity';
-import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUser-badge.repository';
+import { TYPES } from "@/config/inversify-key.types";
+import { CreateBadgeRequestDto } from "@/dto/badge-request.dto";
+import { CreateBadgeResponseDto } from "@/dto/badge-response.dto";
+import { UserBadgeEntity } from "@/entity/user-badge.entity";
+import { BadgeMapper } from "@/Mapper/badge.mapper";
+import { IUserBadgeRepository } from "@/repositories/Gamification/interfaces/IUser-badge.repository";
+import { IBadgeRepository } from "@/repositories/interfaces/IBadge.repository";
+import { IBadgeService } from "@/services/Gamification/interfaces/IBadge.service";
+import { injectable, inject } from "inversify";
 
 @injectable()
 export class BadgeService implements IBadgeService {

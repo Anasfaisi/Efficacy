@@ -19,8 +19,11 @@ export class WalletRepository
     constructor() {
         super(Wallet);
     }
-
-
+    async findWalletById(walletId: string): Promise<Partial<WalletEntity> | null> {
+        const wallet = await super.findById(walletId);
+        if(!wallet)return null
+        return WalletMapper.ToEntity(wallet);
+    }
     async findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null> {
         if (
             !mentorId ||

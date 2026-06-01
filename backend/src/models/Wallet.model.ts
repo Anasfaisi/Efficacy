@@ -13,6 +13,7 @@ export enum TransactionStatus {
 }
 
 interface ITransaction {
+    id?:string ;
     amount: number;
     type: TransactionType;
     status: TransactionStatus;
@@ -22,6 +23,7 @@ interface ITransaction {
 }
 
 interface IWallet extends Document {
+    id?:string
     mentorId?: Types.ObjectId;
     userId?: Types.ObjectId;
     balance: number;
@@ -84,7 +86,6 @@ const walletSchema = new Schema<IWallet>(
     },
     { timestamps: true }
 );
-
 
 export { IWallet, ITransaction };
 export default model<IWallet>('Wallets', walletSchema);

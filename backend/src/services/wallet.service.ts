@@ -15,6 +15,9 @@ import Stripe from 'stripe';
 import { INotificationService } from './Interfaces/INotification.service';
 import { Role } from '@/types/role.types';
 import { NotificationType } from '@/types/notification.enum';
+import { WalletEntity } from '@/entity/wallet.entity';
+import { TransactionEntity } from '@/entity/transaction.entity';
+import { WalletMapper } from '@/Mapper/wallet.mapper';
 
 @injectable()
 export class WalletService implements IWalletService {
@@ -73,7 +76,10 @@ export class WalletService implements IWalletService {
         });
 
         // Recalculate lifetime earnings
-        wallet.lifetimeEarnings = wallet.balance + (wallet.pendingWithdrawal || 0) + (wallet.totalWithdrawn || 0);
+        wallet.lifetimeEarnings =
+            wallet.balance +
+            (wallet.pendingWithdrawal || 0) +
+            (wallet.totalWithdrawn || 0);
 
         await this._walletRepository.update(wallet._id as string, wallet);
         return wallet;
@@ -92,7 +98,10 @@ export class WalletService implements IWalletService {
         wallet.pendingWithdrawal = (wallet.pendingWithdrawal || 0) + amount;
 
         // Recalculate lifetime earnings
-        wallet.lifetimeEarnings = wallet.balance + (wallet.pendingWithdrawal || 0) + (wallet.totalWithdrawn || 0);
+        wallet.lifetimeEarnings =
+            wallet.balance +
+            (wallet.pendingWithdrawal || 0) +
+            (wallet.totalWithdrawn || 0);
 
         wallet.transactions.push({
             amount,
@@ -105,18 +114,19 @@ export class WalletService implements IWalletService {
         await this._walletRepository.update(wallet._id as string, wallet);
 
         const lastTx = wallet.transactions[wallet.transactions.length - 1];
-        const transactionId = lastTx && (lastTx as any)._id ? (lastTx as any)._id.toString() : '';
+        const transactionId =
+            lastTx && (lastTx as any)._id ? (lastTx as any)._id.toString() : '';
 
         // Notify Admin of the payout request
         await this._notificationService.notifyAdmin(
             NotificationType.MENTOR_PAYOUT_REQUEST,
             'New Payout Request',
             `A mentor has requested a payout of ₹${amount}.`,
-            { 
-                walletId: wallet._id as string, 
+            {
+                walletId: wallet._id as string,
                 transactionId,
                 amount: amount.toString(),
-                link: `/admin/payouts?transactionId=${transactionId}`
+                link: `/admin/payouts?transactionId=${transactionId}`,
             }
         );
 
@@ -237,18 +247,28 @@ export class WalletService implements IWalletService {
                 });
             } catch (err: any) {
                 console.error('Stripe Connect Transfer failed:', err);
-                throw new Error(`Stripe Connect Transfer failed: ${err.message}`);
+                throw new Error(
+                    `Stripe Connect Transfer failed: ${err.message}`
+                );
             }
         } else {
-            console.log('Mentor has no onboarded Stripe Connect Express account. Payout processed manually.');
+            console.log(
+                'Mentor has no onboarded Stripe Connect Express account. Payout processed manually.'
+            );
         }
 
         const payoutAmount = transaction.amount;
-        wallet.pendingWithdrawal = Math.max(0, (wallet.pendingWithdrawal || 0) - payoutAmount);
+        wallet.pendingWithdrawal = Math.max(
+            0,
+            (wallet.pendingWithdrawal || 0) - payoutAmount
+        );
         wallet.totalWithdrawn = (wallet.totalWithdrawn || 0) + payoutAmount;
 
         // Recalculate lifetime earnings
-        wallet.lifetimeEarnings = wallet.balance + (wallet.pendingWithdrawal || 0) + (wallet.totalWithdrawn || 0);
+        wallet.lifetimeEarnings =
+            wallet.balance +
+            (wallet.pendingWithdrawal || 0) +
+            (wallet.totalWithdrawn || 0);
 
         transaction.status = TransactionStatus.COMPLETED;
 
@@ -273,12 +293,12 @@ export class WalletService implements IWalletService {
     async rejectWithdrawal(
         walletId: string,
         transactionId: string
-    ): Promise<IWallet> {
-        const wallet = await this._walletRepository.findById(walletId);
-        if (!wallet) throw new Error('Wallet not found');
+    ): Promise<WalletEntity> {
+        const wallet = await this._walletRepository.findWalletById(walletId);
+        if (!wallet ) throw new Error('Wallet not found');
 
-        const transaction = wallet.transactions.find(
-            (t: any) => t._id && t._id.toString() === transactionId
+        const transaction = wallet?.transactions?.find(
+            (t: TransactionEntity) => t.id && t.id.toString() === transactionId
         );
         if (!transaction) throw new Error('Transaction not found');
         if (transaction.status !== TransactionStatus.PENDING) {
@@ -289,14 +309,20 @@ export class WalletService implements IWalletService {
 
         // Refund available balance, deduct pendingWithdrawal
         wallet.balance += payoutAmount;
-        wallet.pendingWithdrawal = Math.max(0, (wallet.pendingWithdrawal || 0) - payoutAmount);
+        wallet.pendingWithdrawal = Math.max(
+            0,
+            (wallet.pendingWithdrawal || 0) - payoutAmount
+        );
 
         // Recalculate lifetime earnings
-        wallet.lifetimeEarnings = wallet.balance + (wallet.pendingWithdrawal || 0) + (wallet.totalWithdrawn || 0);
+        wallet.lifetimeEarnings =
+            wallet.balance +
+            (wallet.pendingWithdrawal || 0) +
+            (wallet.totalWithdrawn || 0);
 
         transaction.status = TransactionStatus.FAILED;
 
-        await this._walletRepository.update(wallet._id as string, wallet);
+       const udpatedWallet= await this._walletRepository.update(wallet.id as string, wallet);
 
         // Notify Mentor of rejected payout request
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';
@@ -311,6 +337,6 @@ export class WalletService implements IWalletService {
             );
         }
 
-        return wallet;
+        return WalletMapper.ToEntity(udpatedWallet) as WalletEntity;
     }
 }
