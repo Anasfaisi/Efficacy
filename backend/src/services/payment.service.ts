@@ -22,20 +22,7 @@ export class PaymentService implements IPaymentService {
         });
     }
 
-    // async createCheckoutSession(
-    //     dto: RequestPaymentDto
-    // ): Promise<ResponsePaymentDto> {
-    //     const session = await this._stripe.checkout.sessions.create({
-    //         payment_method_types: ['card'],
-    //         mode: 'subscription',
-    //         line_items: [{ price: dto.priceId, quantity: 1 }],
-    //         success_url: dto.successUrl,
-    //         cancel_url: dto.cancelUrl,
-    //         customer_email: (await this._userRepository.findById(dto.userId))
-    //             ?.email,
-    //     });
-    //     return new ResponsePaymentDto(session.id, session.url!);
-    // }
+
 
     async verifyCheckoutSession(
         sessionId: string
