@@ -4,6 +4,7 @@ import { mentorApi } from '@/Services/mentor.api';
 import type { Booking } from '@/types/booking';
 import { BookingStatus } from '@/types/booking';
 import type { Mentor, User } from '@/types/auth';
+import { Role } from '@/types/auth';
 import {
     Calendar as CalendarIcon,
     Clock,
@@ -111,6 +112,7 @@ const BookingRequestsPage: React.FC = () => {
                 bookingId: reschedulingBookingId,
                 proposedDate: selectedSlot.date.toISOString(),
                 proposedSlot: selectedSlot.slot,
+                requestedBy:"mentor",
             }),
             'New time proposed to student'
         );

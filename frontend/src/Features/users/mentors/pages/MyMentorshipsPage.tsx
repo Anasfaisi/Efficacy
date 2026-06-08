@@ -91,7 +91,6 @@ const MyMentorshipsPage: React.FC = () => {
         if (filter === 'Active')
             return [
                 MentorshipStatus.ACTIVE,
-                MentorshipStatus.COMPLETED,
             ].includes(m.status);
         if (filter === 'Rejected')
             return [
