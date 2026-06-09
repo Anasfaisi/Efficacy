@@ -195,4 +195,26 @@ export class BookingRepository implements IBookingRepository {
             total,
         };
     }
+
+    async getMentorBookedSlots(mentorId: string): Promise<BookingEntity[]> {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const query: FilterQuery<IBooking> = {
+            mentorId: new Types.ObjectId(mentorId),
+            $or: [
+                {
+                    bookingDate: { $gte: startOfDay },
+                    status: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
+                },
+                {
+                    proposedDate: { $gte: startOfDay },
+                    status: BookingStatus.RESCHEDULED,
+                },
+            ],
+        };
+
+        const docs = await Booking.find(query);
+        return docs.map(BookingMapper.toEntity);
+    }
 }

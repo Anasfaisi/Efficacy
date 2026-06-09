@@ -12,6 +12,7 @@ import {
     isBefore,
     startOfDay,
     eachDayOfInterval,
+    parse,
 } from 'date-fns';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import type { Mentor } from '@/types/auth';
@@ -104,6 +105,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                         startOfDay(new Date())
                     );
 
+
                     const currentDayName = format(day, 'EEEE');
                     const isAvailableDay =
                         Object.keys(mentor.availability || {}).includes(currentDayName);
@@ -142,7 +144,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         if (!selectedDate) return null;
         const selectedDayName = format(selectedDate, 'EEEE');
         const allPossibleSlots = getAllSlots(mentor.availability?.[selectedDayName] || []);
-        console.log(allPossibleSlots,"allPossibleSlots")
+        console.log(allPossibleSlots,"allPossibleSlots", bookedSlots)
         return (
             <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between mb-4">
@@ -158,6 +160,15 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {allPossibleSlots.length > 0 ? (
                         allPossibleSlots.map((slot) => {
+                            // Safely extract the start time, e.g., "9:00 AM" or "10:00 AM"
+                            const startTimeString = slot.split(' - ')[0]; 
+                            
+                            // Parse the slot time using the selected date as the base
+                            const slotStartTime = parse(startTimeString, 'h:mm a', selectedDate);
+                            
+                            // Check if the exact slot start time is in the past
+                            const isTimePassed = isBefore(slotStartTime, new Date());
+
                             const isBooked = bookedSlots.some(
                                 (bs) =>
                                     isSameDay(
@@ -166,16 +177,18 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                                     ) && bs.slot === slot
                             );
 
+                            const isDisabled = isBooked || isTimePassed;
+
                             return (
                                 <button
                                     key={slot}
-                                    disabled={isBooked}
+                                    disabled={isDisabled}
                                     onClick={() =>
                                         onSelectSlot(selectedDate, slot)
                                     }
                                     className={`relative group py-2 px-3 text-[11px] font-bold rounded-xl border transition-all duration-300
                                         ${
-                                            isBooked
+                                            isDisabled
                                                 ? 'bg-gray-50 text-gray-400 border-gray-100 cursor-not-allowed'
                                                 : 'bg-white text-gray-700 border-gray-100 hover:border-[#7F00FF] hover:text-[#7F00FF] hover:shadow-lg hover:-translate-y-0.5 active:scale-95'
                                         }

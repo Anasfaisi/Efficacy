@@ -37,7 +37,7 @@ const MentorLayout: React.FC = () => {
                             className="w-10 h-10 rounded-xl object-cover shadow-sm"
                         />
                         <h1 className="text-2xl font-black text-gray-900 tracking-tighter">
-                            Efficacy<span className="text-indigo-600">.</span>
+                            Efficacy Mentor<span className="text-indigo-600">.</span>
                         </h1>
                     </div>
 

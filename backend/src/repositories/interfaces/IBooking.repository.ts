@@ -41,4 +41,5 @@ export interface IBookingRepository {
         startDate?: Date,
         endDate?: Date
     ): Promise<{ bookings: BookingEntity[]; total: number }>;
+    getMentorBookedSlots(mentorId: string): Promise<BookingEntity[]>;
 }
