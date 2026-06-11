@@ -4,7 +4,6 @@ import { asyncWrapper } from '@/utils/asyncWrapper';
 import { MentorOnboardController } from '@/controllers/mentor-onboard.controller';
 import { upload } from '@/config/multer.config';
 
-import { TokenService } from '@/seservicesrivces/token.service';
 import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { Role } from '@/types/role.types';
 
@@ -16,6 +15,7 @@ import {
     mentorApplicationSchema,
     updateMentorProfileSchema,
 } from '@/validators/mentor.validator';
+import { TokenService } from '@/services/token.service';
 
 export default function mentorRoutes(
     mentorController: MentorController,
