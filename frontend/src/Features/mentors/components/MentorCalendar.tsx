@@ -58,6 +58,29 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
         return d;
     });
 
+    const getUniqueAvailableSlots = (): string[] => {
+        if (mentor.availability && Object.keys(mentor.availability).length > 0) {
+            const slots = new Set<string>();
+            Object.values(mentor.availability).forEach((daySlots) => {
+                if (Array.isArray(daySlots)) {
+                    daySlots.forEach(slot => slots.add(slot));
+                }
+            });
+            return Array.from(slots).sort((a, b) => {
+                const parseTime = (t: string) => {
+                    const match = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+                    if (!match) return 0;
+                    let h = parseInt(match[1], 10);
+                    if (match[3].toUpperCase() === 'PM' && h < 12) h += 12;
+                    if (match[3].toUpperCase() === 'AM' && h === 12) h = 0;
+                    return h * 60 + parseInt(match[2], 10);
+                };
+                return parseTime(a) - parseTime(b);
+            });
+        }
+        return [];
+    };
+
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const getBookingsForDate = (date: Date) => {
@@ -296,8 +319,8 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
     const renderWeekView = () => {
         const start = startOfWeek(currentDate);
         const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
-        const allPossibleSlots = getAllSlots(mentor.preferredTime || []);
-
+        const allPossibleSlots = getUniqueAvailableSlots();
+        console.log(allPossibleSlots,"from mentor calender 1",)
         return (
             <div className="overflow-x-auto animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="min-w-[800px]">
@@ -330,6 +353,10 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                     {slot.split('-')[0]}
                                 </div>
                                 {days.map((day) => {
+                                    const dayName = format(day, 'EEEE');
+                                    const isAvailableSlot = mentor.availability 
+                                        ? (mentor.availability[dayName] || []).includes(slot)
+                                        : true;
                                     const bookings = getBookingsForDate(
                                         day
                                     ).filter((b) => {
@@ -352,6 +379,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                             onClick={() => {
                                                 if (
                                                     !isBooked &&
+                                                    isAvailableSlot &&
                                                     selectable &&
                                                     onSelectSlot
                                                 ) {
@@ -375,9 +403,11 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                                         ? isCurrentMentee
                                                             ? 'bg-indigo-50 border-indigo-500 border-solid shadow-sm'
                                                             : 'bg-green-50 border-green-500 border-solid opacity-60'
-                                                        : !selectable
-                                                          ? 'bg-gray-50/20 border-gray-100 hover:bg-gray-50 hover:border-gray-300'
-                                                          : 'bg-indigo-50/20 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer'
+                                                        : !isAvailableSlot
+                                                          ? 'bg-gray-50/30 border-transparent cursor-not-allowed opacity-40'
+                                                          : !selectable
+                                                            ? 'bg-gray-50/20 border-gray-100 hover:bg-gray-50 hover:border-gray-300'
+                                                            : 'bg-indigo-50/20 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer'
                                                 }
                                             `}
                                         >
@@ -403,7 +433,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                                     </p>
                                                 </div>
                                             ) : (
-                                                selectable && (
+                                                selectable && isAvailableSlot && (
                                                     <div className="text-indigo-300 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-all">
                                                         <Plus size={16} />
                                                     </div>
@@ -421,7 +451,12 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
     };
 
     const renderDayView = () => {
-        const allPossibleSlots = getAllSlots(mentor.preferredTime || []);
+        const dayName = format(currentDate, 'EEEE');
+        const allPossibleSlots = mentor.availability
+            ? (mentor.availability[dayName] || [])
+            : getAllSlots((mentor as any).preferredTime || []);
+        console.log(allPossibleSlots,mentor)
+
         const todayBookings = getBookingsForDate(currentDate);
 
         return (

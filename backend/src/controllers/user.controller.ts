@@ -74,6 +74,7 @@ export class UserController {
                     file: req.file,
                     id: req.currentUser?.id,
                 });
+                console.log(updatedProfilePic,"from user controller")
             if (!updatedProfilePic) {
                 res.status(code.BAD_REQUEST).json({
                     messages: ErrorMessages.UpdateProfilePicFailed,

@@ -26,6 +26,11 @@ export const SuccessMessages = {
     PasswordResetSuccess: 'Password reset successful',
 };
 
+export const MentorshipMessages={
+    SessionsExceeded : "Could not cancel at the moment since you exceeded the 2 sessions limit ",
+    FailedToRefund: "Could not able to process the refund due to technical error "
+}
+
 export const NotificationMessages = {
     MentorAppApprovedTitle: 'Application Approved',
     MentorAppRejectedTitle: 'Application Rejected',
@@ -53,6 +58,7 @@ export const CommonMessages = {
     MentorNotAuthenticated: 'Mentor not authenticated',
     NotAuthenticated: 'Not authenticated',
 };
+
 
 export const ErrorMessages = {
     InvalidCredentials: 'Invalid email or password',
@@ -158,7 +164,27 @@ export const ErrorMessages = {
     NoEvaluator: 'No evaluator found for the badge template',
     BadgeCreationFailed: 'Due to technical issue failed to unlock the badge',
 };
-
+export const WalletMessages = {
+    NoWallet: 'No wallet found for this user',
+    NoTransactions: 'No transactions found for this user',
+    WithdrawalRejected: 'Withdrawal request rejected',
+    WithdrawalApproved: 'Withdrawal request approved',
+    WithdrawalFailed: 'Withdrawal request failed',
+    WithdrawalPending: 'Withdrawal request pending',
+    TransactionNotPending: 'Transaction is not in PENDING status.',
+    WalletFound: 'Wallet found successfully',
+    WalletCreated: 'Wallet created successfully',
+    WalletUpdated: 'Wallet updated successfully',
+    WalletDeleted: 'Wallet deleted successfully',
+    WalletNotFound: 'Wallet not found',
+    WalletNotUpdated: 'Wallet not updated',
+    WalletNotDeleted: 'Wallet not deleted',
+    WalletNotCreated: 'Wallet not created',
+    WalletNotApproved: 'Wallet not approved',
+    WalletNotRejected: 'Wallet not rejected',
+    WalletNotPending: 'Wallet not pending',
+    WalletNotFailed: 'Wallet not failed',
+}
 export interface joinRoomPayload {
     roomId: string;
     user: string;

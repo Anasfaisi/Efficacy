@@ -1,22 +1,21 @@
-import multer, { StorageEngine } from 'multer';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
 import path from 'path';
 import { Request } from 'express';
-import fs from 'fs';
-import { logger } from '@/utils/logMiddlewares';
+import s3Client from './s3.config';
+import dotenv from 'dotenv';
 
-const uploadPath = path.join(__dirname, '../../uploads');
-logger.info(uploadPath);
+dotenv.config();
 
-if (!fs.existsSync(uploadPath)) {
-    fs.mkdirSync(uploadPath, { recursive: true });
-}
-
-const storage: StorageEngine = multer.diskStorage({
-    destination: function (req: Request, file, cb) {
-        cb(null, uploadPath);
+const storage = multerS3({
+    s3: s3Client,
+    bucket: process.env.AWS_S3_BUCKET_NAME as string,
+    metadata: function (req: Request, file, cb) {
+        cb(null, { fieldName: file.fieldname });
     },
-    filename: function (req: Request, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+    key: function (req: Request, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     },
 });
 

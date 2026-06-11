@@ -125,6 +125,8 @@ export const BookingRoutes = {
     END_SESSION: (bookingId: string) =>
         `${BOOKING_BASE}/end-session/${bookingId}`,
     GET_BOOKING_BY_ID: (bookingId: string) => `${BOOKING_BASE}/${bookingId}`,
+    GET_MENTOR_AVAILABILITY: (mentorId: string) =>
+        `${BOOKING_BASE}/mentor/${mentorId}/availability`,
 };
 
 const GAMIFICATION_BASE = '/gamification';

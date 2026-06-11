@@ -63,19 +63,19 @@ export class MentorService implements IMentorService {
         const updateData: Partial<IMentor> = {};
 
         if (files.profilePic) {
-            updateData.profilePic = `${baseUrl}/uploads/${files.profilePic[0].filename}`;
+            updateData.profilePic = `${files.profilePic[0].location}`;
         }
         if (files.coverPic) {
-            updateData.coverPic = `${baseUrl}/uploads/${files.coverPic[0].filename}`;
+            updateData.coverPic = `${files.coverPic[0].location}`;
         }
         if (files.resume) {
-            updateData.resume = `${baseUrl}/uploads/${files.resume[0].filename}`;
+            updateData.resume = `${files.resume[0].location}`;
         }
         if (files.certificate) {
-            updateData.certificate = `${baseUrl}/uploads/${files.certificate[0].filename}`;
+            updateData.certificate = `${files.certificate[0].location}`;
         }
         if (files.idProof) {
-            updateData.idProof = `${baseUrl}/uploads/${files.idProof[0].filename}`;
+            updateData.idProof = `${files.idProof[0].location}`;
         }
 
         const updated = await this._mentorRepository.update(id, updateData);

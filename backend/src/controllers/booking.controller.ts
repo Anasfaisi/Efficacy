@@ -157,4 +157,10 @@ export class BookingController {
         const result = await this._bookingService.endSession(bookingId);
         res.status(code.OK).json(result);
     }
+
+    async getMentorAvailability(req: Request, res: Response): Promise<void> {
+        const { mentorId } = req.params;
+        const availability = await this._bookingService.getMentorAvailability(mentorId);
+        res.status(code.OK).json(availability);
+    }
 }

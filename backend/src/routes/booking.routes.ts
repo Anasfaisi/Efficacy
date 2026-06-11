@@ -74,6 +74,11 @@ export const bookingRoutes = (container: Container) => {
         auth([Role.Mentor, Role.User]),
         asyncWrapper(controller.getBookingById.bind(controller))
     );
+    router.get(
+        '/mentor/:mentorId/availability',
+        auth([Role.User, Role.Mentor]),
+        asyncWrapper(controller.getMentorAvailability.bind(controller))
+    );
 
     return router;
 };

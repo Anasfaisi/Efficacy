@@ -79,8 +79,15 @@ const BookingRequestsPage: React.FC = () => {
 
     const handleUpdateStatus = async (
         bookingId: string,
+        bookingDate : Date,
+        proposedDate: Date,
         status: BookingStatus
     ) => {
+
+        if(proposedDate < new Date()||bookingDate < new Date()){
+            toast.error("Cannot change booking to past date");
+            return;
+        }
         const data = await requestWrapper(
             bookingApi.updateStatus({ bookingId, status }),
             `Booking ${status === BookingStatus.CONFIRMED ? 'accepted' : 'rejected'} successfully`
@@ -94,6 +101,7 @@ const BookingRequestsPage: React.FC = () => {
         approve: boolean
     ) => {
         const data = await requestWrapper(
+
             bookingApi.respondToReschedule(bookingId, approve),
             approve
                 ? 'Reschedule accepted'
@@ -111,6 +119,7 @@ const BookingRequestsPage: React.FC = () => {
                 bookingId: reschedulingBookingId,
                 proposedDate: selectedSlot.date.toISOString(),
                 proposedSlot: selectedSlot.slot,
+                requestedBy:"mentor",
             }),
             'New time proposed to student'
         );
@@ -423,7 +432,7 @@ const BookingRequestsPage: React.FC = () => {
                                                         <CheckCircle2
                                                             size={16}
                                                         />
-                                                        Approve
+                                                        Confirm
                                                     </button>
                                                     <button
                                                         onClick={() =>
@@ -454,6 +463,8 @@ const BookingRequestsPage: React.FC = () => {
                                                         onClick={() =>
                                                             handleUpdateStatus(
                                                                 booking.id,
+                                                                booking.bookingDate,
+                                                                booking.proposedDate,
                                                                 BookingStatus.CONFIRMED
                                                             )
                                                         }

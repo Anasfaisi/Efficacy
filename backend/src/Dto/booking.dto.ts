@@ -52,3 +52,8 @@ export interface PaginatedBookingResponseDto {
     totalPages: number;
     currentPage: number;
 }
+
+export interface MentorAvailabilityResponseDto {
+    date: Date;
+    slot: string;
+}

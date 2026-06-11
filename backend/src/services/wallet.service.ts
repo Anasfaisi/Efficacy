@@ -9,7 +9,7 @@ import {
     TransactionStatus,
 } from '@/models/wallet.model';
 import { ObjectId, Types } from 'mongoose';
-import { ErrorMessages } from '@/types/response-messages.types';
+import { ErrorMessages, WalletMessages } from '@/types/response-messages.types';
 import { createStripeConnectReqDto } from '@/dto/wallet-request.dto';
 import Stripe from 'stripe';
 import { INotificationService } from './Interfaces/INotification.service';
@@ -227,21 +227,20 @@ export class WalletService implements IWalletService {
         transactionId: string
     ): Promise<IWallet> {
         const wallet = await this._walletRepository.findById(walletId);
-        if (!wallet) throw new Error('Wallet not found');
+        if (!wallet) throw new Error(WalletMessages.NoWallet);
 
         const transaction = wallet.transactions.find(
             (t: any) => t._id && t._id.toString() === transactionId
         );
-        if (!transaction) throw new Error('Transaction not found');
+        if (!transaction) throw new Error(WalletMessages.NoTransactions);
         if (transaction.status !== TransactionStatus.PENDING) {
-            throw new Error('Transaction is not in PENDING status.');
+            throw new Error(WalletMessages.TransactionNotPending);
         }
 
-        // Trigger Stripe payout/transfer if Connect account is onboarded
         if (wallet.stripeConnectAccountId && wallet.stripeConnectOnboarded) {
             try {
                 await this._stripe.transfers.create({
-                    amount: Math.round(transaction.amount * 100), // Convert INR to paise
+                    amount: Math.round(transaction.amount * 100),
                     currency: 'hkd',
                     destination: wallet.stripeConnectAccountId,
                 });
@@ -264,7 +263,6 @@ export class WalletService implements IWalletService {
         );
         wallet.totalWithdrawn = (wallet.totalWithdrawn || 0) + payoutAmount;
 
-        // Recalculate lifetime earnings
         wallet.lifetimeEarnings =
             wallet.balance +
             (wallet.pendingWithdrawal || 0) +
@@ -274,7 +272,6 @@ export class WalletService implements IWalletService {
 
         await this._walletRepository.update(wallet._id as string, wallet);
 
-        // Notify Mentor of successful payout completion
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';
         if (mentorIdStr) {
             await this._notificationService.createNotification(
@@ -295,26 +292,24 @@ export class WalletService implements IWalletService {
         transactionId: string
     ): Promise<WalletEntity> {
         const wallet = await this._walletRepository.findWalletById(walletId);
-        if (!wallet ) throw new Error('Wallet not found');
+        if (!wallet ) throw new Error(WalletMessages.NoWallet);
 
         const transaction = wallet?.transactions?.find(
             (t: TransactionEntity) => t.id && t.id.toString() === transactionId
         );
-        if (!transaction) throw new Error('Transaction not found');
+        if (!transaction) throw new Error(WalletMessages.NoTransactions);
         if (transaction.status !== TransactionStatus.PENDING) {
-            throw new Error('Transaction is not in PENDING status.');
+            throw new Error(WalletMessages.TransactionNotPending);
         }
 
         const payoutAmount = transaction.amount;
 
-        // Refund available balance, deduct pendingWithdrawal
-        wallet.balance += payoutAmount;
+        wallet.balance = (wallet.balance?? 0) + payoutAmount;
         wallet.pendingWithdrawal = Math.max(
             0,
             (wallet.pendingWithdrawal || 0) - payoutAmount
         );
 
-        // Recalculate lifetime earnings
         wallet.lifetimeEarnings =
             wallet.balance +
             (wallet.pendingWithdrawal || 0) +

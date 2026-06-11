@@ -1,3 +1,5 @@
+import type { Role } from "./auth";
+
 export enum BookingStatus {
     PENDING = 'pending',
     CONFIRMED = 'confirmed',
@@ -41,4 +43,5 @@ export interface RescheduleRequestDto {
     bookingId: string;
     proposedDate: string;
     proposedSlot: string;
+    requestedBy :Role
 }

@@ -53,6 +53,7 @@ const MentorshipManagementPage: React.FC = () => {
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
+    const [mentorBookedSlots, setMentorBookedSlots] = useState<{ date: string; slot: string }[]>([]);
 
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
     const [rescheduleData, setRescheduleData] = useState<{
@@ -75,13 +76,24 @@ const MentorshipManagementPage: React.FC = () => {
         const data = await requestWrapper(mentorshipApi.getMentorshipById(id));
         if (data) {
             setMentorship(data);
+            const mentor = data.mentorId as Mentor;
+            const mentorIdStr = mentor?._id || mentor?.id;
+
+            if (mentorIdStr) {
+                const mentorSlots = await requestWrapper(
+                    bookingApi.getMentorAvailability(mentorIdStr)
+                );
+                if (mentorSlots) {
+                    setMentorBookedSlots(mentorSlots);
+                }
+            }
+
             const bookingData = await requestWrapper(
                 bookingApi.getUserBookings(1, 100)
             );
 
             if (bookingData?.bookings) {
                 const bookings = bookingData.bookings;
-                const mentor = data.mentorId as Mentor;
 
                 const relevantBookings = bookings.filter(
                     (b) =>
@@ -793,12 +805,7 @@ const MentorshipManagementPage: React.FC = () => {
                                                         onSelectSlot={
                                                             handleSelectSlot
                                                         }
-                                                        bookedSlots={existingBookings.map(
-                                                            (b) => ({
-                                                                date: b.bookingDate,
-                                                                slot: b.slot,
-                                                            })
-                                                        )}
+                                                        bookedSlots={mentorBookedSlots}
                                                     />
                                                 )}
                                                 <div className="mt-4 flex items-center gap-2 text-xs text-gray-400 font-medium px-2">

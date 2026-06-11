@@ -22,9 +22,9 @@ export class MentorOnboardController {
         const result = await this._mentorOnboardService.mentorApplicationInit({
             ...req.body,
             id: req.currentUser?.id,
-            resume: files?.resume?.[0]?.filename,
-            certificate: files?.certificate?.[0]?.filename,
-            idProof: files?.idProof?.[0]?.filename,
+            resume: (files?.resume?.[0] as unknown as { location: string })?.location,
+            certificate: (files?.certificate?.[0] as unknown as { location: string })?.location,
+            idProof: (files?.idProof?.[0] as unknown as { location: string })?.location,
         });
 
         res.status(code.OK).json({

@@ -72,9 +72,7 @@ export class ChatController {
             return;
         }
 
-        const fileUrl = `${req.protocol}://${req.get(
-            'host'
-        )}/uploads/${req.file.filename}`;
+        const fileUrl = (req.file as unknown as {location: string}).location;
 
         res.status(Code.OK).json({ url: fileUrl });
     }
