@@ -10,8 +10,10 @@ import {
     CheckCircle2,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { reviewApi, type Review } from '@/Services/review.api';
+import { reviewApi} from '@/Services/review.api';
+
 import { type Booking } from '@/types/booking';
+import type { Review } from '@/types/reviews';
 
 interface SessionDetailsModalProps {
     isOpen: boolean;
@@ -39,9 +41,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
                 const reviews = await reviewApi.getMentorReviews(mentorId);
                 const foundReview = reviews.find(
                     (r) =>
-                        r.bookingId === booking.id ||
-                        r.bookingId?._id === booking.id ||
-                        r.bookingId?.id === booking.id
+                        r.bookingId === booking.id  
                 );
                 if (foundReview) {
                     setReview(foundReview);
@@ -55,6 +55,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             }
         };
         fetchReview();
+        console.log(review,"from sesstiondetails modal")
     }, [isOpen, mentorId, booking]);
 
     if (!isOpen) return null;

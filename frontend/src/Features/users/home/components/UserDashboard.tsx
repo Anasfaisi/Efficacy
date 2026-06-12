@@ -66,7 +66,8 @@ const UserDashboard: React.FC = () => {
                     const userBadges = await userBadgeApi.getUserBadges();
                     const badgesArray = Array.isArray(userBadges)
                         ? userBadges
-                        : ((userBadges as unknown as { data: UserBadge[] }).data || []);
+                        : (userBadges as unknown as { data: UserBadge[] })
+                              .data || [];
                     setBadges(badgesArray.slice(0, 3));
                 } catch (e) {
                     setBadges([]);
@@ -152,7 +153,8 @@ const UserDashboard: React.FC = () => {
                                                 className={`w-2 h-10 rounded-full transition-opacity ${
                                                     task.priority === 'High'
                                                         ? 'bg-red-500'
-                                                        : task.priority === 'Medium'
+                                                        : task.priority ===
+                                                            'Medium'
                                                           ? 'bg-orange-500'
                                                           : 'bg-green-500'
                                                 }`}
@@ -162,7 +164,8 @@ const UserDashboard: React.FC = () => {
                                                     {task.title}
                                                 </h3>
                                                 <p className="text-xs font-semibold text-gray-400">
-                                                    Due: {formatDate(task.endDate)}
+                                                    Due:{' '}
+                                                    {formatDate(task.endDate)}
                                                 </p>
                                             </div>
                                         </div>
@@ -173,7 +176,8 @@ const UserDashboard: React.FC = () => {
                                 ))
                             ) : (
                                 <div className="text-center py-6 text-gray-400 font-medium">
-                                    No active tasks. Time to relax or plan ahead!
+                                    No active tasks. Time to relax or plan
+                                    ahead!
                                 </div>
                             )}
                             <div className="pt-2 text-center">
@@ -236,7 +240,10 @@ const UserDashboard: React.FC = () => {
                             <ProgressCard
                                 label="Focus Time Today"
                                 value={formatTime(productiveTime)}
-                                progress={Math.min((productiveTime / 120) * 100, 100)}
+                                progress={Math.min(
+                                    (productiveTime / 120) * 100,
+                                    100
+                                )}
                                 color="bg-pink-500"
                             />
                             <ProgressCard
@@ -245,7 +252,10 @@ const UserDashboard: React.FC = () => {
                                 progress={100}
                                 color="bg-orange-500"
                                 icon={
-                                    <Flame size={18} className="fill-orange-500 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+                                    <Flame
+                                        size={18}
+                                        className="fill-orange-500 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]"
+                                    />
                                 }
                             />
                         </div>
@@ -265,15 +275,21 @@ const UserDashboard: React.FC = () => {
                                             className="p-4 bg-teal-50 border-r-8 border-teal-500 rounded-2xl text-xs shadow-sm"
                                         >
                                             <div className="font-bold text-teal-800 mb-1">
-                                                {session.topic || 'Mentorship Session'}
+                                                {session.topic ||
+                                                    'Mentorship Session'}
                                             </div>
                                             <div className="text-teal-600 font-semibold">
-                                                {formatDate(session.bookingDate)} at {session.slot}
+                                                {formatDate(
+                                                    session.bookingDate
+                                                )}{' '}
+                                                at {session.slot}
                                             </div>
                                         </div>
                                     ))}
                                     <button
-                                        onClick={() => navigate('/booking/user')}
+                                        onClick={() =>
+                                            navigate('/booking/user')
+                                        }
                                         className="clay-btn w-full mt-2 py-3.5 bg-teal-500 text-white font-black rounded-2xl"
                                     >
                                         View All Bookings
@@ -302,7 +318,12 @@ const UserDashboard: React.FC = () => {
                                         >
                                             <div
                                                 className="w-10 h-10 rounded-full flex items-center justify-center text-white"
-                                                style={{ backgroundColor: userBadge.badge.design.primaryColor || '#7F00FF' }}
+                                                style={{
+                                                    backgroundColor:
+                                                        userBadge.badge.design
+                                                            .primaryColor ||
+                                                        '#7F00FF',
+                                                }}
                                             >
                                                 <Award size={20} />
                                             </div>
@@ -384,4 +405,3 @@ const ProgressCard: React.FC<{
 );
 
 export default UserDashboard;
-

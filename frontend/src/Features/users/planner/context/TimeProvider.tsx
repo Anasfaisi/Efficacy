@@ -7,15 +7,17 @@ const TimeProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setTime(new Date())
+            setTime(new Date());
         }, 60000);
-        console.log("hi")
+        console.log('hi');
         return () => clearInterval(interval);
     }, []);
 
-    return <TimeContext.Provider value={{currentTime:time}}>
-      {children}
-    </TimeContext.Provider>
- };
+    return (
+        <TimeContext.Provider value={{ currentTime: time }}>
+            {children}
+        </TimeContext.Provider>
+    );
+};
 
 export default TimeProvider;

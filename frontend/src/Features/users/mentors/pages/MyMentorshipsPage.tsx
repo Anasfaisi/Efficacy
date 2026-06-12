@@ -89,9 +89,7 @@ const MyMentorshipsPage: React.FC = () => {
                 MentorshipStatus.PAYMENT_PENDING,
             ].includes(m.status);
         if (filter === 'Active')
-            return [
-                MentorshipStatus.ACTIVE,
-            ].includes(m.status);
+            return [MentorshipStatus.ACTIVE].includes(m.status);
         if (filter === 'Rejected')
             return [
                 MentorshipStatus.REJECTED,

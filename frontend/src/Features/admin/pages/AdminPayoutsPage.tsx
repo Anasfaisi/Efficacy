@@ -14,7 +14,7 @@ import {
     X,
     Bell,
     ArrowUpRight,
-    Loader2
+    Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -61,7 +61,9 @@ const AdminPayoutsPage: React.FC = () => {
 
     // Search & Filter
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeTab, setActiveTab] = useState<'pending' | 'completed' | 'failed' | 'all'>('pending');
+    const [activeTab, setActiveTab] = useState<
+        'pending' | 'completed' | 'failed' | 'all'
+    >('pending');
 
     // Pagination
     const [page, setPage] = useState(1);
@@ -72,15 +74,19 @@ const AdminPayoutsPage: React.FC = () => {
         try {
             setLoading(true);
             // Fetch mentor transactions specifically
-            const data = await adminService.getTransactions(page, limit, 'mentor');
-            
+            const data = await adminService.getTransactions(
+                page,
+                limit,
+                'mentor'
+            );
+
             // Filter only withdrawal requests
-            const withdrawals = (data.transactions as any[] || [])
+            const withdrawals = ((data.transactions as any[]) || [])
                 .map((tx: any) => ({
                     ...tx,
                     // If backend aggregate has mapped it, map keys nicely
                     walletId: tx.walletId,
-                    transactionId: tx.transactionId || tx._id
+                    transactionId: tx.transactionId || tx._id,
                 }))
                 .filter((tx: AdminTransaction) => tx.type === 'withdrawal');
 
@@ -99,7 +105,9 @@ const AdminPayoutsPage: React.FC = () => {
     }, [page]);
 
     // Handle Deep-linked Transaction selection
-    const deepLinkedTx = transactions.find(t => t.transactionId === deepLinkedTxId);
+    const deepLinkedTx = transactions.find(
+        (t) => t.transactionId === deepLinkedTxId
+    );
 
     // Filter transactions locally for quick interactive feel
     const filteredTransactions = transactions.filter((tx) => {
@@ -114,7 +122,11 @@ const AdminPayoutsPage: React.FC = () => {
             const mentorName = tx.mentor?.name?.toLowerCase() || '';
             const mentorEmail = tx.mentor?.email?.toLowerCase() || '';
             const amountStr = tx.amount.toString();
-            return mentorName.includes(query) || mentorEmail.includes(query) || amountStr.includes(query);
+            return (
+                mentorName.includes(query) ||
+                mentorEmail.includes(query) ||
+                amountStr.includes(query)
+            );
         }
 
         return true;
@@ -124,13 +136,22 @@ const AdminPayoutsPage: React.FC = () => {
         setProcessingId(tx.transactionId);
         setConfirmModal(null);
         try {
-            const response = await adminService.approveWithdrawal(tx.walletId, tx.transactionId);
-            toast.success(response.message || 'Payout approved and funds transferred successfully.');
+            const response = await adminService.approveWithdrawal(
+                tx.walletId,
+                tx.transactionId
+            );
+            toast.success(
+                response.message ||
+                    'Payout approved and funds transferred successfully.'
+            );
             // Refresh list
             await fetchPayoutRequests();
         } catch (error: any) {
             console.error(error);
-            toast.error(error.response?.data?.message || 'Failed to approve payout request.');
+            toast.error(
+                error.response?.data?.message ||
+                    'Failed to approve payout request.'
+            );
         } finally {
             setProcessingId(null);
         }
@@ -140,13 +161,22 @@ const AdminPayoutsPage: React.FC = () => {
         setProcessingId(tx.transactionId);
         setConfirmModal(null);
         try {
-            const response = await adminService.rejectWithdrawal(tx.walletId, tx.transactionId);
-            toast.success(response.message || 'Payout request rejected and balance refunded.');
+            const response = await adminService.rejectWithdrawal(
+                tx.walletId,
+                tx.transactionId
+            );
+            toast.success(
+                response.message ||
+                    'Payout request rejected and balance refunded.'
+            );
             // Refresh list
             await fetchPayoutRequests();
         } catch (error: any) {
             console.error(error);
-            toast.error(error.response?.data?.message || 'Failed to reject payout request.');
+            toast.error(
+                error.response?.data?.message ||
+                    'Failed to reject payout request.'
+            );
         } finally {
             setProcessingId(null);
         }
@@ -161,7 +191,10 @@ const AdminPayoutsPage: React.FC = () => {
                         Mentor Payout Requests
                     </h1>
                     <p className="text-gray-500 mt-2 max-w-3xl">
-                        Authorize, track, and manage withdrawal requests from mentors. Automatically process payouts securely through onboarded Stripe Express Connect accounts, or review verified bank details for manual payments.
+                        Authorize, track, and manage withdrawal requests from
+                        mentors. Automatically process payouts securely through
+                        onboarded Stripe Express Connect accounts, or review
+                        verified bank details for manual payments.
                     </p>
                 </div>
                 <div className="flex-shrink-0 flex items-center gap-3">
@@ -187,7 +220,10 @@ const AdminPayoutsPage: React.FC = () => {
                         >
                             <div className="flex items-start gap-4">
                                 <div className="p-3 bg-indigo-600/10 text-indigo-600 rounded-2xl mt-1">
-                                    <Bell className="animate-bounce" size={24} />
+                                    <Bell
+                                        className="animate-bounce"
+                                        size={24}
+                                    />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -195,14 +231,29 @@ const AdminPayoutsPage: React.FC = () => {
                                             Highlighted Request
                                         </span>
                                         <span className="text-xs text-gray-400">
-                                            ID: {deepLinkedTx.transactionId.substring(0, 8)}...
+                                            ID:{' '}
+                                            {deepLinkedTx.transactionId.substring(
+                                                0,
+                                                8
+                                            )}
+                                            ...
                                         </span>
                                     </div>
                                     <h3 className="font-bold text-gray-900 text-lg mt-1">
-                                        {deepLinkedTx.mentor?.name || 'Mentor'} Payout PENDING
+                                        {deepLinkedTx.mentor?.name || 'Mentor'}{' '}
+                                        Payout PENDING
                                     </h3>
                                     <p className="text-sm text-gray-600">
-                                        Amount: <span className="font-semibold text-indigo-700">₹{deepLinkedTx.amount}</span> • Requested on {new Date(deepLinkedTx.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                                        Amount:{' '}
+                                        <span className="font-semibold text-indigo-700">
+                                            ₹{deepLinkedTx.amount}
+                                        </span>{' '}
+                                        • Requested on{' '}
+                                        {new Date(
+                                            deepLinkedTx.date
+                                        ).toLocaleDateString(undefined, {
+                                            dateStyle: 'medium',
+                                        })}
                                     </p>
                                 </div>
                             </div>
@@ -210,19 +261,33 @@ const AdminPayoutsPage: React.FC = () => {
                                 {deepLinkedTx.status === 'pending' ? (
                                     <>
                                         <button
-                                            onClick={() => setConfirmModal({ type: 'reject', tx: deepLinkedTx })}
+                                            onClick={() =>
+                                                setConfirmModal({
+                                                    type: 'reject',
+                                                    tx: deepLinkedTx,
+                                                })
+                                            }
                                             disabled={processingId !== null}
                                             className="px-4 py-2.5 text-sm font-bold bg-white text-rose-600 hover:bg-rose-50 border border-rose-200 active:scale-95 transition-all rounded-xl shadow-sm"
                                         >
                                             Reject
                                         </button>
                                         <button
-                                            onClick={() => setConfirmModal({ type: 'approve', tx: deepLinkedTx })}
+                                            onClick={() =>
+                                                setConfirmModal({
+                                                    type: 'approve',
+                                                    tx: deepLinkedTx,
+                                                })
+                                            }
                                             disabled={processingId !== null}
                                             className="px-5 py-2.5 text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-all rounded-xl shadow-md flex items-center gap-2"
                                         >
-                                            {processingId === deepLinkedTx.transactionId ? (
-                                                <Loader2 className="animate-spin" size={16} />
+                                            {processingId ===
+                                            deepLinkedTx.transactionId ? (
+                                                <Loader2
+                                                    className="animate-spin"
+                                                    size={16}
+                                                />
                                             ) : (
                                                 <Check size={16} />
                                             )}
@@ -230,11 +295,13 @@ const AdminPayoutsPage: React.FC = () => {
                                         </button>
                                     </>
                                 ) : (
-                                    <span className={`px-4 py-2 rounded-xl text-sm font-bold uppercase ${
-                                        deepLinkedTx.status === 'completed' 
-                                            ? 'bg-emerald-100 text-emerald-700' 
-                                            : 'bg-rose-100 text-rose-700'
-                                    }`}>
+                                    <span
+                                        className={`px-4 py-2 rounded-xl text-sm font-bold uppercase ${
+                                            deepLinkedTx.status === 'completed'
+                                                ? 'bg-emerald-100 text-emerald-700'
+                                                : 'bg-rose-100 text-rose-700'
+                                        }`}
+                                    >
                                         Already {deepLinkedTx.status}
                                     </span>
                                 )}
@@ -242,8 +309,16 @@ const AdminPayoutsPage: React.FC = () => {
                         </motion.div>
                     ) : (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm flex items-center gap-3">
-                            <AlertCircle size={20} className="text-amber-600 flex-shrink-0" />
-                            <span>The deep-linked transaction ID <strong>{deepLinkedTxId}</strong> was not found in the recent list or is not a pending mentor withdrawal.</span>
+                            <AlertCircle
+                                size={20}
+                                className="text-amber-600 flex-shrink-0"
+                            />
+                            <span>
+                                The deep-linked transaction ID{' '}
+                                <strong>{deepLinkedTxId}</strong> was not found
+                                in the recent list or is not a pending mentor
+                                withdrawal.
+                            </span>
                         </div>
                     )}
                 </div>
@@ -252,23 +327,30 @@ const AdminPayoutsPage: React.FC = () => {
             {/* Filter Tabs and Search Bar */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex border-b lg:border-none border-gray-100 pb-2 lg:pb-0 gap-1 overflow-x-auto">
-                    {(['pending', 'completed', 'failed', 'all'] as const).map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2.5 text-sm font-bold rounded-xl whitespace-nowrap capitalize transition-all duration-200 ${
-                                activeTab === tab
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-100'
-                                    : 'text-gray-500 hover:bg-gray-50'
-                            }`}
-                        >
-                            {tab === 'all' ? 'All Payouts' : `${tab} requests`}
-                        </button>
-                    ))}
+                    {(['pending', 'completed', 'failed', 'all'] as const).map(
+                        (tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2.5 text-sm font-bold rounded-xl whitespace-nowrap capitalize transition-all duration-200 ${
+                                    activeTab === tab
+                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-100'
+                                        : 'text-gray-500 hover:bg-gray-50'
+                                }`}
+                            >
+                                {tab === 'all'
+                                    ? 'All Payouts'
+                                    : `${tab} requests`}
+                            </button>
+                        )
+                    )}
                 </div>
 
                 <div className="relative max-w-md w-full">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+                        size={18}
+                    />
                     <input
                         type="text"
                         placeholder="Search by mentor name, email, amount..."
@@ -283,37 +365,54 @@ const AdminPayoutsPage: React.FC = () => {
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="animate-pulse bg-white border border-gray-100 rounded-3xl p-6 h-64 shadow-sm" />
+                        <div
+                            key={i}
+                            className="animate-pulse bg-white border border-gray-100 rounded-3xl p-6 h-64 shadow-sm"
+                        />
                     ))}
                 </div>
             ) : filteredTransactions.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {filteredTransactions.map((tx) => {
-                        const isStripeOnboarded = tx.stripeConnectAccountId && tx.stripeConnectOnboarded;
-                        const isHighlighted = tx.transactionId === deepLinkedTxId;
+                        const isStripeOnboarded =
+                            tx.stripeConnectAccountId &&
+                            tx.stripeConnectOnboarded;
+                        const isHighlighted =
+                            tx.transactionId === deepLinkedTxId;
 
                         return (
                             <motion.div
                                 layout
                                 key={tx.transactionId}
                                 className={`bg-white rounded-3xl border transition-all duration-300 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group hover:shadow-md hover:border-gray-200 ${
-                                    isHighlighted ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/10' : 'border-gray-100'
+                                    isHighlighted
+                                        ? 'ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/10'
+                                        : 'border-gray-100'
                                 }`}
                             >
                                 {/* Top Header Info */}
                                 <div>
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide flex items-center gap-1.5 ${
-                                                tx.status === 'pending'
-                                                    ? 'bg-amber-50 text-amber-700 border border-amber-200/50'
-                                                    : tx.status === 'completed'
-                                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                                                    : 'bg-rose-50 text-rose-700 border border-rose-200/50'
-                                            }`}>
-                                                {tx.status === 'pending' && <Clock size={12} />}
-                                                {tx.status === 'completed' && <CheckCircle2 size={12} />}
-                                                {tx.status === 'failed' && <XCircle size={12} />}
+                                            <span
+                                                className={`px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide flex items-center gap-1.5 ${
+                                                    tx.status === 'pending'
+                                                        ? 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                                                        : tx.status ===
+                                                            'completed'
+                                                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                                                          : 'bg-rose-50 text-rose-700 border border-rose-200/50'
+                                                }`}
+                                            >
+                                                {tx.status === 'pending' && (
+                                                    <Clock size={12} />
+                                                )}
+                                                {tx.status === 'completed' && (
+                                                    <CheckCircle2 size={12} />
+                                                )}
+                                                {tx.status === 'failed' && (
+                                                    <XCircle size={12} />
+                                                )}
                                                 {tx.status}
                                             </span>
                                             {isHighlighted && (
@@ -323,7 +422,11 @@ const AdminPayoutsPage: React.FC = () => {
                                             )}
                                         </div>
                                         <span className="text-xs text-gray-400">
-                                            {new Date(tx.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                                            {new Date(
+                                                tx.date
+                                            ).toLocaleDateString(undefined, {
+                                                dateStyle: 'medium',
+                                            })}
                                         </span>
                                     </div>
 
@@ -335,17 +438,21 @@ const AdminPayoutsPage: React.FC = () => {
                                             </div>
                                             <div>
                                                 <h3 className="font-extrabold text-gray-900 text-base leading-snug">
-                                                    {tx.mentor?.name || 'Mentor Profile'}
+                                                    {tx.mentor?.name ||
+                                                        'Mentor Profile'}
                                                 </h3>
                                                 <p className="text-xs text-gray-500 mt-0.5">
-                                                    {tx.mentor?.email || 'No email associated'}
+                                                    {tx.mentor?.email ||
+                                                        'No email associated'}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <div className="flex items-center text-xl font-black text-gray-900 group-hover:text-blue-600 transition-colors justify-end">
                                                 <IndianRupee size={18} />
-                                                <span>{tx.amount.toLocaleString()}</span>
+                                                <span>
+                                                    {tx.amount.toLocaleString()}
+                                                </span>
                                             </div>
                                             <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
                                                 Withdrawal
@@ -357,15 +464,23 @@ const AdminPayoutsPage: React.FC = () => {
                                     <div className="mt-6 border-t border-gray-100 pt-5 space-y-4">
                                         {/* Stripe Connect Express Check */}
                                         <div className="flex items-center justify-between text-xs p-3 rounded-2xl bg-gray-50/50 border border-gray-100">
-                                            <span className="font-medium text-gray-500">Stripe Payout Capability</span>
+                                            <span className="font-medium text-gray-500">
+                                                Stripe Payout Capability
+                                            </span>
                                             {isStripeOnboarded ? (
                                                 <span className="font-bold text-emerald-700 flex items-center gap-1">
-                                                    <CheckCircle2 size={14} className="fill-emerald-50 text-emerald-600" />
+                                                    <CheckCircle2
+                                                        size={14}
+                                                        className="fill-emerald-50 text-emerald-600"
+                                                    />
                                                     Express Connected
                                                 </span>
                                             ) : (
                                                 <span className="font-bold text-amber-700 flex items-center gap-1">
-                                                    <AlertCircle size={14} className="fill-amber-50 text-amber-600" />
+                                                    <AlertCircle
+                                                        size={14}
+                                                        className="fill-amber-50 text-amber-600"
+                                                    />
                                                     Manual Required
                                                 </span>
                                             )}
@@ -375,25 +490,58 @@ const AdminPayoutsPage: React.FC = () => {
                                         {tx.bankAccountDetails && (
                                             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-2.5">
                                                 <div className="flex items-center gap-1.5 text-xs text-gray-700 font-bold border-b border-gray-200/50 pb-2">
-                                                    <Building2 size={14} className="text-gray-500" />
-                                                    <span>Registered Bank Account</span>
+                                                    <Building2
+                                                        size={14}
+                                                        className="text-gray-500"
+                                                    />
+                                                    <span>
+                                                        Registered Bank Account
+                                                    </span>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs">
                                                     <div>
-                                                        <span className="text-gray-400 block mb-0.5">Holder Name</span>
-                                                        <span className="font-semibold text-gray-900">{tx.bankAccountDetails.accountHolderName || 'N/A'}</span>
+                                                        <span className="text-gray-400 block mb-0.5">
+                                                            Holder Name
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900">
+                                                            {tx
+                                                                .bankAccountDetails
+                                                                .accountHolderName ||
+                                                                'N/A'}
+                                                        </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-400 block mb-0.5">Bank Name</span>
-                                                        <span className="font-semibold text-gray-900">{tx.bankAccountDetails.bankName || 'N/A'}</span>
+                                                        <span className="text-gray-400 block mb-0.5">
+                                                            Bank Name
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900">
+                                                            {tx
+                                                                .bankAccountDetails
+                                                                .bankName ||
+                                                                'N/A'}
+                                                        </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-400 block mb-0.5">Account Number</span>
-                                                        <span className="font-semibold text-gray-900 tracking-wider">{tx.bankAccountDetails.accountNumber || 'N/A'}</span>
+                                                        <span className="text-gray-400 block mb-0.5">
+                                                            Account Number
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900 tracking-wider">
+                                                            {tx
+                                                                .bankAccountDetails
+                                                                .accountNumber ||
+                                                                'N/A'}
+                                                        </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-400 block mb-0.5">IFSC Code</span>
-                                                        <span className="font-semibold text-gray-900 tracking-wide uppercase">{tx.bankAccountDetails.ifscCode || 'N/A'}</span>
+                                                        <span className="text-gray-400 block mb-0.5">
+                                                            IFSC Code
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900 tracking-wide uppercase">
+                                                            {tx
+                                                                .bankAccountDetails
+                                                                .ifscCode ||
+                                                                'N/A'}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -405,7 +553,12 @@ const AdminPayoutsPage: React.FC = () => {
                                 {tx.status === 'pending' && (
                                     <div className="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
                                         <button
-                                            onClick={() => setConfirmModal({ type: 'reject', tx })}
+                                            onClick={() =>
+                                                setConfirmModal({
+                                                    type: 'reject',
+                                                    tx,
+                                                })
+                                            }
                                             disabled={processingId !== null}
                                             className="flex-1 py-3 text-xs font-extrabold bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 active:scale-98 transition-all rounded-2xl shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
                                         >
@@ -413,16 +566,27 @@ const AdminPayoutsPage: React.FC = () => {
                                             Reject & Refund
                                         </button>
                                         <button
-                                            onClick={() => setConfirmModal({ type: 'approve', tx })}
+                                            onClick={() =>
+                                                setConfirmModal({
+                                                    type: 'approve',
+                                                    tx,
+                                                })
+                                            }
                                             disabled={processingId !== null}
                                             className="flex-1 py-3 text-xs font-extrabold bg-blue-600 hover:bg-blue-700 text-white active:scale-98 transition-all rounded-2xl shadow-md cursor-pointer flex items-center justify-center gap-1.5"
                                         >
-                                            {processingId === tx.transactionId ? (
-                                                <Loader2 className="animate-spin" size={14} />
+                                            {processingId ===
+                                            tx.transactionId ? (
+                                                <Loader2
+                                                    className="animate-spin"
+                                                    size={14}
+                                                />
                                             ) : (
                                                 <Check size={14} />
                                             )}
-                                            {isStripeOnboarded ? 'Stripe Transfer' : 'Approve Payout'}
+                                            {isStripeOnboarded
+                                                ? 'Stripe Transfer'
+                                                : 'Approve Payout'}
                                         </button>
                                     </div>
                                 )}
@@ -436,9 +600,12 @@ const AdminPayoutsPage: React.FC = () => {
                         <ArrowUpRight size={32} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900 text-lg">No payout requests found</h3>
+                        <h3 className="font-bold text-gray-900 text-lg">
+                            No payout requests found
+                        </h3>
                         <p className="text-gray-500 text-sm mt-1">
-                            We couldn't find any withdrawal requests matching the active tab or search filters.
+                            We couldn't find any withdrawal requests matching
+                            the active tab or search filters.
                         </p>
                     </div>
                     {activeTab !== 'pending' && (
@@ -476,11 +643,13 @@ const AdminPayoutsPage: React.FC = () => {
                             className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-gray-100 relative z-10 space-y-6"
                         >
                             <div className="flex items-start gap-4">
-                                <div className={`p-3 rounded-2xl ${
-                                    confirmModal.type === 'approve' 
-                                        ? 'bg-emerald-50 text-emerald-600' 
-                                        : 'bg-rose-50 text-rose-600'
-                                }`}>
+                                <div
+                                    className={`p-3 rounded-2xl ${
+                                        confirmModal.type === 'approve'
+                                            ? 'bg-emerald-50 text-emerald-600'
+                                            : 'bg-rose-50 text-rose-600'
+                                    }`}
+                                >
                                     {confirmModal.type === 'approve' ? (
                                         <CheckCircle2 size={24} />
                                     ) : (
@@ -489,39 +658,81 @@ const AdminPayoutsPage: React.FC = () => {
                                 </div>
                                 <div className="space-y-1">
                                     <h3 className="font-extrabold text-gray-900 text-lg leading-tight">
-                                        {confirmModal.type === 'approve' 
-                                            ? 'Confirm Payout Approval' 
+                                        {confirmModal.type === 'approve'
+                                            ? 'Confirm Payout Approval'
                                             : 'Confirm Payout Rejection'}
                                     </h3>
                                     <p className="text-sm text-gray-500">
-                                        Transaction ID: {confirmModal.tx.transactionId.substring(0, 8)}...
+                                        Transaction ID:{' '}
+                                        {confirmModal.tx.transactionId.substring(
+                                            0,
+                                            8
+                                        )}
+                                        ...
                                     </p>
                                 </div>
                             </div>
 
                             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
                                 <div className="flex justify-between items-center text-sm border-b border-gray-200/50 pb-2.5">
-                                    <span className="text-gray-500">Requested Amount</span>
+                                    <span className="text-gray-500">
+                                        Requested Amount
+                                    </span>
                                     <span className="font-black text-gray-950 text-base flex items-center">
                                         <IndianRupee size={15} />
                                         {confirmModal.tx.amount.toLocaleString()}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-500">Mentor Name</span>
-                                    <span className="font-semibold text-gray-950">{confirmModal.tx.mentor?.name}</span>
+                                    <span className="text-gray-500">
+                                        Mentor Name
+                                    </span>
+                                    <span className="font-semibold text-gray-950">
+                                        {confirmModal.tx.mentor?.name}
+                                    </span>
                                 </div>
                             </div>
 
                             <p className="text-sm text-gray-600 leading-relaxed">
                                 {confirmModal.type === 'approve' ? (
-                                    confirmModal.tx.stripeConnectAccountId && confirmModal.tx.stripeConnectOnboarded ? (
-                                        <span>This request will trigger an <strong>automatic Stripe Express transfer</strong> of ₹{confirmModal.tx.amount} to the mentor's connected Stripe account. This action cannot be reversed.</span>
+                                    confirmModal.tx.stripeConnectAccountId &&
+                                    confirmModal.tx.stripeConnectOnboarded ? (
+                                        <span>
+                                            This request will trigger an{' '}
+                                            <strong>
+                                                automatic Stripe Express
+                                                transfer
+                                            </strong>{' '}
+                                            of ₹{confirmModal.tx.amount} to the
+                                            mentor's connected Stripe account.
+                                            This action cannot be reversed.
+                                        </span>
                                     ) : (
-                                        <span>Since the mentor has not connected a Stripe Express account, you must transfer <strong>₹{confirmModal.tx.amount} manually</strong> to their registered bank account. Approving will update their status to Completed and record this in their transaction history.</span>
+                                        <span>
+                                            Since the mentor has not connected a
+                                            Stripe Express account, you must
+                                            transfer{' '}
+                                            <strong>
+                                                ₹{confirmModal.tx.amount}{' '}
+                                                manually
+                                            </strong>{' '}
+                                            to their registered bank account.
+                                            Approving will update their status
+                                            to Completed and record this in
+                                            their transaction history.
+                                        </span>
                                     )
                                 ) : (
-                                    <span>Rejecting this request will mark the transaction as failed. The requested amount of <strong>₹{confirmModal.tx.amount} will be instantly refunded</strong> to the mentor's available balance.</span>
+                                    <span>
+                                        Rejecting this request will mark the
+                                        transaction as failed. The requested
+                                        amount of{' '}
+                                        <strong>
+                                            ₹{confirmModal.tx.amount} will be
+                                            instantly refunded
+                                        </strong>{' '}
+                                        to the mentor's available balance.
+                                    </span>
                                 )}
                             </p>
 
@@ -546,7 +757,9 @@ const AdminPayoutsPage: React.FC = () => {
                                             : 'bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-100'
                                     }`}
                                 >
-                                    {confirmModal.type === 'approve' ? 'Yes, Approve Payout' : 'Yes, Reject Request'}
+                                    {confirmModal.type === 'approve'
+                                        ? 'Yes, Approve Payout'
+                                        : 'Yes, Reject Request'}
                                 </button>
                             </div>
                         </motion.div>

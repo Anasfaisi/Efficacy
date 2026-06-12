@@ -8,9 +8,9 @@ export interface CreateReviewRequestDto {
 
 export interface ReviewResponseDto {
     id?: string;
-    bookingId?: string | any;
-    mentorId?: string | any;
-    userId?: string | any;
+    bookingId?: string; 
+    mentorId?: string; 
+    userId?: string;
     rating?: number;
     comment?: string;
     createdAt?: string;
@@ -19,15 +19,9 @@ export interface ReviewResponseDto {
 
 export interface Review {
     _id: string;
-    bookingId: any;
-    mentorId: any;
-    userId:
-        | {
-              _id: string;
-              name: string;
-              profilePic?: string;
-          }
-        | any;
+    bookingId: string;
+    mentorId: string;
+    userId:string;
     rating: number;
     comment: string;
     createdAt: string;

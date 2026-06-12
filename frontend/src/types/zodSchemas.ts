@@ -109,7 +109,6 @@ export const mentorFormSchema = z
             .string()
             .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-
         availability: z
             .record(z.string(), z.array(z.string()))
             .optional()
@@ -121,9 +120,11 @@ export const mentorFormSchema = z
                     );
                     return activeDays.length >= 3;
                 },
-                { message: 'Select at least 3 days with at least one time slot each' }
+                {
+                    message:
+                        'Select at least 3 days with at least one time slot each',
+                }
             ),
-
 
         mentorType: z.enum(['Academic', 'Industry']),
 

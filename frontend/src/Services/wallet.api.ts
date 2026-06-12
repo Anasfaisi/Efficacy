@@ -14,13 +14,13 @@ export const walletApi = {
         return response.data;
     },
 
-    updateBankDetails: async (details: any) => {
-        const response = await api.patch(
-            WalletRoutes.UPDATE_BANK_DETAILS,
-            details
-        );
-        return response.data;
-    },
+    // updateBankDetails: async (details: any) => {
+    //     const response = await api.patch(
+    //         WalletRoutes.UPDATE_BANK_DETAILS,
+    //         details
+    //     );
+    //     return response.data;
+    // },
 
     getTransactions: async (page: number = 1, limit: number = 6) => {
         const response = await api.get(WalletRoutes.GET_TRANSACTIONS, {
@@ -32,13 +32,13 @@ export const walletApi = {
         return response.data;
     },
 
-    onboardStripeConnect : async()=>{
+    onboardStripeConnect: async () => {
         const response = await api.post(WalletRoutes.STRIPE_CONNECT);
-        return response.data
+        return response.data;
     },
 
-    verifyStripeStatus : async()=>{
+    verifyStripeStatus: async () => {
         const response = await api.get(WalletRoutes.STRIPE_STATUS);
-        return response.data
-    }
+        return response.data;
+    },
 };

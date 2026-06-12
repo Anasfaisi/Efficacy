@@ -105,10 +105,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                         startOfDay(new Date())
                     );
 
-
                     const currentDayName = format(day, 'EEEE');
-                    const isAvailableDay =
-                        Object.keys(mentor.availability || {}).includes(currentDayName);
+                    const isAvailableDay = Object.keys(
+                        mentor.availability || {}
+                    ).includes(currentDayName);
 
                     const isDisabled =
                         !isCurrentMonth || isPast || !isAvailableDay;
@@ -143,8 +143,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
     const renderSlots = () => {
         if (!selectedDate) return null;
         const selectedDayName = format(selectedDate, 'EEEE');
-        const allPossibleSlots = getAllSlots(mentor.availability?.[selectedDayName] || []);
-        console.log(allPossibleSlots,"allPossibleSlots", bookedSlots)
+        const allPossibleSlots = getAllSlots(
+            mentor.availability?.[selectedDayName] || []
+        );
+        console.log(allPossibleSlots, 'allPossibleSlots', bookedSlots);
         return (
             <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between mb-4">
@@ -161,13 +163,20 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                     {allPossibleSlots.length > 0 ? (
                         allPossibleSlots.map((slot) => {
                             // Safely extract the start time, e.g., "9:00 AM" or "10:00 AM"
-                            const startTimeString = slot.split(' - ')[0]; 
-                            
+                            const startTimeString = slot.split(' - ')[0];
+
                             // Parse the slot time using the selected date as the base
-                            const slotStartTime = parse(startTimeString, 'h:mm a', selectedDate);
-                            
+                            const slotStartTime = parse(
+                                startTimeString,
+                                'h:mm a',
+                                selectedDate
+                            );
+
                             // Check if the exact slot start time is in the past
-                            const isTimePassed = isBefore(slotStartTime, new Date());
+                            const isTimePassed = isBefore(
+                                slotStartTime,
+                                new Date()
+                            );
 
                             const isBooked = bookedSlots.some(
                                 (bs) =>

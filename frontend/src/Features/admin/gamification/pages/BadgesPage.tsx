@@ -134,7 +134,6 @@ export default function AdminBadgesPage() {
                 !currentStatus
             );
             if (result.status) {
-        
                 setBadges((prev) =>
                     prev.map((badge) =>
                         badge.id == badgeId ? result.badge : badge

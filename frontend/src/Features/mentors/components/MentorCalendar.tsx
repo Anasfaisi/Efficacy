@@ -59,11 +59,14 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
     });
 
     const getUniqueAvailableSlots = (): string[] => {
-        if (mentor.availability && Object.keys(mentor.availability).length > 0) {
+        if (
+            mentor.availability &&
+            Object.keys(mentor.availability).length > 0
+        ) {
             const slots = new Set<string>();
             Object.values(mentor.availability).forEach((daySlots) => {
                 if (Array.isArray(daySlots)) {
-                    daySlots.forEach(slot => slots.add(slot));
+                    daySlots.forEach((slot) => slots.add(slot));
                 }
             });
             return Array.from(slots).sort((a, b) => {
@@ -320,7 +323,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
         const start = startOfWeek(currentDate);
         const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
         const allPossibleSlots = getUniqueAvailableSlots();
-        console.log(allPossibleSlots,"from mentor calender 1",)
+        console.log(allPossibleSlots, 'from mentor calender 1');
         return (
             <div className="overflow-x-auto animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="min-w-[800px]">
@@ -354,8 +357,10 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                 </div>
                                 {days.map((day) => {
                                     const dayName = format(day, 'EEEE');
-                                    const isAvailableSlot = mentor.availability 
-                                        ? (mentor.availability[dayName] || []).includes(slot)
+                                    const isAvailableSlot = mentor.availability
+                                        ? (
+                                              mentor.availability[dayName] || []
+                                          ).includes(slot)
                                         : true;
                                     const bookings = getBookingsForDate(
                                         day
@@ -433,7 +438,8 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                                     </p>
                                                 </div>
                                             ) : (
-                                                selectable && isAvailableSlot && (
+                                                selectable &&
+                                                isAvailableSlot && (
                                                     <div className="text-indigo-300 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-all">
                                                         <Plus size={16} />
                                                     </div>
@@ -453,9 +459,9 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
     const renderDayView = () => {
         const dayName = format(currentDate, 'EEEE');
         const allPossibleSlots = mentor.availability
-            ? (mentor.availability[dayName] || [])
+            ? mentor.availability[dayName] || []
             : getAllSlots((mentor as any).preferredTime || []);
-        console.log(allPossibleSlots,mentor)
+        console.log(allPossibleSlots, mentor);
 
         const todayBookings = getBookingsForDate(currentDate);
 

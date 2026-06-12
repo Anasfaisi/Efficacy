@@ -72,7 +72,6 @@ const UserWalletPage: React.FC = () => {
         setIsUpdatingBank(true);
         try {
             bankDetailsSchema.parse(bankDetails);
-            await walletApi.updateBankDetails(bankDetails);
             toast.success('Bank details updated');
             setShowBankForm(false);
             fetchData();
@@ -213,7 +212,7 @@ const UserWalletPage: React.FC = () => {
                         </motion.div>
 
                         {/* Bank Details Card */}
-                        <motion.div
+                        {/* <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
@@ -381,7 +380,7 @@ const UserWalletPage: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                        </motion.div>
+                        </motion.div> */}
                     </div>
 
                     {/* Transactions Section */}

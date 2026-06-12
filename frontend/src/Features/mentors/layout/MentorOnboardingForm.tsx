@@ -190,8 +190,7 @@ export default function MentorOnboardingForm() {
                 navigate('/mentor/application-received');
             } else if (status === 'rejected') {
                 navigate('/mentor/application-rejected');
-            } 
-             else if (
+            } else if (
                 status &&
                 status !== 'incomplete' &&
                 status !== 'pending'

@@ -6,9 +6,25 @@ import { toast } from 'sonner';
 import { mentorApi } from '@/Services/mentor.api';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import { walletApi } from '@/Services/wallet.api';
-import { Users, Calendar, UserCircle, Upload, AlertCircle, TrendingUp, Star } from 'lucide-react';
+import {
+    Users,
+    Calendar,
+    UserCircle,
+    Upload,
+    AlertCircle,
+    TrendingUp,
+    Star,
+} from 'lucide-react';
 import Breadcrumbs from '@/Components/common/Breadcrumbs';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    CartesianGrid,
+} from 'recharts';
 import type { Mentorship, ISession } from '@/types/mentorship';
 
 interface Transaction {
@@ -25,7 +41,9 @@ const MentorDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [fetchedMentor, setFetchedMentor] = useState<Mentor | null>(null);
     const [mentorships, setMentorships] = useState<Mentorship[]>([]);
-    const [revenueData, setRevenueData] = useState<{ month: string; revenue: number }[]>([]);
+    const [revenueData, setRevenueData] = useState<
+        { month: string; revenue: number }[]
+    >([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const mentor = fetchedMentor || (currentUser as Mentor);
@@ -33,34 +51,56 @@ const MentorDashboard: React.FC = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                console.log("jh-===========")
+                console.log('jh-===========');
                 setIsLoading(true);
-                const [profileData, requestsData, transactionsData] = await Promise.all([
-                    mentorApi.getMentorProfile(),
-                    mentorshipApi.getMentorRequests(1, 100),
-                    walletApi.getTransactions(1, 100),
-                ]);
-                console.log(requestsData,"from md 42")
-                
+                const [profileData, requestsData, transactionsData] =
+                    await Promise.all([
+                        mentorApi.getMentorProfile(),
+                        mentorshipApi.getMentorRequests(1, 100),
+                        walletApi.getTransactions(1, 100),
+                    ]);
+                console.log(requestsData, 'from md 42');
+
                 setFetchedMentor(profileData);
                 const fetchedMentorships = requestsData.mentorships || [];
                 setMentorships(fetchedMentorships);
 
                 // Process Transactions for Graph
-                const transactions: Transaction[] = transactionsData.transactions || [];
-                const earnings = transactions.filter(t => t.type === 'earning' && t.status === 'completed');
-                
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const transactions: Transaction[] =
+                    transactionsData.transactions || [];
+                const earnings = transactions.filter(
+                    (t) => t.type === 'earning' && t.status === 'completed'
+                );
+
+                const monthNames = [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec',
+                ];
                 const revenueAgg = [];
                 for (let i = 5; i >= 0; i--) {
                     const d = new Date();
                     d.setMonth(d.getMonth() - i);
                     const monthIndex = d.getMonth();
-                    const monthEarnings = earnings.filter(t => new Date(t.date).getMonth() === monthIndex);
-                    const totalMonthRevenue = monthEarnings.reduce((acc, curr) => acc + curr.amount, 0);
+                    const monthEarnings = earnings.filter(
+                        (t) => new Date(t.date).getMonth() === monthIndex
+                    );
+                    const totalMonthRevenue = monthEarnings.reduce(
+                        (acc, curr) => acc + curr.amount,
+                        0
+                    );
                     revenueAgg.push({
                         month: monthNames[monthIndex],
-                        revenue: totalMonthRevenue
+                        revenue: totalMonthRevenue,
                     });
                 }
                 setRevenueData(revenueAgg);
@@ -73,8 +113,8 @@ const MentorDashboard: React.FC = () => {
 
         if (currentUser?.role === 'mentor') {
             const status = (currentUser as Mentor).status;
-                fetchDashboardData();
-            
+            fetchDashboardData();
+
             if (status === 'incomplete' || !status || status === 'reapply') {
                 setIsLoading(false);
                 navigate('/mentor/onboarding');
@@ -101,29 +141,47 @@ const MentorDashboard: React.FC = () => {
     }, [currentUser, navigate]);
 
     // Extract all upcoming sessions from active mentorships
-    const activeMentorships = mentorships.filter(m => m.status === 'active');
-    const upcomingSessions: { session: ISession; user: User | string; mentorshipId: string }[] = [];
-    
-    activeMentorships.forEach(m => {
+    const activeMentorships = mentorships.filter((m) => m.status === 'active');
+    const upcomingSessions: {
+        session: ISession;
+        user: User | string;
+        mentorshipId: string;
+    }[] = [];
+
+    activeMentorships.forEach((m) => {
         if (m.sessions) {
-            m.sessions.forEach(s => {
+            m.sessions.forEach((s) => {
                 if (s.status === 'booked' && new Date(s.date) >= new Date()) {
-                    upcomingSessions.push({ session: s, user: m.userId, mentorshipId: m._id || '' });
+                    upcomingSessions.push({
+                        session: s,
+                        user: m.userId,
+                        mentorshipId: m._id || '',
+                    });
                 }
             });
         }
     });
 
-    upcomingSessions.sort((a, b) => new Date(a.session.date).getTime() - new Date(b.session.date).getTime());
+    upcomingSessions.sort(
+        (a, b) =>
+            new Date(a.session.date).getTime() -
+            new Date(b.session.date).getTime()
+    );
 
     // Extract recent completed mentorships
     const recentMentorships = mentorships
-        .filter(m => m.status === 'completed' || m.status === 'active')
-        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .filter((m) => m.status === 'completed' || m.status === 'active')
+        .sort(
+            (a, b) =>
+                new Date(b.updatedAt).getTime() -
+                new Date(a.updatedAt).getTime()
+        )
         .slice(0, 5);
 
     const uniqueMentees = new Set(
-        mentorships.map((m) => typeof m.userId === 'string' ? m.userId : (m.userId as User)._id)
+        mentorships.map((m) =>
+            typeof m.userId === 'string' ? m.userId : (m.userId as User)._id
+        )
     ).size;
 
     if (!currentUser) return null;
@@ -139,7 +197,7 @@ const MentorDashboard: React.FC = () => {
     return (
         <div className="space-y-8 font-sans bg-[#f8fafc] min-h-screen p-2">
             <Breadcrumbs />
-            
+
             {/* Profile Picture Reminder */}
             {!mentor.profilePic && (
                 <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-[inset_0_2px_10px_rgba(255,255,255,0.6),0_10px_30px_rgba(0,0,0,0.05)] border border-white/50 animate-in slide-in-from-top-4 duration-500">
@@ -153,7 +211,8 @@ const MentorDashboard: React.FC = () => {
                                     Complete your profile
                                 </h3>
                                 <p className="text-slate-500 text-sm mt-1 font-medium">
-                                    Add a profile picture to make your profile stand out to potential mentees.
+                                    Add a profile picture to make your profile
+                                    stand out to potential mentees.
                                 </p>
                             </div>
                         </div>
@@ -218,7 +277,9 @@ const MentorDashboard: React.FC = () => {
                             </div>
                             Earnings Overview
                         </h3>
-                        <p className="text-slate-500 text-sm mt-1 font-medium ml-12">Last 6 months revenue</p>
+                        <p className="text-slate-500 text-sm mt-1 font-medium ml-12">
+                            Last 6 months revenue
+                        </p>
                     </div>
                     <div className="px-4 py-2 bg-slate-100 rounded-xl text-sm font-semibold text-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]">
                         Monthly
@@ -228,49 +289,89 @@ const MentorDashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                             data={revenueData}
-                            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                            margin={{
+                                top: 10,
+                                right: 10,
+                                left: -20,
+                                bottom: 0,
+                            }}
                         >
                             <defs>
-                                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                <linearGradient
+                                    id="colorRevenue"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop
+                                        offset="5%"
+                                        stopColor="#10b981"
+                                        stopOpacity={0.3}
+                                    />
+                                    <stop
+                                        offset="95%"
+                                        stopColor="#10b981"
+                                        stopOpacity={0}
+                                    />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                            <XAxis 
-                                dataKey="month" 
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                vertical={false}
+                                stroke="#e2e8f0"
+                            />
+                            <XAxis
+                                dataKey="month"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
+                                tick={{
+                                    fill: '#64748b',
+                                    fontSize: 13,
+                                    fontWeight: 500,
+                                }}
                                 dy={10}
                             />
-                            <YAxis 
+                            <YAxis
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
+                                tick={{
+                                    fill: '#64748b',
+                                    fontSize: 13,
+                                    fontWeight: 500,
+                                }}
                                 dx={-10}
                                 tickFormatter={(value) => `₹${value}`}
                             />
-                            <Tooltip 
-                                contentStyle={{ 
-                                    borderRadius: '16px', 
+                            <Tooltip
+                                contentStyle={{
+                                    borderRadius: '16px',
                                     border: '1px solid rgba(255,255,255,0.5)',
-                                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    boxShadow:
+                                        '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                                    backgroundColor:
+                                        'rgba(255, 255, 255, 0.95)',
                                     backdropFilter: 'blur(10px)',
                                     fontWeight: 600,
-                                    color: '#1e293b'
+                                    color: '#1e293b',
                                 }}
-                                formatter={(value: number) => [`₹${value}`, 'Earnings']}
+                                formatter={(value: number) => [
+                                    `₹${value}`,
+                                    'Earnings',
+                                ]}
                             />
-                            <Area 
-                                type="monotone" 
-                                dataKey="revenue" 
-                                stroke="#10b981" 
+                            <Area
+                                type="monotone"
+                                dataKey="revenue"
+                                stroke="#10b981"
                                 strokeWidth={3}
-                                fillOpacity={1} 
-                                fill="url(#colorRevenue)" 
-                                activeDot={{ r: 6, strokeWidth: 0, fill: '#10b981' }}
+                                fillOpacity={1}
+                                fill="url(#colorRevenue)"
+                                activeDot={{
+                                    r: 6,
+                                    strokeWidth: 0,
+                                    fill: '#10b981',
+                                }}
                             />
                         </AreaChart>
                     </ResponsiveContainer>
@@ -294,60 +395,89 @@ const MentorDashboard: React.FC = () => {
                     {recentMentorships.length > 0 ? (
                         <div className="space-y-5">
                             {recentMentorships.map((mentorship, index) => {
-                                const user = typeof mentorship.userId === 'object' ? mentorship.userId : { name: 'Unknown', _id: mentorship.userId } as User;
+                                const user =
+                                    typeof mentorship.userId === 'object'
+                                        ? mentorship.userId
+                                        : ({
+                                              name: 'Unknown',
+                                              _id: mentorship.userId,
+                                          } as User);
                                 return (
-                                <div
-                                    key={index}
-                                    className="p-5 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all flex flex-col gap-4"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-lg shadow-[inset_0_-2px_4px_rgba(0,0,0,0.05)]">
-                                                {user?.name?.charAt(0) || 'U'}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-800 text-base">
-                                                    {user?.name || 'Unknown Student'}
-                                                </p>
-                                                <p className="text-sm font-medium text-slate-500">
-                                                    {mentorship.totalSessions} Sessions Plan
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <span
-                                            className={`px-4 py-1.5 text-xs font-bold rounded-xl shadow-sm ${
-                                                mentorship.status === 'completed'
-                                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                                                    : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
-                                            }`}
-                                        >
-                                            {mentorship.status.toUpperCase()}
-                                        </span>
-                                    </div>
-
-                                    {/* Ratings & Reviews Section */}
-                                    {mentorship.userFeedback && (
-                                        <div className="mt-2 p-4 bg-slate-50 rounded-2xl border border-slate-100/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <div className="flex items-center">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <Star 
-                                                            key={i} 
-                                                            className={`w-4 h-4 ${i < mentorship.userFeedback!.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} 
-                                                        />
-                                                    ))}
+                                    <div
+                                        key={index}
+                                        className="p-5 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all flex flex-col gap-4"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-lg shadow-[inset_0_-2px_4px_rgba(0,0,0,0.05)]">
+                                                    {user?.name?.charAt(0) ||
+                                                        'U'}
                                                 </div>
-                                                <span className="text-xs font-bold text-slate-600 bg-white px-2 py-0.5 rounded-lg shadow-sm">
-                                                    {mentorship.userFeedback.rating}.0
-                                                </span>
+                                                <div>
+                                                    <p className="font-bold text-slate-800 text-base">
+                                                        {user?.name ||
+                                                            'Unknown Student'}
+                                                    </p>
+                                                    <p className="text-sm font-medium text-slate-500">
+                                                        {
+                                                            mentorship.totalSessions
+                                                        }{' '}
+                                                        Sessions Plan
+                                                    </p>
+                                                </div>
                                             </div>
-                                            {mentorship.userFeedback.comment && (
-                                                <p className="text-sm text-slate-600 font-medium italic">"{mentorship.userFeedback.comment}"</p>
-                                            )}
+                                            <span
+                                                className={`px-4 py-1.5 text-xs font-bold rounded-xl shadow-sm ${
+                                                    mentorship.status ===
+                                                    'completed'
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                                                        : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                                                }`}
+                                            >
+                                                {mentorship.status.toUpperCase()}
+                                            </span>
                                         </div>
-                                    )}
-                                </div>
-                            )})}
+
+                                        {/* Ratings & Reviews Section */}
+                                        {mentorship.userFeedback && (
+                                            <div className="mt-2 p-4 bg-slate-50 rounded-2xl border border-slate-100/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <div className="flex items-center">
+                                                        {[...Array(5)].map(
+                                                            (_, i) => (
+                                                                <Star
+                                                                    key={i}
+                                                                    className={`w-4 h-4 ${i < mentorship.userFeedback!.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs font-bold text-slate-600 bg-white px-2 py-0.5 rounded-lg shadow-sm">
+                                                        {
+                                                            mentorship
+                                                                .userFeedback
+                                                                .rating
+                                                        }
+                                                        .0
+                                                    </span>
+                                                </div>
+                                                {mentorship.userFeedback
+                                                    .comment && (
+                                                    <p className="text-sm text-slate-600 font-medium italic">
+                                                        "
+                                                        {
+                                                            mentorship
+                                                                .userFeedback
+                                                                .comment
+                                                        }
+                                                        "
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -374,30 +504,36 @@ const MentorDashboard: React.FC = () => {
                     </h3>
                     <div className="space-y-4">
                         {upcomingSessions.slice(0, 4).map((item, index) => {
-                            const user = typeof item.user === 'object' ? item.user : { name: 'Unknown Student' } as User;
+                            const user =
+                                typeof item.user === 'object'
+                                    ? item.user
+                                    : ({ name: 'Unknown Student' } as User);
                             return (
-                            <div
-                                key={index}
-                                className="p-5 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all group"
-                            >
-                                <p className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4" />
-                                    {new Date(item.session.date).toLocaleDateString()}
-                                </p>
-                                <p className="font-bold text-slate-800 mb-1">
-                                    {item.session.slot}
-                                </p>
-                                <p className="text-sm font-medium text-slate-500">
-                                    with {user.name}
-                                </p>
-                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-50">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
-                                    <span className="text-xs text-slate-600 font-bold">
-                                        Confirmed
-                                    </span>
+                                <div
+                                    key={index}
+                                    className="p-5 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all group"
+                                >
+                                    <p className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" />
+                                        {new Date(
+                                            item.session.date
+                                        ).toLocaleDateString()}
+                                    </p>
+                                    <p className="font-bold text-slate-800 mb-1">
+                                        {item.session.slot}
+                                    </p>
+                                    <p className="text-sm font-medium text-slate-500">
+                                        with {user.name}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-50">
+                                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
+                                        <span className="text-xs text-slate-600 font-bold">
+                                            Confirmed
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        )})}
+                            );
+                        })}
 
                         {upcomingSessions.length === 0 && (
                             <div className="p-5 bg-indigo-50/50 rounded-2xl border border-indigo-100/50 backdrop-blur-sm">
@@ -443,7 +579,7 @@ const StatCard = ({
     icon,
     trend,
     bgColor,
-    shadowColor
+    shadowColor,
 }: {
     title: string;
     value: string;
@@ -460,7 +596,9 @@ const StatCard = ({
                     {value}
                 </h4>
             </div>
-            <div className={`p-3.5 ${bgColor} rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.05)] transition-transform group-hover:scale-110 duration-300`}>
+            <div
+                className={`p-3.5 ${bgColor} rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.05)] transition-transform group-hover:scale-110 duration-300`}
+            >
                 {icon}
             </div>
         </div>
@@ -468,7 +606,9 @@ const StatCard = ({
             <span className="text-emerald-600 text-xs font-extrabold bg-emerald-50 px-2.5 py-1 rounded-xl shadow-sm border border-emerald-100/50">
                 ↑
             </span>
-            <span className="text-xs text-slate-500 font-semibold">{trend}</span>
+            <span className="text-xs text-slate-500 font-semibold">
+                {trend}
+            </span>
         </div>
     </div>
 );

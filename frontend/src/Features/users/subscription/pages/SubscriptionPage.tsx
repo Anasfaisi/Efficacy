@@ -1,10 +1,12 @@
-import React from 'react'
-import SubscriptionPlans from '../components/SubscriptionPlans'
+import React from 'react';
+import SubscriptionPlans from '../components/SubscriptionPlans';
 
 const SubscriptionPage = () => {
-  return (
-    <div><SubscriptionPlans /> </div>
-  )
-}
+    return (
+        <div>
+            <SubscriptionPlans />{' '}
+        </div>
+    );
+};
 
-export default SubscriptionPage
+export default SubscriptionPage;

@@ -79,13 +79,12 @@ const BookingRequestsPage: React.FC = () => {
 
     const handleUpdateStatus = async (
         bookingId: string,
-        bookingDate : Date,
+        bookingDate: Date,
         proposedDate: Date,
         status: BookingStatus
     ) => {
-
-        if(proposedDate < new Date()||bookingDate < new Date()){
-            toast.error("Cannot change booking to past date");
+        if (proposedDate < new Date() || bookingDate < new Date()) {
+            toast.error('Cannot change booking to past date');
             return;
         }
         const data = await requestWrapper(
@@ -101,7 +100,6 @@ const BookingRequestsPage: React.FC = () => {
         approve: boolean
     ) => {
         const data = await requestWrapper(
-
             bookingApi.respondToReschedule(bookingId, approve),
             approve
                 ? 'Reschedule accepted'
@@ -119,7 +117,7 @@ const BookingRequestsPage: React.FC = () => {
                 bookingId: reschedulingBookingId,
                 proposedDate: selectedSlot.date.toISOString(),
                 proposedSlot: selectedSlot.slot,
-                requestedBy:"mentor",
+                requestedBy: 'mentor',
             }),
             'New time proposed to student'
         );

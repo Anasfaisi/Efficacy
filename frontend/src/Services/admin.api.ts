@@ -21,7 +21,9 @@ export const adminService = {
         return res.data;
     },
     deletePlan: async (planId: string, isActive: boolean) => {
-        const res = await api.delete(PlanRoutes.DELETE_PLAN(planId), { data: { isActive } });
+        const res = await api.delete(PlanRoutes.DELETE_PLAN(planId), {
+            data: { isActive },
+        });
         return res.data;
     },
     adminLoginApi: async (credentials: LoginCredentials) => {
@@ -193,13 +195,23 @@ export const adminService = {
         return response.data;
     },
 
-    approveWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
-        const response = await api.post(AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId));
+    approveWithdrawal: async (
+        walletId: string,
+        transactionId: string
+    ): Promise<any> => {
+        const response = await api.post(
+            AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId)
+        );
         return response.data;
     },
 
-    rejectWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
-        const response = await api.post(AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId));
+    rejectWithdrawal: async (
+        walletId: string,
+        transactionId: string
+    ): Promise<any> => {
+        const response = await api.post(
+            AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId)
+        );
         return response.data;
     },
 };

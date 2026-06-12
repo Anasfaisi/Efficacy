@@ -45,7 +45,7 @@ export interface Mentor {
     skills?: string;
     experienceSummary?: string;
 
-    availability? : Record<string,string[]>;
+    availability?: Record<string, string[]>;
     resume?: string | File;
     certificate?: string | File;
     idProof?: string | File;

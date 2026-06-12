@@ -132,11 +132,10 @@ export const BookingRoutes = {
 const GAMIFICATION_BASE = '/gamification';
 export const GamificationRoutes = {};
 
-const USER_BADGE_BASE='/badge/user';
+const USER_BADGE_BASE = '/badge/user';
 export const UserBadgeRoutes = {
     BASE: USER_BADGE_BASE,
     GET_USER_BADGES: `${USER_BADGE_BASE}/`,
-    
 };
 
 const BADGE_BASE = '/badge';
@@ -144,7 +143,7 @@ export const BadgeRoutes = {
     CREATE_BADGE: `${BADGE_BASE}`,
     UPDATE_BADGE: (badgeId: string) => `${BADGE_BASE}/${badgeId}`,
     GET_ALL_BADGES: `${BADGE_BASE}`,
-    TOGGLE_BADGE_STATUS: (badgeId:string) =>
+    TOGGLE_BADGE_STATUS: (badgeId: string) =>
         `${BADGE_BASE}/${badgeId}/toggle-status`,
 };
 

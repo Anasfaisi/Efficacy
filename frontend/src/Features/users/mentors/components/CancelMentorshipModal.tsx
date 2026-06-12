@@ -86,7 +86,9 @@ const CancelMentorshipModal: React.FC<CancelMentorshipModalProps> = ({
                             </p>
                             {policyNote && (
                                 <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                                    <p className="text-sm text-blue-700 font-medium">{policyNote}</p>
+                                    <p className="text-sm text-blue-700 font-medium">
+                                        {policyNote}
+                                    </p>
                                 </div>
                             )}
                         </div>
