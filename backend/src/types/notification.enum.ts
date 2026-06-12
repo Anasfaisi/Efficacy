@@ -14,5 +14,5 @@ export enum NotificationType {
     MENTORSHIP_ACTIVE = 'mentorship_active',
     MENTORSHIP_COMPLETED = 'mentorship_completed',
     MENTOR_PAYOUT_REQUEST = 'mentor_Payout_Request',
-    MENTORSHIP_CANCELLED='Mentorship_cancelled sucessfully , you will get the refund to the orginal payment method with in 3-5 business days ',
+    MENTORSHIP_CANCELLED = 'Mentorship_cancelled sucessfully , you will get the refund to the orginal payment method with in 3-5 business days ',
 }

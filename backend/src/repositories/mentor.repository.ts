@@ -1,4 +1,3 @@
-
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import MentorModel, { IMentor } from '@/models/mentor.model';

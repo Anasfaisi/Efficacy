@@ -22,8 +22,6 @@ export class PaymentService implements IPaymentService {
         });
     }
 
-
-
     async verifyCheckoutSession(
         sessionId: string
     ): Promise<ResponsePaymentDto> {

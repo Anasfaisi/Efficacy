@@ -93,7 +93,7 @@ export interface MentorApplicationResponseDto {
     rating?: number;
     reviewCount?: number;
     sessionsCompleted?: number;
-    profilePic?: string
+    profilePic?: string;
 }
 
 export class PaginatedMentorResponseDto {

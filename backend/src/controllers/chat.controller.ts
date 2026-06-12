@@ -72,7 +72,7 @@ export class ChatController {
             return;
         }
 
-        const fileUrl = (req.file as unknown as {location: string}).location;
+        const fileUrl = (req.file as unknown as { location: string }).location;
 
         res.status(Code.OK).json({ url: fileUrl });
     }

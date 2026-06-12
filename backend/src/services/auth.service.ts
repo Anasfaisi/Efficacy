@@ -99,7 +99,7 @@ export class AuthService implements IAuthService {
     ): Promise<ProfileResponseDto> {
         const dto = new ProfilePicUpdateDto(data.file, data.id);
 
-        const fileUrl = (dto.file as unknown as {location:string}).location;
+        const fileUrl = (dto.file as unknown as { location: string }).location;
         const updatedProfiePic = await this._userRepository.updateProfilePic(
             dto.id,
             fileUrl

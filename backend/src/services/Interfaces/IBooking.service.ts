@@ -36,5 +36,7 @@ export interface IBookingService {
     verifyBookingAccess(bookingId: string, userId: string): Promise<boolean>;
     startSession(bookingId: string): Promise<BookingResponseDto>;
     endSession(bookingId: string): Promise<BookingResponseDto>;
-    getMentorAvailability(mentorId: string): Promise<{ date: Date; slot: string }[]>;
+    getMentorAvailability(
+        mentorId: string
+    ): Promise<{ date: Date; slot: string }[]>;
 }

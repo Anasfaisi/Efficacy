@@ -292,7 +292,7 @@ export class WalletService implements IWalletService {
         transactionId: string
     ): Promise<WalletEntity> {
         const wallet = await this._walletRepository.findWalletById(walletId);
-        if (!wallet ) throw new Error(WalletMessages.NoWallet);
+        if (!wallet) throw new Error(WalletMessages.NoWallet);
 
         const transaction = wallet?.transactions?.find(
             (t: TransactionEntity) => t.id && t.id.toString() === transactionId
@@ -304,7 +304,7 @@ export class WalletService implements IWalletService {
 
         const payoutAmount = transaction.amount;
 
-        wallet.balance = (wallet.balance?? 0) + payoutAmount;
+        wallet.balance = (wallet.balance ?? 0) + payoutAmount;
         wallet.pendingWithdrawal = Math.max(
             0,
             (wallet.pendingWithdrawal || 0) - payoutAmount
@@ -317,7 +317,10 @@ export class WalletService implements IWalletService {
 
         transaction.status = TransactionStatus.FAILED;
 
-       const udpatedWallet= await this._walletRepository.update(wallet.id as string, wallet);
+        const udpatedWallet = await this._walletRepository.update(
+            wallet.id as string,
+            wallet
+        );
 
         // Notify Mentor of rejected payout request
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';

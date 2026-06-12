@@ -205,7 +205,9 @@ export class BookingRepository implements IBookingRepository {
             $or: [
                 {
                     bookingDate: { $gte: startOfDay },
-                    status: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
+                    status: {
+                        $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+                    },
                 },
                 {
                     proposedDate: { $gte: startOfDay },
