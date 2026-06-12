@@ -1,7 +1,7 @@
 import api from './axiosConfig';
 import type { MentorApplication, Notification } from '../Features/admin/types';
 import type { LoginCredentials, Mentor, User } from '../types/auth';
-import type { Transaction } from '@/types/wallet';
+import type { Transaction, WalletData } from '@/types/wallet';
 import { AdminRoutes, PlanRoutes } from './constant.routes';
 import { type PlanData } from '../Features/admin/components/AddPlanModal';
 
@@ -198,7 +198,7 @@ export const adminService = {
     approveWithdrawal: async (
         walletId: string,
         transactionId: string
-    ): Promise<any> => {
+    ): Promise<{ message: string; wallet: WalletData }> => {
         const response = await api.post(
             AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId)
         );
@@ -208,7 +208,7 @@ export const adminService = {
     rejectWithdrawal: async (
         walletId: string,
         transactionId: string
-    ): Promise<any> => {
+    ): Promise<{ message: string; wallet: WalletData }> => {
         const response = await api.post(
             AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId)
         );
