@@ -215,7 +215,7 @@ const VideoCallPage: React.FC = () => {
             stream: streamRef.current,
         });
 
-        peer.on('signal', (data: any) => {
+        peer.on('signal', (data: Peer.SignalData) => {
             console.log(
                 "LOG: [Mentor] Peer generated 'signal' (Offer). Sending to User:",
                 userSocketId
@@ -227,14 +227,14 @@ const VideoCallPage: React.FC = () => {
             });
         });
 
-        peer.on('stream', (currentRemoteStream: any) => {
+        peer.on('stream', (currentRemoteStream: MediaStream) => {
             console.log('LOG: [Mentor] Received remote stream!');
             setRemoteStream(currentRemoteStream);
             setCallAccepted(true);
             setConnectionStatus('Connected');
         });
 
-        peer.on('error', (err: any) => {
+        peer.on('error', (err: Error) => {
             console.error('Peer error:', err);
             setConnectionStatus('Connection Failed');
         });
@@ -247,7 +247,7 @@ const VideoCallPage: React.FC = () => {
         connectionRef.current = peer;
     };
 
-    const answerCall = (signal: any, fromId: string) => {
+    const answerCall = (signal: Peer.SignalData, fromId: string) => {
         console.log(
             'LOG: [User] answerCall() called. checking streamRef...',
             streamRef.current
@@ -261,7 +261,7 @@ const VideoCallPage: React.FC = () => {
             stream: streamRef.current || undefined,
         });
 
-        peer.on('signal', (data: any) => {
+        peer.on('signal', (data: Peer.SignalData) => {
             signalPeer({
                 to: fromId,
                 signal: data,
@@ -269,7 +269,7 @@ const VideoCallPage: React.FC = () => {
             });
         });
 
-        peer.on('stream', (currentRemoteStream: any) => {
+        peer.on('stream', (currentRemoteStream: MediaStream) => {
             console.log('LOG: [User] Received remote stream!');
             setRemoteStream(currentRemoteStream);
             setConnectionStatus('Connected');

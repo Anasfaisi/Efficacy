@@ -3,6 +3,7 @@ import type { currentUserType } from '@/types/auth';
 
 import type { Message } from '@/types/chat.types';
 import type { Notification } from '@/Features/admin/types';
+import type Peer from 'simple-peer';
 
 let socket: Socket | null = null;
 
@@ -122,7 +123,7 @@ export const offNotificationEvents = () => {
 };
 
 export const onBadgeUnlocked = (
-    callback: (payload: { badge: any }) => void
+    callback: (payload: { badge: Record<string, unknown> }) => void
 ) => {
     socket?.on('BADGE_UNLOCKED', callback);
 };
@@ -142,7 +143,7 @@ export const joinVideoRoom = (
     socket?.emit('joinVideoRoom', { roomId, userId, role });
 };
 
-export const signalPeer = (data: { to: string; signal: any; from: string }) => {
+export const signalPeer = (data: { to: string; signal: Peer.SignalData; from: string }) => {
     socket?.emit('signal', data);
 };
 
@@ -153,7 +154,7 @@ export const onUserConnected = (
 };
 
 export const onSignal = (
-    callback: (data: { signal: any; from: string }) => void
+    callback: (data: { signal: Peer.SignalData; from: string }) => void
 ) => {
     socket?.on('signal', callback);
 };

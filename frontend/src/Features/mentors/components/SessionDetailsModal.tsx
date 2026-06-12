@@ -10,7 +10,7 @@ import {
     CheckCircle2,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { reviewApi} from '@/Services/review.api';
+import { reviewApi } from '@/Services/review.api';
 
 import { type Booking } from '@/types/booking';
 import type { Review } from '@/types/reviews';
@@ -40,8 +40,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             try {
                 const reviews = await reviewApi.getMentorReviews(mentorId);
                 const foundReview = reviews.find(
-                    (r) =>
-                        r.bookingId === booking.id  
+                    (r) => r.bookingId === booking.id
                 );
                 if (foundReview) {
                     setReview(foundReview);
@@ -55,7 +54,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             }
         };
         fetchReview();
-        console.log(review,"from sesstiondetails modal")
+        console.log(review, 'from sesstiondetails modal');
     }, [isOpen, mentorId, booking]);
 
     if (!isOpen) return null;

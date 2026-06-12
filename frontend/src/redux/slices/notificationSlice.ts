@@ -22,7 +22,10 @@ const notificationSlice = createSlice({
         addNotification: (state, action: PayloadAction<Notification>) => {
             const newNotification = { ...action.payload };
 
-            const rawData = newNotification as Notification as {id?: string,_id?:string};
+            const rawData = newNotification as Notification as {
+                id?: string;
+                _id?: string;
+            };
             const finalId = rawData._id || rawData.id;
 
             if (finalId) {

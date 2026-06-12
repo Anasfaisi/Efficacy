@@ -44,7 +44,7 @@ const MentorDetailPage: React.FC = () => {
                     mentorApi.getMentorById(id),
                     reviewApi.getMentorReviews(id),
                 ]);
-        
+
                 setMentor(mentorData);
                 setReviews(reviewsData);
             } catch (error) {
@@ -578,13 +578,13 @@ const MentorDetailPage: React.FC = () => {
                                                         <div className="flex items-center gap-4">
                                                             <img
                                                                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(review.userId?.name || 'User')}&background=F3E8FF&color=7F00FF&bold=true`}
-
                                                                 className="w-14 h-14 rounded-2xl object-cover"
                                                             />
                                                             <div>
                                                                 <h4 className="font-black text-gray-900">
                                                                     {
-                                                                        'Anonymous User'}
+                                                                        'Anonymous User'
+                                                                    }
                                                                 </h4>
                                                                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
                                                                     Verified
