@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/redux/hooks';
 import {
     Plus,
@@ -7,20 +7,96 @@ import {
     Users,
     CheckCircle2,
     Flame,
-    MessageCircle,
-    Video,
+    Award,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { User } from '@/types/auth';
+import type { IPlannerTask } from '@/Features/users/planner/types';
+import type { Booking } from '@/types/booking';
+import type { UserBadge } from '@/types/gamification';
+import { getPlannerTasks } from '@/Services/planner.api';
+import { getDailyPomodoroStats } from '@/Services/pomodoro.api';
+import { bookingApi } from '@/Services/booking.api';
+import { userBadgeApi } from '@/Services/Gamification/userBadge.api';
+
 const UserDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
     const user = currentUser as User;
     const userName = user?.name || 'User';
+    const navigate = useNavigate();
+
+    const [tasks, setTasks] = useState<IPlannerTask[]>([]);
+    const [productiveTime, setProductiveTime] = useState<number>(0);
+    const [upcomingSessions, setUpcomingSessions] = useState<Booking[]>([]);
+    const [badges, setBadges] = useState<UserBadge[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Planner Tasks
+                const fetchedTasks = await getPlannerTasks();
+                const activeTasks = fetchedTasks
+                    .filter((t) => !t.completed)
+                    .slice(0, 3);
+                setTasks(activeTasks);
+
+                // Fetch Productive Time
+                const today = new Date().toISOString().split('T')[0];
+                try {
+                    const stats = await getDailyPomodoroStats(today);
+                    setProductiveTime(stats?.totalFocusTime || 0);
+                } catch (e) {
+                    setProductiveTime(0);
+                }
+
+                // Fetch Bookings
+                try {
+                    const bookingsRes = await bookingApi.getUserBookings(
+                        1,
+                        10,
+                        'confirmed'
+                    );
+                    setUpcomingSessions(bookingsRes.bookings.slice(0, 3));
+                } catch (e) {
+                    setUpcomingSessions([]);
+                }
+
+                // Fetch Badges
+                try {
+                    const userBadges = await userBadgeApi.getUserBadges();
+                    const badgesArray = Array.isArray(userBadges)
+                        ? userBadges
+                        : ((userBadges as unknown as { data: UserBadge[] }).data || []);
+                    setBadges(badgesArray.slice(0, 3));
+                } catch (e) {
+                    setBadges([]);
+                }
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const formatTime = (minutes: number) => {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return `${h}h ${m}m`;
+    };
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        });
+    };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             {/* Welcome Banner */}
-            <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-[#7F00FF]/25 border border-white/10">
+            <div className="bg-gradient-to-r from-[#7F00FF] to-[#E100FF] rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-[#7F00FF]/25 border border-white/10 clay-card">
                 <div className="relative z-10 flex justify-between items-center">
                     <div>
                         <h1 className="text-3xl font-black mb-2 tracking-tight">
@@ -34,7 +110,7 @@ const UserDashboard: React.FC = () => {
                         <img
                             src="https://cdni.iconscout.com/illustration/premium/thumb/student-reading-book-while-sitting-on-couch-5431872-4522814.png"
                             alt="Welcome"
-                            className="w-40 h-40 object-contain drop-shadow-2xl"
+                            className="w-40 h-40 object-contain drop-shadow-2xl animate-float"
                         />
                     </div>
                 </div>
@@ -43,11 +119,11 @@ const UserDashboard: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column - Tasks & Progress */}
+                {/* Left Column - Tasks & Quick Actions */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Active Tasks */}
                     <section>
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center justify-between mb-4 px-2">
                             <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                 <CheckCircle2
                                     className="text-[#7F00FF]"
@@ -63,44 +139,49 @@ const UserDashboard: React.FC = () => {
                                 View All Tasks
                             </Link>
                         </div>
-                        <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 space-y-4">
-                            {[
-                                {
-                                    title: 'Math Assignment',
-                                    due: 'June 10, 2025',
-                                },
-                                {
-                                    title: 'Read Chapter 5',
-                                    due: 'June 12, 2025',
-                                },
-                                {
-                                    title: 'Group Project Meeting',
-                                    due: 'June 15, 2025',
-                                },
-                            ].map((task, i) => (
-                                <div
-                                    key={i}
-                                    className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl group hover:bg-[#7F00FF]/5 transition-all duration-300 border border-transparent hover:border-[#7F00FF]/10"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-2 h-10 bg-[#7F00FF] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <div>
-                                            <h3 className="font-bold text-gray-800">
-                                                {task.title}
-                                            </h3>
-                                            <p className="text-xs font-semibold text-gray-400">
-                                                Due: {task.due}
-                                            </p>
+                        <div className="clay-card p-6 space-y-4">
+                            {tasks.length > 0 ? (
+                                tasks.map((task) => (
+                                    <div
+                                        key={task._id}
+                                        onClick={() => navigate('/planner')}
+                                        className="flex items-center justify-between p-4 bg-[#f8fafc] rounded-2xl group hover:bg-[#7F00FF]/5 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div
+                                                className={`w-2 h-10 rounded-full transition-opacity ${
+                                                    task.priority === 'High'
+                                                        ? 'bg-red-500'
+                                                        : task.priority === 'Medium'
+                                                          ? 'bg-orange-500'
+                                                          : 'bg-green-500'
+                                                }`}
+                                            />
+                                            <div>
+                                                <h3 className="font-bold text-gray-800">
+                                                    {task.title}
+                                                </h3>
+                                                <p className="text-xs font-semibold text-gray-400">
+                                                    Due: {formatDate(task.endDate)}
+                                                </p>
+                                            </div>
                                         </div>
+                                        <button className="clay-btn px-5 py-2 bg-white text-[#7F00FF] border border-[#7F00FF]/20 text-xs font-black rounded-xl">
+                                            Go to Task
+                                        </button>
                                     </div>
-                                    <button className="px-5 py-2 bg-[#7F00FF] text-white text-xs font-black rounded-xl hover:bg-[#6c00db] transition-all shadow-lg shadow-[#7F00FF]/30 active:scale-95">
-                                        Mark as Done
-                                    </button>
+                                ))
+                            ) : (
+                                <div className="text-center py-6 text-gray-400 font-medium">
+                                    No active tasks. Time to relax or plan ahead!
                                 </div>
-                            ))}
+                            )}
                             <div className="pt-2 text-center">
-                                <button className="px-8 py-3 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/30 active:scale-95">
-                                    Add Task
+                                <button
+                                    onClick={() => navigate('/tasks')}
+                                    className="clay-btn px-8 py-3 bg-orange-500 text-white font-black rounded-2xl"
+                                >
+                                    Add New Task
                                 </button>
                             </div>
                         </div>
@@ -108,7 +189,7 @@ const UserDashboard: React.FC = () => {
 
                     {/* Quick Actions */}
                     <section>
-                        <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <h2 className="text-xl font-black text-gray-900 mb-4 px-2 flex items-center gap-2">
                             ⚡ Quick Actions
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -117,7 +198,7 @@ const UserDashboard: React.FC = () => {
                                 label="Add Task"
                                 btnLabel="Add"
                                 color="bg-orange-500"
-                                to="/tasks"
+                                to="/planner"
                             />
                             <QuickActionCard
                                 icon={<Timer size={26} strokeWidth={3} />}
@@ -146,111 +227,105 @@ const UserDashboard: React.FC = () => {
 
                 {/* Right Column - Schedule & Progress */}
                 <div className="space-y-8">
-                    {/* Schedule & Reminders */}
-                    <section>
-                        <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
-                            🗓️ Your Schedule & Reminders
-                        </h2>
-                        <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
-                            <div className="mb-6">
-                                <h3 className="text-sm font-black text-gray-400 mb-4 uppercase tracking-widest">
-                                    Mini Calendar
-                                </h3>
-                                <div className="grid grid-cols-7 gap-2 text-center">
-                                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(
-                                        (d) => (
-                                            <div
-                                                key={d}
-                                                className="text-[11px] font-black text-gray-300"
-                                            >
-                                                {d}
-                                            </div>
-                                        )
-                                    )}
-                                    {Array.from(
-                                        { length: 21 },
-                                        (_, i) => i + 1
-                                    ).map((d) => (
-                                        <div
-                                            key={d}
-                                            className={`text-xs font-bold w-8 h-8 flex items-center justify-center rounded-xl transition-all cursor-default ${d === 15 ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40' : d === 8 ? 'bg-orange-100 text-orange-600' : 'text-gray-500 hover:bg-gray-50'}`}
-                                        >
-                                            {d}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">
-                                    Reminders
-                                </h3>
-                                <div className="p-4 bg-orange-50 border-r-8 border-orange-500 rounded-2xl text-xs font-bold text-orange-700 shadow-sm">
-                                    Submit Essay - June 09, 2025
-                                </div>
-                                <div className="p-4 bg-teal-50 border-r-8 border-teal-500 rounded-2xl text-xs font-bold text-teal-700 shadow-sm">
-                                    Study Session - June 10, 2025
-                                </div>
-                                <button className="w-full mt-2 py-3.5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/40 active:scale-95">
-                                    Sync Calendar
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
                     {/* Your Progress */}
                     <section>
-                        <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
-                            📊 Your Progress
+                        <h2 className="text-xl font-black text-gray-900 mb-4 px-2 flex items-center gap-2">
+                            📊 Your Productive Time
                         </h2>
                         <div className="space-y-4">
                             <ProgressCard
-                                label="Tasks Completed"
-                                value="5/10"
-                                progress={50}
-                                color="bg-[#7F00FF]"
-                            />
-                            <ProgressCard
-                                label="Focus Time"
-                                value="3h 45m"
-                                progress={75}
+                                label="Focus Time Today"
+                                value={formatTime(productiveTime)}
+                                progress={Math.min((productiveTime / 120) * 100, 100)}
                                 color="bg-pink-500"
                             />
                             <ProgressCard
-                                label="Streak"
-                                value="7 Days"
+                                label="Active Streak"
+                                value={`${user?.currentStreak || 0} Days`}
                                 progress={100}
                                 color="bg-orange-500"
                                 icon={
-                                    <Flame size={18} className="fill-white" />
+                                    <Flame size={18} className="fill-orange-500 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
                                 }
                             />
                         </div>
                     </section>
+
+                    {/* Upcoming Sessions */}
+                    <section>
+                        <h2 className="text-xl font-black text-gray-900 mb-4 px-2 flex items-center gap-2">
+                            🗓️ Upcoming Sessions
+                        </h2>
+                        <div className="clay-card p-6">
+                            {upcomingSessions.length > 0 ? (
+                                <div className="space-y-4">
+                                    {upcomingSessions.map((session) => (
+                                        <div
+                                            key={session.id}
+                                            className="p-4 bg-teal-50 border-r-8 border-teal-500 rounded-2xl text-xs shadow-sm"
+                                        >
+                                            <div className="font-bold text-teal-800 mb-1">
+                                                {session.topic || 'Mentorship Session'}
+                                            </div>
+                                            <div className="text-teal-600 font-semibold">
+                                                {formatDate(session.bookingDate)} at {session.slot}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button
+                                        onClick={() => navigate('/booking/user')}
+                                        className="clay-btn w-full mt-2 py-3.5 bg-teal-500 text-white font-black rounded-2xl"
+                                    >
+                                        View All Bookings
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="text-center py-4 text-gray-400 font-medium text-sm">
+                                    No upcoming sessions found.
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Achievements */}
+                    <section>
+                        <h2 className="text-xl font-black text-gray-900 mb-4 px-2 flex items-center gap-2">
+                            🏆 Recent Achievements
+                        </h2>
+                        <div className="clay-card p-6">
+                            {badges.length > 0 ? (
+                                <div className="space-y-4">
+                                    {badges.map((userBadge) => (
+                                        <div
+                                            key={userBadge.badgeId}
+                                            className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-sm border border-gray-100"
+                                        >
+                                            <div
+                                                className="w-10 h-10 rounded-full flex items-center justify-center text-white"
+                                                style={{ backgroundColor: userBadge.badge.design.primaryColor || '#7F00FF' }}
+                                            >
+                                                <Award size={20} />
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-gray-800 text-sm">
+                                                    {userBadge.badge.name}
+                                                </div>
+                                                <div className="text-xs text-gray-400 font-semibold">
+                                                    {userBadge.badge.story}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-4 text-gray-400 font-medium text-sm">
+                                    Keep working hard to unlock badges!
+                                </div>
+                            )}
+                        </div>
+                    </section>
                 </div>
             </div>
-
-            {/* Collaboration Section */}
-            {/* <section>
-                <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
-                    🤝 Collaborate with Peers
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
-                    <CollabCard
-                        title="Chat with Peers"
-                        desc="Message your study group and share resources instantly."
-                        to="/chat"
-                        btnText="Open Chat"
-                        icon={<MessageCircle size={32} />}
-                    />
-                    <CollabCard
-                        title="Join a Call"
-                        desc="Start a voice or video call with peers to study together."
-                        to="#"
-                        btnText="Join Now"
-                        icon={<Video size={32} />}
-                    />
-                </div>
-            </section> */}
         </div>
     );
 };
@@ -262,9 +337,9 @@ const QuickActionCard: React.FC<{
     color: string;
     to: string;
 }> = ({ icon, label, btnLabel, color, to }) => (
-    <div className="bg-white rounded-3xl p-5 border border-gray-100 shadow-xl shadow-gray-200/40 flex flex-col items-center text-center hover:scale-[1.05] transition-all duration-300 group">
+    <div className="clay-card p-5 flex flex-col items-center text-center group">
         <div
-            className={`${color} text-white p-4 rounded-2xl mb-4 shadow-2xl ${color.replace('bg-', 'shadow-')}/40 group-hover:rotate-6 transition-transform`}
+            className={`${color} text-white p-4 rounded-2xl mb-4 shadow-xl ${color.replace('bg-', 'shadow-')}/40 group-hover:-translate-y-1 transition-transform`}
         >
             {icon}
         </div>
@@ -273,7 +348,7 @@ const QuickActionCard: React.FC<{
         </span>
         <Link
             to={to}
-            className={`w-full py-2.5 ${color} text-white text-xs font-black rounded-xl shadow-lg ${color.replace('bg-', 'shadow-')}/30 hover:brightness-110 active:scale-95 transition-all`}
+            className={`clay-btn w-full py-2.5 ${color} text-white text-xs font-black rounded-xl shadow-lg ${color.replace('bg-', 'shadow-')}/30`}
         >
             {btnLabel}
         </Link>
@@ -287,7 +362,7 @@ const ProgressCard: React.FC<{
     color: string;
     icon?: React.ReactNode;
 }> = ({ label, value, progress, color, icon }) => (
-    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
+    <div className="clay-card p-6">
         <div className="flex justify-between items-center mb-4">
             <span className="text-xs font-black text-gray-400 uppercase tracking-widest">
                 {label}
@@ -299,41 +374,14 @@ const ProgressCard: React.FC<{
                 {icon}
             </div>
         </div>
-        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
             <div
-                className={`h-full ${color} rounded-full shadow-lg transition-all duration-1000`}
+                className={`h-full ${color} rounded-full transition-all duration-1000`}
                 style={{ width: `${progress}%` }}
             />
         </div>
     </div>
 );
 
-const CollabCard: React.FC<{
-    title: string;
-    desc: string;
-    to: string;
-    btnText: string;
-    icon: React.ReactNode;
-}> = ({ title, desc, to, btnText, icon }) => (
-    <div className="bg-white rounded-4xl border border-gray-100 shadow-2xl shadow-gray-200/60 overflow-hidden flex flex-col group">
-        <div className="bg-[#009688] p-5 text-white flex justify-between items-center">
-            <span className="text-lg font-black tracking-tight">{title}</span>
-            <div className="opacity-40 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                {icon}
-            </div>
-        </div>
-        <div className="p-8 flex-1 flex flex-col justify-between">
-            <p className="text-sm font-semibold text-gray-400 leading-relaxed mb-8">
-                {desc}
-            </p>
-            <Link
-                to={to}
-                className="w-full py-4 bg-[#009688] text-white font-black rounded-2xl text-center hover:bg-[#00796b] transition-all shadow-xl shadow-[#009688]/40 active:scale-[0.98]"
-            >
-                {btnText}
-            </Link>
-        </div>
-    </div>
-);
-
 export default UserDashboard;
+

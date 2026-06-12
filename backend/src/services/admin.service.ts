@@ -23,6 +23,7 @@ import {
 } from '@/dto/response.dto';
 import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { NotificationMessages } from '@/types/response-messages.types';
+import MentorshipModel from '@/models/mentorship.model';
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -52,7 +53,7 @@ export class AdminService implements IAdminService {
             bio: mentor.bio || '',
             createdAt: mentor.createdAt,
             status: mentor.status,
-
+            profilePic : mentor.profilePic,
             linkedin: mentor.linkedin,
             github: mentor.github,
             personalWebsite: mentor.personalWebsite,
@@ -258,13 +259,51 @@ export class AdminService implements IAdminService {
         totalUsers: number;
         totalMentors: number;
         totalRevenue: number;
+        topMentors: MentorApplicationResponseDto[];
+        revenueData: { month: string; revenue: number }[];
     }> {
         const { totalCount: totalUsers } =
             await this._userRepository.getAllUsers(1, 1);
         const { total: totalMentors } =
             await this._mentorRepository.getAllMentors(1, 1);
         const { totalRevenue } = await this.getRevenueDetails(adminId);
+        
+        const { mentors } = await this._mentorRepository.findAllApprovedMentors(1, 5, '', 'sessionsCompleted_desc', {});
+        const topMentors = mentors.map((m) => this.mapToResponseDto(m));
 
-        return { totalUsers, totalMentors, totalRevenue };
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+        sixMonthsAgo.setDate(1);
+        sixMonthsAgo.setHours(0, 0, 0, 0);
+
+        const revenueAggregation = await MentorshipModel.aggregate([
+            {
+                $match: {
+                    paymentStatus: { $in: ['verified', 'paid'] },
+                    updatedAt: { $gte: sixMonthsAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: "$updatedAt" },
+                    revenue: { $sum: { $multiply: ["$amount", 0.1] } }
+                }
+            }
+        ]);
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const revenueData = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const monthIndex = d.getMonth();
+            const matchingData = revenueAggregation.find(r => r._id === monthIndex + 1);
+            revenueData.push({
+                month: monthNames[monthIndex],
+                revenue: matchingData ? matchingData.revenue : 0
+            });
+        }
+
+        return { totalUsers, totalMentors, totalRevenue, topMentors, revenueData };
     }
 }

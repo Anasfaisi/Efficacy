@@ -19,105 +19,18 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
+import type { Mentor } from '@/types/auth';
 
 interface DashboardStats {
     totalUsers: number;
     totalMentors: number;
     totalRevenue: number;
+    topMentors: Mentor[];
+    revenueData: { month: string; revenue: number }[];
 }
 
-// Dummy data for revenue graph
-const revenueData = [
-    { month: 'Jan', revenue: 4000 },
-    { month: 'Feb', revenue: 3000 },
-    { month: 'Mar', revenue: 5000 },
-    { month: 'Apr', revenue: 4500 },
-    { month: 'May', revenue: 6000 },
-    { month: 'Jun', revenue: 7000 },
-];
 
-// Dummy data for top mentors
-const topMentors = [
-    {
-        id: 1,
-        name: 'Ann Marie',
-        domain: 'Frontend Development',
-        rating: 4.9,
-        sessions: 120,
-        image: 'https://i.pravatar.cc/150?u=1',
-    },
-    {
-        id: 2,
-        name: 'Alice Smith',
-        domain: 'Data Science',
-        rating: 4.8,
-        sessions: 95,
-        image: 'https://i.pravatar.cc/150?u=2',
-    },
-    {
-        id: 3,
-        name: 'Sindhu',
-        domain: 'UI/UX Design',
-        rating: 4.8,
-        sessions: 80,
-        image: 'https://i.pravatar.cc/150?u=3',
-    },
-    {
-        id: 4,
-        name: 'Ramya krish',
-        domain: 'Backend Development',
-        rating: 4.7,
-        sessions: 70,
-        image: 'https://i.pravatar.cc/150?u=4',
-    },
-    {
-        id: 5,
-        name: 'Eva Green',
-        domain: 'Product Management',
-        rating: 4.7,
-        sessions: 65,
-        image: 'https://i.pravatar.cc/150?u=5',
-    },
-];
 
-// Dummy data for top badge holding users
-const topBadgeUsers = [
-    {
-        id: 1,
-        name: 'Michael Lee',
-        badges: 15,
-        currentStreak: 30,
-        image: 'https://i.pravatar.cc/150?u=6',
-    },
-    {
-        id: 2,
-        name: 'Sarah Connor',
-        badges: 12,
-        currentStreak: 25,
-        image: 'https://i.pravatar.cc/150?u=7',
-    },
-    {
-        id: 3,
-        name: 'David Kim',
-        badges: 10,
-        currentStreak: 15,
-        image: 'https://i.pravatar.cc/150?u=8',
-    },
-    {
-        id: 4,
-        name: 'Shane Watson',
-        badges: 8,
-        currentStreak: 10,
-        image: 'https://i.pravatar.cc/150?u=9',
-    },
-    {
-        id: 5,
-        name: 'James Smith',
-        badges: 7,
-        currentStreak: 5,
-        image: 'https://i.pravatar.cc/150?u=10',
-    },
-];
 
 const AdminDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state: RootState) => state.auth);
@@ -125,6 +38,8 @@ const AdminDashboard: React.FC = () => {
         totalUsers: 0,
         totalMentors: 0,
         totalRevenue: 0,
+        topMentors: [],
+        revenueData: [],
     });
     const [loading, setLoading] = useState(true);
 
@@ -133,6 +48,7 @@ const AdminDashboard: React.FC = () => {
             try {
                 const data = await adminService.getDashboardStats();
                 setStats(data);
+                console.log(stats,"from admindhash")
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
             } finally {
@@ -141,7 +57,7 @@ const AdminDashboard: React.FC = () => {
         };
         fetchStats();
     }, []);
-
+console.log(stats,"just for fund")
     return (
         <div className="p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
             <div className="mb-8">
@@ -203,9 +119,9 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Main Content Area */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 gap-6 mb-8">
                 {/* Revenue Graph */}
-                <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-500" />
@@ -218,7 +134,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart
-                                data={revenueData}
+                                data={stats.revenueData}
                                 margin={{
                                     top: 10,
                                     right: 30,
@@ -290,52 +206,6 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Top Badge Holders */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                            <Trophy className="w-5 h-5 text-amber-500" />
-                            Top Collectors
-                        </h3>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-4">
-                        {topBadgeUsers.map((user, idx) => (
-                            <div
-                                key={user.id}
-                                className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="relative">
-                                    <img
-                                        src={user.image}
-                                        alt={user.name}
-                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                                    />
-                                    {idx < 3 && (
-                                        <span
-                                            className={`absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold text-white shadow-sm ${idx === 0 ? 'bg-amber-400' : idx === 1 ? 'bg-gray-400' : 'bg-amber-600'}`}
-                                        >
-                                            {idx + 1}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 truncate">
-                                        {user.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500 truncate">
-                                        {user.currentStreak} day streak
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">
-                                        <Trophy className="w-3 h-3" />
-                                        {user.badges}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </div>
 
             {/* Top Mentors */}
@@ -347,17 +217,17 @@ const AdminDashboard: React.FC = () => {
                     </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    {topMentors.map((mentor) => (
+                    {stats.topMentors.map((mentor) => (
                         <div
                             key={mentor.id}
                             className="group relative bg-white border border-gray-100 rounded-xl p-5 text-center transition-all duration-300 hover:border-blue-100 hover:shadow-lg hover:-translate-y-1"
                         >
                             <div className="absolute top-3 right-3 flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full text-amber-600 text-xs font-bold">
                                 <Star className="w-3 h-3 fill-amber-500" />
-                                {mentor.rating}
+                                {mentor.rating || 0}
                             </div>
                             <img
-                                src={mentor.image}
+                                src={mentor.profilePic || 'https://i.pravatar.cc/150'}
                                 alt={mentor.name}
                                 className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-gray-50 group-hover:border-blue-50 transition-colors"
                             />
@@ -365,10 +235,9 @@ const AdminDashboard: React.FC = () => {
                                 {mentor.name}
                             </h4>
                             <p className="text-xs text-gray-500 mb-3 truncate px-2">
-                                {mentor.domain}
+                                {mentor.domain || mentor.mentorType}
                             </p>
                             <div className="w-full bg-gray-50 py-2 rounded-lg text-xs font-medium text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                                {mentor.sessions} Sessions
                             </div>
                         </div>
                     ))}

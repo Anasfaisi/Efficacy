@@ -45,5 +45,7 @@ export interface IAdminService {
         totalUsers: number;
         totalMentors: number;
         totalRevenue: number;
+        topMentors: MentorApplicationResponseDto[];
+        revenueData: { month: string; revenue: number }[];
     }>;
 }

@@ -424,7 +424,7 @@ setIsStripeLoading(false);
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 {/* LEFT SIDE: Direct deposit bank setup */}
-                <div className="lg:col-span-5 space-y-6">
+                {/* <div className="lg:col-span-5 space-y-6">
                     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-100 shadow-xl shadow-zinc-100/50">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
@@ -566,7 +566,7 @@ setIsStripeLoading(false);
                             </form>
                         )}
                     </div>
-                </div>
+                </div> */}
 
                 {/* RIGHT SIDE: Transaction Explorer */}
                 <div className="lg:col-span-7 space-y-6">

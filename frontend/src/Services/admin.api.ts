@@ -186,6 +186,8 @@ export const adminService = {
         totalUsers: number;
         totalMentors: number;
         totalRevenue: number;
+        topMentors: Mentor[];
+        revenueData: { month: string; revenue: number }[];
     }> => {
         const response = await api.get(AdminRoutes.DASHBOARD_STATS);
         return response.data;

@@ -20,6 +20,8 @@ export const mentorshipApi = {
         const response = await api.get(
             `${MentorshipRoutes.GET_MENTOR_REQUESTS}?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}${search ? `&search=${search}` : ''}`
         );
+                console.log(response,"from mentorapoi 23")
+
         return response.data;
     },
 
