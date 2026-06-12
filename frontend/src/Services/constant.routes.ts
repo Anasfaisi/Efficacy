@@ -129,8 +129,6 @@ export const BookingRoutes = {
         `${BOOKING_BASE}/mentor/${mentorId}/availability`,
 };
 
-
-
 const USER_BADGE_BASE = '/badge/user';
 export const UserBadgeRoutes = {
     BASE: USER_BADGE_BASE,

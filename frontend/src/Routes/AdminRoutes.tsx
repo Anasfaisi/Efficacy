@@ -16,8 +16,7 @@ import AdminPayoutsPage from '@/Features/admin/pages/AdminPayoutsPage';
 import AdminGamificationPage from '@/Features/admin/gamification/pages/BadgesPage';
 import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
 import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
-import SubscriptionPlanManagement from '@/Features/admin/pages/PlanManagement';
-import BadgeCard from '@/Features/admin/gamification/components/BadgeCard';
+
 
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -64,7 +63,6 @@ const AdminRoutes: React.FC = () => {
                 />
                 <Route path="userManagement" element={<UserManagement />} />
                 <Route path="profile" element={<AdminProfilePage />} />
-                {/* <Route path='subscriptionPlans' element={<SubscriptionPlanManagement/>} /> */}
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

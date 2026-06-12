@@ -1,4 +1,3 @@
-import type { UserBadge } from '@/types/gamification';
 import api from '../axiosConfig';
 import { UserBadgeRoutes } from '../constant.routes';
 

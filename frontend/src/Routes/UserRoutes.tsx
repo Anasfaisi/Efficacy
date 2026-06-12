@@ -4,7 +4,6 @@ import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
 import { logoutApi } from '@/Services/user.api';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
-import SubscriptionPage from '@/Features/users/subscription/pages/SubscriptionPage';
 import TimeProvider from '@/Features/users/planner/context/TimeProvider';
 import Achievements from '@/Features/users/achievements/Achievements';
 // Lazy load components
@@ -115,7 +114,6 @@ const UserRoutes: React.FC = () => {
                     <Route path="planner" element={<PlannerPage />} />
                     <Route path="pomodoro" element={<PomodoroPage />} />
                     <Route path="notes" element={<NotesPage />} />
-                    <Route path="subscription" element={<SubscriptionPage />} />
                     <Route path="achievements" element={<Achievements />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -143,7 +143,11 @@ export const joinVideoRoom = (
     socket?.emit('joinVideoRoom', { roomId, userId, role });
 };
 
-export const signalPeer = (data: { to: string; signal: Peer.SignalData; from: string }) => {
+export const signalPeer = (data: {
+    to: string;
+    signal: Peer.SignalData;
+    from: string;
+}) => {
     socket?.emit('signal', data);
 };
 
