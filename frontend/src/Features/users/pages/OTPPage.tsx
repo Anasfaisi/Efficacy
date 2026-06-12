@@ -37,7 +37,7 @@ export function OTPPage() {
     }, [currentUser, navigate]);
 
     const handleVerify = async () => {
-        const result = await verifyOtpApi(tempEmail, otp, role);
+        const result = await verifyOtpApi(tempEmail, otp);
         if (result.success && result.user) {
             dispatch(setCredentials({ currentUser: result.user }));
             toast.success('Email verified successfully!');

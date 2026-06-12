@@ -53,7 +53,6 @@ export const registerInitApi = async (
 export const verifyOtpApi = async (
     email: string | null,
     otp: string,
-    role: string | null
 ): Promise<VerifyOtpResponse> => {
     try {
         const response = await api.post(UserRoutes.VERIFY_OTP, { email, otp });
