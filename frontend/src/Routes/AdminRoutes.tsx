@@ -64,7 +64,7 @@ const AdminRoutes: React.FC = () => {
                 />
                 <Route path="userManagement" element={<UserManagement />} />
                 <Route path="profile" element={<AdminProfilePage />} />
-                <Route path='subscriptionPlans' element={<SubscriptionPlanManagement/>} />
+                {/* <Route path='subscriptionPlans' element={<SubscriptionPlanManagement/>} /> */}
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

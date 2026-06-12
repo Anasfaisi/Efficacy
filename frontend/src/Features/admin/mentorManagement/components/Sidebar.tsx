@@ -43,11 +43,7 @@ export default function Sidebar() {
             label: 'Badge Engine',
             icon: Icons.Award,
         },
-        {
-            to:'/admin/subscriptionPlans',
-           label : 'Subscription Plans',
-           icon : Icons.CreditCard,
-        }
+
     ];
 
     return (

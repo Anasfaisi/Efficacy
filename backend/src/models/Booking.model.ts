@@ -54,11 +54,12 @@ const bookingSchema = new Schema<IBooking>(
     { timestamps: true }
 );
 
-bookingSchema.index({ mentorId: 1, bookingDate: 1, slot: 1 }, { 
-    unique: true,
-    partialFilterExpression: {status : { $ne : BookingStatus.CANCELLED}}
-});
-
-
+bookingSchema.index(
+    { mentorId: 1, bookingDate: 1, slot: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { status: { $ne: BookingStatus.CANCELLED } },
+    }
+);
 
 export default model<IBooking>('Booking', bookingSchema);

@@ -5,8 +5,8 @@ import { UserEntity } from './user.entity';
 
 export interface WalletEntity {
     id: string;
-    mentorId?: string | MentorEntity|ObjectId;
-    userId?: string | UserEntity|ObjectId;
+    mentorId?: string | MentorEntity | ObjectId;
+    userId?: string | UserEntity | ObjectId;
     balance: number;
     pendingBalance: number;
     pendingWithdrawal?: number;

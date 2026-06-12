@@ -13,7 +13,7 @@ export enum TransactionStatus {
 }
 
 interface ITransaction {
-    id?:string ;
+    id?: string;
     amount: number;
     type: TransactionType;
     status: TransactionStatus;
@@ -23,7 +23,7 @@ interface ITransaction {
 }
 
 interface IWallet extends Document {
-    id?:string
+    id?: string;
     mentorId?: Types.ObjectId;
     userId?: Types.ObjectId;
     balance: number;

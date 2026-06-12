@@ -487,8 +487,11 @@ export class BookingService implements IBookingService {
         return BookingMapper.toResponseDto(updated);
     }
 
-    async getMentorAvailability(mentorId: string): Promise<{ date: Date; slot: string }[]> {
-        const bookings = await this._bookingRepository.getMentorBookedSlots(mentorId);
+    async getMentorAvailability(
+        mentorId: string
+    ): Promise<{ date: Date; slot: string }[]> {
+        const bookings =
+            await this._bookingRepository.getMentorBookedSlots(mentorId);
 
         return bookings.map((booking) => {
             if (

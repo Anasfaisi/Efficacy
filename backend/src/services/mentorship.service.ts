@@ -47,7 +47,7 @@ export class MentorshipService implements IMentorshipService {
         @inject(TYPES.OtpService)
         private _otpService: IOtpService
     ) {
-         this._stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        this._stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
             apiVersion: '2025-08-27.basil',
         });
     }
@@ -549,91 +549,91 @@ export class MentorshipService implements IMentorshipService {
         return mentorship;
     }
 
-//     async cancelMentorship(
-//         mentorshipId: string,
-//         userId: string
-//     ): Promise<IMentorship> {
-//         const mentorship =
-//             await this._mentorshipRepository.findById(mentorshipId);
-       
-//             if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
-       
-//             const mentorshipUserId = (mentorship.userId as unknown as MentorEntity).id?.toString() ||mentorship.userId.toString();
-//         if (mentorshipUserId !== userId) throw new Error(CommonMessages.Unauthorized);
-//         if (mentorship.status !== MentorshipStatus.ACTIVE) throw new Error(ErrorMessages.CancelOnlyActive);
+    //     async cancelMentorship(
+    //         mentorshipId: string,
+    //         userId: string
+    //     ): Promise<IMentorship> {
+    //         const mentorship =
+    //             await this._mentorshipRepository.findById(mentorshipId);
 
-//         const startDate = mentorship.startDate || new Date();
-        
-//         const diffDays = (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
+    //             if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
 
-//         if (diffDays > 7) throw new Error(ErrorMessages.CancellationExpired);
+    //             const mentorshipUserId = (mentorship.userId as unknown as MentorEntity).id?.toString() ||mentorship.userId.toString();
+    //         if (mentorshipUserId !== userId) throw new Error(CommonMessages.Unauthorized);
+    //         if (mentorship.status !== MentorshipStatus.ACTIVE) throw new Error(ErrorMessages.CancelOnlyActive);
 
-//         let refundAmount = 0;
-//         const usedSessions = mentorship.usedSessions;
-//         if(usedSessions >2) throw new Error(MentorshipMessages.SessionsExceeded)
+    //         const startDate = mentorship.startDate || new Date();
 
-//         const originalAdminShare = mentorship.amount * 0.1;
-//         const originalMentorShare = mentorship.amount * 0.9;
+    //         const diffDays = (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
 
-//         const retainedAmount = mentorship.amount - refundAmount;
-//         const retainedAdminShare = retainedAmount * 0.1;
-//         const retainedMentorShare = retainedAmount * 0.9;
+    //         if (diffDays > 7) throw new Error(ErrorMessages.CancellationExpired);
 
-//         await this._adminRepository.addRevenue(
-//             retainedAdminShare - originalAdminShare
-//         );
+    //         let refundAmount = 0;
+    //         const usedSessions = mentorship.usedSessions;
+    //         if(usedSessions >2) throw new Error(MentorshipMessages.SessionsExceeded)
 
-//         const currentMentorId =
-//             mentorship.mentorId instanceof Types.ObjectId
-//                 ? mentorship.mentorId.toString()
-//                 : (
-//                       mentorship.mentorId as unknown as MentorEntity
-//                   ).id?.toString();
-//         const debitAmount = originalMentorShare - retainedMentorShare;
-//         if (debitAmount > 0 && currentMentorId) {
-//             await this._walletRepository.debitPendingBalance(
-//                 currentMentorId,
-//                 debitAmount
-//             );
-//         }
-//         if (retainedMentorShare > 0 && currentMentorId) {
-//             await this._walletRepository.releasePendingBalance(
-//                 currentMentorId,
-//                 retainedMentorShare
-//             );
-//         }
+    //         const originalAdminShare = mentorship.amount * 0.1;
+    //         const originalMentorShare = mentorship.amount * 0.9;
 
-//         if (refundAmount > 0) {
-//             await this._walletRepository.creditBalance(
-//                 userId,
-//                 refundAmount,
-//                 `Refund for Mentorship #${mentorshipId}`
-//             );
-//         }
+    //         const retainedAmount = mentorship.amount - refundAmount;
+    //         const retainedAdminShare = retainedAmount * 0.1;
+    //         const retainedMentorShare = retainedAmount * 0.9;
 
-// // we need to write the stripe boiler plate code 
-// //we need to also acknowledge the user with the notification that payment will be credited
-// const refund  = await this._stripe.refunds.create({
-//     payment_intent:mentorship.paymentId as string,
-//     amount:refundAmount,
-//     reason:'requested_by_customer'
-// })
-// if(refund){
-//         mentorship.status = MentorshipStatus.CANCELLED;
-//         await this._mentorshipRepository.update(mentorshipId, mentorship);
-//         await this._notificationService.createNotification(
-//             userId,
-//             Role.User,
-//             NotificationType.MENTORSHIP_CANCELLED,
-//             NotificationMessages.MentorshipCancelledTitle,
-//             'Mentorship_cancelled sucessfully , you will get the refund to the orginal payment method with in 3-5 business days ',
-//             {mentorshipId}
-//         )
-//         return mentorship;
-//     } else{
-//             throw new Error(MentorshipMessages.FailedToRefund)
-//         }
-//     }
+    //         await this._adminRepository.addRevenue(
+    //             retainedAdminShare - originalAdminShare
+    //         );
+
+    //         const currentMentorId =
+    //             mentorship.mentorId instanceof Types.ObjectId
+    //                 ? mentorship.mentorId.toString()
+    //                 : (
+    //                       mentorship.mentorId as unknown as MentorEntity
+    //                   ).id?.toString();
+    //         const debitAmount = originalMentorShare - retainedMentorShare;
+    //         if (debitAmount > 0 && currentMentorId) {
+    //             await this._walletRepository.debitPendingBalance(
+    //                 currentMentorId,
+    //                 debitAmount
+    //             );
+    //         }
+    //         if (retainedMentorShare > 0 && currentMentorId) {
+    //             await this._walletRepository.releasePendingBalance(
+    //                 currentMentorId,
+    //                 retainedMentorShare
+    //             );
+    //         }
+
+    //         if (refundAmount > 0) {
+    //             await this._walletRepository.creditBalance(
+    //                 userId,
+    //                 refundAmount,
+    //                 `Refund for Mentorship #${mentorshipId}`
+    //             );
+    //         }
+
+    // // we need to write the stripe boiler plate code
+    // //we need to also acknowledge the user with the notification that payment will be credited
+    // const refund  = await this._stripe.refunds.create({
+    //     payment_intent:mentorship.paymentId as string,
+    //     amount:refundAmount,
+    //     reason:'requested_by_customer'
+    // })
+    // if(refund){
+    //         mentorship.status = MentorshipStatus.CANCELLED;
+    //         await this._mentorshipRepository.update(mentorshipId, mentorship);
+    //         await this._notificationService.createNotification(
+    //             userId,
+    //             Role.User,
+    //             NotificationType.MENTORSHIP_CANCELLED,
+    //             NotificationMessages.MentorshipCancelledTitle,
+    //             'Mentorship_cancelled sucessfully , you will get the refund to the orginal payment method with in 3-5 business days ',
+    //             {mentorshipId}
+    //         )
+    //         return mentorship;
+    //     } else{
+    //             throw new Error(MentorshipMessages.FailedToRefund)
+    //         }
+    //     }
 
     async cancelMentorship(
         mentorshipId: string,
@@ -641,23 +641,29 @@ export class MentorshipService implements IMentorshipService {
     ): Promise<IMentorship> {
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
-       
+
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
-       
-        const mentorshipUserId = (mentorship.userId as unknown as MentorEntity).id?.toString() || mentorship.userId.toString();
-        if (mentorshipUserId !== userId) throw new Error(CommonMessages.Unauthorized);
-        if (mentorship.status !== MentorshipStatus.ACTIVE) throw new Error(ErrorMessages.CancelOnlyActive);
+
+        const mentorshipUserId =
+            (mentorship.userId as unknown as MentorEntity).id?.toString() ||
+            mentorship.userId.toString();
+        if (mentorshipUserId !== userId)
+            throw new Error(CommonMessages.Unauthorized);
+        if (mentorship.status !== MentorshipStatus.ACTIVE)
+            throw new Error(ErrorMessages.CancelOnlyActive);
 
         const startDate = mentorship.startDate || new Date();
-        const diffDays = (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
+        const diffDays =
+            (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24);
 
         // Validation 1: Must be within 7 days of starting
         if (diffDays > 7) throw new Error(ErrorMessages.CancellationExpired);
 
         const usedSessions = mentorship.usedSessions;
-        
+
         // Validation 2: Cannot cancel if user has already exceeded 2 completed/used sessions
-        if (usedSessions > 2) throw new Error(MentorshipMessages.SessionsExceeded);
+        if (usedSessions > 2)
+            throw new Error(MentorshipMessages.SessionsExceeded);
 
         // 1. Calculate Refund Amount based on used sessions
         let refundAmount = 0;
@@ -684,10 +690,12 @@ export class MentorshipService implements IMentorshipService {
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()
-                : (mentorship.mentorId as unknown as MentorEntity).id?.toString();
-                
+                : (
+                      mentorship.mentorId as unknown as MentorEntity
+                  ).id?.toString();
+
         const debitAmount = originalMentorShare - retainedMentorShare;
-        
+
         // Debit the mentor's pending balance for the refunded portion
         if (debitAmount > 0 && currentMentorId) {
             await this._walletRepository.debitPendingBalance(
@@ -695,7 +703,7 @@ export class MentorshipService implements IMentorshipService {
                 debitAmount
             );
         }
-        
+
         // Release the remaining mentor share from pending to active balance
         if (retainedMentorShare > 0 && currentMentorId) {
             await this._walletRepository.releasePendingBalance(
@@ -716,10 +724,10 @@ export class MentorshipService implements IMentorshipService {
         const session = await this._stripe.checkout.sessions.retrieve(
             mentorship.paymentId
         );
-        
+
         // Extract the payment intent ID (pi_...) from the session object
         const paymentIntentId = session.payment_intent as string;
-        
+
         if (!paymentIntentId) {
             throw new Error('No Payment Intent found for this Stripe session.');
         }
@@ -728,14 +736,14 @@ export class MentorshipService implements IMentorshipService {
         const refund = await this._stripe.refunds.create({
             payment_intent: paymentIntentId,
             amount: Math.round(refundAmount * 100), // Stripe expects amounts in lowest units (INR Paise / cents)
-            reason: 'requested_by_customer'
+            reason: 'requested_by_customer',
         });
 
         // 5. Update Status and Send Notifications on successful refund response
         if (refund) {
             mentorship.status = MentorshipStatus.CANCELLED;
             await this._mentorshipRepository.update(mentorshipId, mentorship);
-            
+
             // Create in-app notification for the user
             await this._notificationService.createNotification(
                 userId,
@@ -745,13 +753,12 @@ export class MentorshipService implements IMentorshipService {
                 `Mentorship cancelled successfully. A refund of ₹${refundAmount} has been initiated to your original payment method and will appear in 3-5 business days.`,
                 { mentorshipId }
             );
-            
+
             return mentorship;
         } else {
             throw new Error(MentorshipMessages.FailedToRefund);
         }
     }
-
 
     private async checkAndReleaseFunds(mentorship: IMentorship): Promise<void> {
         if (

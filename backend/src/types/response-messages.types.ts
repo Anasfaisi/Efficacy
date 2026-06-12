@@ -26,10 +26,12 @@ export const SuccessMessages = {
     PasswordResetSuccess: 'Password reset successful',
 };
 
-export const MentorshipMessages={
-    SessionsExceeded : "Could not cancel at the moment since you exceeded the 2 sessions limit ",
-    FailedToRefund: "Could not able to process the refund due to technical error "
-}
+export const MentorshipMessages = {
+    SessionsExceeded:
+        'Could not cancel at the moment since you exceeded the 2 sessions limit ',
+    FailedToRefund:
+        'Could not able to process the refund due to technical error ',
+};
 
 export const NotificationMessages = {
     MentorAppApprovedTitle: 'Application Approved',
@@ -58,7 +60,6 @@ export const CommonMessages = {
     MentorNotAuthenticated: 'Mentor not authenticated',
     NotAuthenticated: 'Not authenticated',
 };
-
 
 export const ErrorMessages = {
     InvalidCredentials: 'Invalid email or password',
@@ -184,7 +185,7 @@ export const WalletMessages = {
     WalletNotRejected: 'Wallet not rejected',
     WalletNotPending: 'Wallet not pending',
     WalletNotFailed: 'Wallet not failed',
-}
+};
 export interface joinRoomPayload {
     roomId: string;
     user: string;
