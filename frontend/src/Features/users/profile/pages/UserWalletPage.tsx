@@ -62,25 +62,7 @@ const UserWalletPage: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, [page]);
-
-    const handleUpdateBankDetails = async () => {
-        // setIsUpdatingBank(true);
-        try {
-            bankDetailsSchema.parse(bankDetails);
-            toast.success('Bank details updated');
-            // setShowBankForm(false);
-            fetchData();
-        } catch (error) {
-            if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
-            } else {
-                toast.error('Failed to update bank details');
-            }
-        } finally {
-            // setIsUpdatingBank(false);
-        }
-    };
+    });
 
     if (loading && page === 1)
         return (
