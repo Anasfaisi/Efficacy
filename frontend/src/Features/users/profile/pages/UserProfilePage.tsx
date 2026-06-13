@@ -81,9 +81,9 @@ const UserProfilePage = () => {
     const [bio, setBio] = useState('');
     const [headline, setHeadline] = useState('');
     const [dob, setDob] = useState('');
-    const [xpPoints, setXpPoints] = useState(0);
-    const [league, setLeague] = useState('');
-    const [currentStreak, setCurrentStreak] = useState(0);
+    const [, setXpPoints] = useState(0);
+    const [, setLeague] = useState('');
+    const [, setCurrentStreak] = useState(0);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [activeTab, setActiveTab] = useState<

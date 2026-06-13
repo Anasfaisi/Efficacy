@@ -17,7 +17,6 @@ import AdminGamificationPage from '@/Features/admin/gamification/pages/BadgesPag
 import AdminProfilePage from '@/Features/admin/pages/AdminProfilePage';
 import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
 
-
 const Logout: React.FC = () => {
     const dispatch = useAppDispatch();
 

@@ -6,12 +6,8 @@ import {
     Clock,
     ChevronLeft,
     ChevronRight,
-    CreditCard,
     ArrowUpCircle,
     ArrowDownCircle,
-    Plus,
-    CheckCircle2,
-    Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Sidebar from '../../home/layouts/Sidebar';
@@ -32,8 +28,8 @@ const UserWalletPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [limit] = useState(2);
-    const [isUpdatingBank, setIsUpdatingBank] = useState(false);
-    const [showBankForm, setShowBankForm] = useState(false);
+    // const [isUpdatingBank, setIsUpdatingBank] = useState(false);
+    // const [showBankForm, setShowBankForm] = useState(false);
     const [bankDetails, setBankDetails] = useState<BankAccountDetails>({
         accountNumber: '',
         bankName: '',
@@ -69,11 +65,11 @@ const UserWalletPage: React.FC = () => {
     }, [page]);
 
     const handleUpdateBankDetails = async () => {
-        setIsUpdatingBank(true);
+        // setIsUpdatingBank(true);
         try {
             bankDetailsSchema.parse(bankDetails);
             toast.success('Bank details updated');
-            setShowBankForm(false);
+            // setShowBankForm(false);
             fetchData();
         } catch (error) {
             if (error instanceof ZodError) {
@@ -82,7 +78,7 @@ const UserWalletPage: React.FC = () => {
                 toast.error('Failed to update bank details');
             }
         } finally {
-            setIsUpdatingBank(false);
+            // setIsUpdatingBank(false);
         }
     };
 
@@ -98,10 +94,10 @@ const UserWalletPage: React.FC = () => {
             </div>
         );
 
-    const hasBankDetails = !!(
-        wallet?.bankAccountDetails?.accountNumber &&
-        wallet?.bankAccountDetails?.bankName
-    );
+    // const hasBankDetails = !!(
+    //     wallet?.bankAccountDetails?.accountNumber &&
+    //     wallet?.bankAccountDetails?.bankName
+    // );
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
