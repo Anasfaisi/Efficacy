@@ -19,7 +19,11 @@ const consoleFormat = combine(
 const fileFormat = combine(
     errors({ stack: true }),
     timestamp({ format: 'YYYY-MM-DD hh:mm:ss.SSS A' }),
-    json()
+    align(),
+    printf((info) => {
+        const stack = info.stack ? `\n${info.stack}` : '';
+        return `[${info.timestamp}] ${info.level}: ${info.message} ${stack}`;
+    })
 );
 
 export const logger = winston.createLogger({
