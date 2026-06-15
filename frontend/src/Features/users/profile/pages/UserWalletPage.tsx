@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { walletApi } from '@/Services/wallet.api';
 import {
     Wallet,
@@ -16,10 +16,8 @@ import type {
     WalletData,
     Transaction,
     TransactionResponse,
-    BankAccountDetails,
 } from '@/types/wallet';
-import { bankDetailsSchema } from '@/types/zodSchemas';
-import { ZodError } from 'zod';
+
 
 const UserWalletPage: React.FC = () => {
     const [wallet, setWallet] = useState<WalletData | null>(null);
@@ -28,16 +26,8 @@ const UserWalletPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [limit] = useState(2);
-    // const [isUpdatingBank, setIsUpdatingBank] = useState(false);
-    // const [showBankForm, setShowBankForm] = useState(false);
-    const [bankDetails, setBankDetails] = useState<BankAccountDetails>({
-        accountNumber: '',
-        bankName: '',
-        ifscCode: '',
-        accountHolderName: '',
-    });
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [walletData, txData]: [WalletData, TransactionResponse] =
@@ -48,21 +38,17 @@ const UserWalletPage: React.FC = () => {
             setWallet(walletData);
             setTransactions(txData.transactions);
             setTotalPages(txData.totalPages);
-
-            if (walletData?.bankAccountDetails) {
-                setBankDetails(walletData.bankAccountDetails);
-            }
         } catch (error) {
             console.error('Failed to fetch wallet data:', error);
             toast.error('Failed to load wallet data');
         } finally {
             setLoading(false);
         }
-    };
+    }, [page,limit]);
 
     useEffect(() => {
         fetchData();
-    });
+    }, [fetchData]);
 
     if (loading && page === 1)
         return (
@@ -75,11 +61,6 @@ const UserWalletPage: React.FC = () => {
                 </div>
             </div>
         );
-
-    // const hasBankDetails = !!(
-    //     wallet?.bankAccountDetails?.accountNumber &&
-    //     wallet?.bankAccountDetails?.bankName
-    // );
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
