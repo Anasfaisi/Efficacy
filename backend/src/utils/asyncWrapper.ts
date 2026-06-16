@@ -11,7 +11,7 @@ export const asyncWrapper =
     ) =>
     (req: Request, res: Response, next: NextFunction) => {
         controller(req, res, next).catch((err) => {
-            logger.error(err);
+            logger.error(err,"it is me it ======================");
 
             if (err instanceof Error) {
                 res.status(500).json({

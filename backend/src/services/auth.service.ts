@@ -23,6 +23,7 @@ import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
     OtpVerificationRequestDto,
+    PasswordDto,
     ProfilePicUpdateDto,
     ProfileRequestDto,
     RegisterRequestDto,
@@ -92,6 +93,21 @@ export class AuthService implements IAuthService {
             updatedUser?.profilePic,
             updatedUser?.dob
         );
+    }
+
+    async updateUserPassword(data: PasswordDto, userId: string): Promise<void> {
+        const user = await this._userRepository.findById(userId);
+        if (!user) throw new Error(ErrorMessages.UserNotFound);
+        const verifiedUser = await this._passwordService.verifyPassword(
+            data.currentPassword,
+            user.password
+        );
+        if (!verifiedUser) throw new Error(ErrorMessages.InvalidPassword);
+        const hashedPassword = await this._passwordService.hashPassword(
+            data.newPassword
+        );
+        if (!hashedPassword) throw new Error(ErrorMessages.InvalidPassword);
+        await this._userRepository.updatePasswordById(userId, hashedPassword);
     }
 
     async updateUserProfilePic(
@@ -272,7 +288,6 @@ export class AuthService implements IAuthService {
                 resendAvailableAt: new Date(now + RESEND_DELAY_MS + 1),
             }
         );
-        console.log(updatedUser);
         if (!updatedUser) {
             throw new Error(ErrorMessages.UserCreationFailed);
         }

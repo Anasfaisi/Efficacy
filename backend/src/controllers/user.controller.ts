@@ -10,6 +10,7 @@ import {
     SuccessMessages,
     CommonMessages,
 } from '@/types/response-messages.types';
+import { logger } from '@/utils/logMiddlewares';
 
 export class UserController {
     constructor(
@@ -98,6 +99,14 @@ export class UserController {
                 });
             }
         }
+    }
+
+    async updatePassword(req: Request, res: Response) {
+        const userId = req.currentUser?.id;
+        await this._authService.updateUserPassword(req.body, userId!);
+        res.status(code.OK).json({
+            message: SuccessMessages.PasswordUpdateSuccess,
+        });
     }
 
     async login(req: Request, res: Response) {

@@ -142,6 +142,11 @@ export class ProfilePicUpdateDto {
     }
 }
 
+export interface PasswordDto{
+    currentPassword : string
+    newPassword:string
+}
+
 //=============================  task  ============================================//
 export class KanbanTaskRequestDto {
     constructor(

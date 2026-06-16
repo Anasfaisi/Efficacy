@@ -75,8 +75,7 @@ export class UserRepository
             { ...updatedData },
             { new: true, runValidators: true }
         ).exec();
-        return updatedUser;
-    }
+F    }
 
     async updateProfilePic(id: string, fileUrl: string): Promise<IUser | null> {
         const updatedUser = await User.findByIdAndUpdate(
