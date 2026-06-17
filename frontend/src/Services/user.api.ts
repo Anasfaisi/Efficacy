@@ -8,6 +8,7 @@ import {
     type VerifyOtpResponse,
     type ResendOtpResponse,
     ENDPOINTS,
+    type UpdatePasswordType,
 } from '@/types/auth';
 import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
@@ -175,14 +176,21 @@ export const updateProfilePicture = async (
     }
 };
 
-export const updateProfile = async (form: ProfileForm, userId: string) => {
+export const updateProfile = async (
+    form: Partial<ProfileForm>,
+    userId: string
+) => {
     const response = await api.patch(
         UserRoutes.UPDATE_PROFILE_BASIC(userId),
         form
     );
     return response;
 };
-
+export const updatePassword = async (passwordData: UpdatePasswordType) => {
+    const response = await api.patch(UserRoutes.UPDATE_PASSWORD, passwordData);
+    console.log(response, 'from the user api');
+    return response;
+};
 export const getNotifications = async (): Promise<Notification[]> => {
     const res = await api.get(UserRoutes.NOTIFICATIONS);
     return res.data;

@@ -39,7 +39,7 @@ import {
     mentorProfileUpdateSchema,
     bankDetailsSchema,
 } from '@/types/zodSchemas';
-import { string, ZodError } from 'zod';
+import { ZodError } from 'zod';
 import { mentorApi } from '@/Services/mentor.api';
 import { walletApi } from '@/Services/wallet.api';
 

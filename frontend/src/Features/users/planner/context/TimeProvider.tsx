@@ -1,4 +1,3 @@
-import { interval } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { TimeContext } from './TimeContext';
 

@@ -14,6 +14,7 @@ export const UserRoutes = {
     UPDATE_PROFILE_BASIC: (userId: string) => `/profile/${userId}`,
     UPDATE_PROFILE_PICTURE: (userId: string) => `/profile/picture/${userId}`,
     FETCH_CURRENT_USER: (userId: string) => `/me/${userId}`,
+    UPDATE_PASSWORD: `/password`,
 };
 
 const MENTOR_BASE = '/mentor';

@@ -18,7 +18,6 @@ import type {
     TransactionResponse,
 } from '@/types/wallet';
 
-
 const UserWalletPage: React.FC = () => {
     const [wallet, setWallet] = useState<WalletData | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -44,7 +43,7 @@ const UserWalletPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [page,limit]);
+    }, [page, limit]);
 
     useEffect(() => {
         fetchData();

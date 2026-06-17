@@ -24,7 +24,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { userProfileUpdateSchema } from '@/types/zodSchemas';
 import { ZodError } from 'zod';
-import { updateProfile, updateProfilePicture } from '@/Services/user.api';
+import {
+    updatePassword,
+    updateProfile,
+    updateProfilePicture,
+} from '@/Services/user.api';
 import Sidebar from '../../home/layouts/Sidebar';
 
 interface ConfigSectionProps {
@@ -108,14 +112,20 @@ const UserProfilePage = () => {
     }, [currentUser]);
 
     const handleSavePartial = async (
-        fields: Record<string, unknown>,
+        fields: { name: string; headline: string; bio: string; dob: string },
         sectionId: string
     ) => {
+        if (!currentUser?.id) {
+            toast.error(
+                'Invalid user session , please login again to continue'
+            );
+            return;
+        }
         try {
             userProfileUpdateSchema.parse(fields);
 
             setIsLoading(sectionId);
-            await updateProfile(fields as any, currentUser?.id);
+            await updateProfile(fields, currentUser.id);
 
             toast.success('Profile updated successfully');
 
@@ -145,6 +155,11 @@ const UserProfilePage = () => {
     };
 
     const handlePasswordSave = async () => {
+        console.log(currentPassword, newPassword, 'checking password');
+        if (!currentUser?.id) {
+            toast.error('invalid user session, please login again!');
+            return;
+        }
         try {
             userProfileUpdateSchema.parse({ currentPassword, newPassword });
 
@@ -155,10 +170,7 @@ const UserProfilePage = () => {
 
             setIsLoading('security');
 
-            await updateProfile(
-                { currentPassword, newPassword } as any,
-                currentUser?.id
-            );
+            await updatePassword({ currentPassword, newPassword });
 
             toast.success('Password updated successfully');
             setCurrentPassword('');
@@ -167,7 +179,12 @@ const UserProfilePage = () => {
             if (error instanceof ZodError) {
                 error.issues.forEach((err) => toast.error(err.message));
             } else {
-                toast.error('Password update failed');
+                const errorMessage =
+                    (error as { response?: { data?: { message?: string } } })
+                        ?.response?.data?.message ||
+                    (error as Error).message ||
+                    'Password update failed';
+                toast.error(errorMessage);
             }
         } finally {
             setIsLoading(null);
@@ -187,13 +204,13 @@ const UserProfilePage = () => {
             }
         } catch (error) {
             toast.error('Upload failed');
+            console.error(error);
         } finally {
             setIsLoading(null);
         }
     };
 
     const user = currentUser as User;
-    console.log(user, 'the user here now go ');
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">

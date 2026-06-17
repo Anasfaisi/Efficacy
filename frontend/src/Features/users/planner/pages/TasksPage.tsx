@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAppSelector } from '@/redux/hooks';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
@@ -29,7 +29,7 @@ const TasksPage: React.FC = () => {
     const [tasks, setTasks] = useState<IPlannerTask[]>([]);
     const [activeTab, setActiveTab] = useState<
         'All' | 'Today' | 'Upcoming' | 'Overdue'
-    >('All');
+    >('Today');
     const [isAdding, setIsAdding] = useState(false);
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [titleError, setTitleError] = useState('');
@@ -40,13 +40,7 @@ const TasksPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const TASKS_PER_PAGE = 6;
 
-    useEffect(() => {
-        if (currentUser) {
-            fetchTasks();
-        }
-    }, [currentUser]);
-
-    const fetchTasks = async () => {
+    const fetchTasks = useCallback(async () => {
         if (!currentUser?.id) return;
         try {
             const data = await getPlannerTasks();
@@ -54,7 +48,13 @@ const TasksPage: React.FC = () => {
         } catch (error) {
             console.error('Error fetching tasks', error);
         }
-    };
+    }, [currentUser?.id]);
+
+    useEffect(() => {
+        if (currentUser) {
+            fetchTasks();
+        }
+    }, [currentUser, fetchTasks]);
 
     const filteredTasks = useMemo(() => {
         const now = new Date();

@@ -181,3 +181,8 @@ export interface ResendOtpResponse {
     resendAvailableAt: string;
     role: string;
 }
+
+export interface UpdatePasswordType {
+    currentPassword: string;
+    newPassword: string;
+}

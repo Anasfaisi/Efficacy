@@ -11,4 +11,5 @@ export interface ProfileForm {
     xpPoints: number;
     league: string;
     currentStreak: number;
+    password: string;
 }

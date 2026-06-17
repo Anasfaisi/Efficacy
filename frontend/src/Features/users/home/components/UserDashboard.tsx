@@ -3,11 +3,11 @@ import { useAppSelector } from '@/redux/hooks';
 import {
     Plus,
     Timer,
-    Music,
-    Users,
+    NotepadText,
     CheckCircle2,
     Flame,
     Award,
+    NotebookPen,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { User } from '@/types/auth';
@@ -212,14 +212,14 @@ const UserDashboard: React.FC = () => {
                                 to="/pomodoro"
                             />
                             <QuickActionCard
-                                icon={<Music size={26} strokeWidth={3} />}
+                                icon={<NotebookPen size={26} strokeWidth={3} />}
                                 label="Journal"
                                 btnLabel="Notes"
                                 color="bg-[#00897B]"
                                 to="/notes"
                             />
                             <QuickActionCard
-                                icon={<Users size={26} strokeWidth={3} />}
+                                icon={<NotepadText size={26} strokeWidth={3} />}
                                 label="Add Planner"
                                 btnLabel="Plan"
                                 color="bg-teal-500"

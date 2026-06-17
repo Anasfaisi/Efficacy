@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Sidebar from '../../home/layouts/Sidebar';
 import Navbar from '../../home/layouts/Navbar';
 import PomodoroTimer from '../components/PomodoroTimer';
@@ -27,14 +27,17 @@ const PomodoroPage: React.FC = () => {
         }
     };
 
-    const handleTimerStateChange = (state: {
-        mode: TimerMode;
-        timeLeft: number;
-        isActive: boolean;
-        lastUpdated: number | null;
-    }) => {
-        dispatch(updateTimerState(state));
-    };
+    const handleTimerStateChange = useCallback(
+        (state: {
+            mode: TimerMode;
+            timeLeft: number;
+            isActive: boolean;
+            lastUpdated: number | null;
+        }) => {
+            dispatch(updateTimerState(state));
+        },
+        [dispatch]
+    );
 
     return (
         <div className="min-h-screen flex bg-white">
@@ -66,7 +69,7 @@ const PomodoroPage: React.FC = () => {
                                 </h2>
                                 <PomodoroTimer
                                     onSessionComplete={handleSessionComplete}
-                                    initialState={timerState as any}
+                                    initialState={timerState}
                                     onStateChange={handleTimerStateChange}
                                 />
                             </div>

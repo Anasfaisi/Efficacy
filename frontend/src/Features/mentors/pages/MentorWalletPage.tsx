@@ -4,7 +4,6 @@ import {
     Wallet,
     ArrowUpRight,
     ArrowDownLeft,
-    IndianRupee,
     Clock,
     ChevronLeft,
     ChevronRight,
@@ -12,11 +11,9 @@ import {
     Lock,
     CheckCircle,
     AlertCircle,
-    Building2,
     Sparkles,
     Banknote,
     HelpCircle,
-    ExternalLink,
     Check,
     Loader2,
 } from 'lucide-react';
@@ -46,8 +43,6 @@ const MentorWalletPage: React.FC = () => {
         ifscCode: '',
         accountHolderName: '',
     });
-    const [isSavingBank, setIsSavingBank] = useState(false);
-    const [isBankEditing, setIsBankEditing] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
 
     // Simulated Stripe Connect State
@@ -167,45 +162,34 @@ const MentorWalletPage: React.FC = () => {
         }
     };
 
-    const handleSaveBankDetails = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (
-            !bankDetails.accountHolderName ||
-            !bankDetails.bankName ||
-            !bankDetails.accountNumber ||
-            !bankDetails.ifscCode
-        ) {
-            toast.error('Please fill out all bank account fields');
-            return;
-        }
+    // const handleSaveBankDetails = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (
+    //         !bankDetails.accountHolderName ||
+    //         !bankDetails.bankName ||
+    //         !bankDetails.accountNumber ||
+    //         !bankDetails.ifscCode
+    //     ) {
+    //         toast.error('Please fill out all bank account fields');
+    //         return;
+    //     }
 
-        setIsSavingBank(true);
-        try {
-            toast.success('Direct Deposit Bank details updated successfully!');
-            setIsBankEditing(false);
-            fetchData();
-        } catch (error) {
-            toast.error('Failed to update bank details');
-        } finally {
-            setIsSavingBank(false);
-        }
-    };
+    //     setIsSavingBank(true);
+    //     try {
+    //         toast.success('Direct Deposit Bank details updated successfully!');
+    //         setIsBankEditing(false);
+    //         fetchData();
+    //     } catch (error) {
+    //         toast.error('Failed to update bank details');
+    //     } finally {
+    //         setIsSavingBank(false);
+    //     }
+    // };
 
     const handleStripeConnect = async () => {
         setIsStripeLoading(true);
         toast.loading('Redirecting to Stripe Express onboarding...');
 
-        //     setTimeout(() => {
-        //         // toast.dismiss();
-        //         // toast.success('Stripe Connect Mock Integration complete! Wallet linked successfully.');
-        //         // Update local state to mock onboarded
-        //         setWallet((prev: any) => ({
-        //             ...prev,
-        //             stripeConnectOnboarded: true,
-        //             stripeConnectAccountId: 'acct_1tMockStripeExpress77'
-        //         }));
-        //         setIsStripeLoading(false);
-        //     }, 1800);
         try {
             const stripeAccountUrl = await walletApi.onboardStripeConnect();
             console.log(stripeAccountUrl, 'from the mentor walle page');

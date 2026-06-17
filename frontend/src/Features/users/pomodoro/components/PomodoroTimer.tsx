@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Play,
     Pause,
@@ -53,7 +53,11 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
                 setTimeLeft(newTimeLeft);
             }
         }
-    }, []);
+    }, [
+        initialState?.isActive,
+        initialState?.lastUpdated,
+        initialState?.timeLeft,
+    ]);
 
     const [settings, setSettings] = useState({
         pomodoro: 25,
@@ -76,7 +80,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
             isActive,
             lastUpdated: isActive ? Date.now() : null,
         });
-    }, [mode, timeLeft, isActive]);
+    }, [mode, timeLeft, isActive, onStateChange]);
 
     useEffect(() => {
         audioRef.current = new Audio(
@@ -84,32 +88,21 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
         ); // Simple bell sound
     }, []);
 
-    const playSound = () => {
+    const playSound = useCallback(() => {
         if (soundEnabled && audioRef.current) {
             audioRef.current.currentTime = 0;
             audioRef.current
                 .play()
                 .catch((e) => console.log('Audio play failed', e));
         }
-    };
+    }, [soundEnabled]);
 
-    const getDuration = (currentMode: TimerMode) => settings[currentMode] * 60;
+    const getDuration = useCallback(
+        (currentMode: TimerMode) => settings[currentMode] * 60,
+        [settings]
+    );
 
-    useEffect(() => {
-        if (isActive && timeLeft > 0) {
-            timerRef.current = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
-            }, 1000);
-        } else if (timeLeft === 0 && isActive) {
-            handleTimerComplete();
-        }
-
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, [isActive, timeLeft]);
-
-    const handleTimerComplete = () => {
+    const handleTimerComplete = useCallback(() => {
         setIsActive(false);
         playSound();
         const duration = getDuration(mode);
@@ -128,7 +121,21 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
                 setIsActive(true);
             }
         }
-    };
+    }, [mode, settings, onSessionComplete, playSound, getDuration]);
+
+    useEffect(() => {
+        if (isActive && timeLeft > 0) {
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+            }, 1000);
+        } else if (timeLeft === 0 && isActive) {
+            handleTimerComplete();
+        }
+
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [isActive, timeLeft, handleTimerComplete]);
 
     const toggleTimer = () => setIsActive(!isActive);
 

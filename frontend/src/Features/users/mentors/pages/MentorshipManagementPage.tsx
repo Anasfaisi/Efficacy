@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
 import { MentorshipStatus } from '@/types/mentorship';
@@ -36,7 +36,7 @@ import {
 } from '@/Services/socket/socketService';
 import { useAppSelector } from '@/redux/hooks';
 import type { Mentor } from '@/types/auth';
-import { isBookingPast, canReschedule } from '@/utils/timeUtils';
+import { isBookingPast } from '@/utils/timeUtils';
 import { BookingStatus } from '@/types/booking';
 
 const MentorshipManagementPage: React.FC = () => {
