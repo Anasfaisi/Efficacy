@@ -116,7 +116,7 @@ export default function PlanTable() {
                 `Plan marked as ${!currentStatus ? 'Active' : 'Inactive'}`
             );
             fetchPlans();
-        } catch (err) {
+        } catch {
             toast.error('Failed to change plan status');
         }
     };

@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, Mail, Loader2, RefreshCw } from 'lucide-react';
 
 export function OTPPage() {
-    const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =
+    const { tempEmail, isLoading, currentUser, resendAvailableAt } =
         useAppSelector((state) => state.auth);
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState<number>(0);

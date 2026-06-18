@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector } from '@/redux/hooks';
-import type { RootState } from '@/redux/store';
-import {
-    Users,
-    UserCheck,
-    IndianRupee,
-    Trophy,
-    Star,
-    TrendingUp,
-} from 'lucide-react';
+import { Users, UserCheck, IndianRupee, Star, TrendingUp } from 'lucide-react';
 import { adminService } from '@/Services/admin.api';
 import {
     AreaChart,
@@ -30,7 +21,6 @@ interface DashboardStats {
 }
 
 const AdminDashboard: React.FC = () => {
-    const { currentUser } = useAppSelector((state: RootState) => state.auth);
     const [stats, setStats] = useState<DashboardStats>({
         totalUsers: 0,
         totalMentors: 0,

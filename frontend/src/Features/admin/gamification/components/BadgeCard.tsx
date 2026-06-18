@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Badge } from '@/types/gamification';
 import BadgePreview from './BadgePreview';
-import { Edit2, Trash2, Lock, Clock } from 'lucide-react';
+import { Edit2, Lock, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface BadgeCardProps {

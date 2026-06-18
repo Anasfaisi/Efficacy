@@ -66,8 +66,8 @@ const AdminPayoutsPage: React.FC = () => {
     >('pending');
 
     // Pagination
-    const [page, setPage] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
+    const [page] = useState(1);
+    const [, setTotalCount] = useState(0);
     const limit = 50; // Use a high limit for cleaner client-side filtering/view of payouts
 
     const fetchPayoutRequests = async () => {

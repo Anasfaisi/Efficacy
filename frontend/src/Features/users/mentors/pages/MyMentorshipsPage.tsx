@@ -18,9 +18,10 @@ import { chatApi } from '@/Services/chat.api';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
 import CancelMentorshipModal from '../components/CancelMentorshipModal';
+import type { Mentorshiptype } from '@/Features/users/planner/types';
 
 const MyMentorshipsPage: React.FC = () => {
-    const [mentorships, setMentorships] = useState<any[]>([]);
+    const [mentorships, setMentorships] = useState<Mentorshiptype[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
@@ -72,6 +73,7 @@ const MyMentorshipsPage: React.FC = () => {
         };
         fetchMentorships();
     }, []);
+    console.log(mentorships,"+===============")
 
     const filteredMentorships = mentorships.filter((m) => {
         const matchesSearch = m.mentorId?.name

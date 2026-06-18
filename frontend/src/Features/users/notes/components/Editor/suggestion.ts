@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactRenderer } from '@tiptap/react';
-import tippy, { type Instance } from 'tippy.js';
+import tippy, { type Instance, type GetReferenceClientRect } from 'tippy.js';
 import {
     SlashCommandList,
     type CommandItemProps,
@@ -15,6 +15,10 @@ import {
     Text,
 } from 'lucide-react';
 import type { Editor, Range } from '@tiptap/core';
+import type {
+    SuggestionProps,
+    SuggestionKeyDownProps,
+} from '@tiptap/suggestion';
 import '@tiptap/starter-kit';
 
 export const suggestion = {
@@ -144,7 +148,7 @@ export const suggestion = {
         let popup: Instance[];
 
         return {
-            onStart: (props: any) => {
+            onStart: (props: SuggestionProps) => {
                 component = new ReactRenderer(SlashCommandList, {
                     props,
                     editor: props.editor,
@@ -155,7 +159,8 @@ export const suggestion = {
                 }
 
                 popup = tippy('body', {
-                    getReferenceClientRect: props.clientRect,
+                    getReferenceClientRect:
+                        props.clientRect as GetReferenceClientRect,
                     appendTo: () => document.body,
                     content: component.element,
                     showOnCreate: true,
@@ -165,7 +170,7 @@ export const suggestion = {
                 });
             },
 
-            onUpdate(props: any) {
+            onUpdate(props: SuggestionProps) {
                 component.updateProps(props);
 
                 if (!props.clientRect) {
@@ -173,11 +178,12 @@ export const suggestion = {
                 }
 
                 popup[0].setProps({
-                    getReferenceClientRect: props.clientRect,
+                    getReferenceClientRect:
+                        props.clientRect as GetReferenceClientRect,
                 });
             },
 
-            onKeyDown(props: any) {
+            onKeyDown(props: SuggestionKeyDownProps) {
                 if (props.event.key === 'Escape') {
                     popup[0].hide();
                     return true;

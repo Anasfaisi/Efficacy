@@ -1,6 +1,5 @@
 import type { IBadge } from '@/Services/Gamification/adminGamification.api';
 import * as Icons from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // Maps backend string to a reliable CSS Tailwind configuration for colors
 const RarityColors = {

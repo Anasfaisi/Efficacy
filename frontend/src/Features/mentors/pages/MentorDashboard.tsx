@@ -235,7 +235,6 @@ const MentorDashboard: React.FC = () => {
                     icon={<Users className="w-6 h-6 text-blue-600" />}
                     trend="All time"
                     bgColor="bg-blue-50"
-                    shadowColor="shadow-blue-200/50"
                 />
                 <StatCard
                     title="Upcoming Sessions"
@@ -247,7 +246,6 @@ const MentorDashboard: React.FC = () => {
                             : 'No upcoming sessions'
                     }
                     bgColor="bg-purple-50"
-                    shadowColor="shadow-purple-200/50"
                 />
                 <StatCard
                     title="Sessions Completed"
@@ -255,7 +253,6 @@ const MentorDashboard: React.FC = () => {
                     icon={<UserCircle className="w-6 h-6 text-orange-600" />}
                     trend={`${mentor.reviewCount || 0} reviews`}
                     bgColor="bg-orange-50"
-                    shadowColor="shadow-orange-200/50"
                 />
                 <StatCard
                     title="Average Rating"
@@ -263,7 +260,6 @@ const MentorDashboard: React.FC = () => {
                     icon={<Star className="w-6 h-6 text-yellow-600" />}
                     trend="Based on mentee feedback"
                     bgColor="bg-yellow-50"
-                    shadowColor="shadow-yellow-200/50"
                 />
             </div>
 
@@ -579,14 +575,12 @@ const StatCard = ({
     icon,
     trend,
     bgColor,
-    shadowColor,
 }: {
     title: string;
     value: string;
     icon: React.ReactNode;
     trend: string;
     bgColor: string;
-    shadowColor: string;
 }) => (
     <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-7 border border-white/50 shadow-[inset_0_2px_10px_rgba(255,255,255,0.6),0_10px_30px_rgba(0,0,0,0.05)] hover:shadow-[inset_0_2px_10px_rgba(255,255,255,0.6),0_15px_35px_rgba(0,0,0,0.08)] transition-all group">
         <div className="flex items-start justify-between">

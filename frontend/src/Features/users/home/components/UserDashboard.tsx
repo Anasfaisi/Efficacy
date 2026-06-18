@@ -45,7 +45,7 @@ const UserDashboard: React.FC = () => {
                 try {
                     const stats = await getDailyPomodoroStats(today);
                     setProductiveTime(stats?.totalFocusTime || 0);
-                } catch (e) {
+                } catch {
                     setProductiveTime(0);
                 }
 
@@ -57,7 +57,7 @@ const UserDashboard: React.FC = () => {
                         'confirmed'
                     );
                     setUpcomingSessions(bookingsRes.bookings.slice(0, 3));
-                } catch (e) {
+                } catch {
                     setUpcomingSessions([]);
                 }
 
@@ -69,7 +69,7 @@ const UserDashboard: React.FC = () => {
                         : (userBadges as unknown as { data: UserBadge[] })
                               .data || [];
                     setBadges(badgesArray.slice(0, 3));
-                } catch (e) {
+                } catch {
                     setBadges([]);
                 }
             } catch (error) {

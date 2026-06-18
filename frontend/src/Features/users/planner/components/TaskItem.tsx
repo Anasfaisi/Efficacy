@@ -11,7 +11,7 @@ import {
 import type { IPlannerTask } from '@/Features/users/planner/types';
 import { Priority } from '@/Features/users/planner/types';
 import { cn } from '@/lib/utils';
-import { format, differenceInHours, differenceInMinutes } from 'date-fns';
+import { format, differenceInMinutes } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useTime } from '../context/TimeContext';
 

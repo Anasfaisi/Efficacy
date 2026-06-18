@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { badgeApi } from '@/Services/Gamification/badge.api';
-import { adminGamificationApi } from '@/Services/Gamification/adminGamification.api';
 import BadgePreview from '../components/BadgePreview';
 import BadgeCard from '../components/BadgeCard';
 import {
@@ -8,8 +7,6 @@ import {
     Search,
     ChevronLeft,
     ChevronRight,
-    LayoutGrid,
-    Filter,
     Settings2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -141,7 +138,7 @@ export default function AdminBadgesPage() {
                 );
                 toast.success(BadgeMessages.BadgeUpdated);
             }
-        } catch (error) {
+        } catch {
             toast.error(BadgeMessages.BadgeNotUpdated);
         }
     };

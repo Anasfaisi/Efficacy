@@ -58,7 +58,7 @@ const MentorshipManagementPage: React.FC = () => {
     >([]);
 
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
-    const [rescheduleData, setRescheduleData] = useState<{
+    const [rescheduleData] = useState<{
         id: string;
         date: string;
         slot: string;
@@ -67,8 +67,7 @@ const MentorshipManagementPage: React.FC = () => {
     const [nextSession, setNextSession] = useState<Booking | null>(null);
     const [isSessionActive, setIsSessionActive] = useState(false);
 
-    const [selectedBookingForReview, setSelectedBookingForReview] =
-        useState<Booking | null>(null);
+    const [selectedBookingForReview] = useState<Booking | null>(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -243,19 +242,19 @@ const MentorshipManagementPage: React.FC = () => {
         if (data) fetchData();
     };
 
-    const handleRequestReschedule = (bookingId: string) => {
-        const booking = existingBookings.find((b) => b.id === bookingId);
-        if (booking) {
-            setRescheduleData({
-                id: bookingId,
-                date: booking.bookingDate
-                    ? format(new Date(booking.bookingDate), 'MMM do, yyyy')
-                    : 'N/A',
-                slot: booking.slot,
-            });
-            setIsRescheduleModalOpen(true);
-        }
-    };
+    // const handleRequestReschedule = (bookingId: string) => {
+    //     const booking = existingBookings.find((b) => b.id === bookingId);
+    //     if (booking) {
+    //         setRescheduleData({
+    //             id: bookingId,
+    //             date: booking.bookingDate
+    //                 ? format(new Date(booking.bookingDate), 'MMM do, yyyy')
+    //                 : 'N/A',
+    //             slot: booking.slot,
+    //         });
+    //         setIsRescheduleModalOpen(true);
+    //     }
+    // };
 
     const confirmReschedule = async () => {
         if (!rescheduleData) throw new Error('No reschedule data');
@@ -270,18 +269,18 @@ const MentorshipManagementPage: React.FC = () => {
         fetchData();
     };
 
-    const handleRespondToReschedule = async (
-        bookingId: string,
-        approve: boolean
-    ) => {
-        const data = await requestWrapper(
-            bookingApi.respondToReschedule(bookingId, approve),
-            approve
-                ? MentorshipMessages.RESCHEDULE_ACCEPTED
-                : MentorshipMessages.RESCHEDULE_DECLINED
-        );
-        if (data) fetchData();
-    };
+    // const handleRespondToReschedule = async (
+    //     bookingId: string,
+    //     approve: boolean
+    // ) => {
+    //     const data = await requestWrapper(
+    //         bookingApi.respondToReschedule(bookingId, approve),
+    //         approve
+    //             ? MentorshipMessages.RESCHEDULE_ACCEPTED
+    //             : MentorshipMessages.RESCHEDULE_DECLINED
+    //     );
+    //     if (data) fetchData();
+    // };
 
     const handleCancelBooking = (bookingId: string) => {
         toast.custom(

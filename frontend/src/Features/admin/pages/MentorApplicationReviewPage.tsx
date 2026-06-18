@@ -24,7 +24,6 @@ import type { MentorApplication } from '../types';
 import { adminService } from '@/Services/admin.api';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { markAsRead } from '@/redux/slices/notificationSlice';
-import { daysInWeek } from 'date-fns/constants';
 
 export default function MentorReviewPage() {
     const { id } = useParams();
