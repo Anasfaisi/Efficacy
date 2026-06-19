@@ -143,17 +143,20 @@ const BookingHistoryPage: React.FC = () => {
             await reviewApi.submitReview({
                 bookingId: selectedBooking.id,
                 mentorId:
-                    (mentor as any).id || (mentor as any)._id || String(mentor),
+                    (mentor as Mentor).id ||
+                    (mentor as Mentor)._id ||
+                    String(mentor),
                 userId: selectedBooking.userId,
                 rating,
                 comment,
             });
             setIsReviewModalOpen(false);
             fetchBookings(); // Refresh to potentially hide the button if we had a flag
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message || 'Failed to submit review'
-            );
+        } catch (error: unknown) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to submit review';
+            toast.error(errorMessage);
         }
     };
 

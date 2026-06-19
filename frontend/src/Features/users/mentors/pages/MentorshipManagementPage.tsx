@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mentorshipApi } from '@/Services/mentorship.api';
@@ -72,7 +72,7 @@ const MentorshipManagementPage: React.FC = () => {
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!id) return;
         const data = await requestWrapper(mentorshipApi.getMentorshipById(id));
         if (data) {
@@ -126,7 +126,7 @@ const MentorshipManagementPage: React.FC = () => {
             }
         }
         setLoading(false);
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchData();
@@ -145,7 +145,7 @@ const MentorshipManagementPage: React.FC = () => {
         return () => {
             offVideoEvents();
         };
-    }, [id, isMentor]);
+    }, [id, isMentor, fetchData, isSessionActive]);
 
     const handleJoinSession = () => {
         console.log('sdfkjdsfjkdj');
@@ -341,8 +341,8 @@ const MentorshipManagementPage: React.FC = () => {
             await reviewApi.submitReview({
                 bookingId: selectedBookingForReview.id,
                 mentorId:
-                    (mentorData as any)._id ||
-                    (mentorData as any).id ||
+                    (mentorData as Mentor)._id ||
+                    (mentorData as Mentor).id ||
                     String(mentorData),
                 userId: currentUser?.id || '',
                 rating,
@@ -350,11 +350,12 @@ const MentorshipManagementPage: React.FC = () => {
             });
             setIsReviewModalOpen(false);
             fetchData();
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message ||
-                    MentorshipMessages.REVIEW_ERROR_FALLBACK
-            );
+        } catch (error) {
+            console.error('Failed to submit the review:', error);
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to submit the review';
+            toast.error(errorMessage);
         }
     };
 

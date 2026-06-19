@@ -57,7 +57,6 @@ const MyMentorshipsPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await mentorshipApi.getUserRequests();
-                console.log(data, 'my mentorshp');
                 const sortedData = Array.isArray(data) ? data.reverse() : [];
                 setMentorships(sortedData);
             } catch (error) {
@@ -73,7 +72,6 @@ const MyMentorshipsPage: React.FC = () => {
         };
         fetchMentorships();
     }, []);
-    console.log(mentorships,"+===============")
 
     const filteredMentorships = mentorships.filter((m) => {
         const matchesSearch = m.mentorId?.name

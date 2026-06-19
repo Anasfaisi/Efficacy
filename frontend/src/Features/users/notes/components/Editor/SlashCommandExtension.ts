@@ -9,7 +9,15 @@ export const SlashCommand = Extension.create({
         return {
             suggestion: {
                 char: '/',
-                command: ({ editor, range, props }: { editor: Editor; range: Range; props: CommandItemProps }) => {
+                command: ({
+                    editor,
+                    range,
+                    props,
+                }: {
+                    editor: Editor;
+                    range: Range;
+                    props: CommandItemProps;
+                }) => {
                     props.command({ editor, range });
                 },
             },

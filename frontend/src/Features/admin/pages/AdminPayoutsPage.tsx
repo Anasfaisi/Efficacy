@@ -146,12 +146,12 @@ const AdminPayoutsPage: React.FC = () => {
             );
             // Refresh list
             await fetchPayoutRequests();
-        } catch (error: any) {
-            console.error(error);
-            toast.error(
-                error.response?.data?.message ||
-                    'Failed to approve payout request.'
-            );
+        } catch (error: unknown) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
+                'Failed to approve payout request.';
+            toast.error(errorMessage);
         } finally {
             setProcessingId(null);
         }
@@ -171,12 +171,12 @@ const AdminPayoutsPage: React.FC = () => {
             );
             // Refresh list
             await fetchPayoutRequests();
-        } catch (error: any) {
-            console.error(error);
-            toast.error(
-                error.response?.data?.message ||
-                    'Failed to reject payout request.'
-            );
+        } catch (error: unknown) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message ||
+                'Failed to reject payout request.';
+            toast.error(errorMessage);
         } finally {
             setProcessingId(null);
         }

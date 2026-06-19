@@ -1,5 +1,5 @@
-import type { Mentor, User } from "@/types/auth";
-import { MentorshipStatus } from "@/types/mentorship";
+import type { Mentor } from '@/types/auth';
+import { MentorshipStatus } from '@/types/mentorship';
 
 export enum Priority {
     HIGH = 'High',
@@ -31,19 +31,17 @@ export interface TimeContextType {
     currentTime: Date;
 }
 
-
-
-export interface Mentorshiptype{
-_id: string,
-userId: string,
-mentorId: Mentor,
-status : MentorshipStatus,
-startDate?: string,
-endDate?: string,
-proposedStartDate?:string,
-proposedEndDate?:string,
-usedSessions?: number,
-totalSessions?: number,
-createdAt: string,
-updatedAt:string,
+export interface Mentorshiptype {
+    _id: string;
+    userId: string;
+    mentorId: Mentor;
+    status: MentorshipStatus;
+    startDate?: string;
+    endDate?: string;
+    proposedStartDate?: string;
+    proposedEndDate?: string;
+    usedSessions?: number;
+    totalSessions?: number;
+    createdAt: string;
+    updatedAt: string;
 }
