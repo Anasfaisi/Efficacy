@@ -59,7 +59,6 @@ export class MentorService implements IMentorService {
     }
 
     async updateMentorProfileMedia(id: string, files: any): Promise<IMentor> {
-        const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
         const updateData: Partial<IMentor> = {};
 
         if (files.profilePic) {

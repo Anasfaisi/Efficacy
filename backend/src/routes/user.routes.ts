@@ -64,38 +64,11 @@ export default function authRoutes(userController: UserController) {
         userController.updateProfilePic.bind(userController)
     );
 
- router.patch(
-    "/password",
-    authenticateAndAuthorize(_tokenService, Role.User),asyncWrapper(userController.updatePassword.bind(userController)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    router.patch(
+        '/password',
+        authenticateAndAuthorize(_tokenService, Role.User),
+        asyncWrapper(userController.updatePassword.bind(userController))
+    );
 
     router.get(
         '/notifications',

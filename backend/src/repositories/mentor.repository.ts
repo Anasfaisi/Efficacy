@@ -2,7 +2,6 @@ import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
 import MentorModel, { IMentor } from '@/models/mentor.model';
 import { IMentorRepository } from './interfaces/IMentor.repository';
-import { logger } from '@/utils/logMiddlewares';
 
 @injectable()
 export class MentorRepository

@@ -137,8 +137,6 @@ export interface ChatResponseDTO {
     createdAt?: Date;
 }
 
-
-
 //======================  user profile  =========================//
 
 export class ProfileResponseDto {

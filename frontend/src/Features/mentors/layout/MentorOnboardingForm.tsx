@@ -70,21 +70,19 @@ const SectionTitle = ({
     </h2>
 );
 const time = [
-    '9 AM - 10 AM',
-    '10 AM - 11 AM',
-    '11 AM - 12 PM',
-    '12 PM - 1 PM',
-    '1 PM - 2 PM',
-    '2 PM - 3 PM',
-    '3 PM - 4 PM',
-    '4 PM - 5 PM',
-    '5 PM - 6 PM',
-    '6 PM - 7 PM',
-    '7 PM - 8 PM',
-    '8 PM - 9 PM',
-    '9 PM - 10 PM',
-    '10 PM - 11 PM',
-    '11 PM - 12 PM',
+    '9:00 AM - 10:00 AM',
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 1:00 PM',
+    '1:00 PM - 2:00 PM',
+    '2:00 PM - 3:00 PM',
+    '3:00 PM - 4:00 PM',
+    '4:00 PM - 5:00 PM',
+    '5:00 PM - 6:00 PM',
+    '6:00 PM - 7:00 PM',
+    '7:00 PM - 8:00 PM',
+    '8:00 PM - 9:00 PM',
+    '9:00 PM - 10:00 PM',
 ];
 const WeekSchedule: Record<string, string[]> = {
     Monday: time,
@@ -885,7 +883,7 @@ export default function MentorOnboardingForm() {
                                                                                 time
                                                                             }
                                                                             {...register(
-                                                                                `availability.${day}` as any
+                                                                                `availability.${day}` as FieldPath<mentorFormSchemaType>
                                                                             )}
                                                                             className="rounded text-sky-600 focus:ring-sky-500 w-4 h-4 cursor-pointer"
                                                                         />

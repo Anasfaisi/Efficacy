@@ -38,8 +38,8 @@ export interface IBookingRepository {
         page: number,
         limit: number,
         status?: string,
-        startDate?: Date,
-        endDate?: Date
+        startDate?: string,
+        endDate?: string
     ): Promise<{ bookings: BookingEntity[]; total: number }>;
     getMentorBookedSlots(mentorId: string): Promise<BookingEntity[]>;
 }

@@ -21,7 +21,7 @@ interface SessionDetailsModalProps {
     onClose: () => void;
     booking: Booking;
     menteeName: string;
-    mentorId: string |Mentor;
+    mentorId: string | Mentor;
 }
 
 const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
@@ -39,7 +39,9 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             if (!isOpen || !mentorId || !booking) return;
             setLoading(true);
             try {
-                const reviews = await reviewApi.getMentorReviews(mentorId as string);
+                const reviews = await reviewApi.getMentorReviews(
+                    mentorId as string
+                );
                 const foundReview = reviews.find(
                     (r) => r.bookingId === booking.id
                 );

@@ -16,7 +16,6 @@ export interface IBooking extends Document {
     cancelReason?: string;
     actualStartTime?: Date;
     actualEndTime?: Date;
-    sessionMinutes?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -49,7 +48,6 @@ const bookingSchema = new Schema<IBooking>(
         cancelReason: { type: String },
         actualStartTime: { type: Date },
         actualEndTime: { type: Date },
-        sessionMinutes: { type: Number },
     },
     { timestamps: true }
 );

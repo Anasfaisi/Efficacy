@@ -24,7 +24,7 @@ export const SuccessMessages = {
     ApplicationSubmitted: 'Application submitted successfully',
     MentorActivated: 'Mentor activated successfully',
     PasswordResetSuccess: 'Password reset successful',
-    PasswordUpdateSuccess: 'Password updated successfully'
+    PasswordUpdateSuccess: 'Password updated successfully',
 };
 
 export const MentorshipMessages = {

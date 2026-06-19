@@ -114,7 +114,10 @@ export const mentorApi = {
         await api.patch(MentorRoutes.MENTOR_MARK_ALL_NOTIFICATION_AS_READ);
     },
 
-    updateMentorProfileBasicInfo: async (data:{currentPassword: string, newPassword : string}) => {
+    updateMentorProfileBasicInfo: async (data: {
+        currentPassword: string;
+        newPassword: string;
+    }) => {
         const res = await api.patch(
             MentorRoutes.BASIC_MENTOR_PROFILE_BASIC,
             data

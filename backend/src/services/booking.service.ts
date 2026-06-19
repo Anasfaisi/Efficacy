@@ -203,7 +203,9 @@ export class BookingService implements IBookingService {
                 mentorId,
                 page,
                 limit,
-                status
+                status,
+                startDate,
+                endDate
             );
         return {
             bookings: bookings.map(BookingMapper.toResponseDto),
@@ -450,7 +452,7 @@ export class BookingService implements IBookingService {
 
         const updateData: Partial<BookingEntity> = {
             actualEndTime: endTime,
-            sessionMinutes: diffMins,
+            duration: diffMins,
         };
 
         if (diffMins >= 50 && booking.status !== BookingStatus.COMPLETED) {

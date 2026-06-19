@@ -142,9 +142,9 @@ export class ProfilePicUpdateDto {
     }
 }
 
-export interface PasswordDto{
-    currentPassword : string
-    newPassword:string
+export interface PasswordDto {
+    currentPassword: string;
+    newPassword: string;
 }
 
 //=============================  task  ============================================//

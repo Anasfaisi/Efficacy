@@ -3,7 +3,6 @@ import { IBadgeService } from '@/services/Gamification/interfaces/IBadge.service
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import Code from '@/types/http-status.enum';
-import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
 import { ErrorMessages } from '@/types/response-messages.types';
 @injectable()
 export class BadgeController {
@@ -73,7 +72,6 @@ export class BadgeController {
             return;
         }
         const result = await this._badgeService.getUserBadges(userId);
-        console.log(result, 'wanted to see the result');
         res.status(Code.OK).json({ status: true, badges: result });
     }
 }

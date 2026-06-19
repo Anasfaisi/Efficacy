@@ -1,9 +1,9 @@
 import { BadgeTemplate } from '@/types/gamification.types';
 import { IBadgeTemplateResolverService } from './interfaces/IBadge-template-resolver.service';
 import { IBadgeEvaluator } from './interfaces/IBadge-evaluator';
-import { inject, injectable, multiInject } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { injectable, multiInject } from 'inversify';
 
 @injectable()
 export class BadgeTemplateResolverService

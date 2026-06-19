@@ -1,5 +1,4 @@
 import { IPlan } from '@/models/plan.model';
-import { FilterQuery } from 'mongoose';
 
 export interface IPlanRepository {
     createPlan(data: Partial<IPlan>): Promise<IPlan>;

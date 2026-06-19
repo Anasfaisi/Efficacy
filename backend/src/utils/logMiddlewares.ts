@@ -2,8 +2,7 @@ import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import morgan from 'morgan';
 
-const { combine, timestamp, json, printf, colorize, align, errors } =
-    winston.format;
+const { combine, timestamp, printf, colorize, align, errors } = winston.format;
 
 const consoleFormat = combine(
     errors({ stack: true }),

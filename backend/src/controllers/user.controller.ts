@@ -10,7 +10,6 @@ import {
     SuccessMessages,
     CommonMessages,
 } from '@/types/response-messages.types';
-import { logger } from '@/utils/logMiddlewares';
 
 export class UserController {
     constructor(

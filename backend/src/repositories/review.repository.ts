@@ -18,7 +18,6 @@ export class ReviewRepository
         return ReviewMapper.toEntity(doc);
     }
 
-   
     async getAverageRating(
         mentorId: any
     ): Promise<{ averageRating: number; reviewCount: number }> {

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { MentorshipController } from '@/controllers/mentorship.controller';
-import { WalletController } from '@/controllers/Wallet.controller';
 import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { container } from '@/config/inversify.config';
 import { TYPES } from '@/config/inversify-key.types';
