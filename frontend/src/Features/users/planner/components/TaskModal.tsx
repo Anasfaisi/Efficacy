@@ -83,7 +83,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             setSubtasks([]);
             setIsCompleted(false);
         }
-    }, [task, isOpen]);
+    }, [task, isOpen, initialData]);
 
     const handleSave = async () => {
         if (!title.trim()) {

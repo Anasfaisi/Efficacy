@@ -222,7 +222,7 @@ const VideoCallPage: React.FC = () => {
                 "LOG: [Mentor] Peer generated 'signal' (Offer). Sending to User:",
                 userSocketId
             );
-            if(!socketRef.current) return;
+            if (!socketRef.current) return;
             signalPeer({
                 to: userSocketId,
                 signal: data,
@@ -265,7 +265,7 @@ const VideoCallPage: React.FC = () => {
         });
 
         peer.on('signal', (data: Peer.SignalData) => {
-            if(!socketRef.current) return;
+            if (!socketRef.current) return;
             signalPeer({
                 to: fromId,
                 signal: data,
@@ -458,7 +458,10 @@ const VideoCallPage: React.FC = () => {
                     navigate(isMentor ? '/mentor/dashboard' : '/home')
                 }
                 booking={booking}
-                mentorName={(booking?.mentorId as unknown as Mentor)?.name || 'your mentor'}
+                mentorName={
+                    (booking?.mentorId as unknown as Mentor)?.name ||
+                    'your mentor'
+                }
             />
         </div>
     );

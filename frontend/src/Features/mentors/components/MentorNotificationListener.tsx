@@ -140,7 +140,7 @@ export const MentorNotificationListener: React.FC = () => {
         [dispatch, navigate]
     );
 
-    const currentUserId = (currentUser)?.id || (currentUser)?._id;
+    const currentUserId = currentUser?.id || currentUser?._id;
 
     useEffect(() => {
         mentorApi

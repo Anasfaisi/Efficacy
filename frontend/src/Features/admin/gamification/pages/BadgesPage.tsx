@@ -197,7 +197,11 @@ export default function AdminBadgesPage() {
                     ].map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() =>
+                                setActiveTab(
+                                    tab.id as 'all' | 'active' | 'inactive'
+                                )
+                            }
                             className={`px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                                 activeTab === tab.id
                                     ? 'bg-white text-blue-600 shadow-md shadow-blue-500/5'

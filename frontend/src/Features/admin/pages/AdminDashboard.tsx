@@ -35,7 +35,6 @@ const AdminDashboard: React.FC = () => {
             try {
                 const data = await adminService.getDashboardStats();
                 setStats(data);
-                console.log(stats, 'from admindhash');
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
             } finally {
@@ -43,8 +42,7 @@ const AdminDashboard: React.FC = () => {
             }
         };
         fetchStats();
-    }, []);
-    console.log(stats, 'just for fund');
+    }, [stats]);
     return (
         <div className="p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
             <div className="mb-8">

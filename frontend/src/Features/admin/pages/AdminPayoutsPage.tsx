@@ -81,8 +81,10 @@ const AdminPayoutsPage: React.FC = () => {
             );
 
             // Filter only withdrawal requests
-            const withdrawals = ((data.transactions as any[]) || [])
-                .map((tx: any) => ({
+            const withdrawals = (
+                (data.transactions as AdminTransaction[]) || []
+            )
+                .map((tx: AdminTransaction) => ({
                     ...tx,
                     // If backend aggregate has mapped it, map keys nicely
                     walletId: tx.walletId,
@@ -92,7 +94,7 @@ const AdminPayoutsPage: React.FC = () => {
 
             setTransactions(withdrawals);
             setTotalCount(withdrawals.length);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error fetching payouts:', error);
             toast.error('Failed to load payout requests.');
         } finally {

@@ -3,11 +3,22 @@ import { adminService } from '@/Services/admin.api';
 import { IndianRupee, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 
+interface AdminTransaction {
+    _id: string;
+    type: string;
+    description: string;
+    date: string | Date;
+    amount: number;
+    status: string;
+    mentor?: { name?: string; email?: string };
+    user?: { name?: string; email?: string };
+}
+
 const AdminFinancialsPage = () => {
     const [revenue, setRevenue] = useState<{ totalRevenue: number } | null>(
         null
     );
-    const [transactions, setTransactions] = useState<any[]>([]);
+    const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState<'all' | 'mentor' | 'user'>('all');
@@ -47,7 +58,7 @@ const AdminFinancialsPage = () => {
         } else {
             fetchTransactions();
         }
-    }, [page, filter]);
+    }, [page, filter, loading]);
 
     const totalPages = Math.ceil(totalTransactions / limit);
 
@@ -127,7 +138,7 @@ const AdminFinancialsPage = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {transactions.length > 0 ? (
-                                transactions.map((tx: any) => (
+                                transactions.map((tx: AdminTransaction) => (
                                     <tr
                                         key={tx._id}
                                         className="hover:bg-gray-50/50 transition-colors"

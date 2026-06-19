@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     Search,
     Plus,
@@ -56,7 +56,7 @@ export default function PlanTable() {
         setCurrentPage(1);
     }, [statusFilter]);
 
-    const fetchPlans = async () => {
+    const fetchPlans = useCallback(async () => {
         setLoading(true);
         try {
             const limit = 5;
@@ -79,16 +79,17 @@ export default function PlanTable() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [debouncedSearch, statusFilter, currentPage]);
 
     useEffect(() => {
         fetchPlans();
-    }, [debouncedSearch, statusFilter, currentPage]);
+    }, [debouncedSearch, statusFilter, currentPage, fetchPlans]);
 
     const handleAddPlan = async (newPlanData: PlanData) => {
         try {
             if (isEditMode && planToEdit) {
-                const targetId = planToEdit._id || (planToEdit as any).id;
+                const targetId =
+                    planToEdit._id || (planToEdit as { id?: string }).id;
                 await adminService.updatePlan(targetId, newPlanData);
                 toast.success('Plan updated successfully!');
             } else {

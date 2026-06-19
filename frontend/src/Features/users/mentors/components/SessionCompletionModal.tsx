@@ -47,14 +47,13 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
     };
 
     const handleReviewSubmit = async (rating: number, comment: string) => {
-        
         try {
             await reviewApi.submitReview({
                 bookingId: booking?.id as string,
                 mentorId:
                     (booking?.mentorId?.[0] as unknown as Mentor)?.id ||
                     (booking?.mentorId as unknown as Mentor)?.id ||
-                    booking?.mentorId as string,
+                    (booking?.mentorId as string),
                 userId: booking?.userId as string,
                 rating,
                 comment,
