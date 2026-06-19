@@ -458,9 +458,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
 
     const renderDayView = () => {
         const dayName = format(currentDate, 'EEEE');
-        const allPossibleSlots = mentor.availability
-            ? mentor.availability[dayName] || []
-            : getAllSlots((mentor as any).preferredTime || []);
+        const allPossibleSlots = mentor.availability?.[dayName] || [];
         console.log(allPossibleSlots, mentor);
 
         const todayBookings = getBookingsForDate(currentDate);

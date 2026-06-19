@@ -11,7 +11,7 @@ import type { Mentor } from '@/types/auth';
 interface SessionCompletionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    booking: Booking;
+    booking: Booking | null;
     mentorName: string;
 }
 
@@ -32,7 +32,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
             try {
                 if (booking?.status !== BookingStatus.COMPLETED) {
                     await bookingApi.updateStatus({
-                        bookingId: booking.id,
+                        bookingId: booking?.id as string,
                         status: BookingStatus.COMPLETED,
                     });
                 }
@@ -47,14 +47,15 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
     };
 
     const handleReviewSubmit = async (rating: number, comment: string) => {
+        
         try {
             await reviewApi.submitReview({
-                bookingId: booking.id,
+                bookingId: booking?.id as string,
                 mentorId:
-                    (booking.mentorId?.[0] as unknown as Mentor)?.id ||
-                    (booking.mentorId as unknown as Mentor)?.id ||
-                    booking.mentorId,
-                userId: booking.userId,
+                    (booking?.mentorId?.[0] as unknown as Mentor)?.id ||
+                    (booking?.mentorId as unknown as Mentor)?.id ||
+                    booking?.mentorId as string,
+                userId: booking?.userId as string,
                 rating,
                 comment,
             });
@@ -67,7 +68,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
         }
     };
 
-    if (!isOpen) return null;
+    if (!isOpen || !booking) return null;
 
     return (
         <>
