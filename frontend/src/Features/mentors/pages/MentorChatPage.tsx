@@ -204,8 +204,14 @@ const MentorChatPage: React.FC = () => {
                                 const otherUser =
                                     chat.participants.find(
                                         (p) =>
-                                            (p._id || p.id) !== currentUser?.id &&
-                                            (p._id || p.id) !== (currentUser as { _id?: string })?._id
+                                            (p._id || p.id) !==
+                                                currentUser?.id &&
+                                            (p._id || p.id) !==
+                                                (
+                                                    currentUser as {
+                                                        _id?: string;
+                                                    }
+                                                )?._id
                                     ) || chat.participants[0];
 
                                 return (
@@ -280,8 +286,14 @@ const MentorChatPage: React.FC = () => {
                                         const otherUser =
                                             currentConversation.participants.find(
                                                 (p) =>
-                                                       (p._id || p.id) !== currentUser?.id &&
-                                                    (p._id || p.id) !== (currentUser as { _id?: string })?._id
+                                                    (p._id || p.id) !==
+                                                        currentUser?.id &&
+                                                    (p._id || p.id) !==
+                                                        (
+                                                            currentUser as {
+                                                                _id?: string;
+                                                            }
+                                                        )?._id
                                             );
                                         return (
                                             <>

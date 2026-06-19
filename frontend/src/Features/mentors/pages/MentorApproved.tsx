@@ -77,7 +77,8 @@ const MentorApproved: React.FC = () => {
                         </h1>
                         <p className="text-purple-100 max-w-sm mx-auto">
                             Congratulations{' '}
-                            {(currentUser as { name?: string })?.name || 'Mentor'}
+                            {(currentUser as { name?: string })?.name ||
+                                'Mentor'}
                             , you are almost there.
                         </p>
                     </div>

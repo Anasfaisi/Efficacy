@@ -142,10 +142,15 @@ export const mentorFormSchema = z
         guidanceAreas: z.array(z.string()).optional(),
         customGuidance: z.string().optional(),
         experienceSummary: z.string().optional(),
-        monthlyCharge: z.coerce
-            .number()
-            .min(1500, 'Minimum charge is 1500')
-            .max(2000, 'Maximum charge is 2000 during initial phase'),
+        monthlyCharge: z
+            .union([z.string(), z.number()])
+            .transform((v) => Number(v))
+            .pipe(
+                z
+                    .number()
+                    .min(1500, 'Minimum charge is 1500')
+                    .max(2000, 'Maximum charge is 2000 during initial phase')
+            ),
     })
     .superRefine((data, ctx) => {
         if (data.mentorType === 'Academic') {
@@ -242,10 +247,15 @@ export const mentorProfileUpdateSchema = z
             .url('Invalid Website URL')
             .optional()
             .or(z.literal('')),
-        monthlyCharge: z.coerce
-            .number()
-            .min(1500, 'Minimum charge is 1500')
-            .max(2000, 'Maximum charge is 2000')
+        monthlyCharge: z
+            .union([z.string(), z.number()])
+            .transform((v) => Number(v))
+            .pipe(
+                z
+                    .number()
+                    .min(1500, 'Minimum charge is 1500')
+                    .max(2000, 'Maximum charge is 2000')
+            )
             .optional(),
         currentPassword: z.string().optional(),
         newPassword: z

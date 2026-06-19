@@ -138,7 +138,7 @@ export default function MentorOnboardingForm() {
         setError,
         formState: { errors, isSubmitting },
     } = useForm<mentorFormSchemaType>({
-        resolver: zodResolver(mentorFormSchema) as any,
+        resolver: zodResolver(mentorFormSchema),
         mode: 'onChange',
         defaultValues: {
             mentorType: undefined,
