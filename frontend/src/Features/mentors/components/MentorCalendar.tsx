@@ -29,14 +29,14 @@ import {
     Settings2,
     ChevronDown,
 } from 'lucide-react';
-import type { Mentor } from '@/types/auth';
+import type { Mentor, User as UserType } from '@/types/auth';
 import type { Booking } from '@/types/booking';
 import { getAllSlots } from '@/utils/timeUtils';
 
 interface MentorCalendarProps {
     mentor: Mentor;
     allBookings: Booking[];
-    currentMenteeId?: string;
+    currentMenteeId?: string | UserType;
     onSelectSlot?: (date: Date, slot: string) => void;
     selectable?: boolean;
 }

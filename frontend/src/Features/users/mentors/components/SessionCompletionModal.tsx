@@ -4,7 +4,7 @@ import { CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
 import ReviewModal from './ReviewModal';
 import { reviewApi } from '@/Services/review.api';
 import { bookingApi } from '@/Services/booking.api';
-import { BookingStatus,type Booking } from '@/types/booking';
+import { BookingStatus, type Booking } from '@/types/booking';
 import { toast } from 'react-toastify';
 import type { Mentor } from '@/types/auth';
 
@@ -52,7 +52,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
                 bookingId: booking.id,
                 mentorId:
                     (booking.mentorId?.[0] as unknown as Mentor)?.id ||
-                   ( booking.mentorId as unknown as Mentor)?.id ||
+                    (booking.mentorId as unknown as Mentor)?.id ||
                     booking.mentorId,
                 userId: booking.userId,
                 rating,

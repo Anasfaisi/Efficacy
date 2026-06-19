@@ -214,7 +214,7 @@ export const UserNotificationListener: React.FC = () => {
             offNotificationEvents();
             socket?.off('connect');
         };
-    }, [currentUserId, currentUser?.role, handleNotification]);
+    }, [currentUserId, currentUser, handleNotification]);
 
     return (
         <div

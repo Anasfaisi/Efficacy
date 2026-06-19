@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { walletApi } from '@/Services/wallet.api';
 import {
-    Wallet,
+    WalletCards,
     ArrowUpRight,
     ArrowDownLeft,
     Clock,
@@ -19,10 +19,11 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Transaction, WalletData } from '@/types/wallet';
 
 const MentorWalletPage: React.FC = () => {
-    const [wallet, setWallet] = useState<any>(null);
-    const [transactions, setTransactions] = useState<any[]>([]);
+    const [wallet, setWallet] = useState<WalletData | null>(null);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -206,18 +207,19 @@ const MentorWalletPage: React.FC = () => {
     const allTxs = wallet?.transactions || [];
     const lifetimeEarnings =
         allTxs
-            .filter((t: any) => t.type === 'earning')
-            .reduce((acc: number, t: any) => acc + t.amount, 0) || 0;
+            .filter((t: Transaction) => t.type === 'earning')
+            .reduce((acc: number, t: Transaction) => acc + t.amount, 0) || 0;
 
     const totalWithdrawn =
         allTxs
             .filter(
-                (t: any) => t.type === 'withdrawal' && t.status === 'completed'
+                (t: Transaction) =>
+                    t.type === 'withdrawal' && t.status === 'completed'
             )
-            .reduce((acc: number, t: any) => acc + t.amount, 0) || 0;
+            .reduce((acc: number, t: Transaction) => acc + t.amount, 0) || 0;
 
     // Filter transactions for display in table based on ledger tabs
-    const filteredTransactions = transactions.filter((tx: any) => {
+    const filteredTransactions = transactions.filter((tx: Transaction) => {
         if (activeTab === 'all') return true;
         return tx.type === activeTab;
     });
@@ -353,7 +355,7 @@ const MentorWalletPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                            <Wallet size={20} />
+                            <WalletCards size={20} />
                         </div>
                     </div>
                     <div className="pt-4 border-t border-zinc-50 flex items-center justify-between">
@@ -677,7 +679,7 @@ const MentorWalletPage: React.FC = () => {
                             ) : (
                                 <>
                                     {filteredTransactions.map(
-                                        (tx: any, idx: number) => (
+                                        (tx: Transaction, idx: number) => (
                                             <div
                                                 key={tx._id || idx}
                                                 className="p-6 flex items-center justify-between hover:bg-zinc-50/50 transition-colors animate-in fade-in duration-200"

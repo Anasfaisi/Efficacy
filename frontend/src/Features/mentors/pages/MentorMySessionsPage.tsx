@@ -46,10 +46,7 @@ const MentorMySessionsPage: React.FC = () => {
             // Hacky way to get the mentorId from one of the bookings to pass to modal
             if (response.bookings.length > 0) {
                 const b = response.bookings[0];
-                const mId =
-                    (b.mentorId as any)?._id ||
-                    (b.mentorId as any)?.id ||
-                    b.mentorId;
+                const mId = b.mentorId;
                 if (mId) setMentorId(mId as string);
             }
         }

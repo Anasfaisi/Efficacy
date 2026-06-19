@@ -177,10 +177,14 @@ const ChatPage: React.FC = () => {
                                 const otherUser =
                                     chat.participants.find(
                                         (p) =>
-                                            (p as any)._id !==
+                                            (p._id || p.id) !==
                                                 currentUser?.id &&
-                                            (p as any)._id !==
-                                                (currentUser as any)?._id
+                                            (p._id || p.id) !==
+                                                (
+                                                    currentUser as {
+                                                        _id?: string;
+                                                    }
+                                                )?._id
                                     ) || chat.participants[0];
 
                                 return (
@@ -262,11 +266,14 @@ const ChatPage: React.FC = () => {
                                         const otherUser =
                                             currentConversation.participants.find(
                                                 (p) =>
-                                                    (p as any)._id !==
+                                                    (p._id || p.id) !==
                                                         currentUser?.id &&
-                                                    (p as any)._id !==
-                                                        (currentUser as any)
-                                                            ?._id
+                                                    (p._id || p.id) !==
+                                                        (
+                                                            currentUser as {
+                                                                _id?: string;
+                                                            }
+                                                        )?._id
                                             );
                                         return (
                                             <>

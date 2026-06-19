@@ -29,7 +29,7 @@ import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
 import { chatApi } from '@/Services/chat.api';
 
-import type { User as UserType, Mentor as MentorType } from '@/types/auth';
+import type { User as UserType, Mentor as MentorType, Mentor } from '@/types/auth';
 import { isBookingPast } from '@/utils/timeUtils';
 
 const MentorMentorshipManagementPage: React.FC = () => {
@@ -65,8 +65,6 @@ const MentorMentorshipManagementPage: React.FC = () => {
                 const allBookings = response.bookings;
                 setAllMentorBookings(allBookings);
                 const studentId =
-                    (mentorshipData.userId as any)?._id ||
-                    (mentorshipData.userId as any)?.id ||
                     mentorshipData.userId;
                 const filtered = allBookings.filter((b) => {
                     const bUserId =
@@ -101,8 +99,8 @@ const MentorMentorshipManagementPage: React.FC = () => {
         if (!mentorship?.userId) return;
 
         const userId =
-            (mentorship.userId as any)?._id ||
-            (mentorship.userId as any)?.id ||
+            (mentorship.userId as unknown as UserType)?._id ??
+            (mentorship.userId as unknown as UserType)?.id ??
             mentorship.userId;
 
         const conversation = await requestWrapper(chatApi.initiateChat(userId));
@@ -293,10 +291,10 @@ const MentorMentorshipManagementPage: React.FC = () => {
                             {sessionFilter} Sessions
                         </h3>
                         <div className="flex bg-gray-100 p-1 rounded-xl">
-                            {['Upcoming', 'Recent', 'All'].map((sf) => (
+                            {(['Upcoming', 'Recent', 'All'] as const).map((sf) => (
                                 <button
                                     key={sf}
-                                    onClick={() => setSessionFilter(sf as any)}
+                                    onClick={() => setSessionFilter(sf)}
                                     className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${sessionFilter === sf ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
                                     {sf}
@@ -469,8 +467,8 @@ const MentorMentorshipManagementPage: React.FC = () => {
                                 mentor={mentorship.mentorId as MentorType}
                                 allBookings={allMentorBookings}
                                 currentMenteeId={
-                                    (mentorship.userId as any)?._id ||
-                                    (mentorship.userId as any)?.id ||
+                                    (mentorship.userId as unknown as UserType)?._id ||
+                                    (mentorship.userId as unknown as UserType)?.id ||
                                     mentorship.userId
                                 }
                                 selectable={false}
@@ -496,8 +494,8 @@ const MentorMentorshipManagementPage: React.FC = () => {
                     booking={selectedBooking}
                     menteeName={student?.name || 'Student'}
                     mentorId={
-                        (mentorship.mentorId as any)?._id ||
-                        (mentorship.mentorId as any)?.id ||
+                        (mentorship.mentorId as Mentor)?._id ||
+                        (mentorship.mentorId as Mentor)?.id ||
                         mentorship.mentorId
                     }
                 />

@@ -14,13 +14,14 @@ import { reviewApi } from '@/Services/review.api';
 
 import { type Booking } from '@/types/booking';
 import type { Review } from '@/types/reviews';
+import type { Mentor } from '@/types/auth';
 
 interface SessionDetailsModalProps {
     isOpen: boolean;
     onClose: () => void;
     booking: Booking;
     menteeName: string;
-    mentorId: string;
+    mentorId: string |Mentor;
 }
 
 const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
@@ -38,7 +39,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             if (!isOpen || !mentorId || !booking) return;
             setLoading(true);
             try {
-                const reviews = await reviewApi.getMentorReviews(mentorId);
+                const reviews = await reviewApi.getMentorReviews(mentorId as string);
                 const foundReview = reviews.find(
                     (r) => r.bookingId === booking.id
                 );
@@ -59,9 +60,7 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
 
     if (!isOpen) return null;
 
-    // We can assume duration is diff between actualEndTime and actualStartTime, but here it's already recorded in sessionMinutes or diff of booking slots if not available.
-    // The previous implementation mapped "sessionMinutes" to booking.sessionMinutes. We need to check if booking has sessionMinutes, otherwise fallback to "N/A".
-    const sessionMinutes = (booking as any).sessionMinutes;
+    const sessionMinutes = (booking as Booking).duration;
 
     return (
         <AnimatePresence>

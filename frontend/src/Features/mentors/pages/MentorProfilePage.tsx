@@ -52,7 +52,7 @@ interface ConfigSectionProps {
     isLoading?: boolean;
 }
 
-const parseStringifiedArray = (input: any): string[] => {
+const parseStringifiedArray = (input: unknown): string[] => {
     if (!input) return [];
     if (typeof input === 'string') {
         try {
@@ -298,7 +298,7 @@ const MentorProfilePage = () => {
             await mentorApi.updateMentorProfileBasicInfo({
                 currentPassword,
                 newPassword,
-            } as any);
+            });
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
