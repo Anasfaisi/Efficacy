@@ -51,9 +51,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
         null
     );
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    let a = 10;
     const fetchData = useCallback(async () => {
-        console.log(a++)
         if (!id) return;
 
         const mentorshipData = await requestWrapper(
