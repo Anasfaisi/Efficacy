@@ -71,7 +71,7 @@ const BookingRequestsPage: React.FC = () => {
         }
 
         setLoading(false);
-    }, [currentPage,mentor]);
+    }, [currentPage, mentor]);
 
     useEffect(() => {
         fetchBookings();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Plus } from 'lucide-react';
 
 export interface PlanData {
@@ -26,18 +26,21 @@ export default function AddPlanModal({
     initialData,
     isEditMode,
 }: AddPlanModalProps) {
-    const defaultData: PlanData = {
-        name: '',
-        price: 0,
-        billingCycleDays: 30,
-        features: [],
-        limitations: {},
-        mentorType: '',
-    };
+    const defaultData: PlanData = React.useMemo(
+        () => ({
+            name: '',
+            price: 0,
+            billingCycleDays: 30,
+            features: [],
+            limitations: {},
+            mentorType: '',
+        }),
+        []
+    );
 
     const [formData, setFormData] = React.useState<PlanData>(defaultData);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isOpen) {
             if (initialData) {
                 setFormData({
@@ -55,7 +58,7 @@ export default function AddPlanModal({
             setLimitationKey('');
             setLimitationValue(0);
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, initialData, defaultData]);
 
     const [newFeature, setNewFeature] = useState('');
     const [limitationKey, setLimitationKey] = useState('');

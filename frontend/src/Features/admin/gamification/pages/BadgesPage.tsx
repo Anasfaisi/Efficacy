@@ -72,13 +72,13 @@ export default function AdminBadgesPage() {
         [limit]
     );
 
-    const loadInitialData = async () => {
+    const loadInitialData = useCallback(async () => {
         await fetchBadges(1);
-    };
+    }, [fetchBadges]);
 
     useEffect(() => {
         loadInitialData();
-    }, []);
+    }, [loadInitialData]);
 
     useEffect(() => {
         if (currentPage > 1) {
@@ -86,7 +86,7 @@ export default function AdminBadgesPage() {
         } else if (currentPage === 1 && badges.length > 0) {
             fetchBadges(1);
         }
-    }, [currentPage]);
+    }, [currentPage, fetchBadges, badges.length]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

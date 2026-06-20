@@ -32,7 +32,6 @@ export default function MentorApplicationsPage() {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-  
     const fetchApplications = useCallback(async () => {
         try {
             setLoading(true);
@@ -48,11 +47,11 @@ export default function MentorApplicationsPage() {
         } finally {
             setLoading(false);
         }
-    },[page,limit,debouncedSearch])
+    }, [page, limit, debouncedSearch]);
 
-  useEffect(() => {
+    useEffect(() => {
         fetchApplications();
-    }, [page, debouncedSearch,fetchApplications]);
+    }, [page, debouncedSearch, fetchApplications]);
 
     const filteredApplications = applications;
     const getStatusColor = (status: string) => {

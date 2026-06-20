@@ -100,11 +100,11 @@ const AdminPayoutsPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    },[page,limit])
+    }, [page, limit]);
 
     useEffect(() => {
         fetchPayoutRequests();
-    }, [page]);
+    }, [fetchPayoutRequests]);
 
     // Handle Deep-linked Transaction selection
     const deepLinkedTx = transactions.find(

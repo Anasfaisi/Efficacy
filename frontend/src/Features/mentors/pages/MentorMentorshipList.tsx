@@ -62,7 +62,7 @@ const MentorMentorshipList: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [page, limit,activeTab,debouncedSearch]);
+    }, [page, limit, activeTab, debouncedSearch]);
 
     useEffect(() => {
         fetchData();

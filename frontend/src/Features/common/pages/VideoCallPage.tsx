@@ -188,7 +188,7 @@ const VideoCallPage: React.FC = () => {
                 connectionRef.current = null;
             }
         };
-    }, [roomId , currentUserId,isMentor,navigate]);
+    }, [roomId, currentUserId, isMentor, navigate]);
 
     const callUser = (userSocketId: string) => {
         console.log(
