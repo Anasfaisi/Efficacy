@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { adminService } from '@/Services/admin.api';
 import {
@@ -70,7 +70,7 @@ const AdminPayoutsPage: React.FC = () => {
     const [, setTotalCount] = useState(0);
     const limit = 50; // Use a high limit for cleaner client-side filtering/view of payouts
 
-    const fetchPayoutRequests = async () => {
+    const fetchPayoutRequests = useCallback(async () => {
         try {
             setLoading(true);
             // Fetch mentor transactions specifically
@@ -82,13 +82,13 @@ const AdminPayoutsPage: React.FC = () => {
 
             // Filter only withdrawal requests
             const withdrawals = (
-                (data.transactions as AdminTransaction[]) || []
+                (data.transactions as unknown as AdminTransaction[]) || []
             )
                 .map((tx: AdminTransaction) => ({
                     ...tx,
                     // If backend aggregate has mapped it, map keys nicely
                     walletId: tx.walletId,
-                    transactionId: tx.transactionId || tx._id,
+                    transactionId: tx.transactionId,
                 }))
                 .filter((tx: AdminTransaction) => tx.type === 'withdrawal');
 
@@ -100,7 +100,7 @@ const AdminPayoutsPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    },[page,limit])
 
     useEffect(() => {
         fetchPayoutRequests();

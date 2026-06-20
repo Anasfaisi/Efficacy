@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { walletApi } from '@/Services/wallet.api';
 import {
     WalletCards,
@@ -49,7 +49,7 @@ const MentorWalletPage: React.FC = () => {
     // Simulated Stripe Connect State
     const [isStripeLoading, setIsStripeLoading] = useState(false);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [walletData, txData] = await Promise.all([
@@ -79,11 +79,11 @@ const MentorWalletPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [page, fetchData]);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -107,10 +107,8 @@ const MentorWalletPage: React.FC = () => {
                             'Stripe Connect onboarding details were not fully submitted.'
                         );
                     }
-                    // Clean up URL query parameters so refresh doesn't re-trigger verification
                     const newUrl = window.location.pathname;
                     window.history.replaceState({}, document.title, newUrl);
-                    // Reload wallet data
                     fetchData();
                 } catch (error) {
                     toast.dismiss(toastId);
@@ -131,7 +129,7 @@ const MentorWalletPage: React.FC = () => {
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
         }
-    }, []);
+    }, [fetchData]);
 
     const handleWithdraw = async () => {
         const amt = Number(withdrawAmount);

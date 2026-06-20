@@ -31,7 +31,6 @@ import {
 } from 'lucide-react';
 import type { Mentor, User as UserType } from '@/types/auth';
 import type { Booking } from '@/types/booking';
-import { getAllSlots } from '@/utils/timeUtils';
 
 interface MentorCalendarProps {
     mentor: Mentor;

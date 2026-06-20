@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
@@ -52,7 +52,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
     );
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!id) return;
 
         const mentorshipData = await requestWrapper(
@@ -81,11 +81,11 @@ const MentorMentorshipManagementPage: React.FC = () => {
         }
 
         setLoading(false);
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchData();
-    }, [id]);
+    }, [id, fetchData]);
 
     const handleUpdateBookingStatus = async (
         bookingId: string,

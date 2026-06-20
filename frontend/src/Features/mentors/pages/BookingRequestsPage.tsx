@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { bookingApi } from '@/Services/booking.api';
 import { mentorApi } from '@/Services/mentor.api';
 import type { Booking } from '@/types/booking';
@@ -39,7 +39,7 @@ const BookingRequestsPage: React.FC = () => {
         slot: string;
     } | null>(null);
 
-    const fetchBookings = async () => {
+    const fetchBookings = useCallback(async () => {
         setLoading(true);
 
         const data = await requestWrapper(
@@ -71,11 +71,11 @@ const BookingRequestsPage: React.FC = () => {
         }
 
         setLoading(false);
-    };
+    }, [currentPage,mentor]);
 
     useEffect(() => {
         fetchBookings();
-    }, [currentPage]);
+    }, [currentPage, fetchBookings]);
 
     const handleUpdateStatus = async (
         bookingId: string,

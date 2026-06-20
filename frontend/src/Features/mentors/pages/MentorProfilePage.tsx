@@ -52,38 +52,38 @@ interface ConfigSectionProps {
     isLoading?: boolean;
 }
 
-const parseStringifiedArray = (input: unknown): string[] => {
-    if (!input) return [];
-    if (typeof input === 'string') {
-        try {
-            const parsed = JSON.parse(input);
-            return parseStringifiedArray(parsed);
-        } catch {
-            return input
-                .split(',')
-                .map((s: string) => s.trim())
-                .filter(Boolean);
-        }
-    }
-    if (Array.isArray(input)) {
-        if (
-            input.length > 0 &&
-            typeof input[0] === 'string' &&
-            input[0].startsWith('[')
-        ) {
-            try {
-                const firstParsed = JSON.parse(input[0]);
-                if (Array.isArray(firstParsed)) {
-                    return parseStringifiedArray(firstParsed);
-                }
-            } catch {
-                // fall through
-            }
-        }
-        return input.map((item) => String(item));
-    }
-    return [];
-};
+// const parseStringifiedArray = (input: unknown): string[] => {
+//     if (!input) return [];
+//     if (typeof input === 'string') {
+//         try {
+//             const parsed = JSON.parse(input);
+//             return parseStringifiedArray(parsed);
+//         } catch {
+//             return input
+//                 .split(',')
+//                 .map((s: string) => s.trim())
+//                 .filter(Boolean);
+//         }
+//     }
+//     if (Array.isArray(input)) {
+//         if (
+//             input.length > 0 &&
+//             typeof input[0] === 'string' &&
+//             input[0].startsWith('[')
+//         ) {
+//             try {
+//                 const firstParsed = JSON.parse(input[0]);
+//                 if (Array.isArray(firstParsed)) {
+//                     return parseStringifiedArray(firstParsed);
+//                 }
+//             } catch {
+//                 // fall through
+//             }
+//         }
+//         return input.map((item) => String(item));
+//     }
+//     return [];
+// };
 
 const ConfigSection = ({
     title,

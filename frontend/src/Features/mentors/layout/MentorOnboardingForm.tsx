@@ -176,7 +176,7 @@ export default function MentorOnboardingForm() {
         if (currentUser?.role === 'mentor') {
             fetchMentorProfile();
         }
-    }, [currentUser?.role, dispatch]);
+    }, [currentUser?.role, currentUser?.email, dispatch]);
 
     useEffect(() => {
         const mentor = fetchedMentor || (currentUser as Mentor);

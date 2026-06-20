@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
 import { MentorshipStatus } from '@/types/mentorship';
@@ -39,7 +39,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
     const [reApplyOption, setReApplyOption] = useState<'date' | 'days'>('days');
     const [reApplyValue, setReApplyValue] = useState('');
 
-    const fetchRequests = async () => {
+    const fetchRequests =useCallback(async () => {
         try {
             setLoading(true);
             const data = await mentorshipApi.getMentorRequests(
@@ -59,11 +59,11 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
         } finally {
             setLoading(false);
         }
-    };
+    },[page,limit,filter,]);
 
     useEffect(() => {
         fetchRequests();
-    }, [page, filter]);
+    }, [page,filter,fetchRequests]);
 
     const openRejectModal = (id: string) => {
         setRejectModal({ isOpen: true, requestId: id });

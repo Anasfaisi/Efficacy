@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
 import type { User } from '@/types/auth';
@@ -40,7 +40,7 @@ const MentorMentorshipList: React.FC = () => {
         return () => clearTimeout(handler);
     }, [search]);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const statusMap: Record<string, string> = {
@@ -62,11 +62,11 @@ const MentorMentorshipList: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit,activeTab,debouncedSearch]);
 
     useEffect(() => {
         fetchData();
-    }, [page, activeTab, debouncedSearch]);
+    }, [fetchData]);
 
     const handleChat = async (userId: string) => {
         try {

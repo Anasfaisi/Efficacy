@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '@/Services/admin.api';
 import type { MentorApplication } from '../types';
 import {
@@ -32,11 +32,8 @@ export default function MentorApplicationsPage() {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    useEffect(() => {
-        fetchApplications();
-    }, [page, debouncedSearch]);
-
-    const fetchApplications = async () => {
+  
+    const fetchApplications = useCallback(async () => {
         try {
             setLoading(true);
             const data = await adminService.getMentorApplications(
@@ -51,7 +48,11 @@ export default function MentorApplicationsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    },[page,limit,debouncedSearch])
+
+  useEffect(() => {
+        fetchApplications();
+    }, [page, debouncedSearch,fetchApplications]);
 
     const filteredApplications = applications;
     const getStatusColor = (status: string) => {

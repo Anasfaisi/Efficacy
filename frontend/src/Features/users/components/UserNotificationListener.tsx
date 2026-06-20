@@ -184,10 +184,10 @@ export const UserNotificationListener: React.FC = () => {
                                         Badge Unlocked!
                                     </h3>
                                     <p className="text-indigo-200 font-bold text-xl">
-                                        {badge.name}
+                                        {String(badge.name)}
                                     </p>
                                     <p className="text-sm text-indigo-300/80 mt-2 italic">
-                                        "{badge.story}"
+                                        "{String(badge.story)}"
                                     </p>
                                 </div>
                                 <button
@@ -214,7 +214,7 @@ export const UserNotificationListener: React.FC = () => {
             offNotificationEvents();
             socket?.off('connect');
         };
-    }, [currentUserId, currentUser, handleNotification]);
+    }, [currentUserId, currentUser, handleNotification, dispatch]);
 
     return (
         <div

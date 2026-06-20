@@ -177,7 +177,7 @@ export const MentorNotificationListener: React.FC = () => {
         return () => {
             offNotificationEvents();
         };
-    }, [currentUserId, currentUser?.role, handleNotification]);
+    }, [currentUserId, currentUser?.role, handleNotification,dispatch]);
 
     return (
         <div
