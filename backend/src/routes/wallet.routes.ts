@@ -4,7 +4,6 @@ import { ITokenService } from '@/services/Interfaces/IToken.service';
 import { Role } from '@/types/role.types';
 import { asyncWrapper } from '@/utils/asyncWrapper';
 import { Router } from 'express';
-import { auth } from 'google-auth-library';
 
 export default function WalletRoutes(
     walletController: WalletController,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Plus } from 'lucide-react';
 
 export interface PlanData {
@@ -19,19 +19,28 @@ interface AddPlanModalProps {
     isEditMode?: boolean;
 }
 
-export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, isEditMode }: AddPlanModalProps) {
-    const defaultData: PlanData = {
-        name: '',
-        price: 0,
-        billingCycleDays: 30,
-        features: [],
-        limitations: {},
-        mentorType: '',
-    };
+export default function AddPlanModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    initialData,
+    isEditMode,
+}: AddPlanModalProps) {
+    const defaultData: PlanData = React.useMemo(
+        () => ({
+            name: '',
+            price: 0,
+            billingCycleDays: 30,
+            features: [],
+            limitations: {},
+            mentorType: '',
+        }),
+        []
+    );
 
     const [formData, setFormData] = React.useState<PlanData>(defaultData);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isOpen) {
             if (initialData) {
                 setFormData({
@@ -49,7 +58,7 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
             setLimitationKey('');
             setLimitationValue(0);
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, initialData, defaultData]);
 
     const [newFeature, setNewFeature] = useState('');
     const [limitationKey, setLimitationKey] = useState('');
@@ -57,16 +66,24 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
 
     if (!isOpen) return null;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: name === 'price' || name === 'billingCycleDays' ? Number(value) : value,
+            [name]:
+                name === 'price' || name === 'billingCycleDays'
+                    ? Number(value)
+                    : value,
         }));
     };
 
     const addFeature = () => {
-        if (newFeature.trim() && !formData.features.includes(newFeature.trim())) {
+        if (
+            newFeature.trim() &&
+            !formData.features.includes(newFeature.trim())
+        ) {
             setFormData((prev) => ({
                 ...prev,
                 features: [...prev.features, newFeature.trim()],
@@ -117,7 +134,9 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">{isEditMode ? "Edit Plan" : "Add New Plan"}</h2>
+                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                        {isEditMode ? 'Edit Plan' : 'Add New Plan'}
+                    </h2>
                     <button
                         onClick={onClose}
                         className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
@@ -127,13 +146,21 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                 </div>
 
                 <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
-                    <form id="add-plan-form" onSubmit={handleSubmit} className="space-y-6">
+                    <form
+                        id="add-plan-form"
+                        onSubmit={handleSubmit}
+                        className="space-y-6"
+                    >
                         {/* Basic Details */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Basic Details</h3>
+                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                Basic Details
+                            </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700">Plan Name</label>
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Plan Name
+                                    </label>
                                     <input
                                         type="text"
                                         name="name"
@@ -145,7 +172,9 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700">Price (₹)</label>
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Price (₹)
+                                    </label>
                                     <input
                                         type="number"
                                         name="price"
@@ -159,7 +188,9 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700">Billing Cycle (Days)</label>
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Billing Cycle (Days)
+                                    </label>
                                     <input
                                         type="number"
                                         name="billingCycleDays"
@@ -172,16 +203,22 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700">Required Mentor Type (Optional)</label>
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Required Mentor Type (Optional)
+                                    </label>
                                     <select
                                         name="mentorType"
                                         value={formData.mentorType}
                                         onChange={handleChange}
                                         className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                                     >
-                                        <option value="">None / All Types</option>
+                                        <option value="">
+                                            None / All Types
+                                        </option>
                                         <option value="regular">Regular</option>
-                                        <option value="dedicated">Dedicated</option>
+                                        <option value="dedicated">
+                                            Dedicated
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -189,13 +226,20 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
 
                         {/* Features */}
                         <div className="space-y-4 pt-4 border-t border-gray-100">
-                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Features</h3>
+                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                Features
+                            </h3>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
                                     value={newFeature}
-                                    onChange={(e) => setNewFeature(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+                                    onChange={(e) =>
+                                        setNewFeature(e.target.value)
+                                    }
+                                    onKeyDown={(e) =>
+                                        e.key === 'Enter' &&
+                                        (e.preventDefault(), addFeature())
+                                    }
                                     placeholder="Add a new feature..."
                                     className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                                 />
@@ -211,11 +255,18 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                             {formData.features.length > 0 && (
                                 <ul className="space-y-2 mt-3">
                                     {formData.features.map((feature, idx) => (
-                                        <li key={idx} className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-sm text-gray-700">
-                                            <span className="truncate">{feature}</span>
+                                        <li
+                                            key={idx}
+                                            className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-sm text-gray-700"
+                                        >
+                                            <span className="truncate">
+                                                {feature}
+                                            </span>
                                             <button
                                                 type="button"
-                                                onClick={() => removeFeature(feature)}
+                                                onClick={() =>
+                                                    removeFeature(feature)
+                                                }
                                                 className="text-gray-400 hover:text-red-500 p-1"
                                             >
                                                 <X size={16} />
@@ -228,19 +279,27 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
 
                         {/* Limitations */}
                         <div className="space-y-4 pt-4 border-t border-gray-100">
-                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Usage Limitations</h3>
+                            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                Usage Limitations
+                            </h3>
                             <div className="flex flex-col sm:flex-row gap-2 relative">
                                 <input
                                     type="text"
                                     value={limitationKey}
-                                    onChange={(e) => setLimitationKey(e.target.value)}
+                                    onChange={(e) =>
+                                        setLimitationKey(e.target.value)
+                                    }
                                     placeholder="e.g. mentor_sessions"
                                     className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                                 />
                                 <input
                                     type="number"
                                     value={limitationValue}
-                                    onChange={(e) => setLimitationValue(Number(e.target.value))}
+                                    onChange={(e) =>
+                                        setLimitationValue(
+                                            Number(e.target.value)
+                                        )
+                                    }
                                     placeholder="Allowed count"
                                     min="0"
                                     className="w-full sm:w-32 px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
@@ -251,27 +310,42 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                                     className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 font-medium transition-colors flex items-center justify-center gap-2"
                                 >
                                     <Plus size={18} />
-                                    <span className="hidden sm:inline">Add</span>
+                                    <span className="hidden sm:inline">
+                                        Add
+                                    </span>
                                 </button>
                             </div>
                             {Object.keys(formData.limitations).length > 0 && (
                                 <ul className="space-y-2 mt-3">
-                                    {Object.entries(formData.limitations).map(([key, value], idx) => (
-                                        <li key={idx} className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-sm text-gray-700">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-medium bg-gray-200 text-gray-800 px-2.5 py-0.5 rounded text-xs">{key}</span>
-                                                <span className="text-gray-500">Max limit: </span>
-                                                <span className="font-bold text-gray-900">{value}</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => removeLimitation(key)}
-                                                className="text-gray-400 hover:text-red-500 p-1"
+                                    {Object.entries(formData.limitations).map(
+                                        ([key, value], idx) => (
+                                            <li
+                                                key={idx}
+                                                className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-sm text-gray-700"
                                             >
-                                                <X size={16} />
-                                            </button>
-                                        </li>
-                                    ))}
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium bg-gray-200 text-gray-800 px-2.5 py-0.5 rounded text-xs">
+                                                        {key}
+                                                    </span>
+                                                    <span className="text-gray-500">
+                                                        Max limit:{' '}
+                                                    </span>
+                                                    <span className="font-bold text-gray-900">
+                                                        {value}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeLimitation(key)
+                                                    }
+                                                    className="text-gray-400 hover:text-red-500 p-1"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            </li>
+                                        )
+                                    )}
                                 </ul>
                             )}
                         </div>
@@ -291,7 +365,7 @@ export default function AddPlanModal({ isOpen, onClose, onSubmit, initialData, i
                         form="add-plan-form"
                         className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-md shadow-blue-500/20"
                     >
-                        {isEditMode ? "Save Changes" : "Create Plan"}
+                        {isEditMode ? 'Save Changes' : 'Create Plan'}
                     </button>
                 </div>
             </div>

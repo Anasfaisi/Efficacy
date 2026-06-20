@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Badge } from '@/types/gamification';
 import BadgePreview from './BadgePreview';
-import { Edit2, Trash2, Lock, Clock } from 'lucide-react';
+import { Edit2, Lock, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface BadgeCardProps {
@@ -40,7 +40,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
                 <h3 className="text-xl font-bold text-slate-800 leading-tight truncate">
                     {badge.name}
                 </h3>
-                
+
                 <div className="flex items-center gap-2 shrink-0">
                     <button
                         onClick={() => onEdit(badge)}
@@ -48,7 +48,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
                     >
                         <Edit2 size={18} />
                     </button>
-                    
+
                     <button
                         onClick={handleToggle}
                         className={`relative w-11 h-6 rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500 ${
@@ -79,13 +79,15 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
                     <p className="text-sm font-bold text-slate-700 truncate">
                         {badge.template}
                     </p>
-                    
+
                     <div className="mt-1">
-                        <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
-                            isActive 
-                                ? 'bg-green-50 text-green-600 border-green-100' 
-                                : 'bg-slate-50 text-slate-400 border-slate-100'
-                        }`}>
+                        <span
+                            className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                                isActive
+                                    ? 'bg-green-50 text-green-600 border-green-100'
+                                    : 'bg-slate-50 text-slate-400 border-slate-100'
+                            }`}
+                        >
                             {isActive ? 'Active' : 'Inactive'}
                         </span>
                     </div>
@@ -97,14 +99,21 @@ const BadgeCard: React.FC<BadgeCardProps> = ({
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl">
                     <Lock size={12} className="text-slate-400" />
                     <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
-                        Unlocks at <span className="font-bold text-slate-800">{badge.threshold}</span>
+                        Unlocks at{' '}
+                        <span className="font-bold text-slate-800">
+                            {badge.threshold}
+                        </span>
                     </span>
                 </div>
-                
+
                 {badge.updatedAt && (
                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium">
                         <Clock size={10} />
-                        <span>{new Date(badge.updatedAt).toLocaleDateString('en-IN')}</span>
+                        <span>
+                            {new Date(badge.updatedAt).toLocaleDateString(
+                                'en-IN'
+                            )}
+                        </span>
                     </div>
                 )}
             </div>

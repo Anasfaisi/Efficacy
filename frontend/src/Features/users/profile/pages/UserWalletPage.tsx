@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { walletApi } from '@/Services/wallet.api';
 import {
     Wallet,
@@ -6,12 +6,8 @@ import {
     Clock,
     ChevronLeft,
     ChevronRight,
-    CreditCard,
     ArrowUpCircle,
     ArrowDownCircle,
-    Plus,
-    CheckCircle2,
-    Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Sidebar from '../../home/layouts/Sidebar';
@@ -20,10 +16,7 @@ import type {
     WalletData,
     Transaction,
     TransactionResponse,
-    BankAccountDetails,
 } from '@/types/wallet';
-import { bankDetailsSchema } from '@/types/zodSchemas';
-import { ZodError } from 'zod';
 
 const UserWalletPage: React.FC = () => {
     const [wallet, setWallet] = useState<WalletData | null>(null);
@@ -32,16 +25,8 @@ const UserWalletPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [limit] = useState(2);
-    const [isUpdatingBank, setIsUpdatingBank] = useState(false);
-    const [showBankForm, setShowBankForm] = useState(false);
-    const [bankDetails, setBankDetails] = useState<BankAccountDetails>({
-        accountNumber: '',
-        bankName: '',
-        ifscCode: '',
-        accountHolderName: '',
-    });
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [walletData, txData]: [WalletData, TransactionResponse] =
@@ -52,40 +37,17 @@ const UserWalletPage: React.FC = () => {
             setWallet(walletData);
             setTransactions(txData.transactions);
             setTotalPages(txData.totalPages);
-
-            if (walletData?.bankAccountDetails) {
-                setBankDetails(walletData.bankAccountDetails);
-            }
         } catch (error) {
             console.error('Failed to fetch wallet data:', error);
             toast.error('Failed to load wallet data');
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         fetchData();
-    }, [page]);
-
-    const handleUpdateBankDetails = async () => {
-        setIsUpdatingBank(true);
-        try {
-            bankDetailsSchema.parse(bankDetails);
-            await walletApi.updateBankDetails(bankDetails);
-            toast.success('Bank details updated');
-            setShowBankForm(false);
-            fetchData();
-        } catch (error) {
-            if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
-            } else {
-                toast.error('Failed to update bank details');
-            }
-        } finally {
-            setIsUpdatingBank(false);
-        }
-    };
+    }, [fetchData]);
 
     if (loading && page === 1)
         return (
@@ -98,11 +60,6 @@ const UserWalletPage: React.FC = () => {
                 </div>
             </div>
         );
-
-    const hasBankDetails = !!(
-        wallet?.bankAccountDetails?.accountNumber &&
-        wallet?.bankAccountDetails?.bankName
-    );
 
     return (
         <div className="flex min-h-screen bg-[#FDFCFE]">
@@ -213,7 +170,7 @@ const UserWalletPage: React.FC = () => {
                         </motion.div>
 
                         {/* Bank Details Card */}
-                        <motion.div
+                        {/* <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
@@ -381,7 +338,7 @@ const UserWalletPage: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                        </motion.div>
+                        </motion.div> */}
                     </div>
 
                     {/* Transactions Section */}

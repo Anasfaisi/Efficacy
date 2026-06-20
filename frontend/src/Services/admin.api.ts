@@ -1,7 +1,7 @@
 import api from './axiosConfig';
 import type { MentorApplication, Notification } from '../Features/admin/types';
 import type { LoginCredentials, Mentor, User } from '../types/auth';
-import type { Transaction } from '@/types/wallet';
+import type { Transaction, WalletData } from '@/types/wallet';
 import { AdminRoutes, PlanRoutes } from './constant.routes';
 import { type PlanData } from '../Features/admin/components/AddPlanModal';
 
@@ -21,7 +21,9 @@ export const adminService = {
         return res.data;
     },
     deletePlan: async (planId: string, isActive: boolean) => {
-        const res = await api.delete(PlanRoutes.DELETE_PLAN(planId), { data: { isActive } });
+        const res = await api.delete(PlanRoutes.DELETE_PLAN(planId), {
+            data: { isActive },
+        });
         return res.data;
     },
     adminLoginApi: async (credentials: LoginCredentials) => {
@@ -193,13 +195,23 @@ export const adminService = {
         return response.data;
     },
 
-    approveWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
-        const response = await api.post(AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId));
+    approveWithdrawal: async (
+        walletId: string,
+        transactionId: string
+    ): Promise<{ message: string; wallet: WalletData }> => {
+        const response = await api.post(
+            AdminRoutes.APPROVE_WITHDRAWAL(walletId, transactionId)
+        );
         return response.data;
     },
 
-    rejectWithdrawal: async (walletId: string, transactionId: string): Promise<any> => {
-        const response = await api.post(AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId));
+    rejectWithdrawal: async (
+        walletId: string,
+        transactionId: string
+    ): Promise<{ message: string; wallet: WalletData }> => {
+        const response = await api.post(
+            AdminRoutes.REJECT_WITHDRAWAL(walletId, transactionId)
+        );
         return response.data;
     },
 };

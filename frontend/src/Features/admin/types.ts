@@ -68,7 +68,6 @@ export interface MentorApplication {
     createdAt: string;
 }
 
-
 export interface Plan {
     _id: string;
     name: string;

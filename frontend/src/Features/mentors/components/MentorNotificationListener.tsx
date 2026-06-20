@@ -140,7 +140,7 @@ export const MentorNotificationListener: React.FC = () => {
         [dispatch, navigate]
     );
 
-    const currentUserId = (currentUser as any)?.id || (currentUser as any)?._id;
+    const currentUserId = currentUser?.id || currentUser?._id;
 
     useEffect(() => {
         mentorApi
@@ -177,7 +177,7 @@ export const MentorNotificationListener: React.FC = () => {
         return () => {
             offNotificationEvents();
         };
-    }, [currentUserId, currentUser?.role, handleNotification]);
+    }, [currentUserId, currentUser?.role, handleNotification, dispatch]);
 
     return (
         <div

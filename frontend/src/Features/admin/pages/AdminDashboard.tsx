@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector } from '@/redux/hooks';
-import type { RootState } from '@/redux/store';
-import {
-    Users,
-    UserCheck,
-    IndianRupee,
-    Trophy,
-    Star,
-    TrendingUp,
-} from 'lucide-react';
+import { Users, UserCheck, IndianRupee, Star, TrendingUp } from 'lucide-react';
 import { adminService } from '@/Services/admin.api';
 import {
     AreaChart,
@@ -29,11 +20,7 @@ interface DashboardStats {
     revenueData: { month: string; revenue: number }[];
 }
 
-
-
-
 const AdminDashboard: React.FC = () => {
-    const { currentUser } = useAppSelector((state: RootState) => state.auth);
     const [stats, setStats] = useState<DashboardStats>({
         totalUsers: 0,
         totalMentors: 0,
@@ -48,7 +35,6 @@ const AdminDashboard: React.FC = () => {
             try {
                 const data = await adminService.getDashboardStats();
                 setStats(data);
-                console.log(stats,"from admindhash")
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
             } finally {
@@ -57,7 +43,6 @@ const AdminDashboard: React.FC = () => {
         };
         fetchStats();
     }, []);
-console.log(stats,"just for fund")
     return (
         <div className="p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
             <div className="mb-8">
@@ -205,7 +190,6 @@ console.log(stats,"just for fund")
                         </ResponsiveContainer>
                     </div>
                 </div>
-
             </div>
 
             {/* Top Mentors */}
@@ -227,7 +211,10 @@ console.log(stats,"just for fund")
                                 {mentor.rating || 0}
                             </div>
                             <img
-                                src={mentor.profilePic || 'https://i.pravatar.cc/150'}
+                                src={
+                                    mentor.profilePic ||
+                                    'https://i.pravatar.cc/150'
+                                }
                                 alt={mentor.name}
                                 className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-gray-50 group-hover:border-blue-50 transition-colors"
                             />
@@ -237,8 +224,7 @@ console.log(stats,"just for fund")
                             <p className="text-xs text-gray-500 mb-3 truncate px-2">
                                 {mentor.domain || mentor.mentorType}
                             </p>
-                            <div className="w-full bg-gray-50 py-2 rounded-lg text-xs font-medium text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                            </div>
+                            <div className="w-full bg-gray-50 py-2 rounded-lg text-xs font-medium text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors"></div>
                         </div>
                     ))}
                 </div>

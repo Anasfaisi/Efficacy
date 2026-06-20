@@ -100,6 +100,14 @@ export class UserController {
         }
     }
 
+    async updatePassword(req: Request, res: Response) {
+        const userId = req.currentUser?.id;
+        await this._authService.updateUserPassword(req.body, userId!);
+        res.status(code.OK).json({
+            message: SuccessMessages.PasswordUpdateSuccess,
+        });
+    }
+
     async login(req: Request, res: Response) {
         try {
             const { accessToken, refreshToken, user } =

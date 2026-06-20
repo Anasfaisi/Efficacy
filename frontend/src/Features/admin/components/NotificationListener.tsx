@@ -145,7 +145,7 @@ export const NotificationListener: React.FC = () => {
         return () => {
             offNotificationEvents();
         };
-    }, [currentUser?.id, dispatch, navigate]);
+    }, [currentUser, dispatch, navigate]);
 
     return null;
 };

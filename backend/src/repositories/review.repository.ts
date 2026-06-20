@@ -37,7 +37,6 @@ export class ReviewRepository
                 },
             },
         ]);
-        console.log(stats, 'stats from reveiw repo');
         if (stats.length > 0) {
             return {
                 averageRating: Math.round(stats[0].averageRating * 10) / 10,

@@ -2,8 +2,7 @@ import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import morgan from 'morgan';
 
-const { combine, timestamp, json, printf, colorize, align, errors } =
-    winston.format;
+const { combine, timestamp, printf, colorize, align, errors } = winston.format;
 
 const consoleFormat = combine(
     errors({ stack: true }),
@@ -19,7 +18,11 @@ const consoleFormat = combine(
 const fileFormat = combine(
     errors({ stack: true }),
     timestamp({ format: 'YYYY-MM-DD hh:mm:ss.SSS A' }),
-    json()
+    align(),
+    printf((info) => {
+        const stack = info.stack ? `\n${info.stack}` : '';
+        return `[${info.timestamp}] ${info.level}: ${info.message} ${stack}`;
+    })
 );
 
 export const logger = winston.createLogger({

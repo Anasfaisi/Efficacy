@@ -9,7 +9,6 @@ import { IUserBadgeRepository } from '@/repositories/Gamification/interfaces/IUs
 import { ISocketService } from '../Interfaces/ISocket.service';
 import { BadgeEntity } from '@/entity/badge.entity';
 import { ErrorMessages } from '@/types/response-messages.types';
-import { logger } from '@/utils/logMiddlewares';
 
 @injectable()
 export class BadgeGamificationService implements IBadgeGamificationService {

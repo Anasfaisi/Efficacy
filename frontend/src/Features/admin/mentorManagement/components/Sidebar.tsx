@@ -43,7 +43,6 @@ export default function Sidebar() {
             label: 'Badge Engine',
             icon: Icons.Award,
         },
-
     ];
 
     return (

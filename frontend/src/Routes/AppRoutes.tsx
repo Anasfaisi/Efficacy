@@ -17,6 +17,7 @@ import { MentorForgotResetPassword } from '@/Features/mentors/pages/auth/MentorF
 import { ToastContainer } from 'react-toastify';
 import NotFound from '@/Features/common/pages/NotFound';
 import VideoCallPage from '@/Features/common/pages/VideoCallPage';
+import type { Role } from '@/types/auth';
 
 const ProtectedRoute: React.FC<{
     role: 'admin' | 'user' | 'mentor' | ('admin' | 'user' | 'mentor')[];
@@ -32,7 +33,7 @@ const ProtectedRoute: React.FC<{
         redirectTo = '/mentor/login';
 
     return currentUser?.role &&
-        allowedRoles.includes(currentUser.role as any) ? (
+        allowedRoles.includes(currentUser.role as Role) ? (
         <>{children}</>
     ) : (
         <Navigate to={redirectTo} replace />

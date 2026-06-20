@@ -1,11 +1,11 @@
-import PlanTable from "../components/PlanTable";
+import PlanTable from '../components/PlanTable';
 
 const SubscriptionPlanManagement = () => {
-  return (
-    <div>
-        <PlanTable/>
-    </div>
-  )
-}
+    return (
+        <div>
+            <PlanTable />
+        </div>
+    );
+};
 
-export default SubscriptionPlanManagement
+export default SubscriptionPlanManagement;

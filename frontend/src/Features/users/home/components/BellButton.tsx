@@ -7,7 +7,7 @@ import {
     markAllNotificationsAsRead,
     markNotificationAsRead,
 } from '@/Services/user.api';
-
+import type { Notification } from '@/Features/admin/types';
 const BellButton: React.FC = () => {
     const { notifications, unreadCount } = useAppSelector(
         (state) => state.notification
@@ -50,7 +50,7 @@ const BellButton: React.FC = () => {
         }
     };
 
-    const handleNotificationClick = (notif: any) => {
+    const handleNotificationClick = (notif: Notification) => {
         if (!notif.isRead) {
             handleMarkAsRead(notif._id);
         }

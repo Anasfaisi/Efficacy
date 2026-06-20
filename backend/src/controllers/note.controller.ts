@@ -9,12 +9,6 @@ import {
     CommonMessages,
 } from '@/types/response-messages.types';
 
-interface AuthenticatedRequest extends Request {
-    user?: {
-        id: string;
-    };
-}
-
 @injectable()
 export class NoteController {
     constructor(

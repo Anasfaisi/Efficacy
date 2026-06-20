@@ -41,7 +41,6 @@ export interface BookingResponseDto {
     cancelReason?: string;
     actualStartTime?: Date;
     actualEndTime?: Date;
-    sessionMinutes?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

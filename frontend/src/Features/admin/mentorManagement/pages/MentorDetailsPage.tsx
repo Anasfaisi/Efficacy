@@ -360,8 +360,8 @@
 //                             <Calendar size={20} className="text-green-500" />
 //                             Availability
 //                         </h2>
-//                         {/* Note: availableDays comes as string or array depending on mapping. 
-//                  Auth Mentor interface says string, but often it's stored as array. 
+//                         {/* Note: availableDays comes as string or array depending on mapping.
+//                  Auth Mentor interface says string, but often it's stored as array.
 //                  We will robustly handle it.
 //              */}
 //                         <div className="space-y-6">

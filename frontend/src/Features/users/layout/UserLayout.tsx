@@ -1,6 +1,3 @@
-import Sidebar from '../home/layouts/Sidebar';
-import Navbar from '../home/layouts/Navbar';
-
 // import { Outlet } from 'react-router-dom';
 // export const UsersLayout = () => {
 //     return (

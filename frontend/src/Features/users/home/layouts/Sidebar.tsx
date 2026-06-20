@@ -88,11 +88,11 @@ const Sidebar = () => {
             color: '#FFC107',
         },
         {
-            icon:<CreditCard size={20} />,
+            icon: <CreditCard size={20} />,
             label: 'Subscription',
             to: '/subscription',
-            color: '#FFC107'
-        }
+            color: '#FFC107',
+        },
     ];
 
     const [collapsed, setCollapsed] = useState(false);
@@ -155,7 +155,11 @@ const Sidebar = () => {
                             collapsed={collapsed}
                             onClick={
                                 item.subItems
-                                    ? () => toggleExpand(item.label,item.subItems[0].to)
+                                    ? () =>
+                                          toggleExpand(
+                                              item.label,
+                                              item.subItems[0].to
+                                          )
                                     : undefined
                             }
                             active={

@@ -11,7 +11,7 @@ import {
 import type { IPlannerTask } from '@/Features/users/planner/types';
 import { Priority } from '@/Features/users/planner/types';
 import { cn } from '@/lib/utils';
-import { format, differenceInHours,differenceInMinutes } from 'date-fns';
+import { format, differenceInMinutes } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useTime } from '../context/TimeContext';
 
@@ -28,7 +28,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     onEdit,
     onDelete,
 }) => {
-    const {currentTime} = useTime();
+    const { currentTime } = useTime();
     const getPriorityStyles = (priority: Priority) => {
         switch (priority) {
             case Priority.HIGH:
@@ -55,16 +55,16 @@ const TaskItem: React.FC<TaskItemProps> = ({
         }
     };
 
-    const duration = differenceInMinutes(
+    const duration = differenceInMinutes(new Date(task.endDate), currentTime);
+    const totalestimatedtime = differenceInMinutes(
         new Date(task.endDate),
-        currentTime
+        new Date(task.startDate)
     );
-    const totalestimatedtime = differenceInMinutes(new Date(task.endDate), new Date(task.startDate))
-    const deadline = Math.floor(duration/ totalestimatedtime *100)
-    console.log(duration,"duration from the taskItem")
-    console.log(totalestimatedtime,"totalestimatedtime from the taskItem")
-    console.log(deadline,"deadline from the taskItem")
-    console.log(deadline+"%","deadline from the taskItem")
+    const deadline = Math.floor((duration / totalestimatedtime) * 100);
+    console.log(duration, 'duration from the taskItem');
+    console.log(totalestimatedtime, 'totalestimatedtime from the taskItem');
+    console.log(deadline, 'deadline from the taskItem');
+    console.log(deadline + '%', 'deadline from the taskItem');
 
     return (
         <div
@@ -135,14 +135,20 @@ const TaskItem: React.FC<TaskItemProps> = ({
                                 `${duration}m`
                             )
                         ) : (
-                            "Done"
+                            'Done'
                         )}
                     </span>
                 </div>
                 <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                     <div
                         className="h-full bg-primary rounded-full transition-all duration-500"
-                        style={{ width: task.completed ? '100%' : (!task.completed? '0%' : deadline+ '%') }}
+                        style={{
+                            width: task.completed
+                                ? '100%'
+                                : !task.completed
+                                  ? '0%'
+                                  : deadline + '%',
+                        }}
                     />
                 </div>
             </div>

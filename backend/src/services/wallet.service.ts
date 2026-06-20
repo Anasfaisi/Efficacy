@@ -8,7 +8,7 @@ import {
     TransactionType,
     TransactionStatus,
 } from '@/models/wallet.model';
-import { ObjectId, Types } from 'mongoose';
+import { ObjectId } from 'mongoose';
 import { ErrorMessages, WalletMessages } from '@/types/response-messages.types';
 import { createStripeConnectReqDto } from '@/dto/wallet-request.dto';
 import Stripe from 'stripe';

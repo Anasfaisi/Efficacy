@@ -18,9 +18,10 @@ import { chatApi } from '@/Services/chat.api';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentConversation } from '@/redux/slices/chatSlice';
 import CancelMentorshipModal from '../components/CancelMentorshipModal';
+import type { Mentorshiptype } from '@/Features/users/planner/types';
 
 const MyMentorshipsPage: React.FC = () => {
-    const [mentorships, setMentorships] = useState<any[]>([]);
+    const [mentorships, setMentorships] = useState<Mentorshiptype[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
@@ -56,7 +57,6 @@ const MyMentorshipsPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await mentorshipApi.getUserRequests();
-                console.log(data, 'my mentorshp');
                 const sortedData = Array.isArray(data) ? data.reverse() : [];
                 setMentorships(sortedData);
             } catch (error) {
@@ -89,9 +89,7 @@ const MyMentorshipsPage: React.FC = () => {
                 MentorshipStatus.PAYMENT_PENDING,
             ].includes(m.status);
         if (filter === 'Active')
-            return [
-                MentorshipStatus.ACTIVE,
-            ].includes(m.status);
+            return [MentorshipStatus.ACTIVE].includes(m.status);
         if (filter === 'Rejected')
             return [
                 MentorshipStatus.REJECTED,

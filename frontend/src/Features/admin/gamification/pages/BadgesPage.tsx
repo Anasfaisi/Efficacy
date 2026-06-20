@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { badgeApi } from '@/Services/Gamification/badge.api';
-import { adminGamificationApi } from '@/Services/Gamification/adminGamification.api';
 import BadgePreview from '../components/BadgePreview';
 import BadgeCard from '../components/BadgeCard';
 import {
@@ -8,8 +7,6 @@ import {
     Search,
     ChevronLeft,
     ChevronRight,
-    LayoutGrid,
-    Filter,
     Settings2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -75,13 +72,13 @@ export default function AdminBadgesPage() {
         [limit]
     );
 
-    const loadInitialData = async () => {
+    const loadInitialData = useCallback(async () => {
         await fetchBadges(1);
-    };
+    }, [fetchBadges]);
 
     useEffect(() => {
         loadInitialData();
-    }, []);
+    }, [loadInitialData]);
 
     useEffect(() => {
         if (currentPage > 1) {
@@ -89,7 +86,7 @@ export default function AdminBadgesPage() {
         } else if (currentPage === 1 && badges.length > 0) {
             fetchBadges(1);
         }
-    }, [currentPage]);
+    }, [currentPage, fetchBadges, badges.length]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -134,7 +131,6 @@ export default function AdminBadgesPage() {
                 !currentStatus
             );
             if (result.status) {
-        
                 setBadges((prev) =>
                     prev.map((badge) =>
                         badge.id == badgeId ? result.badge : badge
@@ -142,7 +138,7 @@ export default function AdminBadgesPage() {
                 );
                 toast.success(BadgeMessages.BadgeUpdated);
             }
-        } catch (error) {
+        } catch {
             toast.error(BadgeMessages.BadgeNotUpdated);
         }
     };
@@ -201,7 +197,11 @@ export default function AdminBadgesPage() {
                     ].map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() =>
+                                setActiveTab(
+                                    tab.id as 'all' | 'active' | 'inactive'
+                                )
+                            }
                             className={`px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                                 activeTab === tab.id
                                     ? 'bg-white text-blue-600 shadow-md shadow-blue-500/5'

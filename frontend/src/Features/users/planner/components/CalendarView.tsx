@@ -52,12 +52,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 start = startOfWeek(currentDate);
                 end = endOfWeek(currentDate);
                 break;
-            case 'month':
+            case 'month': {
                 const monthStart = startOfMonth(currentDate);
                 const monthEnd = endOfMonth(currentDate);
                 start = startOfWeek(monthStart);
                 end = endOfWeek(monthEnd);
                 break;
+            }
         }
 
         return eachDayOfInterval({ start, end });

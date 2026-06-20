@@ -109,7 +109,6 @@ export const mentorFormSchema = z
             .string()
             .url('Must be a valid video URL (YouTube Unlisted/Drive)'),
 
-
         availability: z
             .record(z.string(), z.array(z.string()))
             .optional()
@@ -121,9 +120,11 @@ export const mentorFormSchema = z
                     );
                     return activeDays.length >= 3;
                 },
-                { message: 'Select at least 3 days with at least one time slot each' }
+                {
+                    message:
+                        'Select at least 3 days with at least one time slot each',
+                }
             ),
-
 
         mentorType: z.enum(['Academic', 'Industry']),
 
@@ -141,10 +142,15 @@ export const mentorFormSchema = z
         guidanceAreas: z.array(z.string()).optional(),
         customGuidance: z.string().optional(),
         experienceSummary: z.string().optional(),
-        monthlyCharge: z.coerce
-            .number()
-            .min(1500, 'Minimum charge is 1500')
-            .max(2000, 'Maximum charge is 2000 during initial phase'),
+        monthlyCharge: z
+            .union([z.string(), z.number()])
+            .transform((v) => Number(v))
+            .pipe(
+                z
+                    .number()
+                    .min(1500, 'Minimum charge is 1500')
+                    .max(2000, 'Maximum charge is 2000 during initial phase')
+            ),
     })
     .superRefine((data, ctx) => {
         if (data.mentorType === 'Academic') {
@@ -241,10 +247,15 @@ export const mentorProfileUpdateSchema = z
             .url('Invalid Website URL')
             .optional()
             .or(z.literal('')),
-        monthlyCharge: z.coerce
-            .number()
-            .min(1500, 'Minimum charge is 1500')
-            .max(2000, 'Maximum charge is 2000')
+        monthlyCharge: z
+            .union([z.string(), z.number()])
+            .transform((v) => Number(v))
+            .pipe(
+                z
+                    .number()
+                    .min(1500, 'Minimum charge is 1500')
+                    .max(2000, 'Maximum charge is 2000')
+            )
             .optional(),
         currentPassword: z.string().optional(),
         newPassword: z

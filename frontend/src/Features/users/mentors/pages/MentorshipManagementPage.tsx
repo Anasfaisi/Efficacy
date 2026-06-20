@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { mentorshipApi } from '@/Services/mentorship.api';
 import type { Mentorship } from '@/types/mentorship';
 import { MentorshipStatus } from '@/types/mentorship';
@@ -36,7 +36,7 @@ import {
 } from '@/Services/socket/socketService';
 import { useAppSelector } from '@/redux/hooks';
 import type { Mentor } from '@/types/auth';
-import { isBookingPast, canReschedule } from '@/utils/timeUtils';
+import { isBookingPast } from '@/utils/timeUtils';
 import { BookingStatus } from '@/types/booking';
 
 const MentorshipManagementPage: React.FC = () => {
@@ -53,10 +53,12 @@ const MentorshipManagementPage: React.FC = () => {
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
-    const [mentorBookedSlots, setMentorBookedSlots] = useState<{ date: string; slot: string }[]>([]);
+    const [mentorBookedSlots, setMentorBookedSlots] = useState<
+        { date: string; slot: string }[]
+    >([]);
 
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
-    const [rescheduleData, setRescheduleData] = useState<{
+    const [rescheduleData] = useState<{
         id: string;
         date: string;
         slot: string;
@@ -65,13 +67,12 @@ const MentorshipManagementPage: React.FC = () => {
     const [nextSession, setNextSession] = useState<Booking | null>(null);
     const [isSessionActive, setIsSessionActive] = useState(false);
 
-    const [selectedBookingForReview, setSelectedBookingForReview] =
-        useState<Booking | null>(null);
+    const [selectedBookingForReview] = useState<Booking | null>(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!id) return;
         const data = await requestWrapper(mentorshipApi.getMentorshipById(id));
         if (data) {
@@ -125,7 +126,7 @@ const MentorshipManagementPage: React.FC = () => {
             }
         }
         setLoading(false);
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchData();
@@ -137,16 +138,14 @@ const MentorshipManagementPage: React.FC = () => {
                     'isMentor,isSessionActive'
                 );
                 setIsSessionActive(true);
-                toast.success(
-                    MentorshipMessages.MENTOR_STARTED_SESSION
-                );
+                toast.success(MentorshipMessages.MENTOR_STARTED_SESSION);
             }
         });
 
         return () => {
             offVideoEvents();
         };
-    }, [id, isMentor]);
+    }, [id, isMentor, fetchData, isSessionActive]);
 
     const handleJoinSession = () => {
         console.log('sdfkjdsfjkdj');
@@ -193,7 +192,7 @@ const MentorshipManagementPage: React.FC = () => {
     };
 
     const handleSelectSlot = (date: Date, slot: string) => {
-        console.log(date,slot)
+        console.log(date, slot);
         setSelectedDate(date);
         setSelectedSlot(slot);
         setIsBookingModalOpen(true);
@@ -243,19 +242,19 @@ const MentorshipManagementPage: React.FC = () => {
         if (data) fetchData();
     };
 
-    const handleRequestReschedule = (bookingId: string) => {
-        const booking = existingBookings.find((b) => b.id === bookingId);
-        if (booking) {
-            setRescheduleData({
-                id: bookingId,
-                date: booking.bookingDate
-                    ? format(new Date(booking.bookingDate), 'MMM do, yyyy')
-                    : 'N/A',
-                slot: booking.slot,
-            });
-            setIsRescheduleModalOpen(true);
-        }
-    };
+    // const handleRequestReschedule = (bookingId: string) => {
+    //     const booking = existingBookings.find((b) => b.id === bookingId);
+    //     if (booking) {
+    //         setRescheduleData({
+    //             id: bookingId,
+    //             date: booking.bookingDate
+    //                 ? format(new Date(booking.bookingDate), 'MMM do, yyyy')
+    //                 : 'N/A',
+    //             slot: booking.slot,
+    //         });
+    //         setIsRescheduleModalOpen(true);
+    //     }
+    // };
 
     const confirmReschedule = async () => {
         if (!rescheduleData) throw new Error('No reschedule data');
@@ -270,18 +269,18 @@ const MentorshipManagementPage: React.FC = () => {
         fetchData();
     };
 
-    const handleRespondToReschedule = async (
-        bookingId: string,
-        approve: boolean
-    ) => {
-        const data = await requestWrapper(
-            bookingApi.respondToReschedule(bookingId, approve),
-            approve
-                ? MentorshipMessages.RESCHEDULE_ACCEPTED
-                : MentorshipMessages.RESCHEDULE_DECLINED
-        );
-        if (data) fetchData();
-    };
+    // const handleRespondToReschedule = async (
+    //     bookingId: string,
+    //     approve: boolean
+    // ) => {
+    //     const data = await requestWrapper(
+    //         bookingApi.respondToReschedule(bookingId, approve),
+    //         approve
+    //             ? MentorshipMessages.RESCHEDULE_ACCEPTED
+    //             : MentorshipMessages.RESCHEDULE_DECLINED
+    //     );
+    //     if (data) fetchData();
+    // };
 
     const handleCancelBooking = (bookingId: string) => {
         toast.custom(
@@ -342,8 +341,8 @@ const MentorshipManagementPage: React.FC = () => {
             await reviewApi.submitReview({
                 bookingId: selectedBookingForReview.id,
                 mentorId:
-                    (mentorData as any)._id ||
-                    (mentorData as any).id ||
+                    (mentorData as Mentor)._id ||
+                    (mentorData as Mentor).id ||
                     String(mentorData),
                 userId: currentUser?.id || '',
                 rating,
@@ -351,10 +350,12 @@ const MentorshipManagementPage: React.FC = () => {
             });
             setIsReviewModalOpen(false);
             fetchData();
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message || MentorshipMessages.REVIEW_ERROR_FALLBACK
-            );
+        } catch (error) {
+            console.error('Failed to submit the review:', error);
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to submit the review';
+            toast.error(errorMessage);
         }
     };
 
@@ -426,7 +427,9 @@ const MentorshipManagementPage: React.FC = () => {
                                 {mentorship.mentorSuggestedStartDate && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
                                         <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
-                                            {MentorshipMessages.REJECTED_REAPPLY_LABEL}
+                                            {
+                                                MentorshipMessages.REJECTED_REAPPLY_LABEL
+                                            }
                                         </h3>
                                         <p className="text-[#7F00FF] font-bold">
                                             {new Date(
@@ -602,7 +605,8 @@ const MentorshipManagementPage: React.FC = () => {
                                             </h4>
                                             <p className="text-xs text-[#7F00FF] font-semibold">
                                                 {(mentorship.mentorId as Mentor)
-                                                    ?.expertise || MentorshipMessages.MENTOR_DEFAULT_EXPERTISE}
+                                                    ?.expertise ||
+                                                    MentorshipMessages.MENTOR_DEFAULT_EXPERTISE}
                                             </p>
                                         </div>
                                     </div>
@@ -644,7 +648,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                         size={16}
                                                         className="group-hover:scale-110 transition-transform"
                                                     />{' '}
-                                                    {MentorshipMessages.BTN_CANCEL}
+                                                    {
+                                                        MentorshipMessages.BTN_CANCEL
+                                                    }
                                                 </button>
                                             )}
                                     </div>
@@ -654,10 +660,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
                                         <div>
                                             <h2 className="text-xl font-bold text-gray-900 mb-1">
-                                                {MentorshipMessages.SESSION_USAGE_TITLE}
+                                                {
+                                                    MentorshipMessages.SESSION_USAGE_TITLE
+                                                }
                                             </h2>
                                             <p className="text-gray-500 text-sm">
-                                                {MentorshipMessages.SESSION_USAGE_SUBTITLE}
+                                                {
+                                                    MentorshipMessages.SESSION_USAGE_SUBTITLE
+                                                }
                                             </p>
                                         </div>
                                         <div className="flex gap-4">
@@ -666,7 +676,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {mentorship.totalSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    {MentorshipMessages.LABEL_TOTAL}
+                                                    {
+                                                        MentorshipMessages.LABEL_TOTAL
+                                                    }
                                                 </p>
                                             </div>
                                             <div className="text-center">
@@ -674,7 +686,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {mentorship.usedSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    {MentorshipMessages.LABEL_USED}
+                                                    {
+                                                        MentorshipMessages.LABEL_USED
+                                                    }
                                                 </p>
                                             </div>
                                             <div className="text-center">
@@ -682,7 +696,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                     {remainingSessions}
                                                 </p>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    {MentorshipMessages.LABEL_LEFT}
+                                                    {
+                                                        MentorshipMessages.LABEL_LEFT
+                                                    }
                                                 </p>
                                             </div>
                                         </div>
@@ -690,14 +706,20 @@ const MentorshipManagementPage: React.FC = () => {
 
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center text-xs font-bold text-gray-400 uppercase">
-                                            <span>{MentorshipMessages.LABEL_PROGRESS}</span>
+                                            <span>
+                                                {
+                                                    MentorshipMessages.LABEL_PROGRESS
+                                                }
+                                            </span>
                                             <span>
                                                 {Math.round(
                                                     (mentorship.usedSessions /
                                                         mentorship.totalSessions) *
                                                         100
                                                 )}
-                                                {MentorshipMessages.LABEL_PERCENT_COMPLETE}
+                                                {
+                                                    MentorshipMessages.LABEL_PERCENT_COMPLETE
+                                                }
                                             </span>
                                         </div>
                                         <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden flex">
@@ -725,7 +747,9 @@ const MentorshipManagementPage: React.FC = () => {
                                             {MentorshipMessages.ACCEPTED_BODY}
                                             {mentorship.mentorSuggestedStartDate && (
                                                 <span className="block mt-2 font-medium text-[#7F00FF]">
-                                                    {MentorshipMessages.ACCEPTED_SUGGESTED_DATE_PREFIX}{' '}
+                                                    {
+                                                        MentorshipMessages.ACCEPTED_SUGGESTED_DATE_PREFIX
+                                                    }{' '}
                                                     {new Date(
                                                         mentorship.mentorSuggestedStartDate
                                                     ).toLocaleDateString()}
@@ -740,7 +764,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                 disabled={isProcessing}
                                                 className="flex-1 py-3 bg-[#7F00FF] text-white font-black rounded-xl hover:bg-[#6c00db] transition-colors disabled:opacity-50"
                                             >
-                                                {MentorshipMessages.BTN_CONFIRM_PAY}
+                                                {
+                                                    MentorshipMessages.BTN_CONFIRM_PAY
+                                                }
                                             </button>
                                             <button
                                                 onClick={() =>
@@ -759,14 +785,20 @@ const MentorshipManagementPage: React.FC = () => {
                                     MentorshipStatus.PAYMENT_PENDING && (
                                     <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50">
                                         <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                            {MentorshipMessages.PAYMENT_REQUIRED_TITLE}
+                                            {
+                                                MentorshipMessages.PAYMENT_REQUIRED_TITLE
+                                            }
                                         </h3>
                                         <p className="text-gray-600 text-sm mb-4">
-                                            {MentorshipMessages.PAYMENT_REQUIRED_BODY}
+                                            {
+                                                MentorshipMessages.PAYMENT_REQUIRED_BODY
+                                            }
                                         </p>
                                         <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                                             <span className="text-sm font-medium text-gray-600">
-                                                {MentorshipMessages.PAYMENT_TOTAL_AMOUNT}
+                                                {
+                                                    MentorshipMessages.PAYMENT_TOTAL_AMOUNT
+                                                }
                                             </span>
                                             <span className="text-xl font-black text-gray-900">
                                                 ₹{mentorship.amount}
@@ -795,7 +827,9 @@ const MentorshipManagementPage: React.FC = () => {
                                                         size={20}
                                                         className="text-[#7F00FF]"
                                                     />
-                                                    {MentorshipMessages.SCHEDULE_SESSION_TITLE}
+                                                    {
+                                                        MentorshipMessages.SCHEDULE_SESSION_TITLE
+                                                    }
                                                 </h3>
                                                 {mentorship.mentorId && (
                                                     <BookingCalendar
@@ -805,13 +839,17 @@ const MentorshipManagementPage: React.FC = () => {
                                                         onSelectSlot={
                                                             handleSelectSlot
                                                         }
-                                                        bookedSlots={mentorBookedSlots}
+                                                        bookedSlots={
+                                                            mentorBookedSlots
+                                                        }
                                                     />
                                                 )}
                                                 <div className="mt-4 flex items-center gap-2 text-xs text-gray-400 font-medium px-2">
                                                     <Info size={14} />
                                                     <span>
-                                                        {MentorshipMessages.SESSIONS_REMAINING_HINT(remainingSessions)}
+                                                        {MentorshipMessages.SESSIONS_REMAINING_HINT(
+                                                            remainingSessions
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
@@ -838,10 +876,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     mentorship.usedSessions >= 7 && (
                                         <div className="bg-green-50 rounded-3xl p-6 border border-green-100">
                                             <h3 className="text-green-800 font-bold mb-2">
-                                                {MentorshipMessages.COMPLETION_TITLE}
+                                                {
+                                                    MentorshipMessages.COMPLETION_TITLE
+                                                }
                                             </h3>
                                             <p className="text-sm text-green-700 mb-4 leading-relaxed">
-                                                {MentorshipMessages.COMPLETION_BODY}
+                                                {
+                                                    MentorshipMessages.COMPLETION_BODY
+                                                }
                                             </p>
                                             <button
                                                 onClick={handleComplete}
@@ -860,7 +902,9 @@ const MentorshipManagementPage: React.FC = () => {
                                 <div className="mt-8 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
                                     <div className="p-6 border-b border-gray-50 flex items-center justify-between">
                                         <h3 className="text-lg font-bold text-gray-900">
-                                            {MentorshipMessages.RECENT_SESSIONS_TITLE}
+                                            {
+                                                MentorshipMessages.RECENT_SESSIONS_TITLE
+                                            }
                                         </h3>
                                     </div>
                                     <div className="divide-y divide-gray-50 max-h-[600px] overflow-y-auto custom-scrollbar">
@@ -871,10 +915,14 @@ const MentorshipManagementPage: React.FC = () => {
                                                     className="mx-auto text-gray-200 mb-4"
                                                 />
                                                 <p className="text-gray-500 font-medium">
-                                                    {MentorshipMessages.NO_SESSIONS_TITLE}
+                                                    {
+                                                        MentorshipMessages.NO_SESSIONS_TITLE
+                                                    }
                                                 </p>
                                                 <p className="text-gray-400 text-xs mt-1">
-                                                    {MentorshipMessages.NO_SESSIONS_HINT}
+                                                    {
+                                                        MentorshipMessages.NO_SESSIONS_HINT
+                                                    }
                                                 </p>
                                             </div>
                                         ) : (
@@ -923,7 +971,10 @@ const MentorshipManagementPage: React.FC = () => {
                                                                     <div>
                                                                         <p className="font-bold text-gray-900">
                                                                             {booking.topic ||
-                                                                                MentorshipMessages.SESSION_FALLBACK_TOPIC(idx + 1)}
+                                                                                MentorshipMessages.SESSION_FALLBACK_TOPIC(
+                                                                                    idx +
+                                                                                        1
+                                                                                )}
                                                                         </p>
                                                                         <div className="flex items-center gap-2 text-xs text-gray-500">
                                                                             <Clock
@@ -1006,7 +1057,8 @@ const MentorshipManagementPage: React.FC = () => {
                     onClose={() => setIsReviewModalOpen(false)}
                     onSubmit={handleReviewSubmit}
                     mentorName={
-                        (mentorship?.mentorId as Mentor)?.name || MentorshipMessages.MENTOR_DEFAULT_NAME
+                        (mentorship?.mentorId as Mentor)?.name ||
+                        MentorshipMessages.MENTOR_DEFAULT_NAME
                     }
                     canSkip={true}
                 />
@@ -1051,10 +1103,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            {MentorshipMessages.POLICY_PERSONAL_GUIDANCE_TITLE}
+                                            {
+                                                MentorshipMessages.POLICY_PERSONAL_GUIDANCE_TITLE
+                                            }
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {MentorshipMessages.POLICY_PERSONAL_GUIDANCE_BODY}
+                                            {
+                                                MentorshipMessages.POLICY_PERSONAL_GUIDANCE_BODY
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -1064,10 +1120,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            {MentorshipMessages.POLICY_SCHEDULE_TITLE}
+                                            {
+                                                MentorshipMessages.POLICY_SCHEDULE_TITLE
+                                            }
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {MentorshipMessages.POLICY_SCHEDULE_BODY(mentorship.totalSessions)}
+                                            {MentorshipMessages.POLICY_SCHEDULE_BODY(
+                                                mentorship.totalSessions
+                                            )}
                                         </p>
                                     </div>
                                 </div>
@@ -1077,10 +1137,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            {MentorshipMessages.POLICY_COMMUNICATION_TITLE}
+                                            {
+                                                MentorshipMessages.POLICY_COMMUNICATION_TITLE
+                                            }
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {MentorshipMessages.POLICY_COMMUNICATION_BODY}
+                                            {
+                                                MentorshipMessages.POLICY_COMMUNICATION_BODY
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -1090,10 +1154,14 @@ const MentorshipManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900">
-                                            {MentorshipMessages.POLICY_RESCHEDULE_TITLE}
+                                            {
+                                                MentorshipMessages.POLICY_RESCHEDULE_TITLE
+                                            }
                                         </p>
                                         <p className="text-xs text-gray-500 font-medium">
-                                            {MentorshipMessages.POLICY_RESCHEDULE_BODY}
+                                            {
+                                                MentorshipMessages.POLICY_RESCHEDULE_BODY
+                                            }
                                         </p>
                                     </div>
                                 </div>

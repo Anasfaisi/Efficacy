@@ -1,3 +1,4 @@
+import { Role } from '@/types/role.types';
 import { IValidationService } from './Interfaces/IValidation.service';
 import { ErrorMessages } from '@/types/response-messages.types';
 export class ValidationService implements IValidationService {
@@ -8,7 +9,7 @@ export class ValidationService implements IValidationService {
     }: {
         email: string;
         password: string;
-        role?: string;
+        role?: Role;
     }) {
         if (!email || !password) {
             throw new Error(ErrorMessages.EmailPasswordRequired);
@@ -18,6 +19,9 @@ export class ValidationService implements IValidationService {
         }
         if (password.length < 6) {
             throw new Error(ErrorMessages.PasswordComplexity);
+        }
+        if (role && role !== Role.User) {
+            throw new Error(ErrorMessages.AccessDenied);
         }
     }
 

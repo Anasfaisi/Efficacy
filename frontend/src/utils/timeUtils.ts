@@ -1,5 +1,4 @@
 export const splitTimeRange = (range: string): string[] => {
-
     const parts = range
         .toLowerCase()
         .split('-')
@@ -9,7 +8,7 @@ export const splitTimeRange = (range: string): string[] => {
         const match = timeStr.match(/(\d+)(?::(\d+))?\s*(am|pm)?/);
         if (!match) return null;
 
-        const [_, hours, mins, periodMatch] = match;
+        const [, hours, periodMatch] = match;
         let period = periodMatch;
         let h = parseInt(hours);
 
@@ -21,7 +20,7 @@ export const splitTimeRange = (range: string): string[] => {
         if (period === 'pm' && h < 12) h += 12;
         if (period === 'am' && h === 12) h = 0;
 
-        return h * 60 ;
+        return h * 60;
     };
 
     const formatTime = (totalMinutes: number) => {
@@ -67,7 +66,7 @@ export const isBookingPast = (bookingDate: string, slot: string): boolean => {
         const match = lastPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
         if (!match) return false;
 
-        const [_, hours, mins, period] = match;
+        const [, hours, mins, period] = match;
         let h = parseInt(hours);
         const m = parseInt(mins);
 
@@ -92,7 +91,7 @@ export const canReschedule = (bookingDate: string, slot: string): boolean => {
         const match = firstPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
         if (!match) return false;
 
-        const [_, hours, mins, period] = match;
+        const [, hours, mins, period] = match;
         let h = parseInt(hours);
         const m = parseInt(mins);
 

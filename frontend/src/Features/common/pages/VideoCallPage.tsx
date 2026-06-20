@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import type { Socket } from 'socket.io-client';
 import { useParams, useNavigate } from 'react-router-dom';
 import Peer from 'simple-peer';
 import {
@@ -23,6 +24,7 @@ import { bookingApi } from '@/Services/booking.api';
 import { toast } from 'react-toastify';
 import SessionCompletionModal from '../../users/mentors/components/SessionCompletionModal';
 import type { Booking } from '@/types/booking';
+import type { Mentor } from '@/types/auth';
 
 const VideoCallPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -46,7 +48,7 @@ const VideoCallPage: React.FC = () => {
     const myVideo = useRef<HTMLVideoElement>(null);
     const userVideo = useRef<HTMLVideoElement>(null);
     const connectionRef = useRef<Peer.Instance | null>(null);
-    const socketRef = useRef<any>(null);
+    const socketRef = useRef<Socket | null>(null);
 
     useEffect(() => {
         if (remoteStream && userVideo.current) {
@@ -186,7 +188,7 @@ const VideoCallPage: React.FC = () => {
                 connectionRef.current = null;
             }
         };
-    }, [roomId]);
+    }, [roomId, currentUserId, isMentor, navigate]);
 
     const callUser = (userSocketId: string) => {
         console.log(
@@ -215,26 +217,27 @@ const VideoCallPage: React.FC = () => {
             stream: streamRef.current,
         });
 
-        peer.on('signal', (data: any) => {
+        peer.on('signal', (data: Peer.SignalData) => {
             console.log(
                 "LOG: [Mentor] Peer generated 'signal' (Offer). Sending to User:",
                 userSocketId
             );
+            if (!socketRef.current) return;
             signalPeer({
                 to: userSocketId,
                 signal: data,
-                from: socketRef.current.id,
+                from: socketRef.current.id as string,
             });
         });
 
-        peer.on('stream', (currentRemoteStream: any) => {
+        peer.on('stream', (currentRemoteStream: MediaStream) => {
             console.log('LOG: [Mentor] Received remote stream!');
             setRemoteStream(currentRemoteStream);
             setCallAccepted(true);
             setConnectionStatus('Connected');
         });
 
-        peer.on('error', (err: any) => {
+        peer.on('error', (err: Error) => {
             console.error('Peer error:', err);
             setConnectionStatus('Connection Failed');
         });
@@ -247,7 +250,7 @@ const VideoCallPage: React.FC = () => {
         connectionRef.current = peer;
     };
 
-    const answerCall = (signal: any, fromId: string) => {
+    const answerCall = (signal: Peer.SignalData, fromId: string) => {
         console.log(
             'LOG: [User] answerCall() called. checking streamRef...',
             streamRef.current
@@ -261,15 +264,16 @@ const VideoCallPage: React.FC = () => {
             stream: streamRef.current || undefined,
         });
 
-        peer.on('signal', (data: any) => {
+        peer.on('signal', (data: Peer.SignalData) => {
+            if (!socketRef.current) return;
             signalPeer({
                 to: fromId,
                 signal: data,
-                from: socketRef.current.id,
+                from: socketRef.current.id as string,
             });
         });
 
-        peer.on('stream', (currentRemoteStream: any) => {
+        peer.on('stream', (currentRemoteStream: MediaStream) => {
             console.log('LOG: [User] Received remote stream!');
             setRemoteStream(currentRemoteStream);
             setConnectionStatus('Connected');
@@ -454,7 +458,10 @@ const VideoCallPage: React.FC = () => {
                     navigate(isMentor ? '/mentor/dashboard' : '/home')
                 }
                 booking={booking}
-                mentorName={(booking?.mentorId as any)?.name || 'your mentor'}
+                mentorName={
+                    (booking?.mentorId as unknown as Mentor)?.name ||
+                    'your mentor'
+                }
             />
         </div>
     );

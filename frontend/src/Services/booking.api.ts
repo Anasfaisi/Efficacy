@@ -105,8 +105,12 @@ export const bookingApi = {
         return res.data;
     },
 
-    getMentorAvailability: async (mentorId: string): Promise<{ date: string; slot: string }[]> => {
-        const res = await api.get(BookingRoutes.GET_MENTOR_AVAILABILITY(mentorId));
+    getMentorAvailability: async (
+        mentorId: string
+    ): Promise<{ date: string; slot: string }[]> => {
+        const res = await api.get(
+            BookingRoutes.GET_MENTOR_AVAILABILITY(mentorId)
+        );
         return res.data;
     },
 };

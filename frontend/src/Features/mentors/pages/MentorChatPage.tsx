@@ -16,6 +16,7 @@ import {
     X,
 } from 'lucide-react';
 import type { Message } from '@/types/chat.types';
+import type { User } from '@/types/auth';
 
 const MentorChatPage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -203,10 +204,14 @@ const MentorChatPage: React.FC = () => {
                                 const otherUser =
                                     chat.participants.find(
                                         (p) =>
-                                            (p as any)._id !==
+                                            (p._id || p.id) !==
                                                 currentUser?.id &&
-                                            (p as any)._id !==
-                                                (currentUser as any)?._id
+                                            (p._id || p.id) !==
+                                                (
+                                                    currentUser as {
+                                                        _id?: string;
+                                                    }
+                                                )?._id
                                     ) || chat.participants[0];
 
                                 return (
@@ -281,11 +286,14 @@ const MentorChatPage: React.FC = () => {
                                         const otherUser =
                                             currentConversation.participants.find(
                                                 (p) =>
-                                                    (p as any)._id !==
+                                                    (p._id || p.id) !==
                                                         currentUser?.id &&
-                                                    (p as any)._id !==
-                                                        (currentUser as any)
-                                                            ?._id
+                                                    (p._id || p.id) !==
+                                                        (
+                                                            currentUser as {
+                                                                _id?: string;
+                                                            }
+                                                        )?._id
                                             );
                                         return (
                                             <>
@@ -309,7 +317,7 @@ const MentorChatPage: React.FC = () => {
                                         const isMe =
                                             msg.senderId === currentUser?.id ||
                                             msg.senderId ===
-                                                (currentUser as any)?._id;
+                                                (currentUser as User)?._id;
                                         return (
                                             <div
                                                 key={idx}

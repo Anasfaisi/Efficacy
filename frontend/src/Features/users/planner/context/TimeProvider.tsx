@@ -1,4 +1,3 @@
-import { interval } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { TimeContext } from './TimeContext';
 
@@ -7,15 +6,17 @@ const TimeProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setTime(new Date())
+            setTime(new Date());
         }, 60000);
-        console.log("hi")
+        console.log('hi');
         return () => clearInterval(interval);
     }, []);
 
-    return <TimeContext.Provider value={{currentTime:time}}>
-      {children}
-    </TimeContext.Provider>
- };
+    return (
+        <TimeContext.Provider value={{ currentTime: time }}>
+            {children}
+        </TimeContext.Provider>
+    );
+};
 
 export default TimeProvider;

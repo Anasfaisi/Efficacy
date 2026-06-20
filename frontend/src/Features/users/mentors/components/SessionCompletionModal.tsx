@@ -4,13 +4,14 @@ import { CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
 import ReviewModal from './ReviewModal';
 import { reviewApi } from '@/Services/review.api';
 import { bookingApi } from '@/Services/booking.api';
-import { BookingStatus } from '@/types/booking';
+import { BookingStatus, type Booking } from '@/types/booking';
 import { toast } from 'react-toastify';
+import type { Mentor } from '@/types/auth';
 
 interface SessionCompletionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    booking: any;
+    booking: Booking | null;
     mentorName: string;
 }
 
@@ -22,7 +23,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
 }) => {
     const [step, setStep] = useState<'confirm' | 'review'>('confirm');
 
-    const minutes = booking?.sessionMinutes || 0;
+    const minutes = booking?.duration || 0;
     const isCompletedByDefault =
         minutes >= 50 || booking?.status === BookingStatus.COMPLETED;
 
@@ -31,7 +32,7 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
             try {
                 if (booking?.status !== BookingStatus.COMPLETED) {
                     await bookingApi.updateStatus({
-                        bookingId: booking.id,
+                        bookingId: booking?.id as string,
                         status: BookingStatus.COMPLETED,
                     });
                 }
@@ -48,24 +49,25 @@ const SessionCompletionModal: React.FC<SessionCompletionModalProps> = ({
     const handleReviewSubmit = async (rating: number, comment: string) => {
         try {
             await reviewApi.submitReview({
-                bookingId: booking.id,
+                bookingId: booking?.id as string,
                 mentorId:
-                    booking.mentorId?.[0]?._id ||
-                    booking.mentorId?._id ||
-                    booking.mentorId,
-                userId: booking.userId,
+                    (booking?.mentorId?.[0] as unknown as Mentor)?.id ||
+                    (booking?.mentorId as unknown as Mentor)?.id ||
+                    (booking?.mentorId as string),
+                userId: booking?.userId as string,
                 rating,
                 comment,
             });
             onClose();
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message || 'Failed to submit review'
-            );
+        } catch (error: unknown) {
+            const errorMessage =
+                (error as { response?: { data?: { message?: string } } })
+                    ?.response?.data?.message || 'Failed to submit review';
+            toast.error(errorMessage);
         }
     };
 
-    if (!isOpen) return null;
+    if (!isOpen || !booking) return null;
 
     return (
         <>

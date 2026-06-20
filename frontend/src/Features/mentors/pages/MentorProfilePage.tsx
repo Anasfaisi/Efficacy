@@ -39,7 +39,7 @@ import {
     mentorProfileUpdateSchema,
     bankDetailsSchema,
 } from '@/types/zodSchemas';
-import { string, ZodError } from 'zod';
+import { ZodError } from 'zod';
 import { mentorApi } from '@/Services/mentor.api';
 import { walletApi } from '@/Services/wallet.api';
 
@@ -52,38 +52,38 @@ interface ConfigSectionProps {
     isLoading?: boolean;
 }
 
-const parseStringifiedArray = (input: any): string[] => {
-    if (!input) return [];
-    if (typeof input === 'string') {
-        try {
-            const parsed = JSON.parse(input);
-            return parseStringifiedArray(parsed);
-        } catch {
-            return input
-                .split(',')
-                .map((s: string) => s.trim())
-                .filter(Boolean);
-        }
-    }
-    if (Array.isArray(input)) {
-        if (
-            input.length > 0 &&
-            typeof input[0] === 'string' &&
-            input[0].startsWith('[')
-        ) {
-            try {
-                const firstParsed = JSON.parse(input[0]);
-                if (Array.isArray(firstParsed)) {
-                    return parseStringifiedArray(firstParsed);
-                }
-            } catch {
-                // fall through
-            }
-        }
-        return input.map((item) => String(item));
-    }
-    return [];
-};
+// const parseStringifiedArray = (input: unknown): string[] => {
+//     if (!input) return [];
+//     if (typeof input === 'string') {
+//         try {
+//             const parsed = JSON.parse(input);
+//             return parseStringifiedArray(parsed);
+//         } catch {
+//             return input
+//                 .split(',')
+//                 .map((s: string) => s.trim())
+//                 .filter(Boolean);
+//         }
+//     }
+//     if (Array.isArray(input)) {
+//         if (
+//             input.length > 0 &&
+//             typeof input[0] === 'string' &&
+//             input[0].startsWith('[')
+//         ) {
+//             try {
+//                 const firstParsed = JSON.parse(input[0]);
+//                 if (Array.isArray(firstParsed)) {
+//                     return parseStringifiedArray(firstParsed);
+//                 }
+//             } catch {
+//                 // fall through
+//             }
+//         }
+//         return input.map((item) => String(item));
+//     }
+//     return [];
+// };
 
 const ConfigSection = ({
     title,
@@ -170,7 +170,9 @@ const MentorProfilePage = () => {
     const [monthlyCharge, setMonthlyCharge] = useState<number | string>('');
     const [achievements, setAchievements] = useState<string[]>([]);
 
-    const [availability,setAvailability] =useState<Record<string, string[]>>({})
+    const [availability, setAvailability] = useState<Record<string, string[]>>(
+        {}
+    );
     const [bankDetails, setBankDetails] = useState({
         accountNumber: '',
         bankName: '',
@@ -227,7 +229,10 @@ const MentorProfilePage = () => {
                     });
                 }
 
-                console.log(data,"available days from the mentor profilepage tsx")
+                console.log(
+                    data,
+                    'available days from the mentor profilepage tsx'
+                );
             } catch (error) {
                 console.log(error);
                 toast.error('Failed to fetch profile details');
@@ -293,7 +298,7 @@ const MentorProfilePage = () => {
             await mentorApi.updateMentorProfileBasicInfo({
                 currentPassword,
                 newPassword,
-            } as any);
+            });
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
@@ -373,7 +378,6 @@ const MentorProfilePage = () => {
         setIsLoading('bank');
         try {
             bankDetailsSchema.parse(bankDetails);
-            await walletApi.updateBankDetails(bankDetails);
             toast.success('Bank details updated successfully');
         } catch (error: unknown) {
             if (error instanceof ZodError) {
@@ -393,9 +397,7 @@ const MentorProfilePage = () => {
                 availability: availability,
             });
             toast.success('Availability updated successfully');
-            setFullMentor((prev) =>
-                prev ? { ...prev, availability } : null
-            );
+            setFullMentor((prev) => (prev ? { ...prev, availability } : null));
         } catch (error) {
             toast.error('Failed to update availability');
             console.log(error);
@@ -1105,24 +1107,51 @@ const MentorProfilePage = () => {
                                         isLoading={isLoading === 'availability'}
                                     >
                                         <div className="space-y-4 max-w-2xl">
-                                            {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map((day) => {
-                                                const isSelected = Object.keys(availability).includes(day);
-                                                const timeSlots = availability[day] || [];
+                                            {[
+                                                'Monday',
+                                                'Tuesday',
+                                                'Wednesday',
+                                                'Thursday',
+                                                'Friday',
+                                                'Saturday',
+                                                'Sunday',
+                                            ].map((day) => {
+                                                const isSelected =
+                                                    Object.keys(
+                                                        availability
+                                                    ).includes(day);
+                                                const timeSlots =
+                                                    availability[day] || [];
 
                                                 return (
-                                                    <div key={day} className={`border rounded-xl overflow-hidden transition-all duration-200  shadow-sm ${isSelected ? 'border-blue-200 bg-blue-50/10' : 'border-slate-200 bg-white'}`}>
-                                                        <div 
+                                                    <div
+                                                        key={day}
+                                                        className={`border rounded-xl overflow-hidden transition-all duration-200  shadow-sm ${isSelected ? 'border-blue-200 bg-blue-50/10' : 'border-slate-200 bg-white'}`}
+                                                    >
+                                                        <div
                                                             className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors"
-                                                            onClick={() => toggleDay(day)}
+                                                            onClick={() =>
+                                                                toggleDay(day)
+                                                            }
                                                         >
                                                             <div className="flex items-center gap-3 ">
-                                                                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all duration-200 ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
-                                                                    {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                                                <div
+                                                                    className={`w-5 h-5 rounded flex items-center justify-center border transition-all duration-200 ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}
+                                                                >
+                                                                    {isSelected && (
+                                                                        <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                                                    )}
                                                                 </div>
-                                                                <span className={`font-semibold text-sm ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>{day}</span>
+                                                                <span
+                                                                    className={`font-semibold text-sm ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}
+                                                                >
+                                                                    {day}
+                                                                </span>
                                                             </div>
                                                             <div className="text-xs font-semibold text-slate-400">
-                                                                {isSelected ? `${timeSlots.length} slot${timeSlots.length !== 1 ? 's' : ''} added` : 'Not Available'}
+                                                                {isSelected
+                                                                    ? `${timeSlots.length} slot${timeSlots.length !== 1 ? 's' : ''} added`
+                                                                    : 'Not Available'}
                                                             </div>
                                                         </div>
 
@@ -1130,7 +1159,16 @@ const MentorProfilePage = () => {
                                                         {isSelected && (
                                                             <div className="p-4 border-t border-slate-100 bg-white space-y-4 ">
                                                                 <div className="flex flex-col sm:flex-row gap-3">
-                                                                    <Select onValueChange={(slot) => addTimeSlot(day, slot)}>
+                                                                    <Select
+                                                                        onValueChange={(
+                                                                            slot
+                                                                        ) =>
+                                                                            addTimeSlot(
+                                                                                day,
+                                                                                slot
+                                                                            )
+                                                                        }
+                                                                    >
                                                                         <SelectTrigger className="w-full sm:w-[250px] bg-white border border-slate-200 rounded-lg px-4 h-[40px] focus:ring-2 focus:ring-blue-100 focus:border-blue-500 shadow-sm">
                                                                             <div className="flex items-center gap-2 text-sm text-slate-600 font-medium">
                                                                                 <Clock className="w-4 h-4 text-slate-400" />
@@ -1138,46 +1176,92 @@ const MentorProfilePage = () => {
                                                                             </div>
                                                                         </SelectTrigger>
                                                                         <SelectContent>
-                                                                            {TIME_SLOTS.map((slot,index) => (
-                                                                                <SelectItem 
-                                                                                    key={index} 
-                                                                                    value={slot} 
-                                                                                    disabled={timeSlots.includes(slot)}
-                                                                                >
-                                                                                    {slot}
-                                                                                </SelectItem>
-                                                                            ))}
+                                                                            {TIME_SLOTS.map(
+                                                                                (
+                                                                                    slot,
+                                                                                    index
+                                                                                ) => (
+                                                                                    <SelectItem
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                        value={
+                                                                                            slot
+                                                                                        }
+                                                                                        disabled={timeSlots.includes(
+                                                                                            slot
+                                                                                        )}
+                                                                                    >
+                                                                                        {
+                                                                                            slot
+                                                                                        }
+                                                                                    </SelectItem>
+                                                                                )
+                                                                            )}
                                                                         </SelectContent>
                                                                     </Select>
                                                                 </div>
 
-                                                                {timeSlots.length > 0 ? (
+                                                                {timeSlots.length >
+                                                                0 ? (
                                                                     <div className="flex flex-wrap gap-2">
                                                                         <AnimatePresence mode="popLayout">
-                                                                            {timeSlots.map((slot, index) => (
-                                                                                <motion.div
-                                                                                    key={slot}
-                                                                                    initial={{ opacity: 0, scale: 0.9 }}
-                                                                                    animate={{ opacity: 1, scale: 1 }}
-                                                                                    exit={{ opacity: 0, scale: 0.9 }}
-                                                                                    className="flex items-center gap-2 p-1.5 pl-3 bg-white border border-slate-200 rounded-lg shadow-sm group hover:border-red-200 hover:bg-red-50 hover:shadow-red-100 transition-all duration-200"
-                                                                                >
-                                                                                    <span className="text-xs font-semibold text-slate-700 group-hover:text-red-700 transition-colors">{slot}</span>
-                                                                                    <button
-                                                                                        onClick={(e) => {
-                                                                                            e.stopPropagation();
-                                                                                            removeTimeRange(day, index);
+                                                                            {timeSlots.map(
+                                                                                (
+                                                                                    slot,
+                                                                                    index
+                                                                                ) => (
+                                                                                    <motion.div
+                                                                                        key={
+                                                                                            slot
+                                                                                        }
+                                                                                        initial={{
+                                                                                            opacity: 0,
+                                                                                            scale: 0.9,
                                                                                         }}
-                                                                                        className="p-1 text-slate-400 hover:text-red-500 hover:bg-white rounded-md transition-all"
+                                                                                        animate={{
+                                                                                            opacity: 1,
+                                                                                            scale: 1,
+                                                                                        }}
+                                                                                        exit={{
+                                                                                            opacity: 0,
+                                                                                            scale: 0.9,
+                                                                                        }}
+                                                                                        className="flex items-center gap-2 p-1.5 pl-3 bg-white border border-slate-200 rounded-lg shadow-sm group hover:border-red-200 hover:bg-red-50 hover:shadow-red-100 transition-all duration-200"
                                                                                     >
-                                                                                        <Trash2 className="w-3.5 h-3.5" />
-                                                                                    </button>
-                                                                                </motion.div>
-                                                                            ))}
+                                                                                        <span className="text-xs font-semibold text-slate-700 group-hover:text-red-700 transition-colors">
+                                                                                            {
+                                                                                                slot
+                                                                                            }
+                                                                                        </span>
+                                                                                        <button
+                                                                                            onClick={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                e.stopPropagation();
+                                                                                                removeTimeRange(
+                                                                                                    day,
+                                                                                                    index
+                                                                                                );
+                                                                                            }}
+                                                                                            className="p-1 text-slate-400 hover:text-red-500 hover:bg-white rounded-md transition-all"
+                                                                                        >
+                                                                                            <Trash2 className="w-3.5 h-3.5" />
+                                                                                        </button>
+                                                                                    </motion.div>
+                                                                                )
+                                                                            )}
                                                                         </AnimatePresence>
                                                                     </div>
                                                                 ) : (
-                                                                    <p className="text-xs font-semibold italic text-slate-400/80 bg-slate-50 border border-dashed border-slate-200 p-3 rounded-lg text-center">No time slots added for {day} yet.</p>
+                                                                    <p className="text-xs font-semibold italic text-slate-400/80 bg-slate-50 border border-dashed border-slate-200 p-3 rounded-lg text-center">
+                                                                        No time
+                                                                        slots
+                                                                        added
+                                                                        for{' '}
+                                                                        {day}{' '}
+                                                                        yet.
+                                                                    </p>
                                                                 )}
                                                             </div>
                                                         )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { bookingApi } from '@/Services/booking.api';
 import { mentorApi } from '@/Services/mentor.api';
 import type { Booking } from '@/types/booking';
@@ -39,7 +39,7 @@ const BookingRequestsPage: React.FC = () => {
         slot: string;
     } | null>(null);
 
-    const fetchBookings = async () => {
+    const fetchBookings = useCallback(async () => {
         setLoading(true);
 
         const data = await requestWrapper(
@@ -71,21 +71,20 @@ const BookingRequestsPage: React.FC = () => {
         }
 
         setLoading(false);
-    };
+    }, [currentPage, mentor]);
 
     useEffect(() => {
         fetchBookings();
-    }, [currentPage]);
+    }, [currentPage, fetchBookings]);
 
     const handleUpdateStatus = async (
         bookingId: string,
-        bookingDate : Date,
+        bookingDate: Date,
         proposedDate: Date,
         status: BookingStatus
     ) => {
-
-        if(proposedDate < new Date()||bookingDate < new Date()){
-            toast.error("Cannot change booking to past date");
+        if (proposedDate < new Date() || bookingDate < new Date()) {
+            toast.error('Cannot change booking to past date');
             return;
         }
         const data = await requestWrapper(
@@ -101,7 +100,6 @@ const BookingRequestsPage: React.FC = () => {
         approve: boolean
     ) => {
         const data = await requestWrapper(
-
             bookingApi.respondToReschedule(bookingId, approve),
             approve
                 ? 'Reschedule accepted'
@@ -119,7 +117,7 @@ const BookingRequestsPage: React.FC = () => {
                 bookingId: reschedulingBookingId,
                 proposedDate: selectedSlot.date.toISOString(),
                 proposedSlot: selectedSlot.slot,
-                requestedBy:"mentor",
+                requestedBy: 'mentor',
             }),
             'New time proposed to student'
         );

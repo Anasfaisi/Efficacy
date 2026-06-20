@@ -16,8 +16,13 @@ export interface Transaction {
 
 export interface WalletData {
     balance: number;
+    lifeTimeEarning: number;
+    mentorId: string;
     pendingBalance: number;
-    bankAccountDetails?: BankAccountDetails;
+    pendingWithdrawal: number;
+    stripeConnectAccountId: string;
+    stripeConnectOnboarded: boolean;
+    totalWithdrawn: number;
     transactions: Transaction[];
 }
 

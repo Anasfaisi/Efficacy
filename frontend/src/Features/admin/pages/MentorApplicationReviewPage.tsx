@@ -24,7 +24,6 @@ import type { MentorApplication } from '../types';
 import { adminService } from '@/Services/admin.api';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { markAsRead } from '@/redux/slices/notificationSlice';
-import { daysInWeek } from 'date-fns/constants';
 
 export default function MentorReviewPage() {
     const { id } = useParams();
@@ -48,7 +47,7 @@ export default function MentorReviewPage() {
             try {
                 setLoading(true);
                 const data = await adminService.getMentorApplicationById(id);
-                console.log(data,"mentor application data")
+                console.log(data, 'mentor application data');
                 setApplication(data);
                 setError(null);
             } catch (err: unknown) {
@@ -111,7 +110,10 @@ export default function MentorReviewPage() {
     const handleApprove = async () => {
         if (!id) return;
         try {
-            console.log(await adminService.approveMentorApplication(id),"This is it");
+            console.log(
+                await adminService.approveMentorApplication(id),
+                'This is it'
+            );
             toast.success('Mentor application approved successfully!');
             navigate('/admin/mentors/applications');
         } catch (err: unknown) {
@@ -496,27 +498,47 @@ export default function MentorReviewPage() {
                                     Preferred Availability
                                 </label>
                                 <div className="flex flex-col gap-3">
-                                    {application.availability && Object.keys(application.availability).length > 0 ? (
-                                        Object.entries(application.availability).map(([day, timeSlots]) => (
-                                            <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100/50 transition-colors">
+                                    {application.availability &&
+                                    Object.keys(application.availability)
+                                        .length > 0 ? (
+                                        Object.entries(
+                                            application.availability
+                                        ).map(([day, timeSlots]) => (
+                                            <div
+                                                key={day}
+                                                className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100/50 transition-colors"
+                                            >
                                                 <div className="w-28 flex-shrink-0">
-                                                    <span className="text-sm font-semibold text-gray-800">{day}</span>
+                                                    <span className="text-sm font-semibold text-gray-800">
+                                                        {day}
+                                                    </span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 flex-1">
-                                                    {Array.isArray(timeSlots) && timeSlots.length > 0 ? (
-                                                        timeSlots.map((time, i) => (
-                                                            <span key={i} className="px-3 py-1 bg-sky-100 border border-gray-200 text-gray-600 rounded-full text-xs font-medium shadow-sm hover:border-green-300 hover:text-green-700 transition-colors cursor-default">
-                                                                {time}
-                                                            </span>
-                                                        ))
+                                                    {Array.isArray(timeSlots) &&
+                                                    timeSlots.length > 0 ? (
+                                                        timeSlots.map(
+                                                            (time, i) => (
+                                                                <span
+                                                                    key={i}
+                                                                    className="px-3 py-1 bg-sky-100 border border-gray-200 text-gray-600 rounded-full text-xs font-medium shadow-sm hover:border-green-300 hover:text-green-700 transition-colors cursor-default"
+                                                                >
+                                                                    {time}
+                                                                </span>
+                                                            )
+                                                        )
                                                     ) : (
-                                                        <span className="text-xs text-gray-400 italic py-1">No specific time slots</span>
+                                                        <span className="text-xs text-gray-400 italic py-1">
+                                                            No specific time
+                                                            slots
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="text-sm text-gray-500 italic py-2">No availability specified</div>
+                                        <div className="text-sm text-gray-500 italic py-2">
+                                            No availability specified
+                                        </div>
                                     )}
                                 </div>
                             </div>

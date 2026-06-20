@@ -14,6 +14,7 @@ export const UserRoutes = {
     UPDATE_PROFILE_BASIC: (userId: string) => `/profile/${userId}`,
     UPDATE_PROFILE_PICTURE: (userId: string) => `/profile/picture/${userId}`,
     FETCH_CURRENT_USER: (userId: string) => `/me/${userId}`,
+    UPDATE_PASSWORD: `/password`,
 };
 
 const MENTOR_BASE = '/mentor';
@@ -129,14 +130,10 @@ export const BookingRoutes = {
         `${BOOKING_BASE}/mentor/${mentorId}/availability`,
 };
 
-const GAMIFICATION_BASE = '/gamification';
-export const GamificationRoutes = {};
-
-const USER_BADGE_BASE='/badge/user';
+const USER_BADGE_BASE = '/badge/user';
 export const UserBadgeRoutes = {
     BASE: USER_BADGE_BASE,
     GET_USER_BADGES: `${USER_BADGE_BASE}/`,
-    
 };
 
 const BADGE_BASE = '/badge';
@@ -144,7 +141,7 @@ export const BadgeRoutes = {
     CREATE_BADGE: `${BADGE_BASE}`,
     UPDATE_BADGE: (badgeId: string) => `${BADGE_BASE}/${badgeId}`,
     GET_ALL_BADGES: `${BADGE_BASE}`,
-    TOGGLE_BADGE_STATUS: (badgeId:string) =>
+    TOGGLE_BADGE_STATUS: (badgeId: string) =>
         `${BADGE_BASE}/${badgeId}/toggle-status`,
 };
 

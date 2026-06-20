@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
 import type { IPlannerTask } from '../../planner/types';
@@ -25,13 +25,7 @@ const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
     const [stats, setStats] = useState<IPomodoroStats | null>(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchStats();
-        }
-    }, [isOpen, date]);
-
-    const fetchStats = async () => {
+    const fetchStats = useCallback(async () => {
         setLoading(true);
         try {
             const dateStr = format(date, 'yyyy-MM-dd');
@@ -42,7 +36,13 @@ const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
         } finally {
             setLoading(false);
         }
-    };
+    }, [date]);
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchStats();
+        }
+    }, [fetchStats, isOpen, date]);
 
     if (!isOpen) return null;
 

@@ -2,6 +2,7 @@ import {
     ForgotPasswordRequestDto,
     LoginRequestDto,
     OtpVerificationRequestDto,
+    PasswordDto,
     ProfilePicUpdateDto,
     ProfileRequestDto,
     RegisterRequestDto,
@@ -25,6 +26,7 @@ export interface IAuthService {
     updateUserProfilePic(
         data: ProfilePicUpdateDto
     ): Promise<ProfileResponseDto>;
+    updateUserPassword(data: PasswordDto, userId: string): Promise<void>;
 
     login(loginDto: LoginRequestDto): Promise<LoginResponseDTO>;
 

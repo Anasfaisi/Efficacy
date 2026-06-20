@@ -38,7 +38,7 @@ export const badgeApi = {
     ): Promise<{ status: boolean; badge: Badge }> => {
         const response = await api.patch(
             BadgeRoutes.TOGGLE_BADGE_STATUS(badgeId),
-            {status}
+            { status }
         );
         return response.data;
     },

@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, Mail, Loader2, RefreshCw } from 'lucide-react';
 
 export function OTPPage() {
-    const { tempEmail, isLoading, currentUser, resendAvailableAt, role } =
+    const { tempEmail, isLoading, currentUser, resendAvailableAt } =
         useAppSelector((state) => state.auth);
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState<number>(0);
@@ -37,7 +37,7 @@ export function OTPPage() {
     }, [currentUser, navigate]);
 
     const handleVerify = async () => {
-        const result = await verifyOtpApi(tempEmail, otp, role);
+        const result = await verifyOtpApi(tempEmail, otp);
         if (result.success && result.user) {
             dispatch(setCredentials({ currentUser: result.user }));
             toast.success('Email verified successfully!');

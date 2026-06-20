@@ -1,4 +1,3 @@
-import { CreateBadgeRequestDto } from '@/dto/badge-request.dto';
 import { UserStatsEntity } from '@/entity/user-stats.entity';
 import { GamificationEvent } from '@/types/gamification.types';
 

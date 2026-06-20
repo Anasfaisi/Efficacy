@@ -18,7 +18,6 @@ export class BookingEntity {
         public cancelReason?: string,
         public actualStartTime?: Date,
         public actualEndTime?: Date,
-        public sessionMinutes?: number,
         public createdAt?: Date,
         public updatedAt?: Date
     ) {}

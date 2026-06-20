@@ -23,7 +23,6 @@ export interface BookingPersistence {
     cancelReason?: string;
     actualStartTime?: Date;
     actualEndTime?: Date;
-    sessionMinutes?: number;
 }
 
 export class BookingMapper {
@@ -78,7 +77,6 @@ export class BookingMapper {
             doc.cancelReason,
             doc.actualStartTime,
             doc.actualEndTime,
-            doc.sessionMinutes,
             doc.createdAt,
             doc.updatedAt
         );
@@ -124,8 +122,6 @@ export class BookingMapper {
             persistence.actualStartTime = entity.actualStartTime;
         if (entity.actualEndTime)
             persistence.actualEndTime = entity.actualEndTime;
-        if (entity.sessionMinutes !== undefined)
-            persistence.sessionMinutes = entity.sessionMinutes;
 
         return persistence;
     }
@@ -147,7 +143,6 @@ export class BookingMapper {
             cancelReason: entity.cancelReason,
             actualStartTime: entity.actualStartTime,
             actualEndTime: entity.actualEndTime,
-            sessionMinutes: entity.sessionMinutes,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
         };

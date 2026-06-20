@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
     Search,
     Mail,
@@ -29,20 +29,7 @@ const MentorMangement = () => {
     const [filterType, setFilterType] = useState<
         'all' | 'Academic' | 'Industry'
     >('all');
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(searchTerm);
-            setPage(1);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [searchTerm]);
-
-    useEffect(() => {
-        fetchMentors();
-    }, [page, debouncedSearch, filterStatus, filterType]);
-
-    const fetchMentors = async () => {
+    const fetchMentors = useCallback(async () => {
         try {
             setLoading(true);
             const data = await adminService.getAllMentors(
@@ -58,7 +45,18 @@ const MentorMangement = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit, debouncedSearch, filterStatus, filterType]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        fetchMentors();
+    }, [fetchMentors, page, debouncedSearch, filterStatus, filterType]);
 
     const handleStatusUpdate = async (id: string, currentStatus: string) => {
         const newStatus = currentStatus === 'active' ? 'inactive' : 'active';

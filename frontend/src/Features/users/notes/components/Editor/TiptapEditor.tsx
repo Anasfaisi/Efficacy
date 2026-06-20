@@ -20,7 +20,7 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
     onChange,
     editable = true,
 }) => {
-    const [forceUpdate] = useState(0);
+    const [, forceUpdate] = useState(0);
 
     const editor = useEditor({
         extensions: [
@@ -63,7 +63,7 @@ const TiptapEditor: React.FC<NoteEditorProps> = ({
                 editor.commands.setContent(content);
             }
         }
-    }, []);
+    }, [editor, content]);
 
     return (
         <div className="flex flex-col w-full h-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

@@ -225,6 +225,7 @@ export class MentorController {
             res.status(code.INTERNAL_SERVER_ERROR).json({
                 message: ErrorMessages.FetchMentorsFailed,
             });
+            console.log(message);
         }
     }
 

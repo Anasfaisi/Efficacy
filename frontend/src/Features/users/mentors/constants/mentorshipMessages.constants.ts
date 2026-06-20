@@ -6,8 +6,10 @@ export const MentorshipMessages = {
     MENTORSHIP_CONFIRMED: 'Mentorship confirmed! Proceed to payment.',
     MENTORSHIP_REJECTED: 'Mentorship request rejected.',
     SESSION_BOOKED: 'Session booked successfully',
-    MENTORSHIP_COMPLETED: 'You have confirmed the completion of this mentorship!',
-    RESCHEDULE_SENT: 'Reschedule request sent to mentor. They will propose a new time.',
+    MENTORSHIP_COMPLETED:
+        'You have confirmed the completion of this mentorship!',
+    RESCHEDULE_SENT:
+        'Reschedule request sent to mentor. They will propose a new time.',
     RESCHEDULE_ACCEPTED: 'New time accepted!',
     RESCHEDULE_DECLINED: 'Reschedule rejected and session cancelled',
     BOOKING_CANCELLED: 'Booking cancelled successfully',
@@ -22,7 +24,8 @@ export const MentorshipMessages = {
     // ── Cancel session toast UI ─────────────────────────────────────────────
     CANCEL_SESSION_TITLE: 'Cancel Session',
     CANCEL_ACTION_UNDONE: 'Action cannot be undone',
-    CANCEL_SESSION_CONFIRM_TEXT: 'Are you sure you want to cancel this session?',
+    CANCEL_SESSION_CONFIRM_TEXT:
+        'Are you sure you want to cancel this session?',
     CANCEL_KEEP_BTN: 'Keep Session',
     CANCEL_CONFIRM_BTN: 'Yes, Cancel',
 
@@ -63,7 +66,8 @@ export const MentorshipMessages = {
     BTN_REJECT: 'Reject',
 
     PAYMENT_REQUIRED_TITLE: 'Payment Required',
-    PAYMENT_REQUIRED_BODY: 'Please complete the payment to activate your mentorship.',
+    PAYMENT_REQUIRED_BODY:
+        'Please complete the payment to activate your mentorship.',
     PAYMENT_TOTAL_AMOUNT: 'Total Amount',
     BTN_PROCESSING: 'Processing...',
     BTN_PAY_NOW: 'Pay Now',
@@ -94,7 +98,8 @@ export const MentorshipMessages = {
 
     // ── Rejected mentorship view ────────────────────────────────────────────
     REJECTED_TITLE: 'Request Rejected',
-    REJECTED_BODY: 'The mentor has reviewed your request but decided not to proceed at this time.',
+    REJECTED_BODY:
+        'The mentor has reviewed your request but decided not to proceed at this time.',
     REJECTED_REASON_LABEL: 'Reason provided',
     REJECTED_NO_REASON: 'No specific reason provided.',
     REJECTED_REAPPLY_LABEL: 'You can re-apply after',

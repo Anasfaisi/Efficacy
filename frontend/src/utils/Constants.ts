@@ -23,5 +23,5 @@ export const BadgeMessages = {
 };
 
 export const TimeContextMessages = {
-    ContextError: 'useTime must be used within a TimeProvider'
-}
+    ContextError: 'useTime must be used within a TimeProvider',
+};
