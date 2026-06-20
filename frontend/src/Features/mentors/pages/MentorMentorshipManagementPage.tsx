@@ -51,8 +51,9 @@ const MentorMentorshipManagementPage: React.FC = () => {
         null
     );
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-
+    let a = 10;
     const fetchData = useCallback(async () => {
+        console.log(a++)
         if (!id) return;
 
         const mentorshipData = await requestWrapper(
@@ -68,7 +69,7 @@ const MentorMentorshipManagementPage: React.FC = () => {
             if (response) {
                 const allBookings = response.bookings;
                 setAllMentorBookings(allBookings);
-                const studentId = mentorshipData.userId;
+                const studentId = mentorshipData.userId._id;
                 const filtered = allBookings.filter((b) => {
                     const bUserId =
                         (b.userId as unknown as UserType)?._id ||

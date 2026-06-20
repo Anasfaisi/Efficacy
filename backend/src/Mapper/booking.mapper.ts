@@ -122,7 +122,6 @@ export class BookingMapper {
             persistence.actualStartTime = entity.actualStartTime;
         if (entity.actualEndTime)
             persistence.actualEndTime = entity.actualEndTime;
-     
 
         return persistence;
     }
