@@ -4,7 +4,10 @@ import { ITransaction, IWallet } from '@/models/wallet.model';
 import { ObjectId } from 'mongoose';
 
 export interface IWalletService {
-    getWallet(userId: string | ObjectId, role: string): Promise<IWallet>;
+    getWallet(
+        userId: string | ObjectId,
+        role: string
+    ): Promise<Partial<WalletEntity> | null>;
     addEarnings(
         mentorId: string | ObjectId,
         amount: number,

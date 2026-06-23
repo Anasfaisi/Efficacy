@@ -33,14 +33,17 @@ export class WalletService implements IWalletService {
         });
     }
 
-    async getWallet(userId: string | ObjectId, role: string): Promise<IWallet> {
+    async getWallet(
+        userId: string | ObjectId,
+        role: string
+    ): Promise<Partial<WalletEntity> | null> {
         let wallet =
             role === Role.Mentor
                 ? await this._walletRepository.findByMentorId(userId)
                 : await this._walletRepository.findByUserId(userId);
 
         if (!wallet) {
-            const initialData: any = {
+            const initialData: WalletEntity = {
                 balance: 0,
                 pendingBalance: 0,
                 pendingWithdrawal: 0,
@@ -49,11 +52,11 @@ export class WalletService implements IWalletService {
                 transactions: [],
             };
             if (role === Role.Mentor) {
-                initialData.mentorId = userId as any;
+                initialData.mentorId = userId as string;
             } else {
-                initialData.userId = userId as any;
+                initialData.userId = userId as string;
             }
-            wallet = await this._walletRepository.create(initialData);
+            wallet = await this._walletRepository.createWallet(initialData);
         }
         return wallet;
     }
@@ -115,7 +118,9 @@ export class WalletService implements IWalletService {
 
         const lastTx = wallet.transactions[wallet.transactions.length - 1];
         const transactionId =
-            lastTx && (lastTx as any)._id ? (lastTx as any)._id.toString() : '';
+            lastTx && (lastTx as TransactionEntity).id
+                ? (lastTx as TransactionEntity).id.toString()
+                : '';
 
         // Notify Admin of the payout request
         await this._notificationService.notifyAdmin(
@@ -230,7 +235,7 @@ export class WalletService implements IWalletService {
         if (!wallet) throw new Error(WalletMessages.NoWallet);
 
         const transaction = wallet.transactions.find(
-            (t: any) => t._id && t._id.toString() === transactionId
+            (t: ITransaction) => t._id && t._id.toString() === transactionId
         );
         if (!transaction) throw new Error(WalletMessages.NoTransactions);
         if (transaction.status !== TransactionStatus.PENDING) {
@@ -244,10 +249,12 @@ export class WalletService implements IWalletService {
                     currency: 'hkd',
                     destination: wallet.stripeConnectAccountId,
                 });
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Stripe Connect Transfer failed:', err);
+                const errorMessage =
+                    err instanceof Error ? err.message : String(err);
                 throw new Error(
-                    `Stripe Connect Transfer failed: ${err.message}`
+                    `Stripe Connect Transfer failed: ${errorMessage}`
                 );
             }
         } else {

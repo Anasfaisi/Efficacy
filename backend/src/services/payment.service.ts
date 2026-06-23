@@ -8,6 +8,7 @@ import { IMentorshipService } from './Interfaces/IMentorship.service';
 import { ErrorMessages } from '@/types/response-messages.types';
 import { MentorEntity } from '@/entity/mentor.entity';
 import { UserEntity } from '@/entity/user.entity';
+import { SubscriptionStatus } from '@/models/subscription.model';
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -119,13 +120,14 @@ export class PaymentService implements IPaymentService {
                 const startDate = new Date();
                 const endDate = new Date(startDate);
                 endDate.setDate(endDate.getDate() + 7);
+                subscription.status = SubscriptionStatus.ACTIVE;
                 await this._userRepository.updateSubscriptionByEmail(
                     customerEmail!,
                     {
                         stripeSubscriptionId: subscriptionId,
-                        status: subscription.status as any,
+                        status: subscription.status,
                         currentPeriodEnd: endDate,
-                    } as any
+                    }
                 );
             }
         }
@@ -136,7 +138,7 @@ export class PaymentService implements IPaymentService {
         amount: number
     ): Promise<string> {
         const transfer = await this._stripe.transfers.create({
-            amount: Math.round(amount * 100), // Convert INR rupees to paise (cents)
+            amount: Math.round(amount * 100),
             currency: 'inr',
             destination: accountId,
         });

@@ -19,6 +19,15 @@ export class WalletRepository
     constructor() {
         super(Wallet);
     }
+
+    async createWallet(
+        data: WalletEntity
+    ): Promise<Partial<WalletEntity> | null> {
+        const persistence = WalletMapper.ToPersistence(data);
+        const result = await this.create(persistence);
+        return WalletMapper.ToEntity(result);
+    }
+
     async findWalletById(
         walletId: string
     ): Promise<Partial<WalletEntity> | null> {

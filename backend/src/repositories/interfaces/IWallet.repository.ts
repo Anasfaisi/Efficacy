@@ -4,6 +4,7 @@ import { ObjectId } from 'mongoose';
 import { WalletEntity } from '@/entity/wallet.entity';
 
 export interface IWalletRepository extends IBaseRepository<IWallet> {
+    createWallet(data: WalletEntity): Promise<Partial<WalletEntity> | null>;
     findWalletById(walletId: string): Promise<Partial<WalletEntity> | null>;
     findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null>;
     creditPendingBalance(

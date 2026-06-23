@@ -5,19 +5,18 @@ import { IMessage } from '@/models/message.model';
 import { injectable, inject } from 'inversify';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';
+import { Types } from 'mongoose';
 
 @injectable()
 export class ChatRepository
     extends BaseRepository<IConversation>
     implements IChatRepository
 {
-    private messageRepository: IMessageRepository;
 
     constructor(
-        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository
+        @inject(TYPES.MessageRepository)private  _messageRepository: IMessageRepository
     ) {
         super(ConversationModel);
-        this.messageRepository = messageRepository;
     }
 
     async createConversation(
@@ -35,8 +34,8 @@ export class ChatRepository
         const convObject = newConversation.toObject();
         return {
             ...convObject,
-            participants: (convObject.participants as any[]).map((p) => p._id),
-        } as any;
+            participants: (convObject.participants).map((p) => p._id),
+        } as unknown as IConversation;
     }
 
     async findConversationByParticipants(
@@ -56,10 +55,10 @@ export class ChatRepository
 
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(
-                (p) => p._id
+            participants: (conversation.participants ).map(
+                (p:{_id:Types.ObjectId}) => p._id
             ),
-        } as any;
+        } as unknown as IConversation;
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
@@ -88,14 +87,14 @@ export class ChatRepository
 
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(
+            participants: (conversation.participants).map(
                 (p) => p._id
             ),
-        } as any;
+        } as IConversation;
     }
 
     async createMessage(data: Partial<IMessage>): Promise<IMessage> {
-        let message = await this.messageRepository.create(data);
+        let message = await this._messageRepository.create(data);
 
         message = await (message as any).populate('senderId', 'name');
 
@@ -114,7 +113,7 @@ export class ChatRepository
         limit: number = 50,
         skip: number = 0
     ): Promise<IMessage[]> {
-        const messages = await (this.messageRepository as any).findByChat(
+        const messages = await (this._messageRepository as any).findByChat(
             conversationId
         );
 
@@ -131,7 +130,7 @@ export class ChatRepository
         conversationId: string,
         userId: string
     ): Promise<void> {
-        (await this.messageRepository.updateMany(
+        (await this._messageRepository.updateMany(
             { conversationId, senderId: { $ne: userId }, isRead: false },
             { isRead: true }
         )) as void;
@@ -147,11 +146,11 @@ export class ChatRepository
     }
 
     async deleteMessage(messageId: string): Promise<IMessage | null> {
-        await this.messageRepository.deleteOne(messageId);
+        await this._messageRepository.deleteOne(messageId);
         return null; // Return type compatibility, technically findByIdAndDelete returns the doc.
     }
 
     async getMessageById(messageId: string): Promise<IMessage | null> {
-        return this.messageRepository.findById(messageId);
+        return this._messageRepository.findById(messageId);
     }
 }

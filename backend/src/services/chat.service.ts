@@ -85,7 +85,7 @@ export class ChatService implements IChatService {
         type: 'text' | 'image' | 'audio' | 'file' = 'text'
     ): Promise<IMessage> {
         const message = await this._chatRepository.createMessage({
-            conversationId: roomId as any,
+            conversationId: roomId ,
             senderId: senderId as any,
             content,
             type,

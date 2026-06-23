@@ -4,7 +4,7 @@ import { TransactionEntity } from './transaction.entity';
 import { UserEntity } from './user.entity';
 
 export interface WalletEntity {
-    id: string;
+    id?: string;
     mentorId?: string | MentorEntity | ObjectId;
     userId?: string | UserEntity | ObjectId;
     balance: number;

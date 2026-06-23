@@ -96,7 +96,7 @@ export class SocketService implements ISocketService {
 
             socket.on(
                 'signal',
-                (data: { to: string; signal: any; from: string }) => {
+                (data: { to: string; signal: unknown; from: string }) => {
                     io.to(data.to).emit('signal', {
                         signal: data.signal,
                         from: data.from,

@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { IBookingRepository } from './interfaces/IBooking.repository';
-import Booking, { IBooking } from '../models/booking.model';
+import Booking, { IBooking } from '@/models/Booking.model';
 import { BookingStatus } from '@/types/booking-status.types';
 import { BookingEntity } from '@/entity/booking.entity';
 import { BookingMapper } from '@/Mapper/booking.mapper';
