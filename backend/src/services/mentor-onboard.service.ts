@@ -11,6 +11,8 @@ import {
     ErrorMessages,
     NotificationMessages,
 } from '@/types/response-messages.types';
+import { MentorEntity } from '@/entity/mentor.entity';
+import { MentorMapper } from '@/Mapper/mentor.mapper';
 
 @injectable()
 export class MentorOnboardService implements IMentorOnboardService {
@@ -132,7 +134,7 @@ export class MentorOnboardService implements IMentorOnboardService {
     async activateMentor(
         mentorId: string,
         monthlyCharge: number
-    ): Promise<IMentor | null> {
+    ): Promise<MentorEntity | null> {
         const mentor = await this._mentorRepository.findById(mentorId);
         if (!mentor) {
             throw new Error(ErrorMessages.MentorNotFound);
@@ -142,9 +144,11 @@ export class MentorOnboardService implements IMentorOnboardService {
             throw new Error(ErrorMessages.MentorNotApproved);
         }
 
-        return await this._mentorRepository.update(mentorId, {
+        const result = await this._mentorRepository.update(mentorId, {
             status: 'active',
             monthlyCharge,
         });
+
+        return MentorMapper.toEntity(result);
     }
 }

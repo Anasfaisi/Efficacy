@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import { FilterQuery } from 'mongoose';
 import { BaseRepository } from './base.repository';
 import MentorModel, { IMentor } from '@/models/mentor.model';
 import { IMentorRepository } from './interfaces/IMentor.repository';
@@ -99,9 +100,13 @@ export class MentorRepository
         limit: number,
         search: string,
         sort: string,
-        filter: any
+        filter: {
+            expertise?: { $regex: string; $options: string };
+            monthlyCharge?: { $gte?: number; $lte?: number };
+            rating?: { $gte: number };
+        }
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }> {
-        const query: any = { status: 'active' };
+        const query: FilterQuery<IMentor> = { status: 'active' };
 
         if (search) {
             query.$or = [
@@ -117,7 +122,7 @@ export class MentorRepository
             Object.assign(query, filter);
         }
 
-        const sortOptions: any = {};
+        const sortOptions: Record<string, 1 | -1> = {};
         if (sort) {
             const [field, order] = sort.split('_');
             const sortField = field === 'price' ? 'monthlyCharge' : field;

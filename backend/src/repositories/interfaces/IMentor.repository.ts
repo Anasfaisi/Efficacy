@@ -29,6 +29,10 @@ export interface IMentorRepository extends IBaseRepository<IMentor> {
         limit: number,
         search: string,
         sort: string,
-        filter: object
+        filter: {
+            expertise?: { $regex: string; $options: string };
+            monthlyCharge?: { $gte?: number; $lte?: number };
+            rating?: { $gte: number };
+        }
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }>;
 }

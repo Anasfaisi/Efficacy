@@ -1,5 +1,7 @@
+import { PopulatedMessageEntity } from '@/entity/message.entity';
 import { IConversation } from '@/models/conversation.model';
 import { IMessage } from '@/models/message.model';
+import { MessageType } from '@/types/message-type.types';
 
 export interface IChatService {
     initiateChat(userId: string, mentorId: string): Promise<IConversation>;
@@ -16,8 +18,8 @@ export interface IChatService {
         senderId: string,
         roomId: string,
         content: string,
-        type?: 'text' | 'image' | 'audio' | 'file'
-    ): Promise<IMessage>;
+        type: MessageType
+    ): Promise<PopulatedMessageEntity>;
     validateRoomAccess(roomId: string, userId: string): Promise<boolean>;
     deleteMessage(userId: string, messageId: string): Promise<IMessage>;
 }

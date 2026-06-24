@@ -136,7 +136,11 @@ export class MentorController {
             const updatedMentor =
                 await this._mentorService.updateMentorProfileMedia(
                     userId,
-                    req.files as (Express.Multer.File & { location: string })[]
+                    req.files as {
+                        [fieldName: string]: (Express.Multer.File & {
+                            location: string;
+                        })[];
+                    }
                 );
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
@@ -157,7 +161,7 @@ export class MentorController {
 
             const parsedData =
                 typeof data === 'string' ? JSON.parse(data) : data;
-            console.log(data,parsedData)
+            console.log(data, parsedData);
             const updatedMentor =
                 await this._mentorService.updateMentorProfileArray(
                     userId,
@@ -175,7 +179,6 @@ export class MentorController {
     }
 
     async getApprovedMentors(req: Request, res: Response) {
-        
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;

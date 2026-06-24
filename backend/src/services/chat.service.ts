@@ -7,6 +7,9 @@ import { IConversation } from '@/models/conversation.model';
 import { IMessage } from '@/models/message.model';
 import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
 import { ErrorMessages } from '@/types/response-messages.types';
+import { MessageType } from '@/types/message-type.types';
+import { PopulatedMessageEntity } from '@/entity/message.entity';
+import { Types } from 'mongoose';
 
 @injectable()
 export class ChatService implements IChatService {
@@ -82,21 +85,16 @@ export class ChatService implements IChatService {
         senderId: string,
         roomId: string,
         content: string,
-        type: 'text' | 'image' | 'audio' | 'file' = 'text'
-    ): Promise<IMessage> {
+        type: MessageType = MessageType.TEXT
+    ): Promise<PopulatedMessageEntity> {
         const message = await this._chatRepository.createMessage({
             conversationId: roomId,
-            senderId: senderId as any,
+            senderId: senderId,
             content,
             type,
             isRead: false,
-        } as Partial<IMessage>);
-
-        await this._chatRepository.updateLastMessage(
-            roomId,
-            message._id as string
-        );
-
+        });
+        await this._chatRepository.updateLastMessage(roomId, message.id);
         return message;
     }
 

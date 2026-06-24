@@ -6,6 +6,8 @@ import { injectable, inject } from 'inversify';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';
 import { Types } from 'mongoose';
+import { MessageEntity, PopulatedMessageEntity } from '@/entity/message.entity';
+import { MessageMapper } from '@/Mapper/message.mapper';
 
 @injectable()
 export class ChatRepository
@@ -91,19 +93,14 @@ export class ChatRepository
         } as IConversation;
     }
 
-    async createMessage(data: Partial<IMessage>): Promise<IMessage> {
-        let message = await this._messageRepository.create(data);
+    async createMessage(
+        data: Partial<MessageEntity>
+    ): Promise<PopulatedMessageEntity> {
+        const persistence = MessageMapper.toPersistence(data);
+        let message = await this._messageRepository.create(persistence);
 
-        message = await (message as any).populate('senderId', 'name');
-
-        const msgObject = (message as any).toObject
-            ? (message as any).toObject()
-            : message;
-        return {
-            ...msgObject,
-            senderName: (msgObject.senderId as any)?.name,
-            senderId: (msgObject.senderId as any)?._id,
-        } as any;
+        message = await message.populate('senderId', 'name');
+        return MessageMapper.toPopulatedEntity(message);
     }
 
     async getMessages(
@@ -138,8 +135,8 @@ export class ChatRepository
         conversationId: string,
         messageId: string
     ): Promise<void> {
-        await this.updateOne(conversationId, {
-            lastMessage: messageId as any,
+        await this.update(conversationId, {
+            lastMessage: new Types.ObjectId(messageId),
         });
     }
 
