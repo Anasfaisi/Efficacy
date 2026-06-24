@@ -12,9 +12,9 @@ export class ChatRepository
     extends BaseRepository<IConversation>
     implements IChatRepository
 {
-
     constructor(
-        @inject(TYPES.MessageRepository)private  _messageRepository: IMessageRepository
+        @inject(TYPES.MessageRepository)
+        private _messageRepository: IMessageRepository
     ) {
         super(ConversationModel);
     }
@@ -34,7 +34,7 @@ export class ChatRepository
         const convObject = newConversation.toObject();
         return {
             ...convObject,
-            participants: (convObject.participants).map((p) => p._id),
+            participants: convObject.participants.map((p) => p._id),
         } as unknown as IConversation;
     }
 
@@ -55,8 +55,8 @@ export class ChatRepository
 
         return {
             ...conversation,
-            participants: (conversation.participants ).map(
-                (p:{_id:Types.ObjectId}) => p._id
+            participants: conversation.participants.map(
+                (p: { _id: Types.ObjectId }) => p._id
             ),
         } as unknown as IConversation;
     }
@@ -87,9 +87,7 @@ export class ChatRepository
 
         return {
             ...conversation,
-            participants: (conversation.participants).map(
-                (p) => p._id
-            ),
+            participants: conversation.participants.map((p) => p._id),
         } as IConversation;
     }
 
@@ -147,7 +145,7 @@ export class ChatRepository
 
     async deleteMessage(messageId: string): Promise<IMessage | null> {
         await this._messageRepository.deleteOne(messageId);
-        return null; // Return type compatibility, technically findByIdAndDelete returns the doc.
+        return null;
     }
 
     async getMessageById(messageId: string): Promise<IMessage | null> {

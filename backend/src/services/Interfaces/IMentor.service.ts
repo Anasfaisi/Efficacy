@@ -7,11 +7,11 @@ export interface IMentorService {
         id: string,
         data: UpdateMentorProfileDto
     ): Promise<IMentor>;
-    updateMentorProfileMedia(id: string, files: any): Promise<IMentor>;
+    updateMentorProfileMedia(id: string, files:{[fieldName : string] : (Express.Multer.File & { location: string })[]}): Promise<IMentor>;
     updateMentorProfileArray(
         id: string,
         field: string,
-        data: any[]
+        data: string[]
     ): Promise<IMentor>;
     getApprovedMentors(
         page: number,

@@ -109,6 +109,7 @@ export default function mentorRoutes(
         validateRequest(updateMentorProfileSchema),
         asyncWrapper(mentorController.updateProfileMedia.bind(mentorController))
     );
+ 
 
     router.patch(
         '/profile/array',
@@ -148,6 +149,7 @@ export default function mentorRoutes(
         authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
         asyncWrapper(mentorController.getMentorById.bind(mentorController))
     );
+  
 
     return router;
 }

@@ -175,6 +175,7 @@ export const updateMentorProfileSchema = z
         experienceYears: z.string().optional(),
         currentRole: z.string().optional(),
         skills: z.string().optional(),
+        achievements: z.array(z.string()).optional(),
         monthlyCharge: z.coerce.number().optional(),
         currentPassword: z.string().optional(),
         newPassword: z

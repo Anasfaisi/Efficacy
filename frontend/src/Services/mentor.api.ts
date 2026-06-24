@@ -149,17 +149,15 @@ export const mentorApi = {
         return res.data;
     },
 
-    updateMentorProfileArray: async (field: string, elements: unknown[]) => {
-        const formData = new FormData();
-        formData.append('field', field);
-        formData.append('data', JSON.stringify(elements));
-
+    updateMentorProfileArray: async (field: string, elements: string[]) => {
+        const body = {
+            field,
+            data: JSON.stringify(elements )
+        };
+        console.log(body)
         const res = await api.patch(
             MentorRoutes.ARRAY_MENTOR_PROFILE_ARRAY,
-            formData,
-            {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            }
+            body,
         );
         return res.data;
     },
