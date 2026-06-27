@@ -57,7 +57,7 @@ const MentorListingPage: React.FC = () => {
         const fetchMentors = async () => {
             setLoading(true);
             try {
-                const filters = {} as price;
+                const filters: Partial<price> = {};
                 if (debouncedMinPrice) filters.minPrice = debouncedMinPrice;
                 if (debouncedMaxPrice) filters.maxPrice = debouncedMaxPrice;
 

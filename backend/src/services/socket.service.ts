@@ -7,6 +7,7 @@ import { ErrorMessages } from '@/types/response-messages.types';
 import { IBookingRepository } from '@/repositories/interfaces/IBooking.repository';
 import { BookingStatus } from '@/types/booking-status.types';
 import { logger } from '@/utils/logMiddlewares';
+import { MessageType } from '@/types/message-type.types';
 
 interface JoinRoomPayload {
     roomId: string;
@@ -17,7 +18,7 @@ interface SendMessagePayload {
     roomId: string;
     senderId: string;
     content: string;
-    type?: 'text' | 'image' | 'audio' | 'file';
+    type?: MessageType;
     senderName?: string;
 }
 
@@ -96,7 +97,7 @@ export class SocketService implements ISocketService {
 
             socket.on(
                 'signal',
-                (data: { to: string; signal: any; from: string }) => {
+                (data: { to: string; signal: unknown; from: string }) => {
                     io.to(data.to).emit('signal', {
                         signal: data.signal,
                         from: data.from,
@@ -168,7 +169,13 @@ export class SocketService implements ISocketService {
         payload: SendMessagePayload
     ) {
         try {
-            const { roomId, senderId, content, type = 'text' } = payload;
+            console.log(payload, 'from socket. service');
+            const {
+                roomId,
+                senderId,
+                content,
+                type = MessageType.TEXT,
+            } = payload;
 
             const savedMessage = await this._chatService.sendMessage(
                 senderId,

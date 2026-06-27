@@ -4,6 +4,7 @@ import Review, { IReview } from '@/models/review.model';
 import { ReviewStatus } from '@/types/review-status.types';
 import { ReviewEntity } from '@/entity/review.entity';
 import { ReviewMapper } from '@/Mapper/review.mapper';
+import { Types } from 'mongoose';
 
 export class ReviewRepository
     extends BaseRepository<IReview>
@@ -19,7 +20,7 @@ export class ReviewRepository
     }
 
     async getAverageRating(
-        mentorId: any
+        mentorId: Types.ObjectId
     ): Promise<{ averageRating: number; reviewCount: number }> {
         const stats = await this.model.aggregate([
             {

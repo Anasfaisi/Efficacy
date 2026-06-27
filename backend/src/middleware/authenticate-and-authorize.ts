@@ -8,12 +8,21 @@ const authenticateAndAuthorize = (
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.cookies?.accessToken;
         if (!token) {
-            res.status(403).json({ message: 'Unauthorized' });
+            res.status(401).json({
+                message: 'Unauthorized: No token provided',
+            });
             return;
         }
 
-        const currentUser = _tokenService.verifyAccessToken(token);
-        req.currentUser = currentUser;
+        try {
+            const currentUser = _tokenService.verifyAccessToken(token);
+            req.currentUser = currentUser;
+        } catch {
+            res.status(401).json({
+                message: 'Unauthorized: Invalid or expired token',
+            });
+            return;
+        }
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
         if (
             allowedRoles.length > 0 &&

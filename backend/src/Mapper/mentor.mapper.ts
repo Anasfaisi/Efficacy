@@ -1,10 +1,12 @@
 import { IMentor } from '@/models/mentor.model';
 import { MentorEntity } from '@/entity/mentor.entity';
-import { Types } from 'mongoose';
 
 export class MentorMapper {
-    static toEntity(doc: IMentor): MentorEntity {
-        const d = doc as any;
+    static toEntity(doc: IMentor | null): MentorEntity {
+        if (!doc) {
+            throw new Error('Mentor not found');
+        }
+        const d = doc;
         return new MentorEntity(
             d._id?.toString() || d.id?.toString(),
             d.name,
@@ -51,14 +53,5 @@ export class MentorMapper {
             d.createdAt,
             d.updatedAt
         );
-    }
-
-    static toPersistence(entity: Partial<MentorEntity>): any {
-        const persistence: any = { ...entity };
-        if (entity.id) {
-            persistence._id = new Types.ObjectId(entity.id);
-            delete persistence.id;
-        }
-        return persistence;
     }
 }

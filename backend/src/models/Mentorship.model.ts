@@ -1,23 +1,6 @@
+import { MentorshipStatus, SessionStatus } from '@/types/mentorship.types';
+import { PaymentStatus } from '@/types/payment.types';
 import { Schema, model, Document, ObjectId } from 'mongoose';
-
-export enum MentorshipStatus {
-    PENDING = 'pending',
-    MENTOR_ACCEPTED = 'mentor_accepted',
-    USER_CONFIRMED = 'user_confirmed',
-    PAYMENT_PENDING = 'payment_pending',
-    ACTIVE = 'active',
-    COMPLETED = 'completed',
-    REJECTED = 'rejected',
-    CANCELLED = 'cancelled',
-}
-
-export enum SessionStatus {
-    PENDING = 'pending',
-    BOOKED = 'booked',
-    COMPLETED = 'completed',
-    RESCHEDULE_REQUESTED = 'reschedule_requested',
-    CANCELLED = 'cancelled',
-}
 
 interface ISession {
     _id?: string | ObjectId;
@@ -30,8 +13,8 @@ interface ISession {
 }
 
 interface IMentorship extends Document {
-    userId: string | ObjectId;
-    mentorId: string | ObjectId;
+    userId: ObjectId;
+    mentorId: ObjectId;
     status: MentorshipStatus;
     startDate?: Date;
     endDate?: Date;
@@ -40,10 +23,10 @@ interface IMentorship extends Document {
 
     totalSessions: number;
     usedSessions: number;
-    sessions: ISession[];
+    sessions?: ISession[];
 
-    paymentStatus: 'pending' | 'paid' | 'verified';
-    paymentId?: string;
+    paymentStatus: PaymentStatus;
+    paymentId: string;
     amount: number;
 
     userFeedback?: {
@@ -101,8 +84,8 @@ const mentorshipSchema = new Schema<IMentorship>(
 
         paymentStatus: {
             type: String,
-            enum: ['pending', 'paid', 'verified'],
-            default: 'pending',
+            enum: Object.values(PaymentStatus),
+            default: PaymentStatus.PENDING,
         },
         paymentId: { type: String },
         amount: { type: Number, required: true },

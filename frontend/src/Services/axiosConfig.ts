@@ -1,5 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
+import { store } from '@/redux/store';
+import { logout } from '@/redux/slices/authSlice';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,6 +35,10 @@ api.interceptors.response.use(
             _retry?: boolean;
         };
 
+        if (originalRequest.url?.includes('/refresh')) {
+            return Promise.reject(error);
+        }
+
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
                 return new Promise(function (resolve, reject) {
@@ -54,6 +60,9 @@ api.interceptors.response.use(
             } catch (err) {
                 isRefreshing = false;
                 processQueue(err, null);
+           
+                store.dispatch(logout());
+                
                 return Promise.reject(err);
             }
         }

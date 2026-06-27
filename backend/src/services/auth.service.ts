@@ -446,7 +446,7 @@ export class AuthService implements IAuthService {
         });
     }
 
-    async logout(refreshToken: string): Promise<void> {
+    async logout(): Promise<void> {
         return Promise.resolve();
     }
 }

@@ -1,42 +1,56 @@
 import { IUser } from '@/models/user.model';
 import { UserEntity } from '@/entity/user.entity';
-import { Types } from 'mongoose';
 
 export class UserMapper {
     static toEntity(doc: IUser): UserEntity {
-        const d = doc as any;
-        return new UserEntity(
-            d._id?.toString() || d.id?.toString(),
-            d.name,
-            d.email,
-            d.role,
-            d.bio,
-            d.headline,
-            d.profilePic,
-            d.dob,
-            d.stripeCustomerId,
-            d.walletBalance,
-            d.walletCurrency,
-            d.xpPoints,
-            d.badge,
-            d.league,
-            d.currentStreak,
-            d.longestStreak,
-            d.lastActiveDate,
-            d.timezone,
-            d.profileCompletion,
-            d.isActive,
-            d.createdAt,
-            d.updatedAt
-        );
+        return {
+            id: doc.id,
+            name: doc.name,
+            email: doc.email,
+            role: doc.role,
+            bio: doc.bio,
+            headline: doc.headline,
+            profilePic: doc.profilePic,
+            dob: doc.dob,
+            stripeCustomerId: doc.stripeCustomerId,
+            walletBalance: doc.walletBalance,
+            walletCurrency: doc.walletCurrency,
+            xpPoints: doc.xpPoints,
+            badge: doc.badge,
+            league: doc.league,
+            currentStreak: doc.currentStreak,
+            longestStreak: doc.longestStreak,
+            lastActiveDate: doc.lastActiveDate,
+            timezone: doc.timezone,
+            profileCompletion: doc.profileCompletion,
+            isActive: doc.isActive,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+        };
     }
 
-    static toPersistence(entity: Partial<UserEntity>): any {
-        const persistence: any = { ...entity };
-        if (entity.id) {
-            persistence._id = new Types.ObjectId(entity.id);
-            delete persistence.id;
-        }
-        return persistence;
+    static toPersistence(entity: UserEntity): Partial<IUser> {
+        return {
+            id: entity.id,
+            name: entity.name,
+            email: entity.email,
+            role: entity.role,
+            bio: entity.bio,
+            headline: entity.headline,
+            profilePic: entity.profilePic,
+            dob: entity.dob,
+            stripeCustomerId: entity.stripeCustomerId,
+            walletBalance: entity.walletBalance,
+            walletCurrency: entity.walletCurrency,
+            xpPoints: entity.xpPoints,
+            badge: entity.badge,
+            league: entity.league,
+            currentStreak: entity.currentStreak,
+            longestStreak: entity.longestStreak,
+            lastActiveDate: entity.lastActiveDate,
+            timezone: entity.timezone,
+            profileCompletion: entity.profileCompletion,
+            isActive: entity.isActive,
+        };
     }
 }

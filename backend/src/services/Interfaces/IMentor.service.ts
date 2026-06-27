@@ -7,18 +7,27 @@ export interface IMentorService {
         id: string,
         data: UpdateMentorProfileDto
     ): Promise<IMentor>;
-    updateMentorProfileMedia(id: string, files: any): Promise<IMentor>;
+    updateMentorProfileMedia(
+        id: string,
+        files: {
+            [fieldName: string]: (Express.Multer.File & { location: string })[];
+        }
+    ): Promise<IMentor>;
     updateMentorProfileArray(
         id: string,
         field: string,
-        data: any[]
+        data: string[]
     ): Promise<IMentor>;
     getApprovedMentors(
         page: number,
         limit: number,
         search: string,
         sort: string,
-        filter: any
+        filter: {
+            expertise?: { $regex: string; $options: string };
+            monthlyCharge?: { $gte?: number; $lte?: number };
+            rating?: { $gte: number };
+        }
     ): Promise<{ mentors: IMentor[]; total: number; pages: number }>;
     getMentorById(id: string): Promise<IMentor | null>;
 }

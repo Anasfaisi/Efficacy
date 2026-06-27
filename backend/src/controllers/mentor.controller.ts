@@ -69,7 +69,7 @@ export class MentorController {
             if (!refreshToken) {
                 throw new Error(AuthMessages.InvalidRefreshToken);
             }
-            await this._mentorAuthService.logout(refreshToken);
+            await this._mentorAuthService.logout();
 
             res.clearCookie('refreshToken', {
                 httpOnly: true,
@@ -136,7 +136,11 @@ export class MentorController {
             const updatedMentor =
                 await this._mentorService.updateMentorProfileMedia(
                     userId,
-                    req.files
+                    req.files as {
+                        [fieldName: string]: (Express.Multer.File & {
+                            location: string;
+                        })[];
+                    }
                 );
             res.status(code.OK).json({ mentor: updatedMentor });
         } catch (error: unknown) {
@@ -157,7 +161,7 @@ export class MentorController {
 
             const parsedData =
                 typeof data === 'string' ? JSON.parse(data) : data;
-
+            console.log(data, parsedData);
             const updatedMentor =
                 await this._mentorService.updateMentorProfileArray(
                     userId,

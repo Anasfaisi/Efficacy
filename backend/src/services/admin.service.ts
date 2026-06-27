@@ -24,6 +24,7 @@ import {
 import { UpdateUserStatusRequestDto } from '@/dto/request.dto';
 import { NotificationMessages } from '@/types/response-messages.types';
 import MentorshipModel from '@/models/mentorship.model';
+import { PaymentStatus } from '@/types/payment.types';
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -285,7 +286,9 @@ export class AdminService implements IAdminService {
         const revenueAggregation = await MentorshipModel.aggregate([
             {
                 $match: {
-                    paymentStatus: { $in: ['verified', 'paid'] },
+                    paymentStatus: {
+                        $in: [PaymentStatus.PAID, PaymentStatus.VERIFIED],
+                    },
                     updatedAt: { $gte: sixMonthsAgo },
                 },
             },

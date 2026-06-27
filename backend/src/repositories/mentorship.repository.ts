@@ -1,11 +1,9 @@
 import { injectable } from 'inversify';
 import { BaseRepository } from './base.repository';
-import Mentorship, {
-    IMentorship,
-    MentorshipStatus,
-} from '@/models/mentorship.model';
+import Mentorship, { IMentorship } from '@/models/mentorship.model';
 import { IMentorshipRepository } from './interfaces/IMentorship.repository';
-import { ObjectId, Types } from 'mongoose';
+import { ObjectId, Types, FilterQuery, PipelineStage } from 'mongoose';
+import { MentorshipStatus } from '@/types/mentorship.types';
 
 @injectable()
 export class MentorshipRepository
@@ -100,7 +98,9 @@ export class MentorshipRepository
         status?: string,
         search?: string
     ): Promise<{ mentorships: IMentorship[]; total: number }> {
-        const match: any = { mentorId: new Types.ObjectId(mentorId as string) };
+        const match: FilterQuery<IMentorship> = {
+            mentorId: new Types.ObjectId(mentorId as string),
+        };
         if (status && status !== 'all') {
             if (status === 'approved') {
                 match.status = {
@@ -115,7 +115,7 @@ export class MentorshipRepository
             }
         }
 
-        const pipeline: any[] = [{ $match: match }];
+        const pipeline: PipelineStage[] = [{ $match: match }];
 
         pipeline.push({
             $lookup: {

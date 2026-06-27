@@ -27,7 +27,7 @@ export class planRepository
 
         if (search) {
             const searchRegex = { $regex: search, $options: 'i' };
-            const searchConditions: any[] = [
+            const searchConditions: FilterQuery<IPlan>[] = [
                 { name: searchRegex },
                 { features: searchRegex },
             ];

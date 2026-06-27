@@ -4,7 +4,7 @@ import { IBookingRepository } from '@/repositories/interfaces/IBooking.repositor
 import { INotificationService } from './Interfaces/INotification.service';
 import { IMentorRepository } from '@/repositories/interfaces/IMentor.repository';
 import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.repository';
-import { MentorshipStatus } from '@/models/mentorship.model';
+import { MentorshipStatus } from '@/types/mentorship.types';
 import {
     CreateBookingRequestDto,
     BookingResponseDto,
@@ -25,6 +25,8 @@ import {
 } from '@/types/response-messages.types';
 import { BookingPolicy } from '@/config/booking-policy.constant';
 
+import { extractId } from '@/utils/extractId';
+
 @injectable()
 export class BookingService implements IBookingService {
     constructor(
@@ -40,49 +42,14 @@ export class BookingService implements IBookingService {
         private _mentorshipRepository: IMentorshipRepository
     ) {}
 
-    private _extractId(
-        field: string | { id?: string; _id?: unknown } | unknown
-    ): string {
-        if (!field) return '';
-        if (typeof field === 'string') return field;
-
-        if (typeof field === 'object') {
-            const f = field as {
-                id?: unknown;
-                _id?: unknown;
-                toHexString?: () => string;
-            };
-
-            // Priority 1: _id (Mongoose objects/docs)
-            if (f._id) return String(f._id);
-
-            // Priority 2: id IF it is a string (Entities)
-            if (typeof f.id === 'string') return f.id;
-
-            // Priority 3: toHexString() (Mongoose ObjectId)
-            if (typeof f.toHexString === 'function') return f.toHexString();
-
-            // Priority 4: toString() fallback
-            if (
-                typeof (field as { toString: () => string }).toString ===
-                'function'
-            ) {
-                const s = (field as { toString: () => string }).toString();
-                if (s !== '[object Object]') return s;
-            }
-        }
-
-        return String(field);
-    }
-
     async createBooking(
         data: CreateBookingRequestDto
     ): Promise<BookingResponseDto> {
         const bookingDate = new Date(data.bookingDate);
         const booking = BookingMapper.fromCreateRequest(data, bookingDate);
 
-        const userId = this._extractId(booking.userId);
-        const mentorId = this._extractId(booking.mentorId);
+        const userId = extractId(booking.userId);
+        const mentorId = extractId(booking.mentorId);
 
         const hasBookingToday =
             await this._bookingRepository.hasExistingBooking(
@@ -236,8 +203,8 @@ export class BookingService implements IBookingService {
             data.status === BookingStatus.COMPLETED &&
             booking.status !== BookingStatus.COMPLETED
         ) {
-            const mentorId = this._extractId(booking.mentorId);
-            const userId = this._extractId(booking.userId);
+            const mentorId = extractId(booking.mentorId);
+            const userId = extractId(booking.userId);
 
             const mentor = await this._mentorRepository.findById(mentorId);
             if (mentor) {
@@ -268,7 +235,7 @@ export class BookingService implements IBookingService {
         }
 
         await this._notificationService.createNotification(
-            this._extractId(booking.userId),
+            extractId(booking.userId),
             Role.User,
             NotificationType.SYSTEM_ANNOUNCEMENT,
             title,
@@ -287,7 +254,7 @@ export class BookingService implements IBookingService {
 
         const proposedDate = new Date(data.proposedDate);
 
-        const mentorId = this._extractId(booking.mentorId);
+        const mentorId = extractId(booking.mentorId);
         const isAvailable = await this._bookingRepository.isSlotAvailable(
             mentorId,
             proposedDate,
@@ -321,8 +288,8 @@ export class BookingService implements IBookingService {
 
         const recipientId =
             data.requestedBy === 'user'
-                ? this._extractId(booking.mentorId)
-                : this._extractId(booking.userId);
+                ? extractId(booking.mentorId)
+                : extractId(booking.userId);
         const recipientRole =
             data.requestedBy === 'user' ? Role.Mentor : Role.User;
         const senderName = data.requestedBy === 'user' ? 'Student' : 'Mentor';
@@ -357,7 +324,7 @@ export class BookingService implements IBookingService {
         let updatedBooking: BookingEntity | null;
 
         if (approve) {
-            const mentorId = this._extractId(booking.mentorId);
+            const mentorId = extractId(booking.mentorId);
             const isAvailable = await this._bookingRepository.isSlotAvailable(
                 mentorId,
                 booking.proposedDate!,
@@ -388,8 +355,8 @@ export class BookingService implements IBookingService {
 
         const recipientId =
             booking.rescheduleBy === 'user'
-                ? this._extractId(booking.userId)
-                : this._extractId(booking.mentorId);
+                ? extractId(booking.userId)
+                : extractId(booking.mentorId);
         const recipientRole =
             booking.rescheduleBy === 'user' ? Role.User : Role.Mentor;
 
@@ -416,8 +383,8 @@ export class BookingService implements IBookingService {
         const booking = await this._bookingRepository.findById(bookingId);
         if (!booking) return false;
 
-        const bookingUserId = this._extractId(booking.userId);
-        const bookingMentorId = this._extractId(booking.mentorId);
+        const bookingUserId = extractId(booking.userId);
+        const bookingMentorId = extractId(booking.mentorId);
 
         const isParticipant =
             bookingUserId === userId || bookingMentorId === userId;
@@ -458,8 +425,8 @@ export class BookingService implements IBookingService {
         if (diffMins >= 50 && booking.status !== BookingStatus.COMPLETED) {
             updateData.status = BookingStatus.COMPLETED;
 
-            const mentorId = this._extractId(booking.mentorId);
-            const userId = this._extractId(booking.userId);
+            const mentorId = extractId(booking.mentorId);
+            const userId = extractId(booking.userId);
 
             const mentor = await this._mentorRepository.findById(mentorId);
             if (mentor) {

@@ -15,6 +15,11 @@ export class BadgeRepository
         super(Badge);
     }
 
+    async createBadge(badge: Partial<BadgeEntity>): Promise<BadgeEntity> {
+        const createdBadge = await this.model.create(badge);
+        return BadgeMapper.ToEntity(createdBadge);
+    }
+
     async getAllBadgesAdmin(
         page: number,
         limit: number

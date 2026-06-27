@@ -39,6 +39,7 @@ export class BadgeController {
     public async updateBadge(req: Request, res: Response) {
         const badgeId = req.params.badgeId;
         const badgeData = req.body;
+
         const updatedBadge = await this._badgeService.updateBadge(
             badgeId,
             badgeData

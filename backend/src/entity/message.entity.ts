@@ -1,4 +1,4 @@
-import { MessageStatus } from '@/types/role.types';
+import { MessageType } from '@/types/message-type.types';
 
 export class MessageEntity {
     constructor(
@@ -6,10 +6,21 @@ export class MessageEntity {
         public conversationId: string,
         public senderId: string,
         public content: string,
-        public attachments: string[],
-        public status: MessageStatus,
-        public seenBy: string,
+        public isRead: boolean,
+        public type: MessageType,
         public createdAt: Date,
         public updatedAt: Date
     ) {}
+}
+
+export interface PopulatedMessageEntity {
+    id: string;
+    conversationId: string;
+    senderId: string;
+    content: string;
+    isRead: boolean;
+    type: MessageType;
+    createdAt: Date;
+    updatedAt: Date;
+    senderName: string;
 }

@@ -1,3 +1,4 @@
+import { MessageEntity, PopulatedMessageEntity } from '@/entity/message.entity';
 import { IConversation } from '@/models/conversation.model';
 import { IMessage } from '@/models/message.model';
 
@@ -11,7 +12,9 @@ export interface IChatRepository {
     getUserConversations(userId: string): Promise<IConversation[]>;
     getConversationById(id: string): Promise<IConversation | null>;
 
-    createMessage(data: Partial<IMessage>): Promise<IMessage>;
+    createMessage(
+        data: Partial<MessageEntity>
+    ): Promise<PopulatedMessageEntity>;
     getMessages(
         conversationId: string,
         limit: number,

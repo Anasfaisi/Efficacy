@@ -131,7 +131,7 @@ export class AdminController {
         try {
             const token = req.cookies.refreshToken;
             if (!token) {
-                throw new Error('No refresh token provided');
+                throw new Error('Last Session expired, Please login again');
             }
             const { accessToken, refreshToken } =
                 await this._authService.refreshToken(token);

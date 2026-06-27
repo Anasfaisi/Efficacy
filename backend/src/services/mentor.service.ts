@@ -58,7 +58,12 @@ export class MentorService implements IMentorService {
         return updatedMentor;
     }
 
-    async updateMentorProfileMedia(id: string, files: any): Promise<IMentor> {
+    async updateMentorProfileMedia(
+        id: string,
+        files: {
+            [fieldName: string]: (Express.Multer.File & { location: string })[];
+        }
+    ): Promise<IMentor> {
         const updateData: Partial<IMentor> = {};
 
         if (files.profilePic) {
@@ -85,9 +90,9 @@ export class MentorService implements IMentorService {
     async updateMentorProfileArray(
         id: string,
         field: string,
-        data: any[]
+        data: string[]
     ): Promise<IMentor> {
-        const updateData: any = {};
+        const updateData: Record<string, string[]> = {};
         updateData[field] = data;
         const updated = await this._mentorRepository.update(id, updateData);
         if (!updated) throw new Error(ErrorMessages.UpdateFailed);

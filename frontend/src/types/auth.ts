@@ -126,6 +126,7 @@ export interface AuthState {
     resendAvailableAt: string | null;
     successMessage?: string | null;
 }
+
 export interface RegisterCredentials {
     email: string;
     password: string;

@@ -1,4 +1,7 @@
-import { CreateBadgeRequestDto } from '@/dto/badge-request.dto';
+import {
+    BadgeRequestDto,
+    CreateBadgeRequestDto,
+} from '@/dto/badge-request.dto';
 import { CreateBadgeResponseDto } from '@/dto/badge-response.dto';
 import { IBadgeService } from './interfaces/IBadge.service';
 import { inject, injectable } from 'inversify';
@@ -19,8 +22,8 @@ export class BadgeService implements IBadgeService {
     async createBadge(
         badgeData: CreateBadgeRequestDto
     ): Promise<CreateBadgeResponseDto> {
-        //needed a mapped badge to give to badge repo
-        const Badge = await this._badgeRepository.create(badgeData as any);
+        const badgeEntity = BadgeMapper.toEntityFromCreateReqDto(badgeData);
+        const Badge = await this._badgeRepository.createBadge(badgeEntity);
         return BadgeMapper.ToResponseDto(Badge);
     }
 
@@ -43,11 +46,12 @@ export class BadgeService implements IBadgeService {
 
     async updateBadge(
         badgeId: string,
-        badgeData: CreateBadgeRequestDto
+        badgeData: BadgeRequestDto
     ): Promise<CreateBadgeResponseDto> {
+        const badgeEntity = BadgeMapper.toEntityFromDto(badgeData);
         const result = await this._badgeRepository.update(
             badgeId,
-            badgeData as any
+            BadgeMapper.toPersistence(badgeEntity)
         );
         if (!result) throw new Error('Badge not found');
         return BadgeMapper.ToResponseDto(result);

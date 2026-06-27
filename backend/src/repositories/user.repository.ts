@@ -4,6 +4,7 @@ import User, { IUser } from '../models/user.model';
 import { Role } from '@/types/role.types';
 import { UserUpdateData } from '@/types/repository.types';
 import { ISubscription } from '@/models/subscription.model';
+import { FilterQuery } from 'mongoose';
 
 export class UserRepository
     extends BaseRepository<IUser>
@@ -94,7 +95,7 @@ export class UserRepository
         search?: string
     ): Promise<{ users: IUser[]; totalCount: number }> {
         const skip = (page - 1) * limit;
-        const query: any = { role: Role.User };
+        const query: FilterQuery<IUser> = { role: Role.User };
 
         if (search) {
             query.$or = [

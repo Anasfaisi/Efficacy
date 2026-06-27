@@ -1,3 +1,4 @@
+import { MessageType } from '@/types/message-type.types';
 import { Schema, model, Types, Document } from 'mongoose';
 
 export interface IMessage extends Document {
@@ -5,8 +6,7 @@ export interface IMessage extends Document {
     senderId: Types.ObjectId;
     content: string;
     isRead: boolean;
-    type: 'text' | 'image' | 'file';
-    metadata?: Record<string, any>;
+    type: MessageType;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -35,12 +35,8 @@ const MessageSchema = new Schema<IMessage>(
         },
         type: {
             type: String,
-            enum: ['text', 'image', 'audio', 'file'],
-            default: 'text',
-        },
-        metadata: {
-            type: Map,
-            of: Schema.Types.Mixed,
+            enum: Object.values(MessageType),
+            default: MessageType.TEXT,
         },
     },
     { timestamps: true }

@@ -5,19 +5,31 @@ import { IMessage } from '@/models/message.model';
 import { injectable, inject } from 'inversify';
 import { IMessageRepository } from './interfaces/IMessage.repository';
 import { TYPES } from '@/config/inversify-key.types';
+import { Types } from 'mongoose';
+import { MessageEntity, PopulatedMessageEntity } from '@/entity/message.entity';
+import { MessageMapper } from '@/Mapper/message.mapper';
+
+interface PopulatedParticipant {
+    _id: {
+        _id: Types.ObjectId;
+        name: string;
+        email: string;
+        role: string;
+        profilePic?: string;
+    };
+    onModel: string;
+}
 
 @injectable()
 export class ChatRepository
     extends BaseRepository<IConversation>
     implements IChatRepository
 {
-    private messageRepository: IMessageRepository;
-
     constructor(
-        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository
+        @inject(TYPES.MessageRepository)
+        private _messageRepository: IMessageRepository
     ) {
         super(ConversationModel);
-        this.messageRepository = messageRepository;
     }
 
     async createConversation(
@@ -35,8 +47,10 @@ export class ChatRepository
         const convObject = newConversation.toObject();
         return {
             ...convObject,
-            participants: (convObject.participants as any[]).map((p) => p._id),
-        } as any;
+            participants: (
+                convObject.participants as unknown as PopulatedParticipant[]
+            ).map((p) => p._id),
+        } as unknown as IConversation;
     }
 
     async findConversationByParticipants(
@@ -50,16 +64,19 @@ export class ChatRepository
                 'participants._id': { $all: participantIds },
             })
             .populate('participants._id', 'name profilePic role email')
-            .lean();
+            .lean<
+                | (Omit<IConversation, 'participants'> & {
+                      participants: PopulatedParticipant[];
+                  })
+                | null
+            >();
 
         if (!conversation) return null;
 
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(
-                (p) => p._id
-            ),
-        } as any;
+            participants: conversation.participants.map((p) => p._id),
+        } as unknown as IConversation;
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
@@ -70,12 +87,16 @@ export class ChatRepository
             .populate('participants._id', 'name profilePic role email')
             .populate('lastMessage')
             .sort({ updatedAt: -1 })
-            .lean();
+            .lean<
+                (Omit<IConversation, 'participants'> & {
+                    participants: PopulatedParticipant[];
+                })[]
+            >();
 
-        return conversations.map((conv: any) => ({
+        return conversations.map((conv) => ({
             ...conv,
-            participants: conv.participants.map((p: any) => p._id),
-        }));
+            participants: conv.participants.map((p) => p._id),
+        })) as unknown as IConversation[];
     }
 
     async getConversationById(id: string): Promise<IConversation | null> {
@@ -88,25 +109,37 @@ export class ChatRepository
 
         return {
             ...conversation,
-            participants: (conversation.participants as any[]).map(
-                (p) => p._id
-            ),
-        } as any;
+            participants: conversation.participants.map((p) => p._id),
+        } as unknown as IConversation;
     }
 
-    async createMessage(data: Partial<IMessage>): Promise<IMessage> {
-        let message = await this.messageRepository.create(data);
+    async createMessage(
+        data: Partial<MessageEntity>
+    ): Promise<PopulatedMessageEntity> {
+        const persistence = MessageMapper.toPersistence(data);
+        const message = await this._messageRepository.create(persistence);
 
-        message = await (message as any).populate('senderId', 'name');
+        const conversation = await this.model
+            .findById(data.conversationId)
+            .populate('participants._id', 'name')
+            .lean<
+                | (Omit<IConversation, 'participants'> & {
+                      participants: PopulatedParticipant[];
+                  })
+                | null
+            >();
 
-        const msgObject = (message as any).toObject
-            ? (message as any).toObject()
-            : message;
-        return {
-            ...msgObject,
-            senderName: (msgObject.senderId as any)?.name,
-            senderId: (msgObject.senderId as any)?._id,
-        } as any;
+        let senderName = '';
+        if (conversation) {
+            const participant = conversation.participants.find(
+                (p) => p._id._id.toString() === data.senderId
+            );
+            if (participant) senderName = participant._id.name;
+        }
+
+        const populatedEntity = MessageMapper.toPopulatedEntity(message);
+        populatedEntity.senderName = senderName;
+        return populatedEntity;
     }
 
     async getMessages(
@@ -114,24 +147,45 @@ export class ChatRepository
         limit: number = 50,
         skip: number = 0
     ): Promise<IMessage[]> {
-        const messages = await (this.messageRepository as any).findByChat(
-            conversationId
-        );
+        const messages =
+            await this._messageRepository.findByChat(conversationId);
+
+        const conversation = await this.model
+            .findById(conversationId)
+            .populate('participants._id', 'name')
+            .lean<
+                | (Omit<IConversation, 'participants'> & {
+                      participants: PopulatedParticipant[];
+                  })
+                | null
+            >();
+
+        const participantsMap = new Map<string, string>();
+        if (conversation) {
+            conversation.participants.forEach((p) => {
+                participantsMap.set(p._id._id.toString(), p._id.name);
+            });
+        }
 
         const paginatedMessages = messages.slice(skip, skip + limit);
 
-        return paginatedMessages.map((msg: any) => ({
-            ...(msg.toObject ? msg.toObject() : msg),
-            senderName: msg.senderId?.name,
-            senderId: msg.senderId?._id,
-        }));
+        return paginatedMessages.map((msg) => {
+            const msgObj = msg.toObject ? msg.toObject() : msg;
+            const senderIdStr = msgObj.senderId.toString();
+
+            return {
+                ...msgObj,
+                senderName: participantsMap.get(senderIdStr),
+                senderId: senderIdStr,
+            } as unknown as IMessage;
+        });
     }
 
     async markMessagesAsRead(
         conversationId: string,
         userId: string
     ): Promise<void> {
-        (await this.messageRepository.updateMany(
+        (await this._messageRepository.updateMany(
             { conversationId, senderId: { $ne: userId }, isRead: false },
             { isRead: true }
         )) as void;
@@ -141,17 +195,17 @@ export class ChatRepository
         conversationId: string,
         messageId: string
     ): Promise<void> {
-        await this.updateOne(conversationId, {
-            lastMessage: messageId as any,
+        await this.update(conversationId, {
+            lastMessage: new Types.ObjectId(messageId),
         });
     }
 
     async deleteMessage(messageId: string): Promise<IMessage | null> {
-        await this.messageRepository.deleteOne(messageId);
-        return null; // Return type compatibility, technically findByIdAndDelete returns the doc.
+        await this._messageRepository.deleteOne(messageId);
+        return null;
     }
 
     async getMessageById(messageId: string): Promise<IMessage | null> {
-        return this.messageRepository.findById(messageId);
+        return this._messageRepository.findById(messageId);
     }
 }
