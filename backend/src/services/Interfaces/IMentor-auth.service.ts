@@ -36,5 +36,5 @@ export interface IMentorAuthService {
     mentorResetPassword(
         dto: ResetPasswordrequestDto
     ): Promise<{ message: string }>;
-    logout(refreshToken: string): Promise<void>;
+    logout(): Promise<void>;
 }

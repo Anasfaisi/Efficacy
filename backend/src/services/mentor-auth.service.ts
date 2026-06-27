@@ -267,7 +267,7 @@ export class MentorAuthService implements IMentorAuthService {
         return { message: SuccessMessages.PasswordResetSuccess };
     }
 
-    async logout(refreshToken: string): Promise<void> {
+    async logout(): Promise<void> {
         return Promise.resolve();
     }
 }

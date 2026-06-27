@@ -32,7 +32,9 @@ export class MentorRepository
         search?: string,
         filters?: { status?: string; mentorType?: string }
     ): Promise<{ mentors: IMentor[]; total: number }> {
-        const query: any = { status: { $in: ['active', 'inactive'] } };
+        const query: FilterQuery<IMentor> = {
+            status: { $in: ['active', 'inactive'] },
+        };
 
         if (filters?.status && filters.status !== 'all') {
             query.status = filters.status;
@@ -67,7 +69,7 @@ export class MentorRepository
         search?: string,
         filters?: { status?: string; mentorType?: string }
     ): Promise<{ mentors: IMentor[]; total: number }> {
-        const query: any = { status: { $ne: 'incomplete' } };
+        const query: FilterQuery<IMentor> = { status: { $ne: 'incomplete' } };
 
         if (filters?.status && filters.status !== 'all') {
             query.status = filters.status;

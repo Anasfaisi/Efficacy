@@ -1,4 +1,5 @@
 import {
+    BadgeType,
     GamificationEvent,
     IconType,
     Rarity,
@@ -20,4 +21,5 @@ export interface CreateBadgeResponseDto {
     };
     triggerEvent: GamificationEvent;
     isActive: boolean;
+    type: BadgeType;
 }

@@ -27,6 +27,6 @@ export function cronJob() {
                     logger.error('Error in daily completion check:', err)
                 );
         },
-        24 * 60 * 60 * 1000
+        24 * 60 * 60 * 1000 * 7
     );
 }

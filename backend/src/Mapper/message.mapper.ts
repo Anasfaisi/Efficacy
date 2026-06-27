@@ -39,15 +39,15 @@ export class MessageMapper {
         return {
             id: messageData.id,
             conversationId: messageData.conversationId.toString(),
-            senderId: sender._id
+            senderId: sender?._id
                 ? sender._id.toString()
-                : messageData.senderId.toString(),
+                : messageData.senderId?.toString(),
             content: messageData.content,
             isRead: messageData.isRead,
             type: messageData.type,
             createdAt: messageData.createdAt ?? new Date(),
             updatedAt: messageData.updatedAt ?? new Date(),
-            senderName: sender.name,
+            senderName: sender?.name,
         };
     }
 }

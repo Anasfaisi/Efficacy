@@ -9,7 +9,6 @@ import { IMentorshipRepository } from '@/repositories/interfaces/IMentorship.rep
 import { ErrorMessages } from '@/types/response-messages.types';
 import { MessageType } from '@/types/message-type.types';
 import { PopulatedMessageEntity } from '@/entity/message.entity';
-import { Types } from 'mongoose';
 
 @injectable()
 export class ChatService implements IChatService {
@@ -60,7 +59,8 @@ export class ChatService implements IChatService {
     }
 
     async getUserConversations(userId: string): Promise<IConversation[]> {
-        return this._chatRepository.getUserConversations(userId);
+        const result = await this._chatRepository.getUserConversations(userId);
+        return result;
     }
 
     async getRoomMessages(

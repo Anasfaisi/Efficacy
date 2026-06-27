@@ -16,7 +16,6 @@ export interface getAllPlanRequestDto {
     page: number;
     limit: number;
 }
-export interface getAllPlanResponseDto {}
 export interface createPlanResponseDto {
     id?: string;
     name?: string;

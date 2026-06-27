@@ -41,7 +41,6 @@ export class PomodoroRepository
                 totalFocusTime: duration,
                 totalCycles: 1,
             };
-        } else {
         }
 
         return this.model

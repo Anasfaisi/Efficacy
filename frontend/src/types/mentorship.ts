@@ -18,6 +18,11 @@ export enum SessionStatus {
     RESCHEDULE_REQUESTED = 'reschedule_requested',
     CANCELLED = 'cancelled',
 }
+export enum PaymentStatus{
+    PENDING = 'pending',
+    PAID = 'paid',
+    VERIFIED = 'verified',
+}
 
 export interface ISession {
     _id?: string;
@@ -43,7 +48,7 @@ export interface Mentorship {
     usedSessions: number;
     sessions: ISession[];
 
-    paymentStatus: 'pending' | 'paid' | 'verified';
+    paymentStatus: PaymentStatus;
     paymentId?: string;
     amount: number;
 

@@ -48,5 +48,5 @@ export interface IAuthService {
     forgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }>;
     resetPassword(dto: ResetPasswordrequestDto): Promise<{ message: string }>;
 
-    logout(refreshToken: string): Promise<void>;
+    logout(): Promise<void>;
 }

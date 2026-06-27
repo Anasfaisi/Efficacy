@@ -1,14 +1,12 @@
 import { IMentor } from '@/models/mentor.model';
 import { MentorEntity } from '@/entity/mentor.entity';
-import { Types } from 'mongoose';
 
 export class MentorMapper {
-    static toEntity(doc: IMentor |null): MentorEntity {
-        if(!doc)
-        {
-            throw new Error("Mentor not found");
+    static toEntity(doc: IMentor | null): MentorEntity {
+        if (!doc) {
+            throw new Error('Mentor not found');
         }
-        const d = doc
+        const d = doc;
         return new MentorEntity(
             d._id?.toString() || d.id?.toString(),
             d.name,
@@ -56,5 +54,4 @@ export class MentorMapper {
             d.updatedAt
         );
     }
-
 }

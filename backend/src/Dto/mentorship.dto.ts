@@ -1,3 +1,5 @@
+import { MentorshipEntity } from '@/entity/mentorship.entity';
+
 export class CreateMentorshipRequestDto {
     constructor(
         public mentorId: string,
@@ -42,7 +44,7 @@ export class VerifyPaymentDto {
 
 export class PaginatedMentorshipResponseDto {
     constructor(
-        public mentorships: any[],
+        public mentorships: MentorshipEntity[],
         public totalCount: number,
         public totalPages: number,
         public currentPage: number

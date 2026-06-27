@@ -46,7 +46,7 @@ export class WalletRepository
     }
 
     async creditPendingBalance(
-        mentorId: string | ObjectId,
+        mentorId: ObjectId,
         amount: number,
         description: string
     ): Promise<void> {
@@ -67,7 +67,7 @@ export class WalletRepository
                 balance: 0,
                 pendingBalance: 0,
                 transactions: [],
-            } as any);
+            });
         }
 
         wallet.pendingBalance += amount;
@@ -135,7 +135,7 @@ export class WalletRepository
     }
 
     async creditBalance(
-        userId: string | ObjectId,
+        userId: ObjectId,
         amount: number,
         description: string
     ): Promise<void> {
@@ -164,7 +164,7 @@ export class WalletRepository
                 balance: 0,
                 pendingBalance: 0,
                 transactions: [],
-            } as any);
+            });
         }
 
         wallet.balance += amount;
@@ -275,7 +275,9 @@ export class WalletRepository
         ];
 
         const result = await Wallet.aggregate(pipeline);
-        const data = result[0].data.map((item: any) => item.transactions);
+        const data = result[0].data.map(
+            (item: { transactions: ITransaction }) => item.transactions
+        );
         const total = result[0].metadata[0]?.total || 0;
 
         return { transactions: data, total };

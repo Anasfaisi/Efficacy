@@ -69,7 +69,7 @@ export class MentorController {
             if (!refreshToken) {
                 throw new Error(AuthMessages.InvalidRefreshToken);
             }
-            await this._mentorAuthService.logout(refreshToken);
+            await this._mentorAuthService.logout();
 
             res.clearCookie('refreshToken', {
                 httpOnly: true,

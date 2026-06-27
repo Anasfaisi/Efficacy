@@ -128,7 +128,7 @@ const Sidebar = () => {
 
     return (
         <div
-            className={`${collapsed ? 'w-24' : 'w-64'} h-screen sticky top-0 shrink-0 bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 relative z-20 transition-all duration-300`}
+            className={`${collapsed ? 'w-24' : 'w-64'} h-screen sticky top-0 shrink-0 bg-white border-r border-gray-100 flex flex-col shadow-2xl shadow-gray-200/50 z-20 transition-all duration-300`}
         >
             {/* Toggle Button */}
             <button
