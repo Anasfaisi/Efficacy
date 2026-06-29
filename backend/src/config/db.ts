@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
     try {
         await mongoose.connect(
-            process.env.MONGODB_URI || 'mongodb://localhost:27017/Efficacy'
+            process.env.MONGODB_URI as string
         );
         logger.info('MongoDB connected');
     } catch (error) {
