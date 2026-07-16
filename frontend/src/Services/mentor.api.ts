@@ -152,12 +152,12 @@ export const mentorApi = {
     updateMentorProfileArray: async (field: string, elements: string[]) => {
         const body = {
             field,
-            data: JSON.stringify(elements )
+            data: JSON.stringify(elements),
         };
-        console.log(body)
+        console.log(body);
         const res = await api.patch(
             MentorRoutes.ARRAY_MENTOR_PROFILE_ARRAY,
-            body,
+            body
         );
         return res.data;
     },

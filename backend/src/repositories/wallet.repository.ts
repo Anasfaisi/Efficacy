@@ -22,7 +22,7 @@ export class WalletRepository
 
     async createWallet(
         data: WalletEntity
-    ): Promise<Partial<WalletEntity> | null> {
+    ): Promise<WalletEntity| null> {
         const persistence = WalletMapper.ToPersistence(data);
         const result = await this.create(persistence);
         return WalletMapper.ToEntity(result);
@@ -30,19 +30,21 @@ export class WalletRepository
 
     async findWalletById(
         walletId: string
-    ): Promise<Partial<WalletEntity> | null> {
+    ): Promise<WalletEntity | null> {
         const wallet = await super.findById(walletId);
         if (!wallet) return null;
         return WalletMapper.ToEntity(wallet);
     }
-    async findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null> {
+    async findByMentorId(mentorId: string | ObjectId): Promise<WalletEntity | null> {
         if (
             !mentorId ||
             mentorId.toString() === 'null' ||
             mentorId.toString() === 'undefined'
         )
             return null;
-        return await Wallet.findOne({ mentorId });
+        const wallet = await Wallet.findOne({ mentorId });
+        if (!wallet) return null;
+        return WalletMapper.ToEntity(wallet);
     }
 
     async creditPendingBalance(
@@ -52,16 +54,7 @@ export class WalletRepository
     ): Promise<void> {
         let wallet = await this.findByMentorId(mentorId);
         if (!wallet) {
-            if (
-                !mentorId ||
-                mentorId.toString() === 'null' ||
-                mentorId.toString() === 'undefined'
-            ) {
-                console.error(
-                    'Attempted to create mentor wallet with nullish ID'
-                );
-                return;
-            }
+          
             wallet = await this.create({
                 mentorId,
                 balance: 0,
@@ -79,7 +72,7 @@ export class WalletRepository
             date: new Date(),
         });
 
-        await wallet.save();
+        await this.updateWallet(wallet.id as string, wallet);
     }
 
     async releasePendingBalance(
@@ -101,7 +94,7 @@ export class WalletRepository
             description: 'Funds Unlocked - Mentorship Completed',
             date: new Date(),
         });
-        await wallet.save();
+        await this.updateWallet(wallet.id as string, wallet);
     }
 
     async debitPendingBalance(
@@ -121,7 +114,7 @@ export class WalletRepository
             description: 'Refund/Cancellation Deduction',
             date: new Date(),
         });
-        await wallet.save();
+        await this.updateWallet(wallet.id as string, wallet);
     }
 
     async findByUserId(userId: string | ObjectId): Promise<IWallet | null> {
@@ -292,4 +285,9 @@ export class WalletRepository
             { $set: { stripeConnectAccountId: accountId } }
         );
     }
+
+    async updateWallet(walletId: string, wallet: WalletEntity): Promise<void> {
+        const persistence = WalletMapper.ToPersistence(wallet);
+        await this.update(walletId, persistence);
+}
 }

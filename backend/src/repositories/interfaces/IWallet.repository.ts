@@ -4,9 +4,9 @@ import { ObjectId } from 'mongoose';
 import { WalletEntity } from '@/entity/wallet.entity';
 
 export interface IWalletRepository extends IBaseRepository<IWallet> {
-    createWallet(data: WalletEntity): Promise<Partial<WalletEntity> | null>;
-    findWalletById(walletId: string): Promise<Partial<WalletEntity> | null>;
-    findByMentorId(mentorId: string | ObjectId): Promise<IWallet | null>;
+    createWallet(data: WalletEntity): Promise<WalletEntity | null>;
+    findWalletById(walletId: string): Promise<WalletEntity | null>;
+    findByMentorId(mentorId: string | ObjectId): Promise<WalletEntity | null>;
     creditPendingBalance(
         mentorId: string | ObjectId,
         amount: number,
@@ -39,4 +39,5 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
     ): Promise<{ transactions: ITransaction[]; total: number }>;
 
     updateStripeConnectId(mentorId: string, accountId: string): Promise<void>;
+    updateWallet(walletId:string,wallet : WalletEntity) : Promise<void>
 }

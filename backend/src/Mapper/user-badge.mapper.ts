@@ -1,5 +1,5 @@
 import { UserBadgeEntity } from '@/entity/user-badge.entity';
-import { IUserBadge } from '@/models/userBadge.model';
+import { IUserBadge } from '@/models/user-badge.model';
 
 export class UserBadgeMapper {
     static ToEntity(userBadge: IUserBadge): UserBadgeEntity {

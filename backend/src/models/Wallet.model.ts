@@ -1,4 +1,4 @@
-import { Schema, model, Document, ObjectId } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export enum TransactionType {
     EARNING = 'earning',
@@ -24,8 +24,8 @@ interface ITransaction {
 
 interface IWallet extends Document {
     id?: string;
-    mentorId?: ObjectId;
-    userId?: ObjectId;
+    mentorId?: Types.ObjectId;
+    userId?: Types.ObjectId;
     balance: number;
     pendingBalance: number;
     pendingWithdrawal?: number;

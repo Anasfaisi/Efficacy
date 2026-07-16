@@ -3,7 +3,7 @@ import { IPomodoroService } from './Interfaces/IPomodoro.service';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/inversify-key.types';
 import { IPomodoroRepository } from '@/repositories/interfaces/IPomodoro.repository';
-import { UserStats } from '@/models/userStats.model';
+import { UserStats } from '@/models/user-stats.model';
 import { emitGamificationEvent } from '@/utils/eventBus';
 import { GamificationEvent } from '@/types/gamification.types';
 import { IPomodoroGamificationService } from './Gamification/interfaces/IPomodoro-gamification.service';

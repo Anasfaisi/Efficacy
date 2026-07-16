@@ -7,26 +7,28 @@ export interface IWalletService {
     getWallet(
         userId: string | ObjectId,
         role: string
-    ): Promise<Partial<WalletEntity> | null>;
+    ): Promise<WalletEntity | null>;
     addEarnings(
         mentorId: string | ObjectId,
         amount: number,
         mentorshipId: string
-    ): Promise<IWallet>;
+    ): Promise<WalletEntity>;
     requestWithdrawal(
         mentorId: string | ObjectId,
         amount: number
-    ): Promise<IWallet>;
-    updateBankDetails(
-        userId: string | ObjectId,
-        role: string,
-        details: {
-            accountNumber: string;
-            bankName: string;
-            ifscCode: string;
-            accountHolderName: string;
-        }
-    ): Promise<IWallet>;
+    ): Promise<WalletEntity>;
+
+    // updateBankDetails(
+    //     userId: string | ObjectId,
+    //     role: string,
+    //     details: {
+    //         accountNumber: string;
+    //         bankName: string;
+    //         ifscCode: string;
+    //         accountHolderName: string;
+    //     }
+    // ): Promise<IWallet>;
+    
     getPaginatedTransactions(
         userId: string | ObjectId,
         role: string,

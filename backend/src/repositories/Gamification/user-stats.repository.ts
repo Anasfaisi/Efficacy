@@ -2,7 +2,7 @@ import { UserStatsEntity } from '@/entity/user-stats.entity';
 import { IUserStatsRepository } from './interfaces/IUser-stats.repository';
 import { UserStatsMapper } from '@/Mapper/user-stats.mapper';
 import { BaseRepository } from '../base.repository';
-import { IUserStats, UserStats } from '@/models/userStats.model';
+import { IUserStats, UserStats } from '@/models/user-stats.model';
 
 export class UserStatsRepository
     extends BaseRepository<IUserStats>

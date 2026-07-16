@@ -36,11 +36,8 @@ export class WalletService implements IWalletService {
     async getWallet(
         userId: string | ObjectId,
         role: string
-    ): Promise<Partial<WalletEntity> | null> {
-        let wallet =
-            role === Role.Mentor
-                ? await this._walletRepository.findByMentorId(userId)
-                : await this._walletRepository.findByUserId(userId);
+    ): Promise<WalletEntity | null> {
+        let wallet = await this._walletRepository.findByMentorId(userId);
 
         if (!wallet) {
             const initialData: WalletEntity = {
@@ -65,9 +62,12 @@ export class WalletService implements IWalletService {
         mentorId: string | ObjectId,
         amount: number,
         mentorshipId: string
-    ): Promise<IWallet> {
+    ): Promise<WalletEntity> {
+        
         const wallet = await this.getWallet(mentorId, Role.Mentor);
-
+        if(!wallet){
+            throw new Error(WalletMessages.WalletNotFound);
+        }
         wallet.balance += amount;
         wallet.transactions.push({
             amount,
@@ -84,15 +84,16 @@ export class WalletService implements IWalletService {
             (wallet.pendingWithdrawal || 0) +
             (wallet.totalWithdrawn || 0);
 
-        await this._walletRepository.update(wallet._id as string, wallet);
+        await this._walletRepository.updateWallet(wallet.id as string, wallet);
         return wallet;
     }
 
     async requestWithdrawal(
         mentorId: string | ObjectId,
         amount: number
-    ): Promise<IWallet> {
+    ): Promise<WalletEntity> {
         const wallet = await this.getWallet(mentorId, Role.Mentor);
+        if(!wallet)throw new Error(WalletMessages.WalletNotFound)
         if (wallet.balance < amount)
             throw new Error(ErrorMessages.InsufficientBalance);
 
@@ -114,13 +115,11 @@ export class WalletService implements IWalletService {
             date: new Date(),
         });
 
-        await this._walletRepository.update(wallet._id as string, wallet);
+        await this._walletRepository.updateWallet(wallet.id as string, wallet);
 
         const lastTx = wallet.transactions[wallet.transactions.length - 1];
         const transactionId =
-            lastTx && (lastTx as TransactionEntity).id
-                ? (lastTx as TransactionEntity).id.toString()
-                : '';
+            (lastTx as TransactionEntity)?.id?.toString() || '';
 
         // Notify Admin of the payout request
         await this._notificationService.notifyAdmin(
@@ -128,7 +127,7 @@ export class WalletService implements IWalletService {
             'New Payout Request',
             `A mentor has requested a payout of ₹${amount}.`,
             {
-                walletId: wallet._id as string,
+                walletId: wallet.id as string,
                 transactionId,
                 amount: amount.toString(),
                 link: `/admin/payouts?transactionId=${transactionId}`,
@@ -138,21 +137,21 @@ export class WalletService implements IWalletService {
         return wallet;
     }
 
-    async updateBankDetails(
-        userId: string | ObjectId,
-        role: string,
-        details: {
-            accountNumber: string;
-            bankName: string;
-            ifscCode: string;
-            accountHolderName: string;
-        }
-    ): Promise<IWallet> {
-        const wallet = await this.getWallet(userId, role);
-        wallet.bankAccountDetails = details;
-        await this._walletRepository.update(wallet._id as string, wallet);
-        return wallet;
-    }
+    // async updateBankDetails(
+    //     userId: string | ObjectId,
+    //     role: string,
+    //     details: {
+    //         accountNumber: string;
+    //         bankName: string;
+    //         ifscCode: string;
+    //         accountHolderName: string;
+    //     }
+    // ): Promise<IWallet> {
+    //     const wallet = await this.getWallet(userId, role);
+    //     wallet.bankAccountDetails = details;
+    //     await this._walletRepository.update(wallet._id as string, wallet);
+    //     return wallet;
+    // }
 
     async getPaginatedTransactions(
         userId: string | ObjectId,
@@ -161,8 +160,9 @@ export class WalletService implements IWalletService {
         limit: number
     ): Promise<{ transactions: ITransaction[]; total: number }> {
         const wallet = await this.getWallet(userId, role);
+        if(!wallet)throw new Error(WalletMessages.WalletNotFound)
         return this._walletRepository.findPaginatedTransactions(
-            wallet._id as string,
+            wallet.id as string,
             page,
             limit
         );
@@ -324,7 +324,7 @@ export class WalletService implements IWalletService {
 
         transaction.status = TransactionStatus.FAILED;
 
-        const udpatedWallet = await this._walletRepository.update(
+        const udpatedWallet = await this._walletRepository.updateWallet(
             wallet.id as string,
             wallet
         );
@@ -342,6 +342,6 @@ export class WalletService implements IWalletService {
             );
         }
 
-        return WalletMapper.ToEntity(udpatedWallet) as WalletEntity;
+        return wallet
     }
 }

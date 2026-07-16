@@ -18,7 +18,7 @@ export enum SessionStatus {
     RESCHEDULE_REQUESTED = 'reschedule_requested',
     CANCELLED = 'cancelled',
 }
-export enum PaymentStatus{
+export enum PaymentStatus {
     PENDING = 'pending',
     PAID = 'paid',
     VERIFIED = 'verified',

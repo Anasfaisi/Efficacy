@@ -1,4 +1,4 @@
-import { IUserBadge, UserBadge } from '@/models/userBadge.model';
+import { IUserBadge, UserBadge } from '@/models/user-badge.model';
 import { BaseRepository } from '../base.repository';
 import { IUserBadgeRepository } from './interfaces/IUser-badge.repository';
 import { Types } from 'mongoose';

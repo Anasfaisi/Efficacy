@@ -665,6 +665,7 @@ export class MentorshipService implements IMentorshipService {
                       : (
                             mentorship.mentorId as unknown as MentorEntity
                         ).id?.toString();
+            console.log(currentMentorId, 'currentMentorId =======');
             if (currentMentorId) {
                 await this._walletRepository.releasePendingBalance(
                     currentMentorId,
