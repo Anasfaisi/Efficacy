@@ -1,5 +1,5 @@
 import { container } from '@/config/inversify.config';
-import { KanbanController } from '@/controllers/Kanban.controller';
+import { KanbanController } from '@/controllers/kanban.controller';
 import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { TokenService } from '@/services/token.service';
 import { TYPES } from '@/config/inversify-key.types';

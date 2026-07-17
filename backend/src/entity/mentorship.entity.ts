@@ -2,12 +2,12 @@ import { MentorshipStatus } from '@/types/mentorship.types';
 import { MentorEntity } from './mentor.entity';
 import { UserEntity } from './user.entity';
 import { PaymentStatus } from '@/types/payment.types';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface MentorshipEntity {
     id: string;
-    userId: ObjectId | UserEntity;
-    mentorId: ObjectId | MentorEntity;
+    userId: Types.ObjectId | UserEntity;
+    mentorId: Types.ObjectId | MentorEntity;
     status: MentorshipStatus;
     startDate?: Date;
     endDate?: Date;

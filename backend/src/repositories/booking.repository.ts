@@ -1,11 +1,11 @@
 import { injectable } from 'inversify';
 import { IBookingRepository } from './interfaces/IBooking.repository';
-import Booking, { IBooking } from '@/models/Booking.model';
 import { BookingStatus } from '@/types/booking-status.types';
 import { BookingEntity } from '@/entity/booking.entity';
 import { BookingMapper } from '@/Mapper/booking.mapper';
 import { Types, FilterQuery } from 'mongoose';
 import { logger } from '@/utils/logMiddlewares';
+import Booking, { IBooking } from '@/models/booking.model';
 @injectable()
 export class BookingRepository implements IBookingRepository {
     async create(booking: BookingEntity): Promise<BookingEntity> {

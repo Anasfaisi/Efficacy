@@ -8,7 +8,7 @@ import { IMentorshipService } from './Interfaces/IMentorship.service';
 import { ErrorMessages } from '@/types/response-messages.types';
 import { MentorEntity } from '@/entity/mentor.entity';
 import { UserEntity } from '@/entity/user.entity';
-import { SubscriptionStatus } from '@/models/subscription.model';
+import { SubscriptionStatus, ISubscription } from '@/models/subscription.model';
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -114,20 +114,16 @@ export class PaymentService implements IPaymentService {
                 const subscriptionId = session.subscription as string;
                 const customerEmail = session.customer_email;
 
-                const subscription =
-                    await this._stripe.subscriptions.retrieve(subscriptionId);
-
                 const startDate = new Date();
                 const endDate = new Date(startDate);
                 endDate.setDate(endDate.getDate() + 7);
-                subscription.status = SubscriptionStatus.ACTIVE;
                 await this._userRepository.updateSubscriptionByEmail(
                     customerEmail!,
                     {
                         stripeSubscriptionId: subscriptionId,
-                        status: subscription.status,
+                        status: SubscriptionStatus.ACTIVE,
                         currentPeriodEnd: endDate,
-                    }
+                    } as ISubscription
                 );
             }
         }

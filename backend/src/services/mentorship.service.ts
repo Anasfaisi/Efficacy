@@ -23,6 +23,7 @@ import {
 import { MentorEntity } from '@/entity/mentor.entity';
 import { UserEntity } from '@/entity/user.entity';
 import { IOtpService } from './Interfaces/IOtp.service';
+import { MentorShipMapper } from '@/Mapper/mentorship.mapper';
 import Stripe from 'stripe';
 import { PaymentStatus } from '@/types/payment.types';
 
@@ -50,8 +51,8 @@ export class MentorshipService implements IMentorshipService {
     }
 
     async createRequest(
-        userId: string | ObjectId,
-        mentorId: string | ObjectId,
+        userId: string,
+        mentorId: string,
         sessions: number,
         proposedStartDate?: Date
     ): Promise<IMentorship> {
@@ -74,8 +75,8 @@ export class MentorshipService implements IMentorshipService {
         if (existingMentorship)
             throw new Error(ErrorMessages.MentorshipAlreadyExists);
         const mentorship = await this._mentorshipRepository.create({
-            userId,
-            mentorId,
+            userId: new Types.ObjectId(userId),
+            mentorId: new Types.ObjectId(mentorId),
             proposedStartDate,
             totalSessions: sessions,
             status: MentorshipStatus.PENDING,
@@ -112,7 +113,7 @@ export class MentorshipService implements IMentorshipService {
                 search
             );
         return new PaginatedMentorshipResponseDto(
-            mentorships,
+            mentorships.map((m) => MentorShipMapper.toEntity(m)),
             total,
             Math.ceil(total / limit),
             page

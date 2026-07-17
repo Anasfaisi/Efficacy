@@ -17,7 +17,6 @@ import { Role } from '@/types/role.types';
 import { NotificationType } from '@/types/notification.enum';
 import { WalletEntity } from '@/entity/wallet.entity';
 import { TransactionEntity } from '@/entity/transaction.entity';
-import { WalletMapper } from '@/Mapper/wallet.mapper';
 
 @injectable()
 export class WalletService implements IWalletService {
@@ -63,9 +62,8 @@ export class WalletService implements IWalletService {
         amount: number,
         mentorshipId: string
     ): Promise<WalletEntity> {
-        
         const wallet = await this.getWallet(mentorId, Role.Mentor);
-        if(!wallet){
+        if (!wallet) {
             throw new Error(WalletMessages.WalletNotFound);
         }
         wallet.balance += amount;
@@ -93,7 +91,7 @@ export class WalletService implements IWalletService {
         amount: number
     ): Promise<WalletEntity> {
         const wallet = await this.getWallet(mentorId, Role.Mentor);
-        if(!wallet)throw new Error(WalletMessages.WalletNotFound)
+        if (!wallet) throw new Error(WalletMessages.WalletNotFound);
         if (wallet.balance < amount)
             throw new Error(ErrorMessages.InsufficientBalance);
 
@@ -160,7 +158,7 @@ export class WalletService implements IWalletService {
         limit: number
     ): Promise<{ transactions: ITransaction[]; total: number }> {
         const wallet = await this.getWallet(userId, role);
-        if(!wallet)throw new Error(WalletMessages.WalletNotFound)
+        if (!wallet) throw new Error(WalletMessages.WalletNotFound);
         return this._walletRepository.findPaginatedTransactions(
             wallet.id as string,
             page,
@@ -218,7 +216,10 @@ export class WalletService implements IWalletService {
 
         if (account.details_submitted) {
             wallet.stripeConnectOnboarded = true;
-            await this._walletRepository.update(wallet._id as string, wallet);
+            await this._walletRepository.updateWallet(
+                wallet.id as string,
+                wallet
+            );
         }
 
         return {
@@ -235,7 +236,7 @@ export class WalletService implements IWalletService {
         if (!wallet) throw new Error(WalletMessages.NoWallet);
 
         const transaction = wallet.transactions.find(
-            (t: ITransaction) => t._id && t._id.toString() === transactionId
+            (t: TransactionEntity) => t.id && t.id.toString() === transactionId
         );
         if (!transaction) throw new Error(WalletMessages.NoTransactions);
         if (transaction.status !== TransactionStatus.PENDING) {
@@ -324,10 +325,10 @@ export class WalletService implements IWalletService {
 
         transaction.status = TransactionStatus.FAILED;
 
-        const udpatedWallet = await this._walletRepository.updateWallet(
-            wallet.id as string,
-            wallet
-        );
+        // const udpatedWallet = await this._walletRepository.updateWallet(
+        //     wallet.id as string,
+        //     wallet
+        // );
 
         // Notify Mentor of rejected payout request
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';
@@ -342,6 +343,6 @@ export class WalletService implements IWalletService {
             );
         }
 
-        return wallet
+        return wallet;
     }
 }

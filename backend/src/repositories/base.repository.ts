@@ -11,8 +11,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
 
     async findOne(query: FilterQuery<T>): Promise<T | null> {
-        return this.
-        model.findOne(query).exec();
+        return this.model.findOne(query).exec();
     }
 
     async create(data: Partial<T>): Promise<T> {

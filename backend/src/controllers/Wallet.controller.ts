@@ -20,20 +20,6 @@ export class WalletController {
         res.status(code.OK).json(wallet);
     }
 
-    async updateBankDetails(req: Request, res: Response): Promise<void> {
-        const userId = req.currentUser!.id;
-        const role = req.currentUser!.role;
-        const details = req.body;
-
-        const wallet = await this._walletService.updateBankDetails(
-            userId,
-            role,
-            details
-        );
-
-        res.status(code.OK).json(wallet);
-    }
-
     async requestWithdrawal(req: Request, res: Response): Promise<void> {
         const userId = req.currentUser!.id;
         const { amount } = req.body;

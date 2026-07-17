@@ -21,11 +21,11 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
         amount: number
     ): Promise<void>;
     findByUserId(userId: string | ObjectId): Promise<IWallet | null>;
-    creditBalance(
-        userId: string | ObjectId,
-        amount: number,
-        description: string
-    ): Promise<void>;
+    // creditBalance(
+    //     userId: string | ObjectId,
+    //     amount: number,
+    //     description: string
+    // ): Promise<void>;
     findAllWallets(): Promise<IWallet[]>;
     getGlobalTransactions(
         page: number,
@@ -39,5 +39,5 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
     ): Promise<{ transactions: ITransaction[]; total: number }>;
 
     updateStripeConnectId(mentorId: string, accountId: string): Promise<void>;
-    updateWallet(walletId:string,wallet : WalletEntity) : Promise<void>
+    updateWallet(walletId: string, wallet: WalletEntity): Promise<void>;
 }

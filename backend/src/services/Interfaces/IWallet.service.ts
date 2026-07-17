@@ -28,7 +28,7 @@ export interface IWalletService {
     //         accountHolderName: string;
     //     }
     // ): Promise<IWallet>;
-    
+
     getPaginatedTransactions(
         userId: string | ObjectId,
         role: string,

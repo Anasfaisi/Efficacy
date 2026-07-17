@@ -1,4 +1,3 @@
-import { IBooking } from '@/models/booking.model';
 import { BookingEntity } from '@/entity/booking.entity';
 import { BookingResponseDto } from '@/dto/booking.dto';
 import { UserEntity } from '@/entity/user.entity';
@@ -6,6 +5,7 @@ import { MentorEntity } from '@/entity/mentor.entity';
 import { Types } from 'mongoose';
 import { CreateBookingRequestDto } from '@/dto/booking.dto';
 import { BookingStatus } from '@/types/booking-status.types';
+import { IBooking } from '@/models/booking.model';
 
 export interface BookingPersistence {
     _id: Types.ObjectId;

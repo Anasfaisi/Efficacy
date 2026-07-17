@@ -1,9 +1,9 @@
 import { IKanbanRepository } from './interfaces/IKanban.repository';
 import { BaseRepository } from './base.repository';
-import KanbanBoardModel, { IKanbanBoard } from '@/models/kanban-board.model';
 import { KanbanMapper } from '@/Mapper/kanban.mapper';
 import { KanbanBoardFromEntity } from '@/entity/from.entity';
 import { KanbanBoardToEntity } from '@/entity/to.entity';
+import KanbanBoardModel, { IKanbanBoard } from '@/models/kanban-board.model';
 export class KanbanRepository
     extends BaseRepository<IKanbanBoard>
     implements IKanbanRepository

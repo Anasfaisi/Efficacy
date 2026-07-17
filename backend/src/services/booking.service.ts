@@ -171,8 +171,8 @@ export class BookingService implements IBookingService {
                 page,
                 limit,
                 status,
-                startDate,
-                endDate
+                startDate ? new Date(startDate) : undefined,
+                endDate ? new Date(endDate) : undefined
             );
         return {
             bookings: bookings.map(BookingMapper.toResponseDto),

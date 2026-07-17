@@ -20,22 +20,20 @@ export class WalletRepository
         super(Wallet);
     }
 
-    async createWallet(
-        data: WalletEntity
-    ): Promise<WalletEntity| null> {
+    async createWallet(data: WalletEntity): Promise<WalletEntity | null> {
         const persistence = WalletMapper.ToPersistence(data);
         const result = await this.create(persistence);
         return WalletMapper.ToEntity(result);
     }
 
-    async findWalletById(
-        walletId: string
-    ): Promise<WalletEntity | null> {
+    async findWalletById(walletId: string): Promise<WalletEntity | null> {
         const wallet = await super.findById(walletId);
         if (!wallet) return null;
         return WalletMapper.ToEntity(wallet);
     }
-    async findByMentorId(mentorId: string | ObjectId): Promise<WalletEntity | null> {
+    async findByMentorId(
+        mentorId: string | ObjectId
+    ): Promise<WalletEntity | null> {
         if (
             !mentorId ||
             mentorId.toString() === 'null' ||
@@ -54,15 +52,14 @@ export class WalletRepository
     ): Promise<void> {
         let wallet = await this.findByMentorId(mentorId);
         if (!wallet) {
-          
-            wallet = await this.create({
-                mentorId,
+            wallet = await this.createWallet({
+                mentorId: mentorId.toString(),
                 balance: 0,
                 pendingBalance: 0,
                 transactions: [],
-            });
+            } as unknown as WalletEntity);
         }
-
+        if (!wallet) return;
         wallet.pendingBalance += amount;
         wallet.transactions.push({
             amount,
@@ -127,50 +124,50 @@ export class WalletRepository
         return await Wallet.findOne({ userId });
     }
 
-    async creditBalance(
-        userId: ObjectId,
-        amount: number,
-        description: string
-    ): Promise<void> {
-        if (
-            !userId ||
-            userId.toString() === 'null' ||
-            userId.toString() === 'undefined'
-        ) {
-            console.error('Attempted to credit wallet with nullish user ID');
-            return;
-        }
-        let wallet = await this.findByUserId(userId);
-        if (!wallet) {
-            if (
-                !userId ||
-                userId.toString() === 'null' ||
-                userId.toString() === 'undefined'
-            ) {
-                console.error(
-                    'Attempted to create user wallet with nullish ID'
-                );
-                return;
-            }
-            wallet = await this.create({
-                userId,
-                balance: 0,
-                pendingBalance: 0,
-                transactions: [],
-            });
-        }
+    // async creditBalance(
+    //     userId: ObjectId,
+    //     amount: number,
+    //     description: string
+    // ): Promise<void> {
+    //     if (
+    //         !userId ||
+    //         userId.toString() === 'null' ||
+    //         userId.toString() === 'undefined'
+    //     ) {
+    //         console.error('Attempted to credit wallet with nullish user ID');
+    //         return;
+    //     }
+    //     let wallet = await this.findByUserId(userId);
+    //     if (!wallet) {
+    //         if (
+    //             !userId ||
+    //             userId.toString() === 'null' ||
+    //             userId.toString() === 'undefined'
+    //         ) {
+    //             console.error(
+    //                 'Attempted to create user wallet with nullish ID'
+    //             );
+    //             return;
+    //         }
+    //         wallet = await this.create({
+    //             userId,
+    //             balance: 0,
+    //             pendingBalance: 0,
+    //             transactions: [],
+    //         });
+    //     }
 
-        wallet.balance += amount;
-        wallet.transactions.push({
-            amount,
-            type: TransactionType.REFUND,
-            status: TransactionStatus.COMPLETED,
-            description,
-            date: new Date(),
-        });
+    //     wallet.balance += amount;
+    //     wallet.transactions.push({
+    //         amount,
+    //         type: TransactionType.REFUND,
+    //         status: TransactionStatus.COMPLETED,
+    //         description,
+    //         date: new Date(),
+    //     });
 
-        await wallet.save();
-    }
+    //     await wallet.save();
+    // }
 
     async findAllWallets(): Promise<IWallet[]> {
         return await Wallet.find()
@@ -289,5 +286,5 @@ export class WalletRepository
     async updateWallet(walletId: string, wallet: WalletEntity): Promise<void> {
         const persistence = WalletMapper.ToPersistence(wallet);
         await this.update(walletId, persistence);
-}
+    }
 }

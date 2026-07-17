@@ -1,4 +1,3 @@
-import { IKanbanService } from '@/servies/Interfaces/Ikanban.service';
 import HttpStatus from '@/types/http-status.enum';
 import { TYPES } from '@/config/inversify-key.types';
 import {
@@ -7,6 +6,7 @@ import {
 } from '@/types/response-messages.types';
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
+import { IKanbanService } from '@/services/Interfaces/Ikanban.service';
 
 @injectable()
 export class KanbanController {

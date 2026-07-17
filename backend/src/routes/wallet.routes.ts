@@ -22,11 +22,11 @@ export default function WalletRoutes(
         asyncWrapper(walletController.requestWithdrawal.bind(walletController))
     );
 
-    router.patch(
-        '/bank-details',
-        authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
-        asyncWrapper(walletController.updateBankDetails.bind(walletController))
-    );
+    // router.patch(
+    //     '/bank-details',
+    //     authenticateAndAuthorize(tokenService, [Role.User, Role.Mentor]),
+    //     asyncWrapper(walletController.updateBankDetails.bind(walletController))
+    // );
 
     router.get(
         '/transactions',

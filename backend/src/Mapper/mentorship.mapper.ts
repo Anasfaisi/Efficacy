@@ -1,6 +1,7 @@
 import { IMentorship } from '@/models/mentorship.model';
 import { MentorshipEntity } from '@/entity/mentorship.entity';
 import { extractId } from '@/utils/extractId';
+import { Types } from 'mongoose';
 
 export class MentorShipMapper {
     static toEntity(doc: IMentorship): MentorshipEntity {
@@ -25,12 +26,8 @@ export class MentorShipMapper {
     static toPersistence(entity: MentorshipEntity): Partial<IMentorship> {
         return {
             id: entity.id,
-            userId: extractId(
-                entity.userId
-            ) as unknown as import('mongoose').ObjectId,
-            mentorId: extractId(
-                entity.mentorId
-            ) as unknown as import('mongoose').ObjectId,
+            userId: new Types.ObjectId(extractId(entity.userId)),
+            mentorId: new Types.ObjectId(extractId(entity.mentorId)),
             proposedStartDate: entity.proposedStartDate,
             status: entity.status,
             amount: entity.amount,

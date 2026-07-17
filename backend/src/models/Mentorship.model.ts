@@ -1,9 +1,9 @@
 import { MentorshipStatus, SessionStatus } from '@/types/mentorship.types';
 import { PaymentStatus } from '@/types/payment.types';
-import { Schema, model, Document, ObjectId } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 interface ISession {
-    _id?: string | ObjectId;
+    _id?: string | Types.ObjectId;
     date: Date;
     slot?: string;
     status: SessionStatus;
@@ -13,8 +13,8 @@ interface ISession {
 }
 
 interface IMentorship extends Document {
-    userId: ObjectId;
-    mentorId: ObjectId;
+    userId: Types.ObjectId;
+    mentorId: Types.ObjectId;
     status: MentorshipStatus;
     startDate?: Date;
     endDate?: Date;
