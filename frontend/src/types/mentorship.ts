@@ -31,6 +31,7 @@ export interface ISession {
     mentorNotes?: string;
     userNotes?: string;
     meetingLink?: string;
+    slot?: string;
 }
 
 export interface Mentorship {

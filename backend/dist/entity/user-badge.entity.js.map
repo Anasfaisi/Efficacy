@@ -1,0 +1,1 @@
+{"version":3,"file":"user-badge.entity.js","sourceRoot":"","sources":["../../src/entity/user-badge.entity.ts"],"names":[],"mappings":"","sourcesContent":["export interface UserBadgeEntity {\n    id: string;\n    userId: string;\n    badgeId: string;\n    unlockedAt: Date;\n}\n"]}

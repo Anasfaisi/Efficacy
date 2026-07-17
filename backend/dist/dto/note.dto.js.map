@@ -1,0 +1,1 @@
+{"version":3,"file":"note.dto.js","sourceRoot":"","sources":["../../src/dto/note.dto.ts"],"names":[],"mappings":"","sourcesContent":["export interface CreateNoteDTO {\n    userId: string;\n    title?: string;\n    content?: string;\n    isSticky?: boolean;\n}\n\nexport interface UpdateNoteDTO {\n    title?: string;\n    content?: string;\n    isSticky?: boolean;\n}\n"]}

@@ -467,6 +467,7 @@ export default function MentorOnboardingForm() {
                     )}
 
                 <form
+                    // @ts-expect-error - Zod transform type mismatch with react-hook-form
                     onSubmit={handleSubmit(onSubmit)}
                     className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100/50"
                 >

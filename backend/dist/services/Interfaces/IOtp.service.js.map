@@ -1,0 +1,1 @@
+{"version":3,"file":"IOtp.service.js","sourceRoot":"","sources":["../../../src/services/Interfaces/IOtp.service.ts"],"names":[],"mappings":"","sourcesContent":["export interface IOtpService {\n    generateOtp(): Promise<string>;\n    sendOtp(email: string, otp: string): Promise<void>;\n    sendEmail(email: string, subject: string, text: string): Promise<void>;\n}\n"]}

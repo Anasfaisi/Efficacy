@@ -20,7 +20,7 @@ interface IUser extends Document<ObjectId> {
     walletBalance?: number;
 
     xpPoints?: number;
-    badge?: string;
+    badge?: string[];
     league?: string;
 
     currentStreak?: number;
@@ -56,7 +56,7 @@ const userSchema = new Schema<IUser>(
         walletCurrency: { type: String, default: 'INR' },
 
         xpPoints: { type: Number, default: 0 },
-        badge: { type: Array, default: [] },
+        badge: { type: [String], default: [] },
         league: { type: String, default: 'Beginner' },
 
         currentStreak: { type: Number, default: 0 },

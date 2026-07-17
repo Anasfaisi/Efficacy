@@ -178,10 +178,10 @@ export const updateProfilePicture = async (
 
 export const updateProfile = async (
     form: Partial<ProfileForm>,
-    userId: string
+    userId: string | undefined
 ) => {
     const response = await api.patch(
-        UserRoutes.UPDATE_PROFILE_BASIC(userId),
+        UserRoutes.UPDATE_PROFILE_BASIC(userId!),
         form
     );
     return response;

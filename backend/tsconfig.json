@@ -3,13 +3,17 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "sourceMap": true,
-    "module": "esnext",
+    "module": "commonjs",
     "target": "esnext",
     "inlineSources": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["./src/*"]
     }

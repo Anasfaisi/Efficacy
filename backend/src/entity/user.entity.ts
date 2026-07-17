@@ -13,7 +13,7 @@ export interface UserEntity {
     walletBalance?: number;
     walletCurrency?: string;
     xpPoints?: number;
-    badge?: string;
+    badge?: string[];
     league?: string;
     currentStreak?: number;
     longestStreak?: number;

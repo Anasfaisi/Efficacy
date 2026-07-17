@@ -20,7 +20,7 @@ const ProfilePic: React.FC = () => {
 
     const handleProfilePicUpdate = async () => {
         if (!proPic) return;
-        const result = await updateProfilePicture(proPic, 'user', user?.id);
+        const result = await updateProfilePicture(proPic, 'user');
         console.log(result, 'propic');
         if (result?.user) {
             dispatch(setCredentials({ currentUser: result.user }));
@@ -38,9 +38,9 @@ const ProfilePic: React.FC = () => {
             <div className="flex flex-col items-center mb-6">
                 <div className="">
                     <span className="text-purple-600 opacity-80">
-                        {user?.profilePic ? (
+                        {user && 'profilePic' in user && user.profilePic ? (
                             <img
-                                src={user.profilePic}
+                                src={user.profilePic as string}
                                 alt="Profile"
                                 width={100}
                                 height={100}
@@ -58,7 +58,7 @@ const ProfilePic: React.FC = () => {
                     className="bg-purple-600 opacity-80 text-white rounded-5 w-35 h-8 m-5"
                     onClick={() => setEditState(true)}
                 >
-                    {user?.profilePic ? 'Change picture' : 'Add picture'}
+                    {user && 'profilePic' in user && user.profilePic ? 'Change picture' : 'Add picture'}
                 </button>
                 {editState && (
                     <div>

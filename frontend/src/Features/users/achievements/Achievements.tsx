@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Navbar from '../home/layouts/Navbar';
 import Sidebar from '../home/layouts/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';

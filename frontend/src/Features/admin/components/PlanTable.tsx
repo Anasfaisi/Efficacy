@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
     Search,
     Plus,
@@ -90,6 +90,7 @@ export default function PlanTable() {
             if (isEditMode && planToEdit) {
                 const targetId =
                     planToEdit._id || (planToEdit as { id?: string }).id;
+                if (!targetId) return;
                 await adminService.updatePlan(targetId, newPlanData);
                 toast.success('Plan updated successfully!');
             } else {

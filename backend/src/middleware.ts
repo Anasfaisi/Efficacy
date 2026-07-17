@@ -7,7 +7,7 @@ import { container } from './config/inversify.config';
 import { PaymentController } from './controllers/payment.controller';
 import { TYPES } from './config/inversify-key.types';
 import path from 'path';
-import { fileURLToPath } from 'url';
+
 import { morganMiddleware } from './utils/logMiddlewares';
 export function applyMiddlewares(app: Express) {
     const corsOptions = {
@@ -21,8 +21,6 @@ export function applyMiddlewares(app: Express) {
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     };
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
 
     app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
     app.use(cors(corsOptions));

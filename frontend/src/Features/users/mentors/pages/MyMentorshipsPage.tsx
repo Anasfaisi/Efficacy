@@ -353,7 +353,7 @@ const MyMentorshipsPage: React.FC = () => {
                                                                         handleChat(
                                                                             mentorship
                                                                                 .mentorId
-                                                                                ._id
+                                                                                ?._id as string
                                                                         );
                                                                     }}
                                                                     className="flex items-center gap-1 text-[#7F00FF] hover:text-[#6000c0] font-medium text-sm transition-colors z-10 mr-4"

@@ -22,7 +22,7 @@ export class LoginResponseDTO {
             profilePic?: string;
             dob?: string;
             xpPoints?: number;
-            badge?: string;
+            badge?: string[];
         }
     ) {}
 

@@ -24,14 +24,14 @@ const ProfileForm: React.FC = () => {
     useEffect(() => {
         if (user) {
             setForm({
-                name: user.name || '',
-                userId: user.userId || '',
-                email: user.email || '',
-                headline: user.headline || '',
-                bio: user.bio || '',
-                xpPoints: user.xpPoints || 0,
-                league: user.league || '',
-                currentStreak: user.currentStreak || 0,
+                name: (user && 'name' in user ? user.name : '') as string,
+                userId: (user && 'userId' in user ? user.userId : '') as string,
+                email: user.email as string,
+                headline: (user && 'headline' in user ? user.headline : '') as string,
+                bio: (user && 'bio' in user ? user.bio : '') as string,
+                xpPoints: (user && 'xpPoints' in user ? user.xpPoints : 0) as number,
+                league: (user && 'league' in user ? user.league : '') as string,
+                currentStreak: (user && 'currentStreak' in user ? user.currentStreak : 0) as number,
             });
         }
     }, [user]);

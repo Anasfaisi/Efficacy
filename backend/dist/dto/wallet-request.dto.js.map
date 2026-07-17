@@ -1,0 +1,1 @@
+{"version":3,"file":"wallet-request.dto.js","sourceRoot":"","sources":["../../src/dto/wallet-request.dto.ts"],"names":[],"mappings":"","sourcesContent":["export interface createStripeConnectReqDto {\n    email: string;\n    mentorId: string;\n}\n"]}
