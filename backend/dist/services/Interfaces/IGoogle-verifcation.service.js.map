@@ -1,1 +1,0 @@
-{"version":3,"file":"IGoogle-verifcation.service.js","sourceRoot":"","sources":["../../../src/services/Interfaces/IGoogle-verifcation.service.ts"],"names":[],"mappings":"","sourcesContent":["import { LoginTicket } from 'google-auth-library';\nexport interface IGoogleVerificationService {\n    verify(googleToken: string): Promise<LoginTicket>;\n}\n"]}

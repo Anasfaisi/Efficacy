@@ -1,1 +1,0 @@
-{"version":3,"file":"booking-policy.constant.js","sourceRoot":"","sources":["../../src/config/booking-policy.constant.ts"],"names":[],"mappings":";;;AAAa,QAAA,aAAa,GAAG;IACzB,YAAY,EAAE,CAAC;IACf,aAAa,EAAE,CAAC;CACnB,CAAC","sourcesContent":["export const BookingPolicy = {\n    WEEKLY_LIMIT: 3,\n    LOOKBACK_DAYS: 7,\n};\n"]}

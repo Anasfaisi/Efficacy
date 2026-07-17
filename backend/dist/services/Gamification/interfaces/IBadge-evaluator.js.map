@@ -1,1 +1,0 @@
-{"version":3,"file":"IBadge-evaluator.js","sourceRoot":"","sources":["../../../../src/services/Gamification/interfaces/IBadge-evaluator.ts"],"names":[],"mappings":"","sourcesContent":["import { BadgeEvaluatorDto } from '@/dto/badge-request.dto';\n\nexport interface IBadgeEvaluator {\n    readonly badgeTemplateEvent: string;\n    evaulate(data: BadgeEvaluatorDto): boolean;\n}\n"]}

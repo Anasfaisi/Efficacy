@@ -1,1 +1,0 @@
-{"version":3,"file":"payment.types.js","sourceRoot":"","sources":["../../src/types/payment.types.ts"],"names":[],"mappings":";;;AAAA,IAAY,aAIX;AAJD,WAAY,aAAa;IACrB,oCAAmB,CAAA;IACnB,8BAAa,CAAA;IACb,sCAAqB,CAAA;AACzB,CAAC,EAJW,aAAa,6BAAb,aAAa,QAIxB","sourcesContent":["export enum PaymentStatus {\n    PENDING = 'pending',\n    PAID = 'paid',\n    VERIFIED = 'verified',\n}\n"]}
