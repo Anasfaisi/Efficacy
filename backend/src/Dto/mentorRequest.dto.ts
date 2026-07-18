@@ -81,6 +81,7 @@ export class UpdateMentorProfileDto {
         public skills?: string,
         public monthlyCharge?: number,
         public currentPassword?: string,
-        public newPassword?: string
+        public newPassword?: string,
+        public availability?: Record<string, string[]>
     ) {}
 }

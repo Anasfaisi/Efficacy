@@ -467,7 +467,6 @@ export default function MentorOnboardingForm() {
                     )}
 
                 <form
-                    // @ts-expect-error - Zod transform type mismatch with react-hook-form
                     onSubmit={handleSubmit(onSubmit)}
                     className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100/50"
                 >
@@ -1508,9 +1507,9 @@ export default function MentorOnboardingForm() {
                                                             Graduation Year
                                                         </p>
                                                         <p className="font-medium text-gray-900">
-                                                            {getValues(
+                                                            {String(getValues(
                                                                 'graduationYear'
-                                                            ) || '-'}
+                                                            ) || '-')}
                                                         </p>
                                                     </div>
                                                     <div className="md:col-span-2">

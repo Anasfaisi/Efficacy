@@ -577,7 +577,7 @@ const MentorDetailPage: React.FC = () => {
                                                     <div className="flex justify-between items-start mb-6">
                                                         <div className="flex items-center gap-4">
                                                             <img
-                                                                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(review.userId?.name || 'User')}&background=F3E8FF&color=7F00FF&bold=true`}
+                                                                src={`https://ui-avatars.com/api/?name=User&background=F3E8FF&color=7F00FF&bold=true`}
                                                                 className="w-14 h-14 rounded-2xl object-cover"
                                                             />
                                                             <div>

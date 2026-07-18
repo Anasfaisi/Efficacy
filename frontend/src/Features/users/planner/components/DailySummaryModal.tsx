@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
 import type { IPlannerTask } from '../../planner/types';
-import type { IPomodoroStats } from '@/Services/pomodoro.api';
 import { getDailyPomodoroStats } from '@/Services/pomodoro.api';
 import { CheckCircle2, Target, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { IPomodoroStats } from '@/types/pomodoro';
 
 interface DailySummaryModalProps {
     date: Date;

@@ -1,6 +1,5 @@
-import type { IBadge } from '@/Services/Gamification/adminGamification.api';
 import * as Icons from 'lucide-react';
-
+import type { Badge } from '@/types/gamification';
 // Maps backend string to a reliable CSS Tailwind configuration for colors
 const RarityColors = {
     COMMON: {
@@ -36,7 +35,7 @@ const RarityColors = {
 };
 
 interface BadgePreviewProps {
-    badge: Partial<IBadge>;
+    badge: Partial<Badge>;
     size?: 'sm' | 'md' | 'lg';
 }
 

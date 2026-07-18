@@ -312,7 +312,7 @@ export const userProfileUpdateSchema = z
     })
     .partial();
 
-export type mentorFormSchemaType = z.infer<typeof mentorFormSchema>;
+export type mentorFormSchemaType = z.input<typeof mentorFormSchema>;
 export type resetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type forgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

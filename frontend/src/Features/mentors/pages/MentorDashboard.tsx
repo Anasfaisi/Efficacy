@@ -351,7 +351,7 @@ const MentorDashboard: React.FC = () => {
                                     fontWeight: 600,
                                     color: '#1e293b',
                                 }}
-                                formatter={(value: string | number | (string | number)[] | undefined) => [
+                                formatter={(value) => [
                                     `₹${value}`,
                                     'Earnings',
                                 ]}

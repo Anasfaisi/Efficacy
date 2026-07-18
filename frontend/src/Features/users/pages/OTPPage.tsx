@@ -42,7 +42,10 @@ export function OTPPage() {
             dispatch(setCredentials({ currentUser: result.user }));
             toast.success('Email verified successfully!');
         } else {
-            toast.error(result.message || 'Verification failed');
+            const message = result.success
+                ? 'Email verified successfully!'
+                : result.message;
+            toast.error(message);
         }
     };
 

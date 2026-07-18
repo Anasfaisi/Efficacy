@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { KanbanColumnProps, Task } from '../types';
+import { Priority, type KanbanColumnProps, type Task } from '../types';
 import KanbanCard from './KanbanCard';
 import AddTaskCard from './AddTaskCard';
 import {
@@ -43,7 +43,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
             description: form.description,
             dueDate: form.dueDate,
             approxTimeToFinish: form.approxTimeToFinish,
-            priority: 'medium',
+            priority: Priority.MEDIUM,
             completed: false,
         };
         addTask(column.columnId, newTask);

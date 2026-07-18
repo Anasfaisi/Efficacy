@@ -362,10 +362,11 @@ const BookingRequestsPage: React.FC = () => {
                                                 >
                                                     <Clock size={12} />
                                                     <span className="text-xs font-bold">
-                                                        {isReschedule &&
-                                                        booking.proposedSlot
-                                                            ? booking.proposedSlot
-                                                            : booking.slot}
+                                                        {String(
+                                                            isReschedule && booking.proposedSlot
+                                                                ? booking.proposedSlot
+                                                                : booking.slot
+                                                        )}
                                                     </span>
                                                 </div>
                                                 {isReschedule && (
@@ -461,10 +462,11 @@ const BookingRequestsPage: React.FC = () => {
                                                         onClick={() =>
                                                             handleUpdateStatus(
                                                                 booking.id,
-                                                                booking.bookingDate,
-                                                                booking.proposedDate,
+                                                                new Date(booking.bookingDate),
+                                                                booking.proposedDate ? new Date(booking.proposedDate) : new Date(booking.bookingDate),
                                                                 BookingStatus.CONFIRMED
                                                             )
+
                                                         }
                                                         className="flex-1 flex items-center justify-center gap-2 py-3 bg-black text-white text-xs font-black rounded-xl hover:bg-green-600 transition-all active:scale-95"
                                                     >

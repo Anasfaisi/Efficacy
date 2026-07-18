@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
-import SubscriptionInfo from './SubscriptionInfo';
 import type { User } from '@/types/auth';
 
 const plans = [
@@ -91,9 +90,7 @@ const SubscriptionForm = () => {
                 className={`flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-50 p-6
     ${user?.subscription?.status !== 'active' ? 'hidden' : ''}`}
             >
-                {user?.subscription?.status === 'active' && (
-                    <SubscriptionInfo subscription={user.subscription} />
-                )}
+                {user?.subscription?.status === 'active' }
             </div>
             <div className="flex flex-col items-center bg-white py-12 px-4 md:px-8">
                 <h2 className="text-3xl font-bold text-gray-800 mb-8">

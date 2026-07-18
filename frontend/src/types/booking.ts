@@ -18,8 +18,8 @@ export interface Booking {
     duration: number;
     topic?: string;
     rescheduleBy?: 'user' | 'mentor' | null;
-    proposedDate?: string;
-    proposedSlot?: string;
+    proposedDate?: Date;
+    proposedSlot?: Date;
     meetingLink?: string;
     cancelReason?: string;
     createdAt: string;

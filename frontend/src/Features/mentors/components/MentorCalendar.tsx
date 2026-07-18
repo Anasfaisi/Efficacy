@@ -368,7 +368,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                             b.status === 'rescheduled' &&
                                             b.proposedDate
                                         ) {
-                                            return b.proposedSlot === slot;
+                                            return String(b.proposedSlot) === slot;
                                         }
                                         return b.slot === slot;
                                     });
@@ -482,7 +482,7 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                     {allPossibleSlots.map((slot) => {
                         const bookings = todayBookings.filter((b) => {
                             if (b.status === 'rescheduled' && b.proposedDate) {
-                                return b.proposedSlot === slot;
+                                return String(b.proposedSlot) === slot;
                             }
                             return b.slot === slot;
                         });
