@@ -61,7 +61,7 @@ import { MentorshipRepository } from '@/repositories/mentorship.repository';
 import { IWalletRepository } from '@/repositories/interfaces/IWallet.repository';
 import { WalletRepository } from '@/repositories/wallet.repository';
 import { MentorshipController } from '@/controllers/mentorship.controller';
-import { WalletController } from '@/controllers/Wallet.controller';
+import { WalletController } from '@/controllers/wallet.controller';
 import { PomodoroController } from '@/controllers/pomodoro.controller';
 import { IPomodoroService } from '@/services/Interfaces/IPomodoro.service';
 import { PomodoroService } from '@/services/pomodoro.service';
@@ -112,7 +112,7 @@ import { BadgeGamificationService } from '@/services/Gamification/badge-gamifica
 import { IBadgeGamificationService } from '@/services/Gamification/interfaces/IBadge-gamification.service';
 import { IPomodoroGamificationService } from '@/services/Gamification/interfaces/IPomodoro-gamification.service';
 import { PomodoroGamificationService } from '@/services/Gamification/pomodoro-gamification.service';
-import { NotificationRepository } from '@/repositories/Notification.repository';
+import { NotificationRepository } from '@/repositories/notification.repository';
 
 export const container = new Container();
 

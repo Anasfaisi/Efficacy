@@ -28,7 +28,7 @@ import planRoutes from './routes/plan.routes';
 import { BadgeController } from './controllers/Gamification/badge.controller';
 import { ITokenService } from './services/Interfaces/IToken.service';
 import BadgeRoutes from './routes/Gamification/badge.routes';
-import { WalletController } from './controllers/Wallet.controller';
+import { WalletController } from './controllers/wallet.controller';
 import WalletRoutes from './routes/wallet.routes';
 
 export function applyRoutes(app: Express) {

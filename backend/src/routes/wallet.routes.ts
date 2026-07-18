@@ -1,4 +1,4 @@
-import { WalletController } from '@/controllers/Wallet.controller';
+import { WalletController } from '@/controllers/wallet.controller';
 import authenticateAndAuthorize from '@/middleware/authenticate-and-authorize';
 import { ITokenService } from '@/services/Interfaces/IToken.service';
 import { Role } from '@/types/role.types';
