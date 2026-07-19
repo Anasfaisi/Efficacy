@@ -98,9 +98,12 @@ export class MentorshipRepository
         status?: string,
         search?: string
     ): Promise<{ mentorships: IMentorship[]; total: number }> {
+        console.log(mentorId,"from mentorshiprepository ======")
         const match: FilterQuery<IMentorship> = {
             mentorId: new Types.ObjectId(mentorId as string),
         };
+        console.log(match,"from mentorshiprepository 22222222222222222======")
+
         if (status && status !== 'all') {
             if (status === 'approved') {
                 match.status = {
@@ -116,7 +119,7 @@ export class MentorshipRepository
         }
 
         const pipeline: PipelineStage[] = [{ $match: match }];
-
+        console.log(pipeline,"33333333333333333333333333333")
         pipeline.push({
             $lookup: {
                 from: 'users',

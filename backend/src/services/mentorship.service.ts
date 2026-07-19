@@ -84,6 +84,7 @@ export class MentorshipService implements IMentorshipService {
             paymentStatus: PaymentStatus.PENDING,
             sessions: [],
         });
+        console.log(mentorship,"from mentorship service")
 
         await this._notificationService.createNotification(
             mentorId as string,
@@ -104,6 +105,7 @@ export class MentorshipService implements IMentorshipService {
         status?: string,
         search?: string
     ): Promise<PaginatedMentorshipResponseDto> {
+        console.log(mentorId,"from mentorshipservice ======")
         const { mentorships, total } =
             await this._mentorshipRepository.findPaginatedByMentorId(
                 mentorId,
@@ -112,6 +114,8 @@ export class MentorshipService implements IMentorshipService {
                 status,
                 search
             );
+
+            console.log(mentorships,"from service")
         return new PaginatedMentorshipResponseDto(
             mentorships.map((m) => MentorShipMapper.toEntity(m)),
             total,
@@ -138,10 +142,11 @@ export class MentorshipService implements IMentorshipService {
                 throw new Error(ErrorMessages.PastDateBooking);
             }
         }
+        console.log(mentorshipId,"758888897853789797729270894730978")
         const mentorship =
             await this._mentorshipRepository.findById(mentorshipId);
         if (!mentorship) throw new Error(ErrorMessages.MentorshipNotFound);
-
+        console.log(mentorship,"4444444444444444444444444")
         const currentMentorId =
             mentorship.mentorId instanceof Types.ObjectId
                 ? mentorship.mentorId.toString()

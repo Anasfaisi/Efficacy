@@ -67,12 +67,6 @@ const Sidebar = () => {
                 { label: 'Chat', to: '/chat' },
             ],
         },
-        {
-            icon: <Wallet size={20} />,
-            label: 'Wallet',
-            to: '/profile/wallet',
-            color: '#7F00FF',
-        },
 
         {
             icon: <User size={20} />,
@@ -85,12 +79,6 @@ const Sidebar = () => {
             icon: <Trophy size={20} />,
             label: 'Achievements',
             to: '/achievements',
-            color: '#FFC107',
-        },
-        {
-            icon: <CreditCard size={20} />,
-            label: 'Subscription',
-            to: '/subscription',
             color: '#FFC107',
         },
     ];

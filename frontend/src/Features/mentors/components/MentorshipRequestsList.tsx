@@ -184,7 +184,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                             const student = req.userId as UserType;
                             return (
                                 <div
-                                    key={req._id}
+                                    key={(req._id || req.id)}
                                     className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-4"
                                 >
                                     <div className="flex items-center gap-3">
@@ -256,7 +256,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                                             <button
                                                 onClick={() =>
                                                     handleRespond(
-                                                        req._id!,
+                                                        ((req._id || req.id) || req.id)!,
                                                         'mentor_accepted'
                                                     )
                                                 }
@@ -266,7 +266,7 @@ const MentorshipRequestsList: React.FC<MentorshipRequestsListProps> = ({
                                             </button>
                                             <button
                                                 onClick={() =>
-                                                    openRejectModal(req._id!)
+                                                    openRejectModal(((req._id || req.id) || req.id)!)
                                                 }
                                                 className="flex-1 flex items-center justify-center gap-2 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-bold"
                                             >

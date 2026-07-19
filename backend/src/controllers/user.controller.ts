@@ -156,7 +156,7 @@ export class UserController {
     }
 
     async resendOtp(req: Request, res: Response) {
-        console.log(req.body.email, 'req.body.emai');
+        console.log(req.body.email, 'req.body.email');
         const { tempEmail, resendAvailableAt } =
             await this._authService.resendOtp(req.body);
 
