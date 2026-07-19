@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     markAllNotificationsAsRead,
     markNotificationAsRead,
-} from '@/Services/user.api';
+} from '@/types/user.api';
 import type { Notification } from '@/Features/admin/types';
 const BellButton: React.FC = () => {
     const { notifications, unreadCount } = useAppSelector(

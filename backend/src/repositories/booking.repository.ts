@@ -74,7 +74,6 @@ export class BookingRepository implements IBookingRepository {
         slot: string,
         excludeBookingId?: string
     ): Promise<boolean> {
-        console.log(mentorId, date, slot, 'slot check');
         const query: FilterQuery<IBooking> = {
             mentorId: new Types.ObjectId(mentorId),
             $or: [

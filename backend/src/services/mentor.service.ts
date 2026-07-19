@@ -49,7 +49,6 @@ export class MentorService implements IMentorService {
 
         delete updateData.currentPassword;
         delete updateData.newPassword;
-        console.log(updateData, 'before update from mentor service');
         const updatedMentor = await this._mentorRepository.update(
             id,
             updateData

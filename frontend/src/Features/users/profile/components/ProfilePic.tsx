@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import type { RootState } from '@/redux/store';
-import { updateProfilePicture } from '@/Services/user.api';
+import { updateProfilePicture } from '@/types/user.api';
 import { setCredentials } from '@/redux/slices/authSlice';
 
 const ProfilePic: React.FC = () => {
@@ -21,7 +21,6 @@ const ProfilePic: React.FC = () => {
     const handleProfilePicUpdate = async () => {
         if (!proPic) return;
         const result = await updateProfilePicture(proPic, 'user');
-        console.log(result, 'propic');
         if (result?.user) {
             dispatch(setCredentials({ currentUser: result.user }));
             setEditState(false);

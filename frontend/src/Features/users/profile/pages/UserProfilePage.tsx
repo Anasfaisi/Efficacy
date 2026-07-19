@@ -28,7 +28,7 @@ import {
     updatePassword,
     updateProfile,
     updateProfilePicture,
-} from '@/Services/user.api';
+} from '@/types/user.api';
 import Sidebar from '../../home/layouts/Sidebar';
 
 interface ConfigSectionProps {
@@ -155,7 +155,6 @@ const UserProfilePage = () => {
     };
 
     const handlePasswordSave = async () => {
-        console.log(currentPassword, newPassword, 'checking password');
         if (!currentUser?.id) {
             toast.error('invalid user session, please login again!');
             return;

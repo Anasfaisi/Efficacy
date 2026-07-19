@@ -14,7 +14,7 @@ import type { ProfileForm } from '@/types/profile';
 import { AuthMessages } from '@/utils/Constants';
 import { AxiosError } from 'axios';
 import type { Notification } from '@/Features/admin/types';
-import { MentorRoutes, UserRoutes } from './constant.routes';
+import { MentorRoutes, UserRoutes } from '../Services/constant.routes';
 
 export const fetchCurrentUser = async (userId: string): Promise<User> => {
     const res = await api.get(UserRoutes.FETCH_CURRENT_USER(userId));
@@ -187,6 +187,7 @@ export const updateProfile = async (
 };
 export const updatePassword = async (passwordData: UpdatePasswordType) => {
     const response = await api.patch(UserRoutes.UPDATE_PASSWORD, passwordData);
+    console.log(response, 'from the user api');
     return response;
 };
 export const getNotifications = async (): Promise<Notification[]> => {

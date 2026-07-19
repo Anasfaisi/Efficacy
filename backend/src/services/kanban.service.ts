@@ -105,7 +105,6 @@ export class KanbanService implements IKanbanService {
         destCol.tasks.splice(dto.destTaskIndex, 0, task);
 
         const updated = await this._kanbanRepository.saveKanbanBoard(board);
-        console.log(updated, '===========');
 
         return new KanbanBoardResponseDto(updated.columns);
     }

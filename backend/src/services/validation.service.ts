@@ -40,7 +40,6 @@ export class ValidationService implements IValidationService {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             throw new Error(ErrorMessages.InvalidEmail);
         }
-        console.log('email...', email);
         if (password.length < 6) {
             throw new Error(ErrorMessages.PasswordComplexity);
         }
@@ -63,6 +62,5 @@ export class ValidationService implements IValidationService {
                 `${ErrorMessages.InvalidRoleGoogleLogin} for ${endpoint}`
             );
         }
-        console.log('Successfully validated Google login at backend');
     }
 }

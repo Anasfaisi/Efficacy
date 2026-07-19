@@ -39,10 +39,7 @@ export const NotificationListener: React.FC = () => {
         connectSocket();
 
         onNewNotification((notification: Notification) => {
-            console.log(
-                'Real-time notification received in Listener:',
-                notification
-            );
+         
 
             const processedNotification: Notification = {
                 ...notification,

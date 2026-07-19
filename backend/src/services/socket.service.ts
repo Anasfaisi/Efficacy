@@ -169,7 +169,6 @@ export class SocketService implements ISocketService {
         payload: SendMessagePayload
     ) {
         try {
-            console.log(payload, 'from socket. service');
             const {
                 roomId,
                 senderId,

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite && npm run lint",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run lint:fix",
     "lint": "eslint src/**/*.{js,ts,tsx}",
     "preview": "vite preview",
     "lint:fix": "eslint . --fix"

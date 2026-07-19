@@ -247,7 +247,6 @@ export default function MentorOnboardingForm() {
 
     const validateStep = async (stepId: number) => {
         const stepConfig = STEPS.find((s) => s.id === stepId);
-        console.log('step id from validate step ', stepConfig);
         if (!stepConfig) return;
 
         if (stepId === 3) {
@@ -320,13 +319,11 @@ export default function MentorOnboardingForm() {
     };
 
     const handleNext = async (e?: React.MouseEvent) => {
-        console.log(currentStep);
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
         const isStepValid = await validateStep(currentStep);
-        console.log(isStepValid, 'what is coming here');
         if (isStepValid) {
             setCurrentStep((prev) => Math.min(prev + 1, STEPS.length));
             window.scrollTo({ top: 0, behavior: 'smooth' });

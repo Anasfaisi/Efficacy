@@ -18,6 +18,7 @@ import { getPlannerTasks } from '@/Services/planner.api';
 import { getDailyPomodoroStats } from '@/Services/pomodoro.api';
 import { bookingApi } from '@/Services/booking.api';
 import { userBadgeApi } from '@/Services/Gamification/userBadge.api';
+import welcomeImage from '@/assets/welcome logo.png'
 
 const UserDashboard: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -109,7 +110,7 @@ const UserDashboard: React.FC = () => {
                     </div>
                     <div className="hidden md:block">
                         <img
-                            src="https://cdni.iconscout.com/illustration/premium/thumb/student-reading-book-while-sitting-on-couch-5431872-4522814.png"
+                            src='https://efficacy-storage-bucket.s3.eu-north-1.amazonaws.com/welcome+logo.png'
                             alt="Welcome"
                             className="w-40 h-40 object-contain drop-shadow-2xl animate-float"
                         />

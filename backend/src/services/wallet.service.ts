@@ -189,7 +189,6 @@ export class WalletService implements IWalletService {
     private async configureStripeConnectLink(
         accountId: string
     ): Promise<string> {
-        console.log('account Id : ', accountId);
         const accountLink = await this._stripe.accountLinks.create({
             account: accountId,
             refresh_url:
@@ -198,7 +197,6 @@ export class WalletService implements IWalletService {
                 process.env.FRONTEND_URL + '/mentor/wallet?success=true',
             type: 'account_onboarding',
         });
-        console.log(accountLink, 'account link from wallet service0');
         return accountLink.url;
     }
 

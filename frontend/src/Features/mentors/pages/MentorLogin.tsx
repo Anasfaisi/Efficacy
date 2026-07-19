@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema, type loginFormSchemaType } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
-import { googleLoginApi, loginApi } from '@/Services/user.api';
+import { googleLoginApi, loginApi } from '@/types/user.api';
 import type { CredentialResponse } from '@/types/auth';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
@@ -50,7 +50,6 @@ const MentorLogin: React.FC = () => {
             }
         } catch (err: unknown) {
             toast.error('Login failed. Please check your credentials.');
-            console.log(err);
         }
     };
 
@@ -67,7 +66,6 @@ const MentorLogin: React.FC = () => {
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
-                console.log(err);
                 setGoogleError('Google login failed');
             }
         }

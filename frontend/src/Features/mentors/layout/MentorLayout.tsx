@@ -19,7 +19,6 @@ const MentorLayout: React.FC = () => {
     const navigate = useNavigate();
 
     if (!currentUser) {
-        console.log('MentorLayout: No current user, returning null');
         return null;
     }
 

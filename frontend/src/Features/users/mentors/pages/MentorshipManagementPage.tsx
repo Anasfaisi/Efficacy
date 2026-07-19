@@ -132,11 +132,6 @@ const MentorshipManagementPage: React.FC = () => {
         fetchData();
         onHostOnline(() => {
             if (!isMentor) {
-                console.log(
-                    isMentor,
-                    isSessionActive,
-                    'isMentor,isSessionActive'
-                );
                 setIsSessionActive(true);
                 toast.success(MentorshipMessages.MENTOR_STARTED_SESSION);
             }
@@ -148,7 +143,6 @@ const MentorshipManagementPage: React.FC = () => {
     }, [id, isMentor, fetchData, isSessionActive]);
 
     const handleJoinSession = () => {
-        console.log('sdfkjdsfjkdj');
         if (!nextSession) return;
         navigate(`/meet/${nextSession.id}`);
     };
@@ -192,7 +186,6 @@ const MentorshipManagementPage: React.FC = () => {
     };
 
     const handleSelectSlot = (date: Date, slot: string) => {
-        console.log(date, slot);
         setSelectedDate(date);
         setSelectedSlot(slot);
         setIsBookingModalOpen(true);

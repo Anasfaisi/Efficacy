@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/types/zodSchemas';
 import type { RegisterFormData } from '@/types/zodSchemas';
-import { registerInitApi } from '@/Services/user.api';
+import { registerInitApi } from '@/types/user.api';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';

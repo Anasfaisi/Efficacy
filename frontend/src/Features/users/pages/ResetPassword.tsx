@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { forgotPasswordApi, resetPasswordApi } from '@/Services/user.api';
+import { forgotPasswordApi, resetPasswordApi } from '@/types/user.api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
@@ -55,9 +55,7 @@ export const ForgotResetPassword: React.FC = () => {
                 }
                 const result = await forgotPasswordApi(email);
                 if (result) {
-                    toast.success(
-                         'Reset link sent to your email.'
-                    );
+                    toast.success('Reset link sent to your email.');
                 }
             }
         } catch (error: unknown) {

@@ -74,7 +74,6 @@ export class UserController {
                     file: req.file,
                     id: req.currentUser?.id,
                 });
-            console.log(updatedProfilePic, 'from user controller');
             if (!updatedProfilePic) {
                 res.status(code.BAD_REQUEST).json({
                     messages: ErrorMessages.UpdateProfilePicFailed,
@@ -156,7 +155,6 @@ export class UserController {
     }
 
     async resendOtp(req: Request, res: Response) {
-        console.log(req.body.email, 'req.body.email');
         const { tempEmail, resendAvailableAt } =
             await this._authService.resendOtp(req.body);
 

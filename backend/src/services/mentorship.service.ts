@@ -84,7 +84,6 @@ export class MentorshipService implements IMentorshipService {
             paymentStatus: PaymentStatus.PENDING,
             sessions: [],
         });
-        console.log(mentorship, 'from mentorship service');
 
         await this._notificationService.createNotification(
             mentorId as string,
@@ -105,7 +104,6 @@ export class MentorshipService implements IMentorshipService {
         status?: string,
         search?: string
     ): Promise<PaginatedMentorshipResponseDto> {
-        console.log(mentorId, 'from mentorshipservice ======');
         const { mentorships, total } =
             await this._mentorshipRepository.findPaginatedByMentorId(
                 mentorId,
@@ -115,7 +113,6 @@ export class MentorshipService implements IMentorshipService {
                 search
             );
 
-        console.log(mentorships, 'from service');
         return new PaginatedMentorshipResponseDto(
             mentorships.map((m) => MentorShipMapper.toEntity(m)),
             total,
@@ -669,7 +666,6 @@ export class MentorshipService implements IMentorshipService {
                       : (
                             mentorship.mentorId as unknown as MentorEntity
                         ).id?.toString();
-            console.log(currentMentorId, 'currentMentorId =======');
             if (currentMentorId) {
                 await this._walletRepository.releasePendingBalance(
                     currentMentorId,

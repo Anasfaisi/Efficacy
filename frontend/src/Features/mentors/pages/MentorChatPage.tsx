@@ -30,7 +30,6 @@ const MentorChatPage: React.FC = () => {
         const fetchChats = async () => {
             try {
                 const data = await chatApi.getConversations();
-                console.log(data, 'mentor chats page');
                 dispatch(setConversations(data));
             } catch (error) {
                 console.error('Failed to load chats', error);

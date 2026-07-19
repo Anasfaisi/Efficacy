@@ -7,7 +7,7 @@ import { loginFormSchema, type loginFormSchemaType } from '@/types/zodSchemas';
 import { useForm } from 'react-hook-form';
 import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordLink } from '@/Features/users/pages/ForgotPassowrd';
-import { googleLoginApi, loginApi } from '@/Services/user.api';
+import { googleLoginApi, loginApi } from '@/types/user.api';
 import type { CredentialResponse } from '@/types/auth';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';

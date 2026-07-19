@@ -2,7 +2,7 @@ import React, { useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
-import { logoutApi } from '@/Services/user.api';
+import { logoutApi } from '@/types/user.api';
 import { UserNotificationListener } from '@/Features/users/components/UserNotificationListener';
 import TimeProvider from '@/Features/users/planner/context/TimeProvider';
 import Achievements from '@/Features/users/achievements/Achievements';

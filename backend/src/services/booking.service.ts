@@ -106,12 +106,6 @@ export class BookingService implements IBookingService {
         if (weeklyBookingCount >= BookingPolicy.WEEKLY_LIMIT) {
             throw new Error(ErrorMessages.WeeklyBookingLimitReached);
         }
-        console.log(
-            weeklyBookingCount,
-            weeklyBookingCount >= BookingPolicy.WEEKLY_LIMIT,
-            BookingPolicy.WEEKLY_LIMIT,
-            'from booking service'
-        );
         const createdBooking = await this._bookingRepository.create(booking);
 
         const user = await this._userRepository.findById(userId);

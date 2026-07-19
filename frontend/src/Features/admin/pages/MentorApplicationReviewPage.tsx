@@ -47,7 +47,6 @@ export default function MentorReviewPage() {
             try {
                 setLoading(true);
                 const data = await adminService.getMentorApplicationById(id);
-                console.log(data, 'mentor application data');
                 setApplication(data);
                 setError(null);
             } catch (err: unknown) {
@@ -110,10 +109,6 @@ export default function MentorReviewPage() {
     const handleApprove = async () => {
         if (!id) return;
         try {
-            console.log(
-                await adminService.approveMentorApplication(id),
-                'This is it'
-            );
             toast.success('Mentor application approved successfully!');
             navigate('/admin/mentors/applications');
         } catch (err: unknown) {

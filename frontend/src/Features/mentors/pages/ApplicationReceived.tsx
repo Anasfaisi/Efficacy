@@ -15,7 +15,6 @@ export default function ApplicationReceived() {
         if (currentUser?.role === 'mentor') {
             const mentor = currentUser as Mentor;
             const status = mentor.status;
-            console.log(status);
 
             if (status === 'incomplete' || !status) {
                 navigate('/mentor/onboarding');

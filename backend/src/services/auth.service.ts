@@ -259,7 +259,6 @@ export class AuthService implements IAuthService {
     }
 
     async resendOtp(dto: resendOtpRequestDto) {
-        console.log(dto.email, 'dto . email');
         const unverifiedUser = await this._unverifiedUserRepository.findByEmail(
             dto.email
         );
@@ -304,7 +303,6 @@ export class AuthService implements IAuthService {
         dto: ForgotPasswordRequestDto
     ): Promise<{ message: string }> {
         const user = await this._userRepository.findByEmail(dto.email);
-        console.log(user);
         if (!user) throw new Error(ErrorMessages.UserNotFound);
 
         const resetToken = this._tokenService.generatePasswordResetToken(

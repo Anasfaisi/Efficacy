@@ -33,9 +33,7 @@ export const mentorApi = {
         if (files.certificate)
             formData.append('certificate', files.certificate);
         if (files.idProof) formData.append('idProof', files.idProof);
-        for (const [key, value] of formData) {
-            console.log(key, value, 'form data');
-        }
+       
 
         const res = await api.post(
             MentorRoutes.MENTOR_APPLICATION_INIT,
@@ -156,7 +154,6 @@ export const mentorApi = {
             field,
             data: JSON.stringify(elements),
         };
-        console.log(body);
         const res = await api.patch(
             MentorRoutes.ARRAY_MENTOR_PROFILE_ARRAY,
             body

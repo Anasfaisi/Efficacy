@@ -322,7 +322,6 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
         const start = startOfWeek(currentDate);
         const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
         const allPossibleSlots = getUniqueAvailableSlots();
-        console.log(allPossibleSlots, 'from mentor calender 1');
         return (
             <div className="overflow-x-auto animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="min-w-[800px]">
@@ -460,7 +459,6 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
     const renderDayView = () => {
         const dayName = format(currentDate, 'EEEE');
         const allPossibleSlots = mentor.availability?.[dayName] || [];
-        console.log(allPossibleSlots, mentor);
 
         const todayBookings = getBookingsForDate(currentDate);
 

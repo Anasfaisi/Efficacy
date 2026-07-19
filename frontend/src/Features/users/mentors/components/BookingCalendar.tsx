@@ -146,7 +146,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         const allPossibleSlots = getAllSlots(
             mentor.availability?.[selectedDayName] || []
         );
-        console.log(allPossibleSlots, 'allPossibleSlots', bookedSlots);
         return (
             <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between mb-4">

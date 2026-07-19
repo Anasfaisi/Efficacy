@@ -191,7 +191,6 @@ const MentorWalletPage: React.FC = () => {
 
         try {
             const stripeAccountUrl = await walletApi.onboardStripeConnect();
-            console.log(stripeAccountUrl, 'from the mentor walle page');
             if (stripeAccountUrl) {
                 window.location.href = stripeAccountUrl;
                 setIsStripeLoading(false);

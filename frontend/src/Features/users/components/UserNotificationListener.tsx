@@ -16,7 +16,7 @@ import {
 } from '@/redux/slices/notificationSlice';
 import { useNavigate } from 'react-router-dom';
 import type { Notification } from '@/Features/admin/types';
-import { getNotifications } from '@/Services/user.api';
+import { getNotifications } from '@/types/user.api';
 
 export const UserNotificationListener: React.FC = () => {
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -204,13 +204,11 @@ export const UserNotificationListener: React.FC = () => {
             });
 
             socket.on('connect', () => {
-                console.log('User socket connected, re-joining room');
                 if (currentUserId) joinUserRoom(currentUserId);
             });
         }
 
         return () => {
-            console.log('🧹 UserNotificationListener: Cleaning up...');
             offNotificationEvents();
             socket?.off('connect');
         };

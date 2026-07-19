@@ -112,7 +112,6 @@ export class MentorController {
 
             const updateDto = new UpdateMentorProfileDto();
             Object.assign(updateDto, req.body);
-            console.log(req.body, updateDto, 'from mentor controller');
             const updatedMentor =
                 await this._mentorService.updateMentorProfileBasicInfo(
                     userId,
@@ -161,7 +160,6 @@ export class MentorController {
 
             const parsedData =
                 typeof data === 'string' ? JSON.parse(data) : data;
-            console.log(data, parsedData);
             const updatedMentor =
                 await this._mentorService.updateMentorProfileArray(
                     userId,
@@ -227,9 +225,8 @@ export class MentorController {
                     ? error.message
                     : 'Failed to fetch mentors';
             res.status(code.INTERNAL_SERVER_ERROR).json({
-                message: ErrorMessages.FetchMentorsFailed,
+                message: ErrorMessages.FetchMentorsFailed || message,
             });
-            console.log(message);
         }
     }
 

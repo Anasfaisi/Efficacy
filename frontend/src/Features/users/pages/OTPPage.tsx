@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCredentials, setTempUser } from '@/redux/slices/authSlice';
-import { resendOtpApi, verifyOtpApi } from '@/Services/user.api';
+import { resendOtpApi, verifyOtpApi } from '@/types/user.api';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Mail, Loader2, RefreshCw } from 'lucide-react';

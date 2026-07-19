@@ -162,10 +162,7 @@ export const MentorNotificationListener: React.FC = () => {
             onNewNotification(handleNotification);
 
             socket.on('connect', () => {
-                console.log(
-                    '🚀 MentorNotificationListener: Socket connected! Socket ID:',
-                    socket.id
-                );
+               
                 if (currentUserId) joinUserRoom(currentUserId);
             });
         } else {

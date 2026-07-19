@@ -51,7 +51,6 @@ const MentorDashboard: React.FC = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                console.log('jh-===========');
                 setIsLoading(true);
                 const [profileData, requestsData, transactionsData] =
                     await Promise.all([
@@ -59,7 +58,6 @@ const MentorDashboard: React.FC = () => {
                         mentorshipApi.getMentorRequests(1, 100),
                         walletApi.getTransactions(1, 100),
                     ]);
-                console.log(requestsData, 'from md 42');
 
                 setFetchedMentor(profileData);
                 const fetchedMentorships = requestsData.mentorships || [];

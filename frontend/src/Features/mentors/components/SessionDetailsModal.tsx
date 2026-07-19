@@ -57,7 +57,6 @@ const SessionDetailsModal: React.FC<SessionDetailsModalProps> = ({
             }
         };
         fetchReview();
-        console.log(review, 'from sesstiondetails modal');
     }, [isOpen, mentorId, booking, review]);
 
     if (!isOpen) return null;

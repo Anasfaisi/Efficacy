@@ -21,7 +21,6 @@ export const createTaskAPI = async (
         columnId,
         task,
     });
-    console.log(res.data.kanbanBoard.columns);
     return res.data.kanbanBoard;
 };
 

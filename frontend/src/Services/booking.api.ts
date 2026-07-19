@@ -91,7 +91,6 @@ export const bookingApi = {
 
     getBookingById: async (bookingId: string): Promise<Booking> => {
         const res = await api.get(BookingRoutes.GET_BOOKING_BY_ID(bookingId));
-        console.log(res, 'res');
         return res.data;
     },
 

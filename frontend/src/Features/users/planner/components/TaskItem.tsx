@@ -61,10 +61,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
         new Date(task.startDate)
     );
     const deadline = Math.floor((duration / totalestimatedtime) * 100);
-    console.log(duration, 'duration from the taskItem');
-    console.log(totalestimatedtime, 'totalestimatedtime from the taskItem');
-    console.log(deadline, 'deadline from the taskItem');
-    console.log(deadline + '%', 'deadline from the taskItem');
 
     return (
         <div
