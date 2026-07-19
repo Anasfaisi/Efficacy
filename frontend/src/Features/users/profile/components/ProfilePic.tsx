@@ -58,7 +58,9 @@ const ProfilePic: React.FC = () => {
                     className="bg-purple-600 opacity-80 text-white rounded-5 w-35 h-8 m-5"
                     onClick={() => setEditState(true)}
                 >
-                    {user && 'profilePic' in user && user.profilePic ? 'Change picture' : 'Add picture'}
+                    {user && 'profilePic' in user && user.profilePic
+                        ? 'Change picture'
+                        : 'Add picture'}
                 </button>
                 {editState && (
                     <div>

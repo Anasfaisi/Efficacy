@@ -6,7 +6,7 @@ import { Types } from 'mongoose';
 export class MentorShipMapper {
     static toEntity(doc: IMentorship): MentorshipEntity {
         return {
-            id: doc._id as string ,
+            id: doc._id as string,
             userId: doc.userId,
             mentorId: doc.mentorId,
             proposedStartDate: doc.proposedStartDate,

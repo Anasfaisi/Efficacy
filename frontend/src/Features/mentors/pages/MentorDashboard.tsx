@@ -337,7 +337,9 @@ const MentorDashboard: React.FC = () => {
                                     fontWeight: 500,
                                 }}
                                 dx={-10}
-                                tickFormatter={(value: number | string) => `₹${value}`}
+                                tickFormatter={(value: number | string) =>
+                                    `₹${value}`
+                                }
                             />
                             <Tooltip
                                 contentStyle={{
@@ -351,10 +353,7 @@ const MentorDashboard: React.FC = () => {
                                     fontWeight: 600,
                                     color: '#1e293b',
                                 }}
-                                formatter={(value) => [
-                                    `₹${value}`,
-                                    'Earnings',
-                                ]}
+                                formatter={(value) => [`₹${value}`, 'Earnings']}
                             />
                             <Area
                                 type="monotone"

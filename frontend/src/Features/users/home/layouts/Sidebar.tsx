@@ -8,9 +8,7 @@ import {
     User,
     Trophy,
     ChevronRight,
-    Wallet,
     LogOut,
-    CreditCard,
 } from 'lucide-react';
 import SidebarButton from '../components/SidebarButton';
 import { useLocation, Link, useNavigate } from 'react-router-dom';

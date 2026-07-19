@@ -1507,9 +1507,11 @@ export default function MentorOnboardingForm() {
                                                             Graduation Year
                                                         </p>
                                                         <p className="font-medium text-gray-900">
-                                                            {String(getValues(
-                                                                'graduationYear'
-                                                            ) || '-')}
+                                                            {String(
+                                                                getValues(
+                                                                    'graduationYear'
+                                                                ) || '-'
+                                                            )}
                                                         </p>
                                                     </div>
                                                     <div className="md:col-span-2">

@@ -112,7 +112,7 @@ export class MentorController {
 
             const updateDto = new UpdateMentorProfileDto();
             Object.assign(updateDto, req.body);
-            console.log(req.body,updateDto,"from mentor controller")
+            console.log(req.body, updateDto, 'from mentor controller');
             const updatedMentor =
                 await this._mentorService.updateMentorProfileBasicInfo(
                     userId,

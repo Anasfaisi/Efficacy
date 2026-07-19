@@ -368,7 +368,9 @@ const MentorCalendar: React.FC<MentorCalendarProps> = ({
                                             b.status === 'rescheduled' &&
                                             b.proposedDate
                                         ) {
-                                            return String(b.proposedSlot) === slot;
+                                            return (
+                                                String(b.proposedSlot) === slot
+                                            );
                                         }
                                         return b.slot === slot;
                                     });

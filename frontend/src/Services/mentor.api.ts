@@ -119,7 +119,6 @@ export const mentorApi = {
             currentPassword?: string;
             newPassword?: string;
         }
-        
     ) => {
         const res = await api.patch(
             MentorRoutes.BASIC_MENTOR_PROFILE_BASIC,
