@@ -310,7 +310,7 @@ export class AuthService implements IAuthService {
         const resetToken = this._tokenService.generatePasswordResetToken(
             user.id
         );
-        const resetLink = `${process.env.FRONTEND_URL}/mentor/reset-password?token=${resetToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
         await this._otpService.sendEmail(
             user.email,
             'Reset Your Password',

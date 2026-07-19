@@ -56,7 +56,7 @@ export const ForgotResetPassword: React.FC = () => {
                 const result = await forgotPasswordApi(email);
                 if (result) {
                     toast.success(
-                        result.message || 'Reset link sent to your email.'
+                         'Reset link sent to your email.'
                     );
                 }
             }
