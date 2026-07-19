@@ -33,7 +33,6 @@ export const mentorApi = {
         if (files.certificate)
             formData.append('certificate', files.certificate);
         if (files.idProof) formData.append('idProof', files.idProof);
-       
 
         const res = await api.post(
             MentorRoutes.MENTOR_APPLICATION_INIT,

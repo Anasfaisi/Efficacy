@@ -162,7 +162,6 @@ export const MentorNotificationListener: React.FC = () => {
             onNewNotification(handleNotification);
 
             socket.on('connect', () => {
-               
                 if (currentUserId) joinUserRoom(currentUserId);
             });
         } else {

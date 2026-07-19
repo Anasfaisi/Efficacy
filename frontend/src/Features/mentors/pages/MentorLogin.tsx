@@ -49,6 +49,7 @@ const MentorLogin: React.FC = () => {
                 toast.error(result.message);
             }
         } catch (err: unknown) {
+            console.log(err);
             toast.error('Login failed. Please check your credentials.');
         }
     };
@@ -66,6 +67,7 @@ const MentorLogin: React.FC = () => {
                 dispatch(setCredentials({ currentUser: result.user }));
                 toast.success('Successfully logged in with Google');
             } catch (err: unknown) {
+                console.log(err);
                 setGoogleError('Google login failed');
             }
         }

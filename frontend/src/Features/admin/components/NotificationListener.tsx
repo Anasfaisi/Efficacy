@@ -39,8 +39,6 @@ export const NotificationListener: React.FC = () => {
         connectSocket();
 
         onNewNotification((notification: Notification) => {
-         
-
             const processedNotification: Notification = {
                 ...notification,
                 _id: notification._id || `temp-${Date.now()}`,

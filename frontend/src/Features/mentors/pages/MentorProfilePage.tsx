@@ -228,7 +228,6 @@ const MentorProfilePage = () => {
                             '',
                     });
                 }
-
             } catch (error) {
                 console.log(error);
                 toast.error('Failed to fetch profile details');

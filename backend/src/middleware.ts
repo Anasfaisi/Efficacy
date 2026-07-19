@@ -11,9 +11,7 @@ import path from 'path';
 import { morganMiddleware } from './utils/logMiddlewares';
 export function applyMiddlewares(app: Express) {
     const corsOptions = {
-        origin: [
-            process.env.FRONTEND_URL || 'https://efficacy.ddns.net',
-        ],
+        origin: [process.env.FRONTEND_URL || 'https://efficacy.ddns.net'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
