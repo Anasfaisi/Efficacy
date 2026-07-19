@@ -10,16 +10,13 @@ let socket: Socket | null = null;
 const getSocketUrl = () => {
     const apiUrl =
         import.meta.env.VITE_API_URL_SOCKET || import.meta.env.VITE_API_URL;
-    if (!apiUrl) return 'http://localhost:5000';
+    if (!apiUrl) return window.location.origin;
 
     try {
         const url = new URL(apiUrl);
         return url.origin;
     } catch {
-        if (apiUrl.includes(':') && !apiUrl.startsWith('http')) {
-            return `http://${apiUrl}`;
-        }
-        return 'http://localhost:5000';
+        return window.location.origin;
     }
 };
 
