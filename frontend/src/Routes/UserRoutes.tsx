@@ -1,4 +1,6 @@
 import React, { useEffect, Suspense, lazy } from 'react';
+import NotFound from '@/Features/common/pages/NotFound';
+import MentorDetailPage from '@/Features/users/mentors/pages/MentorDetailPage';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
@@ -25,9 +27,7 @@ const TasksPage = lazy(
 const MentorListingPage = lazy(
     () => import('@/Features/users/mentors/pages/MentorListingPage')
 );
-const MentorDetailPage = lazy(
-    () => import('@/Features/users/mentors/pages/MentorDetailPage')
-);
+
 const PlannerPage = lazy(
     () => import('@/Features/users/planner/pages/PlannerPage')
 );
@@ -37,7 +37,7 @@ const MentorshipManagementPage = lazy(
 const MyMentorshipsPage = lazy(
     () => import('@/Features/users/mentors/pages/MyMentorshipsPage')
 );
-const NotFound = lazy(() => import('@/Features/common/pages/NotFound'));
+
 const PomodoroPage = lazy(
     () => import('@/Features/users/pomodoro/pages/PomodoroPage')
 );
