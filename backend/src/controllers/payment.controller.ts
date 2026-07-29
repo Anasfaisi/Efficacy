@@ -35,7 +35,7 @@ export class PaymentController {
         try {
             const sig = req.headers['stripe-signature'] as string;
             const rawBody = req.body;
-            console.log("yeah it is working completely")
+            console.log('yeah it is working completely');
             await this._paymentService.handleWebhookEvent(rawBody, sig);
 
             res.status(code.OK).send({ received: true });
