@@ -287,8 +287,8 @@ const MentorMentorshipList: React.FC = () => {
                                             Upcoming Sessions
                                         </h4>
                                         <div className="flex flex-wrap gap-3">
-                                            {m.sessions
-                                                .filter(
+                                            {m?.sessions
+                                                ?.filter(
                                                     (s) =>
                                                         s.status ===
                                                             SessionStatus.BOOKED &&
@@ -337,7 +337,7 @@ const MentorMentorshipList: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 ))}
-                                            {m.sessions.filter(
+                                            {m?.sessions?.filter(
                                                 (s) =>
                                                     s.status ===
                                                     SessionStatus.BOOKED
