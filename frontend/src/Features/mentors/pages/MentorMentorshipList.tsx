@@ -55,7 +55,7 @@ const MentorMentorshipList: React.FC = () => {
                 statusMap[activeTab],
                 debouncedSearch
             );
-            console.log(data,"from mentormentoshiplist")
+            console.log(data, 'from mentormentoshiplist');
             setMentorships(data.mentorships);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -287,7 +287,7 @@ const MentorMentorshipList: React.FC = () => {
                                             Upcoming Sessions
                                         </h4>
                                         <div className="flex flex-wrap gap-3">
-                                            {(m.sessions||[])
+                                            {(m.sessions || [])
                                                 .filter(
                                                     (s) =>
                                                         s.status ===
@@ -337,7 +337,7 @@ const MentorMentorshipList: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 ))}
-                                            {(m.sessions|| []).filter(
+                                            {(m.sessions || []).filter(
                                                 (s) =>
                                                     s.status ===
                                                     SessionStatus.BOOKED

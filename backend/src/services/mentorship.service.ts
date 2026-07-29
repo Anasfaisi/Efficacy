@@ -112,7 +112,6 @@ export class MentorshipService implements IMentorshipService {
                 status,
                 search
             );
-            console.log(mentorships,"from the great great backend")
         return new PaginatedMentorshipResponseDto(
             mentorships.map((m) => MentorShipMapper.toEntity(m)),
             total,

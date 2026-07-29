@@ -37,6 +37,7 @@ export class MentorshipController {
             status,
             search
         );
+        console.log(requests)
         res.status(code.OK).json(requests);
     }
 
