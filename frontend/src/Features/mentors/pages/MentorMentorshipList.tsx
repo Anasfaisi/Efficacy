@@ -55,6 +55,7 @@ const MentorMentorshipList: React.FC = () => {
                 statusMap[activeTab],
                 debouncedSearch
             );
+            console.log(data,"from mentormentoshiplist")
             setMentorships(data.mentorships);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -165,7 +166,7 @@ const MentorMentorshipList: React.FC = () => {
                             const student = m.userId as User;
                             return (
                                 <div
-                                    key={m._id}
+                                    key={m.id}
                                     className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
                                 >
                                     <div className="p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
@@ -202,7 +203,7 @@ const MentorMentorshipList: React.FC = () => {
                                                 </p>
 
                                                 <div className="text-[10px] text-gray-400 font-mono mb-4 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100">
-                                                    ID: {m._id?.substring(0, 6)}
+                                                    ID: {m.id?.substring(0, 6)}
                                                     ...
                                                 </div>
 
@@ -298,7 +299,7 @@ const MentorMentorshipList: React.FC = () => {
                                                 .slice(0, 2)
                                                 .map((session) => (
                                                     <div
-                                                        key={session._id}
+                                                        key={session.id}
                                                         className="px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4"
                                                     >
                                                         <div className="text-center border-r border-gray-100 pr-4">

@@ -9,10 +9,11 @@ const startServer = async () => {
     const app = createApp();
     await connectDB();
     const server = app.listen(PORT, () => {
-        console.log('Server is listening on the http://localhost: ', PORT);
+        console.log('Server is listening on the ', PORT);
     });
     setUpSocket(server);
     // cronJob();
 };
 
 startServer();
+1770314975707

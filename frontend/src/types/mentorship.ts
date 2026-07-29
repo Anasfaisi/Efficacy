@@ -47,7 +47,7 @@ export interface Mentorship {
 
     totalSessions: number;
     usedSessions: number;
-    sessions: ISession[];
+    sessions: Session[];
 
     paymentStatus: PaymentStatus;
     paymentId?: string;
@@ -68,4 +68,13 @@ export interface Mentorship {
     rejectionReason?: string;
     createdAt: string;
     updatedAt: string;
+}
+export interface Session {
+    id?: string;
+    date: Date;
+    slot?: string;
+    status: SessionStatus;
+    mentorNotes?: string;
+    userNotes?: string;
+    meetingLink?: string;
 }
