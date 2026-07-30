@@ -13,6 +13,7 @@ import MessageBubble from '../components/MessageBubble';
 import { Send, User, Menu, Image as ImageIcon, Mic, X } from 'lucide-react';
 
 import React, { useEffect } from 'react';
+import { toast } from 'sonner';
 const ChatPage: React.FC = () => {
     const dispatch = useAppDispatch();
     const { conversations, currentConversation } = useAppSelector(
@@ -75,6 +76,13 @@ const ChatPage: React.FC = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.size > MAX_SIZE) {
+            toast.error('File size exceeds the 5MB limit.');
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
         try {
             setIsUploading(true);
             const { url } = await chatApi.uploadFile(file);
@@ -112,6 +120,13 @@ const ChatPage: React.FC = () => {
                 const audioBlob = new Blob(audioChunksRef.current, {
                     type: 'audio/webm',
                 });
+                
+                const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+                if (audioBlob.size > MAX_SIZE) {
+                    toast.error('Audio recording is too large (exceeds 5MB). Please record a shorter message.');
+                    return;
+                }
+
                 const file = new File([audioBlob], 'voice-message.webm', {
                     type: 'audio/webm',
                 });
