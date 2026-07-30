@@ -120,10 +120,12 @@ const ChatPage: React.FC = () => {
                 const audioBlob = new Blob(audioChunksRef.current, {
                     type: 'audio/webm',
                 });
-                
+
                 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
                 if (audioBlob.size > MAX_SIZE) {
-                    toast.error('Audio recording is too large (exceeds 5MB). Please record a shorter message.');
+                    toast.error(
+                        'Audio recording is too large (exceeds 5MB). Please record a shorter message.'
+                    );
                     return;
                 }
 
