@@ -55,7 +55,6 @@ const MentorMentorshipList: React.FC = () => {
                 statusMap[activeTab],
                 debouncedSearch
             );
-            console.log(data, 'from mentormentoshiplist');
             setMentorships(data.mentorships);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -269,7 +268,7 @@ const MentorMentorshipList: React.FC = () => {
                                                 <button
                                                     onClick={() =>
                                                         navigate(
-                                                            `/mentor/mentorship/${m._id}`
+                                                            `/mentor/mentorship/${m.id}`
                                                         )
                                                     }
                                                     className="flex-1 sm:flex-none px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
