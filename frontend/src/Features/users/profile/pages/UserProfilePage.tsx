@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { updateCurrentUser } from '@/redux/slices/authSlice';
 import type { User } from '@/types/auth';
@@ -16,9 +17,11 @@ import {
     ShieldCheck,
     AtSign,
     Star,
-    Wallet,
+    // Wallet,
     ChevronRight,
     Home,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -90,11 +93,14 @@ const UserProfilePage = () => {
     const [, setCurrentStreak] = useState(0);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<
         'general' | 'billing' | 'security'
     >('general');
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const profilePicRef = useRef<HTMLInputElement>(null);
 
@@ -133,17 +139,8 @@ const UserProfilePage = () => {
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 error.issues.forEach((err) => toast.error(err.message));
-            } else if (
-                error &&
-                typeof error === 'object' &&
-                'response' in error
-            ) {
-                const axiosError = error as {
-                    response?: { data?: { message?: string } };
-                };
-                toast.error(
-                    axiosError.response?.data?.message || 'Update failed'
-                );
+            } else if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || 'Update failed');
             } else {
                 toast.error(
                     typeof error === 'string' ? error : 'Update failed'
@@ -155,6 +152,7 @@ const UserProfilePage = () => {
     };
 
     const handlePasswordSave = async () => {
+        setPasswordError(null);
         if (!currentUser?.id) {
             toast.error('invalid user session, please login again!');
             return;
@@ -163,7 +161,7 @@ const UserProfilePage = () => {
             userProfileUpdateSchema.parse({ currentPassword, newPassword });
 
             if (!currentPassword || !newPassword) {
-                toast.error('Both current and new passwords are required');
+                setPasswordError('Both current and new passwords are required');
                 return;
             }
 
@@ -174,16 +172,19 @@ const UserProfilePage = () => {
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
+            setShowNewPassword(false);
+            setShowCurrentPassword(false);
         } catch (error: unknown) {
             if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
+                setPasswordError(error.issues[0].message);
+            } else if (axios.isAxiosError(error)) {
+                setPasswordError(
+                    error.response?.data?.message || 'Password update failed'
+                );
+            } else if (error instanceof Error) {
+                setPasswordError(error.message);
             } else {
-                const errorMessage =
-                    (error as { response?: { data?: { message?: string } } })
-                        ?.response?.data?.message ||
-                    (error as Error).message ||
-                    'Password update failed';
-                toast.error(errorMessage);
+                setPasswordError('Password update failed');
             }
         } finally {
             setIsLoading(null);
@@ -387,7 +388,7 @@ const UserProfilePage = () => {
                         >
                             General Info
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => setActiveTab('billing')}
                             className={`px-6 py-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${
                                 activeTab === 'billing'
@@ -396,7 +397,7 @@ const UserProfilePage = () => {
                             }`}
                         >
                             Account & Billing
-                        </button>
+                        </button> */}
                         <button
                             onClick={() => setActiveTab('security')}
                             className={`px-6 py-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${
@@ -507,7 +508,7 @@ const UserProfilePage = () => {
                                 </motion.div>
                             )}
 
-                            {activeTab === 'billing' && (
+                            {/* {activeTab === 'billing' && (
                                 <motion.div
                                     key="billing"
                                     initial={{ opacity: 0, x: -10 }}
@@ -567,7 +568,7 @@ const UserProfilePage = () => {
                                         </div>
                                     </ConfigSection>
                                 </motion.div>
-                            )}
+                            )} */}
 
                             {activeTab === 'security' && (
                                 <motion.div
@@ -592,16 +593,38 @@ const UserProfilePage = () => {
                                                 <div className="relative group">
                                                     <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-purple-600" />
                                                     <input
-                                                        type="password"
+                                                        type={
+                                                            showCurrentPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         value={currentPassword}
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
                                                             setCurrentPassword(
                                                                 e.target.value
-                                                            )
-                                                        }
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
+                                                            );
+                                                            setPasswordError(
+                                                                null
+                                                            );
+                                                        }}
+                                                        className={`w-full bg-slate-50 border ${passwordError ? 'border-red-300 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-purple-100 focus:border-purple-500'} rounded-2xl pl-11 pr-11 py-3 text-slate-900 focus:ring-4 outline-none transition-all font-medium`}
                                                         placeholder="••••••••"
                                                     />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setShowCurrentPassword(
+                                                                !showCurrentPassword
+                                                            )
+                                                        }
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 focus:outline-none"
+                                                    >
+                                                        {showCurrentPassword ? (
+                                                            <EyeOff className="w-4 h-4" />
+                                                        ) : (
+                                                            <Eye className="w-4 h-4" />
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
@@ -611,19 +634,46 @@ const UserProfilePage = () => {
                                                 <div className="relative group">
                                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-purple-600" />
                                                     <input
-                                                        type="password"
+                                                        type={
+                                                            showNewPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         value={newPassword}
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
                                                             setNewPassword(
                                                                 e.target.value
-                                                            )
-                                                        }
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-900 focus:ring-4 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium"
+                                                            );
+                                                            setPasswordError(
+                                                                null
+                                                            );
+                                                        }}
+                                                        className={`w-full bg-slate-50 border ${passwordError ? 'border-red-300 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-purple-100 focus:border-purple-500'} rounded-2xl pl-11 pr-11 py-3 text-slate-900 focus:ring-4 outline-none transition-all font-medium`}
                                                         placeholder="Min. 8 characters"
                                                     />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setShowNewPassword(
+                                                                !showNewPassword
+                                                            )
+                                                        }
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 focus:outline-none"
+                                                    >
+                                                        {showNewPassword ? (
+                                                            <EyeOff className="w-4 h-4" />
+                                                        ) : (
+                                                            <Eye className="w-4 h-4" />
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
+                                        {passwordError && (
+                                            <div className="mt-4 text-sm text-red-500 font-medium px-1">
+                                                {passwordError}
+                                            </div>
+                                        )}
                                     </ConfigSection>
                                 </motion.div>
                             )}

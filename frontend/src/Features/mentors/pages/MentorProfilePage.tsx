@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import { useAppDispatch } from '@/redux/hooks';
 import { updateCurrentUser } from '@/redux/slices/authSlice';
 import type { Mentor } from '@/types/auth';
@@ -25,6 +26,8 @@ import {
     Home,
     Clock,
     Mail,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import {
     Select,
@@ -37,11 +40,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import {
     mentorProfileUpdateSchema,
-    bankDetailsSchema,
+    // bankDetailsSchema,
 } from '@/types/zodSchemas';
 import { ZodError } from 'zod';
 import { mentorApi } from '@/Services/mentor.api';
-import { walletApi } from '@/Services/wallet.api';
+// import { walletApi } from '@/Services/wallet.api';
 
 interface ConfigSectionProps {
     title: string;
@@ -173,15 +176,18 @@ const MentorProfilePage = () => {
     const [availability, setAvailability] = useState<Record<string, string[]>>(
         {}
     );
-    const [bankDetails, setBankDetails] = useState({
-        accountNumber: '',
-        bankName: '',
-        ifscCode: '',
-        accountHolderName: '',
-    });
+    // const [bankDetails, setBankDetails] = useState({
+    //     accountNumber: '',
+    //     bankName: '',
+    //     ifscCode: '',
+    //     accountHolderName: '',
+    // });
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
 
     const profilePicRef = useRef<HTMLInputElement>(null);
     const coverPicRef = useRef<HTMLInputElement>(null);
@@ -216,18 +222,18 @@ const MentorProfilePage = () => {
                 setAchievements(data.achievements || []);
                 setAvailability(data.availability || {});
 
-                const walletData = await walletApi.getWallet();
-                if (walletData?.bankAccountDetails) {
-                    setBankDetails({
-                        accountNumber:
-                            walletData.bankAccountDetails.accountNumber || '',
-                        bankName: walletData.bankAccountDetails.bankName || '',
-                        ifscCode: walletData.bankAccountDetails.ifscCode || '',
-                        accountHolderName:
-                            walletData.bankAccountDetails.accountHolderName ||
-                            '',
-                    });
-                }
+                // const walletData = await walletApi.getWallet();
+                // if (walletData?.bankAccountDetails) {
+                //     setBankDetails({
+                //         accountNumber:
+                //             walletData.bankAccountDetails.accountNumber || '',
+                //         bankName: walletData.bankAccountDetails.bankName || '',
+                //         ifscCode: walletData.bankAccountDetails.ifscCode || '',
+                //         accountHolderName:
+                //             walletData.bankAccountDetails.accountHolderName ||
+                //             '',
+                //     });
+                // }
             } catch (error) {
                 console.log(error);
                 toast.error('Failed to fetch profile details');
@@ -261,17 +267,8 @@ const MentorProfilePage = () => {
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 error.issues.forEach((err) => toast.error(err.message));
-            } else if (
-                error &&
-                typeof error === 'object' &&
-                'response' in error
-            ) {
-                const axiosError = error as {
-                    response?: { data?: { message?: string } };
-                };
-                toast.error(
-                    axiosError.response?.data?.message || 'Update failed'
-                );
+            } else if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || 'Update failed');
             } else {
                 toast.error('Update failed');
             }
@@ -281,11 +278,12 @@ const MentorProfilePage = () => {
     };
 
     const handlePasswordSave = async () => {
+        setPasswordError(null);
         try {
             mentorProfileUpdateSchema.parse({ currentPassword, newPassword });
 
             if (!currentPassword || !newPassword) {
-                toast.error('Both current and new passwords are required');
+                setPasswordError('Both current and new passwords are required');
                 return;
             }
 
@@ -297,23 +295,19 @@ const MentorProfilePage = () => {
             toast.success('Password updated successfully');
             setCurrentPassword('');
             setNewPassword('');
+            setShowNewPassword(false);
+            setShowCurrentPassword(false);
         } catch (error: unknown) {
             if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
-            } else if (
-                error &&
-                typeof error === 'object' &&
-                'response' in error
-            ) {
-                const axiosError = error as {
-                    response?: { data?: { message?: string } };
-                };
-                toast.error(
-                    axiosError.response?.data?.message ||
-                        'Password update failed'
+                setPasswordError(error.issues[0].message);
+            } else if (axios.isAxiosError(error)) {
+                setPasswordError(
+                    error.response?.data?.message || 'Password update failed'
                 );
+            } else if (error instanceof Error) {
+                setPasswordError(error.message);
             } else {
-                toast.error('Password update failed');
+                setPasswordError('Password update failed');
             }
         } finally {
             setIsLoading(null);
@@ -369,21 +363,21 @@ const MentorProfilePage = () => {
         }
     };
 
-    const handleSaveBankDetails = async () => {
-        setIsLoading('bank');
-        try {
-            bankDetailsSchema.parse(bankDetails);
-            toast.success('Bank details updated successfully');
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                error.issues.forEach((err) => toast.error(err.message));
-            } else {
-                toast.error('Failed to update bank details');
-            }
-        } finally {
-            setIsLoading(null);
-        }
-    };
+    // const handleSaveBankDetails = async () => {
+    //     setIsLoading('bank');
+    //     try {
+    //         bankDetailsSchema.parse(bankDetails);
+    //         toast.success('Bank details updated successfully');
+    //     } catch (error: unknown) {
+    //         if (error instanceof ZodError) {
+    //             error.issues.forEach((err) => toast.error(err.message));
+    //         } else {
+    //             toast.error('Failed to update bank details');
+    //         }
+    //     } finally {
+    //         setIsLoading(null);
+    //     }
+    // };
 
     const handleSaveAvailability = async () => {
         setIsLoading('availability');
@@ -1307,7 +1301,7 @@ const MentorProfilePage = () => {
                                         </div>
                                     </ConfigSection>
 
-                                    <ConfigSection
+                                    {/* <ConfigSection
                                         title="Bank Details"
                                         description="Withdraw your earnings to your bank account."
                                         footer="Payments are processed securely via our financial partners."
@@ -1392,7 +1386,7 @@ const MentorProfilePage = () => {
                                                 />
                                             </div>
                                         </div>
-                                    </ConfigSection>
+                                    </ConfigSection> */}
                                 </motion.div>
                             )}
 
@@ -1419,16 +1413,38 @@ const MentorProfilePage = () => {
                                                 <div className="relative group">
                                                     <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500" />
                                                     <input
-                                                        type="password"
+                                                        type={
+                                                            showCurrentPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         value={currentPassword}
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
                                                             setCurrentPassword(
                                                                 e.target.value
-                                                            )
-                                                        }
-                                                        className="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                                            );
+                                                            setPasswordError(
+                                                                null
+                                                            );
+                                                        }}
+                                                        className={`w-full bg-white border ${passwordError ? 'border-red-300 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-blue-100 focus:border-blue-500'} rounded-lg pl-10 pr-10 py-2.5 text-slate-900 focus:ring-2 outline-none transition-all`}
                                                         placeholder="••••••••"
                                                     />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setShowCurrentPassword(
+                                                                !showCurrentPassword
+                                                            )
+                                                        }
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 focus:outline-none"
+                                                    >
+                                                        {showCurrentPassword ? (
+                                                            <EyeOff className="w-4 h-4" />
+                                                        ) : (
+                                                            <Eye className="w-4 h-4" />
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
@@ -1438,19 +1454,46 @@ const MentorProfilePage = () => {
                                                 <div className="relative group">
                                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500" />
                                                     <input
-                                                        type="password"
+                                                        type={
+                                                            showNewPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         value={newPassword}
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
                                                             setNewPassword(
                                                                 e.target.value
-                                                            )
-                                                        }
-                                                        className="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                                            );
+                                                            setPasswordError(
+                                                                null
+                                                            );
+                                                        }}
+                                                        className={`w-full bg-white border ${passwordError ? 'border-red-300 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-blue-100 focus:border-blue-500'} rounded-lg pl-10 pr-10 py-2.5 text-slate-900 focus:ring-2 outline-none transition-all`}
                                                         placeholder="Min 8 characters"
                                                     />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setShowNewPassword(
+                                                                !showNewPassword
+                                                            )
+                                                        }
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 focus:outline-none"
+                                                    >
+                                                        {showNewPassword ? (
+                                                            <EyeOff className="w-4 h-4" />
+                                                        ) : (
+                                                            <Eye className="w-4 h-4" />
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
+                                        {passwordError && (
+                                            <div className="mt-4 text-sm text-red-500 font-medium px-1">
+                                                {passwordError}
+                                            </div>
+                                        )}
                                     </ConfigSection>
                                 </motion.div>
                             )}
