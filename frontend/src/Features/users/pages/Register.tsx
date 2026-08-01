@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setTempUser } from '@/redux/slices/authSlice';
+import { setCredentials, setTempUser } from '@/redux/slices/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/types/zodSchemas';
 import type { RegisterFormData } from '@/types/zodSchemas';
-import { registerInitApi } from '@/types/user.api';
+import { googleLoginApi, registerInitApi } from '@/types/user.api';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { CredentialResponse } from '@/types/auth';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Register: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [googleError, setGoogleError] = useState<string | null>(null);
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -61,7 +64,24 @@ const Register: React.FC = () => {
             toast.error(errorMessage);
         }
     };
-
+    const handleGoogleSuccess = async (
+        credentialResponse: CredentialResponse
+    ) => {
+        setGoogleError(null);
+        if (credentialResponse.credential) {
+            try {
+                const result = await googleLoginApi(
+                    credentialResponse.credential,
+                    'user'
+                );
+                dispatch(setCredentials({ currentUser: result.user }));
+                toast.success('Successfully logged in with Google');
+            } catch (err: unknown) {
+                console.log(err);
+                setGoogleError('Google login failed');
+            }
+        }
+    };
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh animate-gradient-slow p-4">
             <motion.div
@@ -113,6 +133,12 @@ const Register: React.FC = () => {
                                 future.
                             </p>
                         </div>
+
+                        {googleError && (
+                            <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center">
+                                {googleError}
+                            </div>
+                        )}
 
                         <form
                             onSubmit={handleSubmit(onSubmit)}
@@ -252,6 +278,20 @@ const Register: React.FC = () => {
                                     'Sign up'
                                 )}
                             </button>
+
+                            <div className="flex justify-center">
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() =>
+                                        setGoogleError(
+                                            'Google authentication failed'
+                                        )
+                                    }
+                                    theme="outline"
+                                    shape="circle"
+                                    width="100%"
+                                />
+                            </div>
 
                             <p className="text-center text-slate-500 text-sm mt-8">
                                 Already have an account?{' '}

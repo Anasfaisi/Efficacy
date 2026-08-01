@@ -178,15 +178,24 @@ export class WalletRepository
     async getGlobalTransactions(
         page: number,
         limit: number,
-        filter: 'all' | 'mentor' | 'user'
+        filter: 'all' | 'mentor' | 'user',
+        type?: string,
+        status?: string
     ): Promise<{ transactions: ITransaction[]; total: number }> {
         const match: Record<string, unknown> = {};
         if (filter === 'mentor') match.mentorId = { $exists: true };
         if (filter === 'user') match.userId = { $exists: true };
 
+        const txMatch: Record<string, unknown> = {};
+        if (type) txMatch['transactions.type'] = type;
+        if (status && status !== 'all') txMatch['transactions.status'] = status;
+
         const pipeline: PipelineStage[] = [
             { $match: match },
             { $unwind: '$transactions' },
+            ...(Object.keys(txMatch).length > 0
+                ? ([{ $match: txMatch }] as PipelineStage[])
+                : []),
             { $sort: { 'transactions.date': -1 } },
             {
                 $lookup: {

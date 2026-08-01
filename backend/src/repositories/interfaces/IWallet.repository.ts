@@ -30,7 +30,9 @@ export interface IWalletRepository extends IBaseRepository<IWallet> {
     getGlobalTransactions(
         page: number,
         limit: number,
-        filter: 'all' | 'mentor' | 'user'
+        filter: 'all' | 'mentor' | 'user',
+        type?: string,
+        status?: string
     ): Promise<{ transactions: ITransaction[]; total: number }>;
     findPaginatedTransactions(
         walletId: string | ObjectId,

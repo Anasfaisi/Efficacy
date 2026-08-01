@@ -172,13 +172,17 @@ export const adminService = {
     getTransactions: async (
         page: number = 1,
         limit: number = 10,
-        filter: string = 'all'
+        filter: string = 'all',
+        type?: string,
+        status?: string
     ): Promise<{ transactions: Transaction[]; total: number }> => {
         const response = await api.get(AdminRoutes.TRANSACTIONS, {
             params: {
                 page,
                 limit,
                 filter,
+                type,
+                status,
             },
         });
         return response.data;

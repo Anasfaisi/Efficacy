@@ -38,12 +38,12 @@ const MentorWalletPage: React.FC = () => {
     >('all');
 
     // Bank Details state
-    const [bankDetails, setBankDetails] = useState({
-        accountNumber: '',
-        bankName: '',
-        ifscCode: '',
-        accountHolderName: '',
-    });
+    // const [bankDetails, setBankDetails] = useState({
+    //     accountNumber: '',
+    //     bankName: '',
+    //     ifscCode: '',
+    //     accountHolderName: '',
+    // });
     const [showTooltip, setShowTooltip] = useState(false);
 
     // Simulated Stripe Connect State
@@ -60,16 +60,16 @@ const MentorWalletPage: React.FC = () => {
             setTransactions(txData.transactions);
             setTotalPages(txData.totalPages);
 
-            if (walletData?.bankAccountDetails) {
-                setBankDetails({
-                    accountNumber:
-                        walletData.bankAccountDetails.accountNumber || '',
-                    bankName: walletData.bankAccountDetails.bankName || '',
-                    ifscCode: walletData.bankAccountDetails.ifscCode || '',
-                    accountHolderName:
-                        walletData.bankAccountDetails.accountHolderName || '',
-                });
-            }
+            // if (walletData?.bankAccountDetails) {
+            //     setBankDetails({
+            //         accountNumber:
+            //             walletData.bankAccountDetails.accountNumber || '',
+            //         bankName: walletData.bankAccountDetails.bankName || '',
+            //         ifscCode: walletData.bankAccountDetails.ifscCode || '',
+            //         accountHolderName:
+            //             walletData.bankAccountDetails.accountHolderName || '',
+            //     });
+            // }
         } catch (error) {
             console.error('Failed to fetch wallet data:', error);
             const errorMessage =
@@ -233,6 +233,7 @@ const MentorWalletPage: React.FC = () => {
             </div>
         );
     }
+    console.log(wallet, withdrawAmount, 'from mentor wallet page');
 
     return (
         <div className="max-w-[76rem] mx-auto space-y-8 pb-20 px-4">
@@ -835,7 +836,7 @@ const MentorWalletPage: React.FC = () => {
                             </div>
 
                             {/* Alert for empty bank details */}
-                            {!bankDetails.accountNumber && (
+                            {/* {!bankDetails.accountNumber && (
                                 <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-2.5 text-xs text-amber-800">
                                     <AlertCircle
                                         className="shrink-0 mt-0.5 text-amber-600"
@@ -852,7 +853,7 @@ const MentorWalletPage: React.FC = () => {
                                         </p>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
 
                             {/* Payout Input Form */}
                             <div className="space-y-4">
@@ -956,7 +957,6 @@ const MentorWalletPage: React.FC = () => {
                                     disabled={
                                         isWithdrawing ||
                                         !withdrawAmount ||
-                                        !bankDetails.accountNumber ||
                                         Number(withdrawAmount) < 500 ||
                                         Number(withdrawAmount) >
                                             (wallet?.balance || 0)

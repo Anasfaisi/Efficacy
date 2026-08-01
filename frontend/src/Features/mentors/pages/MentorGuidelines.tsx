@@ -124,7 +124,20 @@ const MentorGuidelines: React.FC = () => {
 
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
-                        Mentor <span className="text-blue-600">Guidelines</span>
+                        {currentUser?.role === 'mentor' &&
+                        (currentUser as Mentor).status === 'active' ? (
+                            <>
+                                Mentor{' '}
+                                <span className="text-blue-600">
+                                    Guidelines
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                Welcome to{' '}
+                                <span className="text-blue-600">Efficacy</span>
+                            </>
+                        )}
                     </h1>
                     <p className="mt-4 text-xl text-slate-600">
                         {isApproved

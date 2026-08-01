@@ -102,6 +102,7 @@ export class AuthService implements IAuthService {
             data.currentPassword,
             user.password
         );
+        console.log(user.password, 'from authservice');
         if (!verifiedUser)
             throw new Error(ErrorMessages.invalidCurrentPassword);
         const hashedPassword = await this._passwordService.hashPassword(

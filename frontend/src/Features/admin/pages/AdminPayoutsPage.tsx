@@ -7,7 +7,6 @@ import {
     XCircle,
     AlertCircle,
     Clock,
-    Building2,
     User,
     Search,
     Check,
@@ -66,41 +65,38 @@ const AdminPayoutsPage: React.FC = () => {
     >('pending');
 
     // Pagination
-    const [page] = useState(1);
-    const [, setTotalCount] = useState(0);
-    const limit = 50; // Use a high limit for cleaner client-side filtering/view of payouts
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const limit = 10;
 
     const fetchPayoutRequests = useCallback(async () => {
         try {
             setLoading(true);
-            // Fetch mentor transactions specifically
             const data = await adminService.getTransactions(
                 page,
                 limit,
-                'mentor'
+                'mentor',
+                'withdrawal',
+                activeTab === 'all' ? undefined : activeTab
             );
 
-            // Filter only withdrawal requests
             const withdrawals = (
                 (data.transactions as unknown as AdminTransaction[]) || []
-            )
-                .map((tx: AdminTransaction) => ({
-                    ...tx,
-                    // If backend aggregate has mapped it, map keys nicely
-                    walletId: tx.walletId,
-                    transactionId: tx.transactionId,
-                }))
-                .filter((tx: AdminTransaction) => tx.type === 'withdrawal');
+            ).map((tx: AdminTransaction) => ({
+                ...tx,
+                walletId: tx.walletId,
+                transactionId: tx.transactionId,
+            }));
 
             setTransactions(withdrawals);
-            setTotalCount(withdrawals.length);
+            setTotalCount(data.total || withdrawals.length);
         } catch (error: unknown) {
             console.error('Error fetching payouts:', error);
             toast.error('Failed to load payout requests.');
         } finally {
             setLoading(false);
         }
-    }, [page, limit]);
+    }, [page, limit, activeTab]);
 
     useEffect(() => {
         fetchPayoutRequests();
@@ -111,13 +107,8 @@ const AdminPayoutsPage: React.FC = () => {
         (t) => t.transactionId === deepLinkedTxId
     );
 
-    // Filter transactions locally for quick interactive feel
+    // Filter transactions locally for quick interactive feel (search only)
     const filteredTransactions = transactions.filter((tx) => {
-        // Tab filtering
-        if (activeTab !== 'all' && tx.status !== activeTab) {
-            return false;
-        }
-
         // Search filtering (Mentor name, email, or amount)
         if (searchQuery.trim() !== '') {
             const query = searchQuery.toLowerCase();
@@ -133,6 +124,8 @@ const AdminPayoutsPage: React.FC = () => {
 
         return true;
     });
+
+    console.log(filteredTransactions, 'filteredTransactions');
 
     const handleApprove = async (tx: AdminTransaction) => {
         setProcessingId(tx.transactionId);
@@ -489,65 +482,6 @@ const AdminPayoutsPage: React.FC = () => {
                                         </div>
 
                                         {/* Bank Details section */}
-                                        {tx.bankAccountDetails && (
-                                            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-2.5">
-                                                <div className="flex items-center gap-1.5 text-xs text-gray-700 font-bold border-b border-gray-200/50 pb-2">
-                                                    <Building2
-                                                        size={14}
-                                                        className="text-gray-500"
-                                                    />
-                                                    <span>
-                                                        Registered Bank Account
-                                                    </span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs">
-                                                    <div>
-                                                        <span className="text-gray-400 block mb-0.5">
-                                                            Holder Name
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900">
-                                                            {tx
-                                                                .bankAccountDetails
-                                                                .accountHolderName ||
-                                                                'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-400 block mb-0.5">
-                                                            Bank Name
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900">
-                                                            {tx
-                                                                .bankAccountDetails
-                                                                .bankName ||
-                                                                'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-400 block mb-0.5">
-                                                            Account Number
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900 tracking-wider">
-                                                            {tx
-                                                                .bankAccountDetails
-                                                                .accountNumber ||
-                                                                'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-400 block mb-0.5">
-                                                            IFSC Code
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900 tracking-wide uppercase">
-                                                            {tx
-                                                                .bankAccountDetails
-                                                                .ifscCode ||
-                                                                'N/A'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
 
@@ -621,6 +555,69 @@ const AdminPayoutsPage: React.FC = () => {
                             View Pending Requests
                         </button>
                     )}
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {!loading && totalCount > 0 && (
+                <div className="flex items-center justify-between border-t border-gray-100 bg-white p-4 sm:px-6 rounded-2xl shadow-sm mt-6">
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm text-gray-700">
+                                Showing{' '}
+                                <span className="font-medium">
+                                    {(page - 1) * limit + 1}
+                                </span>{' '}
+                                to{' '}
+                                <span className="font-medium">
+                                    {Math.min(page * limit, totalCount)}
+                                </span>{' '}
+                                of{' '}
+                                <span className="font-medium">
+                                    {totalCount}
+                                </span>{' '}
+                                results
+                            </p>
+                        </div>
+                        <div>
+                            <nav
+                                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                aria-label="Pagination"
+                            >
+                                <button
+                                    onClick={() =>
+                                        setPage((p) => Math.max(1, p - 1))
+                                    }
+                                    disabled={page === 1}
+                                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="sr-only">Previous</span>
+                                    <span className="font-bold text-sm px-2">
+                                        Previous
+                                    </span>
+                                </button>
+
+                                {/* Current Page Display */}
+                                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+                                    Page {page} of{' '}
+                                    {Math.max(1, Math.ceil(totalCount / limit))}
+                                </span>
+
+                                <button
+                                    onClick={() => setPage((p) => p + 1)}
+                                    disabled={
+                                        page >= Math.ceil(totalCount / limit)
+                                    }
+                                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="sr-only">Next</span>
+                                    <span className="font-bold text-sm px-2">
+                                        Next
+                                    </span>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             )}
 

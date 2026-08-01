@@ -27,13 +27,11 @@ export default function AdminBadgesPage() {
     );
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const limit = 10;
 
-    // Initial state matching standard Badge schema
     const initialFormState: Partial<Badge> = {
         name: '',
         story: '',
@@ -108,11 +106,11 @@ export default function AdminBadgesPage() {
                 const response = await badgeApi.createBadge(formState);
                 if (response.success) {
                     toast.success('New Badge unlocked directly into the DB!');
-                    fetchBadges(1); // Still need fetch for NEW items to get pagination right
+                    fetchBadges(1);
                     setCurrentPage(1);
                 }
             }
-            // Cleanup: Close modal and reset form
+
             setIsFormOpen(false);
             setEditingBadge(null);
             setFormState(initialFormState);
@@ -459,7 +457,7 @@ export default function AdminBadgesPage() {
 
                                 <div className="space-y-2">
                                     <label className="text-xs font-semibold text-gray-500">
-                                        Backend Metric Template
+                                        Metric Template of Event
                                     </label>
                                     <select
                                         required
@@ -624,6 +622,7 @@ export default function AdminBadgesPage() {
                                         </label>
                                         <input
                                             type="color"
+                                            required
                                             className="w-full h-10 p-1 mt-1 rounded cursor-pointer border-none bg-transparent"
                                             value={
                                                 formState.design?.bgColor ||
@@ -650,13 +649,14 @@ export default function AdminBadgesPage() {
                                 <textarea
                                     className="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 max-h-24 min-h-[80px]"
                                     value={formState.story}
+                                    required
                                     onChange={(e) =>
                                         setFormState({
                                             ...formState,
                                             story: e.target.value,
                                         })
                                     }
-                                    placeholder="The unyielding spirit of seven consecutive days..."
+                                    placeholder="e.g.The unyielding spirit of seven consecutive days..."
                                 />
                             </div>
 
@@ -666,7 +666,7 @@ export default function AdminBadgesPage() {
                             >
                                 {editingBadge
                                     ? 'Deploy Changes to Badges Engine'
-                                    : 'Mint Gamification Badge to DB'}
+                                    : 'Create Badge'}
                             </button>
                         </div>
                     </form>

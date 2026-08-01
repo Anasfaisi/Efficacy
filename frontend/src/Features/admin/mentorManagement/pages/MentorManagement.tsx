@@ -1,15 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-    Search,
-    Mail,
-    MapPin,
-    MoreVertical,
-    UserCheck,
-    UserX,
-    Edit,
-    Eye,
-    Award,
-} from 'lucide-react';
+import { Search, Mail, MapPin, UserCheck, UserX, Award } from 'lucide-react';
 import type { Mentor } from '@/types/auth';
 import { adminService } from '@/Services/admin.api';
 import { useNavigate } from 'react-router-dom';
@@ -193,10 +183,10 @@ const MentorMangement = () => {
                                     </div>
                                 </div>
                                 <button className="p-1 hover:bg-gray-100 rounded-full transition-colors opacity-0 group-hover:opacity-100">
-                                    <MoreVertical
+                                    {/* <MoreVertical
                                         size={18}
                                         className="text-gray-400"
-                                    />
+                                    /> */}
                                 </button>
                             </div>
 
@@ -242,13 +232,13 @@ const MentorMangement = () => {
                                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         title="View Profile"
                                     >
-                                        <Eye size={18} />
+                                        {/* <Eye size={18} /> */}
                                     </button>
                                     <button
                                         className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
                                         title="Edit"
                                     >
-                                        <Edit size={18} />
+                                        {/* <Edit size={18} /> */}
                                     </button>
                                 </div>
                                 <button

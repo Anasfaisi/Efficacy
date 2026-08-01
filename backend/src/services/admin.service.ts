@@ -246,12 +246,16 @@ export class AdminService implements IAdminService {
     async getAllTransactions(
         page: number,
         limit: number,
-        filter: 'all' | 'mentor' | 'user'
+        filter: 'all' | 'mentor' | 'user',
+        type?: string,
+        status?: string
     ): Promise<{ transactions: ITransaction[]; total: number }> {
         return await this._walletRepository.getGlobalTransactions(
             page,
             limit,
-            filter
+            filter,
+            type,
+            status
         );
     }
 

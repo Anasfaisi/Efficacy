@@ -323,10 +323,7 @@ export class WalletService implements IWalletService {
 
         transaction.status = TransactionStatus.FAILED;
 
-        // const udpatedWallet = await this._walletRepository.updateWallet(
-        //     wallet.id as string,
-        //     wallet
-        // );
+        await this._walletRepository.updateWallet(wallet.id as string, wallet);
 
         // Notify Mentor of rejected payout request
         const mentorIdStr = wallet.mentorId ? wallet.mentorId.toString() : '';

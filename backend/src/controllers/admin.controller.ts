@@ -255,10 +255,14 @@ export class AdminController {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
         const filter = (req.query.filter as 'all' | 'mentor' | 'user') || 'all';
+        const type = (req.query.type as string) || undefined;
+        const status = (req.query.status as string) || undefined;
         const transactions = await this._adminService.getAllTransactions(
             page,
             limit,
-            filter
+            filter,
+            type,
+            status
         );
         res.status(code.OK).json(transactions);
     }
