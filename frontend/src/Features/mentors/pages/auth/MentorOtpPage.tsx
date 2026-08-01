@@ -68,8 +68,8 @@ export function MentorOtpPage() {
             setOtp('');
             dispatch(
                 setTempUser({
-                    email: result.email,
-                    role: result.role,
+                    email: result.tempEmail || result.email || tempEmail,
+                    role: result.role || role,
                     resendAvailableAt: result.resendAvailableAt,
                 })
             );

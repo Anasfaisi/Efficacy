@@ -203,7 +203,7 @@ export class MentorAuthService implements IMentorAuthService {
 
         const now = Date.now();
         const OTP_EXPIRY_MS = 5 * 60 * 1000;
-        const RESEND_DELAY_MS = 30 * 1000;
+        const RESEND_DELAY_MS = 60 * 1000;
 
         let otp = unverifiedUser.otp;
         let otpExpiresAt = new Date(unverifiedUser.otpExpiresAt).getTime();

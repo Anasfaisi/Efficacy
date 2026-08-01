@@ -167,7 +167,6 @@ export const updateProfilePicture = async (
                 'profile picture updation failed'
             );
         }
-        console.error(error);
         if (error instanceof Error) {
             throw error.message;
         }
@@ -187,7 +186,6 @@ export const updateProfile = async (
 };
 export const updatePassword = async (passwordData: UpdatePasswordType) => {
     const response = await api.patch(UserRoutes.UPDATE_PASSWORD, passwordData);
-    console.log(response, 'from the user api');
     return response;
 };
 export const getNotifications = async (): Promise<Notification[]> => {
